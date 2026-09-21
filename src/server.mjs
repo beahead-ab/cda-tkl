@@ -1,0 +1,62 @@
+import fs from 'node:fs';
+import http from 'node:http';
+import { fileURLToPath } from 'node:url';
+import { Engine } from './engine.mjs';
+import { Storage } from './storage.mjs';
+import { LocoNetClient } from './transport.mjs';
+import { hex } from './protocol.mjs';
+import { json, guard, body, staticFile } from './http.mjs';
+
+const profile = JSON.parse(fs.readFileSync(new URL('../profiles/charlottendal.json', import.meta.url)));
+const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
+const storage = new Storage(process.env.CHARLOTTENDAL_STATE_DIR || fileURLToPath(new URL('../var', import.meta.url)));
+const client = new LocoNetClient({ ...profile.transport, port: Number(process.env.CHARLOTTENDAL_WIRE_PORT || profile.transport.port), silenceMs: profile.staleMs });
+const engine = new Engine(profile, { storage, send: bytes => client.send(bytes) });
+let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
+function protect(action) { try { return action(); } catch (e) { engine.log('error', e.message); } }
+engine.on('change', () => { dirty = true; });
+client.on('connection', connected => protect(() => engine.connection(connected)));
+client.on('frame', bytes => protect(() => engine.receive(bytes)));
+client.on('fault', message => engine.log('transport', String(message)));
+client.on('wire', event => { trace.unshift({ ...event, at: Date.now() }); trace.length = Math.min(trace.length, 100); dirty = true; });
+const snapshot = () => ({ ...engine.snapshot(), trace });
+const server = http.createServer(async (req, res) => {
+  try {
+    guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
+    if (req.method === 'GET') {
+      if (url.pathname === '/api/state') return json(res, snapshot());
+      if (url.pathname === '/api/config') return json(res, { ...profile, notes });
+      if (url.pathname === '/api/events') {
+        res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive', 'X-Content-Type-Options': 'nosniff' });
+        res.write(`data: ${JSON.stringify(snapshot())}\n\n`); streams.add(res); req.on('close', () => streams.delete(res)); return;
+      }
+      if (url.pathname.startsWith('/api/')) return json(res, { error: 'Finns inte' }, 404);
+      return staticFile(res, root, decodeURIComponent(url.pathname));
+    }
+    const data = await body(req);
+    if (url.pathname === '/api/route') engine.request(data.from, data.to);
+    else if (url.pathname === '/api/cancel') engine.cancel(data.id);
+    else if (url.pathname === '/api/turnout') engine.manual(data.name, data.position);
+    else if (url.pathname === '/api/note') {
+      if (typeof data.key !== 'string' || data.key.length > 120 || typeof data.note !== 'string' || data.note.length > 4000 || ['__proto__', 'constructor', 'prototype'].includes(data.key)) throw Error('Ogiltig anteckning');
+      const next = { ...notes, [data.key]: data.note }; storage.save('notes.json', next); notes = next;
+    } else return json(res, { error: 'Okänd manöver' }, 404);
+    json(res, { ok: true, state: snapshot() });
+  } catch (e) { json(res, { error: e.message }, 400); }
+});
+let tick, publish;
+server.listen(port, '127.0.0.1', () => {
+  console.log(`Charlottendal TKL: http://127.0.0.1:${port}`); client.start();
+  tick = setInterval(() => protect(() => engine.tick()), 100);
+  publish = setInterval(() => {
+    if (!dirty) return; dirty = false; const text = `data: ${JSON.stringify(snapshot())}\n\n`;
+    for (const res of streams) { if (res.writableLength > 1e6) { res.end(); streams.delete(res); } else res.write(text); }
+  }, 150);
+});
+server.on('error', e => { console.error(e.message); process.exit(1); });
+function close() {
+  clearInterval(tick); clearInterval(publish);
+  for (const n of Object.keys(engine.signals)) protect(() => engine.permission(n, 'STOP'));
+  setTimeout(() => { client.stop(); for (const s of streams) s.end(); server.close(() => process.exit(0)); }, 250);
+}
+process.on('SIGINT', close); process.on('SIGTERM', close);
