@@ -5,7 +5,7 @@ Skapade och verifierade 22 september 2026.
 ## Källkod
 
 - Produktnamn: **Charlottendal TKL**.
-- Privat repository: [beahead-ab/charlottendal-tkl](https://github.com/beahead-ab/charlottendal-tkl).
+- Privat repository: [beahead-ab/cda-tkl](https://github.com/beahead-ab/cda-tkl).
 - Huvudgren: `main`.
 - Första applikationsversion: commit `ac78b11`.
 - Lokala driftdata och anteckningar i `var/` är undantagna från Git, liksom miljöfiler och privata nyckelfiler.

@@ -2,7 +2,7 @@
 
 En första körbar lokal applikation med egen TKL-kärna och en separat anläggningssimulator. Den använder Charlottendals exporterade geometri och JMRI mod59-signalbilder. Claude Design behövs inte för att köra den.
 
-Privat källkod finns i [beahead-ab/charlottendal-tkl](https://github.com/beahead-ab/charlottendal-tkl). En separat DigitalOcean-Droplet har skapats för kommande demo-publicering; se [serveruppgifter och aktuell driftstatus](docs/drift.md).
+Privat källkod finns i [beahead-ab/cda-tkl](https://github.com/beahead-ab/cda-tkl). En separat DigitalOcean-Droplet har skapats för kommande demo-publicering; se [serveruppgifter och aktuell driftstatus](docs/drift.md).
 
 ## Starta och prova
 
