@@ -2,13 +2,13 @@ const $ = id => document.getElementById(id), esc = x => String(x).replace(/[&<>"
 let state, ready = false, busy = false;
 async function act(path, data) {
   if (busy) return; busy = true;
-  try { const r = await fetch('/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); const a = await r.json(); if (!r.ok) throw Error(a.error); $('message').hidden = true; }
+  try { const r = await fetch('api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); const a = await r.json(); if (!r.ok) throw Error(a.error); $('message').hidden = true; }
   catch (e) { $('message').textContent = e.message; $('message').hidden = false; }
   finally { busy = false; await poll(); }
 }
 async function poll() {
   try {
-    const response = await fetch('/api/state'); state = await response.json();
+    const response = await fetch('api/state'); state = await response.json();
     if (!ready) {
       $('blocks').innerHTML = Object.keys(state.blocks).map(n => `<button data-block="${n}">${n}</button>`).join('');
       $('trains').innerHTML = state.scenarios.map(s => `<button data-train="${s.id}">${esc(s.label)}</button>`).join('');
@@ -32,4 +32,5 @@ async function poll() {
 $('blocks').onclick = e => { const name = e.target.closest('button')?.dataset.block; if (name) act('block', { name, occupied: !state.blocks[name] }); };
 $('trains').onclick = e => { const id = e.target.closest('button')?.dataset.train; if (id) act('train', { id }); };
 $('link').onclick = () => act('link', { connected: !state.link });
+try { const response = await fetch('api/config'); if (!response.ok) throw Error(); const config = await response.json(); $('tkl-link').href = config.tklUrl; $('tkl-link').hidden = false; } catch {}
 await poll(); setInterval(poll, 400);

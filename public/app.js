@@ -186,6 +186,7 @@ async function start() {
   const files = [...new Set(Object.values(iconTypes).flatMap(a => a.slice(0, 3)))];
   await Promise.all(files.map(async file => { const i = new Image(); imageCache.push(i); i.src = icon(file); await i.decode(); }));
   buildPlan();
+  $('field-link').href = config.fieldUrl; $('field-link').hidden = false;
   $('route-catalog').innerHTML = config.routes.map(r => `<button data-route="${r.id}" disabled>${esc(r.label)} <span aria-hidden="true">↗</span></button>`).join('');
   $('route-catalog').onclick = e => { const r = config.routes.find(r => r.id === e.target.closest('button')?.dataset.route); if (r) api('route', { from: r.from, to: r.to }); };
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };

@@ -2,7 +2,7 @@
 
 ## Automatiska prov
 
-19 av 19 protokoll- och kärntester godkända. Ett separat helhetstest med två riktiga Node-processer, TCP och HTTP godkänt.
+23 av 23 protokoll-, kärn- och inloggningstester godkända. Två separata helhetstest med riktiga Node-processer, TCP och HTTP godkända.
 
 - Publicerade byteexempel för B0, B1, B2 och den preliminära E4-profilen; kontrollsummor och fragmenterade strömmar.
 - Kommandoeko ändrar inte rapporterade växellägen.
@@ -14,6 +14,8 @@
 - Omstart återställer lås men inga körmedgivanden. Trasig lagring och profilbyte med lås avvisas.
 - Misslyckad låslagring skickar inga växelorder eller körmedgivanden.
 - Helhetstest: riktiga order och återrapporter mellan processerna, beständiga anteckningar/lås, återtagning efter beläggning, avbrott/återanslutning samt avvisat POST-anrop från annat ursprung.
+- Webbdrift: verifiering av JWT-signatur, avsändare, applikation, e-postadress och utgångstid; ogiltiga och saknade inloggningsbevis avvisas. Ofullständig inloggningskonfiguration stoppar publik uppstart.
+- Separat helhetstest visar att både TKL och simulatorn skyddar gränssnitt, data och manöver-API även vid direktanrop förbi Cloudflare.
 
 ## Manuell kontroll i appens webbläsare
 

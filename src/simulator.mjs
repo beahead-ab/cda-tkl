@@ -5,8 +5,10 @@ import { fileURLToPath } from 'node:url';
 import { Field } from './field.mjs';
 import { hex, fromHex, LineReader } from './protocol.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
+import { createAccessGuard } from './access.mjs';
 
 const profile = JSON.parse(fs.readFileSync(new URL('../profiles/simulator.json', import.meta.url)));
+const authenticate = createAccessGuard();
 const port = Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911), wirePort = Number(process.env.CHARLOTTENDAL_WIRE_PORT || 8912);
 const field = new Field(profile), clients = new Set(), trace = [];
 let link = true;
@@ -31,7 +33,8 @@ wire.listen(wirePort, '127.0.0.1');
 const root = fileURLToPath(new URL('../public', import.meta.url));
 const server = http.createServer(async (req, res) => {
   try {
-    guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
+    guard(req, port); await authenticate(req); const url = new URL(req.url, `http://127.0.0.1:${port}`);
+    if (req.method === 'GET' && url.pathname === '/api/config') return json(res, { tklUrl: process.env.CHARLOTTENDAL_TKL_URL || 'http://127.0.0.1:8910/' });
     if (req.method === 'GET' && url.pathname === '/api/state') return json(res, { ...field.snapshot(), link, clients: clients.size, trace });
     if (req.method === 'POST') {
       const data = await body(req);
@@ -44,7 +47,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (url.pathname.startsWith('/api/')) return json(res, { error: 'Finns inte' }, 404);
     staticFile(res, root, url.pathname === '/' ? '/simulator.html' : decodeURIComponent(url.pathname));
-  } catch (e) { json(res, { error: e.message }, 400); }
+  } catch (e) { json(res, { error: e.message }, e.status || 400); }
 });
 server.listen(port, '127.0.0.1', () => console.log(`Charlottendal anläggning: http://127.0.0.1:${port} · LocoNet ${wirePort}`));
 const step = setInterval(() => field.tick(), 50), reports = setInterval(() => field.allReports(), 2000);

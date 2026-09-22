@@ -4,12 +4,13 @@ export function json(res, value, status = 200) {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
   res.end(JSON.stringify(value));
 }
-export function guard(req, port) {
-  const allowed = new Set([`127.0.0.1:${port}`, `localhost:${port}`, `[::1]:${port}`]);
+export function guard(req, port, publicOrigin = process.env.CHARLOTTENDAL_PUBLIC_ORIGIN) {
+  const allowed = publicOrigin ? new Set([new URL(publicOrigin).host]) : new Set([`127.0.0.1:${port}`, `localhost:${port}`, `[::1]:${port}`]);
+  const origins = publicOrigin ? [publicOrigin] : [...allowed].map(h => 'http://' + h);
   if (!allowed.has(req.headers.host)) throw Error('Otillåten värd');
   if (!['GET', 'HEAD', 'POST'].includes(req.method)) throw Error('Otillåten metod');
   if (req.method === 'POST') {
-    if (req.headers.origin && ![...allowed].some(h => req.headers.origin === 'http://' + h)) throw Error('Otillåtet ursprung');
+    if (req.headers.origin && !origins.includes(req.headers.origin)) throw Error('Otillåtet ursprung');
     if (req.headers['sec-fetch-site'] === 'cross-site') throw Error('Otillåtet ursprung');
     if (!req.headers['content-type']?.startsWith('application/json')) throw Error('JSON krävs');
   }

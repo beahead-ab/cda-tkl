@@ -4,10 +4,11 @@ import { fileURLToPath } from 'node:url';
 import { Engine } from './engine.mjs';
 import { Storage } from './storage.mjs';
 import { LocoNetClient } from './transport.mjs';
-import { hex } from './protocol.mjs';
+import { createAccessGuard } from './access.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
 
 const profile = JSON.parse(fs.readFileSync(new URL('../profiles/charlottendal.json', import.meta.url)));
+const authenticate = createAccessGuard();
 const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
 const storage = new Storage(process.env.CHARLOTTENDAL_STATE_DIR || fileURLToPath(new URL('../var', import.meta.url)));
 const client = new LocoNetClient({ ...profile.transport, port: Number(process.env.CHARLOTTENDAL_WIRE_PORT || profile.transport.port), silenceMs: profile.staleMs });
@@ -22,13 +23,16 @@ client.on('wire', event => { trace.unshift({ ...event, at: Date.now() }); trace.
 const snapshot = () => ({ ...engine.snapshot(), trace });
 const server = http.createServer(async (req, res) => {
   try {
-    guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
-    if (req.method === 'GET') {
+    guard(req, port); const expires = await authenticate(req); const url = new URL(req.url, `http://127.0.0.1:${port}`);
+    if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
-      if (url.pathname === '/api/config') return json(res, { ...profile, notes });
+      if (url.pathname === '/api/config') return json(res, { ...profile, notes, fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || 'http://127.0.0.1:8911/' });
       if (url.pathname === '/api/events') {
         res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive', 'X-Content-Type-Options': 'nosniff' });
-        res.write(`data: ${JSON.stringify(snapshot())}\n\n`); streams.add(res); req.on('close', () => streams.delete(res)); return;
+        if (req.method === 'HEAD') return res.end();
+        res.write(`data: ${JSON.stringify(snapshot())}\n\n`); streams.add(res);
+        const expiry = expires ? setTimeout(() => res.end(), Math.max(1, expires - Date.now())) : null;
+        req.on('close', () => { streams.delete(res); clearTimeout(expiry); }); return;
       }
       if (url.pathname.startsWith('/api/')) return json(res, { error: 'Finns inte' }, 404);
       return staticFile(res, root, decodeURIComponent(url.pathname));
@@ -42,7 +46,7 @@ const server = http.createServer(async (req, res) => {
       const next = { ...notes, [data.key]: data.note }; storage.save('notes.json', next); notes = next;
     } else return json(res, { error: 'Okänd manöver' }, 404);
     json(res, { ok: true, state: snapshot() });
-  } catch (e) { json(res, { error: e.message }, 400); }
+  } catch (e) { json(res, { error: e.message }, e.status || 400); }
 });
 let tick, publish;
 server.listen(port, '127.0.0.1', () => {

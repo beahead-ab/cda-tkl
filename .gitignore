@@ -7,3 +7,4 @@ var/*
 *.pem
 *.key
 deploy/secrets/
+node_modules/

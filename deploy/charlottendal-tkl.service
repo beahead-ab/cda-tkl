@@ -1,0 +1,29 @@
+[Unit]
+Description=Charlottendal TKL
+Wants=network-online.target charlottendal-simulator.service
+After=network-online.target charlottendal-simulator.service
+
+[Service]
+Type=simple
+User=charlottendal
+Group=charlottendal
+WorkingDirectory=/opt/charlottendal/current
+EnvironmentFile=/etc/charlottendal-tkl/app.env
+ExecStart=/usr/local/bin/node src/server.mjs
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+StateDirectory=charlottendal-tkl
+StateDirectoryMode=0750
+UMask=0027
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

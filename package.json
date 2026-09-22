@@ -14,5 +14,8 @@
     "test": "node --test test/*.test.mjs",
     "check": "node scripts/check.mjs",
     "test:integration": "node --test test/integration.mjs"
+  },
+  "dependencies": {
+    "jose": "6.2.12"
   }
 }

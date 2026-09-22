@@ -11,6 +11,10 @@ if [[ -z "$charlottendal_node" ]] || ! "$charlottendal_node" -e 'process.exit(Nu
   read -r '?Tryck Retur för att stänga.'
   exit 1
 fi
+if [[ ! -d node_modules/jose ]]; then
+  print 'Installerar appens beroenden första gången…'
+  PATH="${charlottendal_node:h}:$PATH" "${charlottendal_node:h}/npm" ci --ignore-scripts || exit 1
+fi
 print 'Charlottendal startar. Öppna http://127.0.0.1:8910 och http://127.0.0.1:8911'
 print 'Låt detta fönster vara öppet. Avsluta med Ctrl+C.'
 "$charlottendal_node" scripts/start.mjs

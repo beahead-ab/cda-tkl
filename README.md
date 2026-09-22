@@ -6,7 +6,7 @@ Privat källkod finns i [beahead-ab/cda-tkl](https://github.com/beahead-ab/cda-t
 
 ## Starta och prova
 
-Dubbelklicka **Starta Charlottendal.command** i den här mappen. Låt terminalfönstret vara öppet medan appen körs. Node.js 22 eller senare behövs; inga externa programpaket behöver installeras.
+Dubbelklicka **Starta Charlottendal.command** i den här mappen. Låt terminalfönstret vara öppet medan appen körs. Node.js 22 eller senare behövs. Första starten installerar det låsta beroendet `jose`, som verifierar Cloudflare-inloggning vid webbdrift. Lokal körning behöver inget Cloudflare-konto.
 
 - [TKL-panelen](http://127.0.0.1:8910)
 - [Den separata anläggningen](http://127.0.0.1:8911)
@@ -51,10 +51,11 @@ Vid avbrott kan kärnan begära stopp endast när förbindelsen fungerar. Den ka
 ## För utveckling
 
 ```sh
+npm ci --ignore-scripts    # installera låsta beroenden första gången
 npm start                 # startar TKL och simulator som två processer
 npm run backend           # endast TKL
 npm run simulator         # endast anläggningen
-npm test                  # 19 protokoll- och kärntester
+npm test                  # protokoll-, kärn- och inloggningstester
 npm run test:integration  # helhetstest med separata processer och tillfälliga portar
 npm run check             # syntaxkontroll
 ```
