@@ -24,7 +24,7 @@ function save(file, record) {
 }
 export async function initializePassword(file, password) {
   if (fs.existsSync(file)) throw Error('Lösenord finns redan; filen skrivs inte över');
-  if (typeof password !== 'string' || password.length < 12 || password.length > 128) throw Error('Använd 12–128 tecken');
+  if (typeof password !== 'string' || password.length < 6 || password.length > 128) throw Error('Använd 6–128 tecken');
   const salt = randomBytes(16).toString('hex');
   fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o750 });
   save(file, { version: 1, salt, hash: (await hash(password, salt)).toString('hex'), mustChange: true, sessions: [], attempts: [] });
@@ -90,7 +90,7 @@ export class PasswordAuth extends EventEmitter {
         const supplied = route === '/api/auth/login' ? data.password : data.currentPassword;
         if (!await matches(supplied, record)) throw fail('Fel lösenord');
         if (route === '/api/auth/password') {
-          if (typeof data.newPassword !== 'string' || data.newPassword.length < 12 || data.newPassword.length > 128) throw fail('Välj ett lösenord med 12–128 tecken', 400);
+          if (typeof data.newPassword !== 'string' || data.newPassword.length < 6 || data.newPassword.length > 128) throw fail('Välj ett lösenord med 6–128 tecken', 400);
           if (data.newPassword === supplied) throw fail('Välj ett nytt lösenord', 400);
           const salt = randomBytes(16).toString('hex');
           record.salt = salt; record.hash = (await hash(data.newPassword, salt)).toString('hex');

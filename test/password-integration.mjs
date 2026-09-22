@@ -19,7 +19,7 @@ const stop = child => child.exitCode === null && child.signalCode === null ? new
 
 test('password login protects both processes, requires change, revokes sessions and throttles guesses', { timeout: 40000 }, async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cda-password-'));
-  const file = path.join(dir, 'auth.json'), initial = 'temporary-test-only', changed = 'a different test password';
+  const file = path.join(dir, 'auth.json'), initial = 'temporary-test-only', changed = 'test42';
   const ports = await Promise.all([freePort(), freePort(), freePort()]);
   const env = { ...process.env, CHARLOTTENDAL_AUTH_MODE: 'password', CHARLOTTENDAL_AUTH_FILE: file,
     CHARLOTTENDAL_PUBLIC_ORIGIN: 'https://cda-tkl.trainmeet.app', CHARLOTTENDAL_STATE_DIR: path.join(dir, 'state'),

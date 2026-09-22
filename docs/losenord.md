@@ -2,7 +2,7 @@
 
 Webbdrift använder `CHARLOTTENDAL_AUTH_MODE=password` och den separata filen `CHARLOTTENDAL_AUTH_FILE`. Lokal körning utan publik adress är oförändrad.
 
-Första lösenordet skapas med `scripts/initialize-password.mjs`, via standard input, aldrig som kommandoradsargument. Skriptet vägrar skriva över en befintlig fil. Första inloggningen måste följas av lösenordsbyte innan panelens eller simulatorns API blir tillgängligt. Nya lösenord har 12–128 tecken.
+Första lösenordet skapas med `scripts/initialize-password.mjs`, via standard input, aldrig som kommandoradsargument. Skriptet vägrar skriva över en befintlig fil. Första inloggningen måste följas av lösenordsbyte innan panelens eller simulatorns API blir tillgängligt. Nya lösenord har 6–128 tecken.
 
 Lösenord lagras med individuellt salt och scrypt (N=131072, r=8, p=1). Sessionsnycklar är 32 slumpbyte; bara deras SHA-256-hash lagras. Sessioner gäller 12 timmar och skickas i en Secure, HttpOnly, SameSite=Strict, __Host-cookie. Lösenordsbyte avslutar alla gamla sessioner och TKL:s händelseströmmar. Utloggning återkallar aktuell session. Fem misslyckade försök per minut tillåts totalt, även över omstart. POST kräver korrekt Origin.
 
