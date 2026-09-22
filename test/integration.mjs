@@ -25,8 +25,12 @@ test('network profile runs parallel trains across separate processes and release
   try {
     launch('src/simulator.mjs'); launch('src/server.mjs');
     await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && s.blocks.S100.occupied === false; });
+    const staged=await post(httpPort,'configuration/save',{revision:0,key:'signals:1/1',name:'Infart Cu',description:'Provad visningsändring'});
+    assert.equal(staged.changes.length,2);
+    await post(httpPort,'configuration/save',{revision:0,key:'signals:1/1',name:'Föråldrad',description:''},409);
     for (const [from, to] of [['htvCu','htvSpIA'], ['htvAn','htvSpIIA']]) await post(httpPort, 'route', { from, to });
     await until(async () => { const s = await get(httpPort); return s.routes.length === 2 && s.routes.every(r => r.state === 'active'); });
+    await post(httpPort,'configuration/activate',{revision:1,reason:'Spärrat aktiveringsförsök'},409);
     await post(httpPort, 'turnout', { name:'Vx102', position:'T' }, 400);
     await post(httpPort, 'route', { from:'htvAn', to:'htvSpIA' }, 400);
     const ready = await get(httpPort);
@@ -35,6 +39,15 @@ test('network profile runs parallel trains across separate processes and release
     await until(async () => (await get(httpPort)).routes.every(r => r.state === 'traversing'));
     await until(async () => { const s = await get(httpPort); return !s.routes.length; }, 22000);
     assert.equal((await get(simPort)).trains.length, 0);
+    const activated=await post(httpPort,'configuration/activate',{revision:1,reason:'Namn på infart'});
+    assert.equal(activated.active.activeVersion,1);
+    const presentation=await (await fetch(`http://127.0.0.1:${httpPort}/api/presentation`)).json();
+    assert.equal(presentation.overrides['signals:1/1'].name,'Infart Cu');
+    assert.equal((await get(httpPort)).configurationVersion,1);
+    await post(httpPort,'configuration/restore',{revision:2,version:0});
+    await post(httpPort,'configuration/activate',{revision:3,reason:'Återställ original'});
+    assert.equal(JSON.parse(fs.readFileSync(path.join(dir,'configuration.json'))).versions.length,3);
+
     assert.equal(JSON.parse(fs.readFileSync(path.join(dir,'routes.json'))).routes.length, 0);
     await post(httpPort, 'track-block', { name:'SIA', blocked:true });
     await post(httpPort, 'route', { from:'htvCu', to:'htvSpIA' }, 400);

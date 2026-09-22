@@ -6,6 +6,7 @@ import { LocoNetClient } from './transport.mjs';
 import { createAuth } from './auth.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
 import { loadProfile } from './profile.mjs';
+import { Configuration } from './configuration.mjs';
 
 const profile = loadProfile();
 const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
@@ -13,6 +14,7 @@ const auth = createAuth(root, true);
 const storage = new Storage(process.env.CHARLOTTENDAL_STATE_DIR || fileURLToPath(new URL('../var', import.meta.url)));
 const client = new LocoNetClient({ ...profile.transport, port: Number(process.env.CHARLOTTENDAL_WIRE_PORT || profile.transport.port), silenceMs: profile.staleMs });
 const engine = new Engine(profile, { storage, send: bytes => client.send(bytes) });
+const configuration = new Configuration(profile, {storage,canActivate:()=>!engine.routes.length && !engine.storageFault});
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
 auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
 function protect(action) { try { return action(); } catch (e) { engine.log('error', e.message); } }
@@ -21,7 +23,7 @@ client.on('connection', connected => protect(() => engine.connection(connected))
 client.on('frame', bytes => protect(() => engine.receive(bytes)));
 client.on('fault', message => engine.log('transport', String(message)));
 client.on('wire', event => { trace.unshift({ ...event, at: Date.now() }); trace.length = Math.min(trace.length, 100); dirty = true; });
-const snapshot = () => ({ ...engine.snapshot(), trace });
+const snapshot = () => ({ ...engine.snapshot(), trace, configurationVersion:configuration.data.activeVersion });
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -29,7 +31,9 @@ const server = http.createServer(async (req, res) => {
     const expires = await auth.authenticate(req);
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
-      if (url.pathname === '/api/config') return json(res, { ...profile, notes, fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || 'http://127.0.0.1:8911/', accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
+      if (url.pathname === '/api/config') return json(res, { ...profile, notes, presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || 'http://127.0.0.1:8911/', accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
+      if (url.pathname === '/api/configuration') return json(res, configuration.view());
+      if (url.pathname === '/api/presentation') return json(res, configuration.presentation());
       if (url.pathname === '/api/events') {
         res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive', 'X-Content-Type-Options': 'nosniff' });
         if (req.method === 'HEAD') return res.end();
@@ -41,6 +45,13 @@ const server = http.createServer(async (req, res) => {
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
     const data = await body(req);
+    if (url.pathname.startsWith('/api/configuration/')) {
+      const command=url.pathname.slice('/api/configuration/'.length);
+      if(!['save','restore','discard','activate'].includes(command)) return json(res,{error:'Okänd inställningsåtgärd'},404);
+      const result=configuration[command](data); dirty=true;
+      engine.log('configuration',command==='activate'?`Visningsinställningar version ${result.active.activeVersion} aktiverad.`:'Inställningsutkast '+({save:'sparat',restore:'hämtat från historiken',discard:'kastat'}[command])+'.');
+      return json(res,result);
+    }
     if (url.pathname === '/api/route') engine.request(data.from, data.to);
     else if (url.pathname === '/api/cancel') engine.cancel(data.id);
     else if (url.pathname === '/api/turnout') engine.manual(data.name, data.position);

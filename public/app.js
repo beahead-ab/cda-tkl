@@ -51,10 +51,22 @@ function choose(id) {
   else { const from = chosen; clearChoice(); api('route', { from, to: id }); }
 }
 function label(id) {
-  if(config.buttons?.[id]) return config.buttons[id].label;
+  if(config.buttons?.[id]) return displayName('buttons',id,config.buttons[id].label);
   const found = config.routes.find(r => r.from === id || r.to === id);
   if (found) return found.label.split(' → ')[found.from === id ? 0 : 1];
   return id.replace('htv', '');
+}
+function displayName(kind,id,fallback=id) { return config.presentation?.overrides[kind+':'+id]?.name||fallback; }
+function presentationDescription(kind,id) { return config.presentation?.overrides[kind+':'+id]?.description||''; }
+function applyPresentation(value) {
+  config.presentation=value;
+  sourceRegister?.presentationChanged();
+  // Change text in place: never rebuild the SVG or signal image elements.
+  for(const option of $('block-choice').options) option.textContent=displayName('blocks',option.value)+(displayName('blocks',option.value)!==option.value?' · '+option.value:'');
+  for(const id of ['catalog-from','catalog-to']) for(const option of $(id)?.options||[]) option.textContent=label(option.value);
+  if(chosen) $('selection-hint').textContent=label(chosen)+' → välj slutpunkt';
+  for(const b of buttons) { const id=b.sensor||b.id;if(!id)continue;const node=b.g||b.node;if(node&&config.buttons?.[id]) {node.setAttribute('aria-label',label(id));const title=node.querySelector('title');if(title)title.textContent=label(id);} }
+  paint();
 }
 function buildPlan() {
   layout = panelLayout(panel);
@@ -200,6 +212,7 @@ function animateFlow() {
 const statuses = { setting: 'Lägger växlar', establishing: 'Etablerar', clearing: 'Klarsätter', active: 'Klar', traversing:'Tåg passerar', held: 'Stopp · lås kvar', occupied: 'Lås kvar', cancelling: 'Återtar' };
 function paint() {
   if (!state) return;
+  sourceRegister?.updateState(state,online);
   const c = $('connection'); c.textContent = !online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad';
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
   paintPlan(); paintInspector();
@@ -208,11 +221,11 @@ function paint() {
   $('reset-ais').disabled = !usable() || pending;
   const blocks=state.controls?.blocked || [];
   $('blocked-count').textContent=blocks.length ? `· ${blocks.length} spärrade` : '';
-  html('blocked-list',blocks.map(n=>`<span class="field-chip blocked-chip">${esc(n)} · spärrat</span>`).join(''));
+  html('blocked-list',blocks.map(n=>`<span class="field-chip blocked-chip">${esc(displayName('blocks',n))} · spärrat</span>`).join(''));
   $('toggle-block').textContent = isBlocked($('block-choice').value)?'Ta bort spärr':'Spärra spår';
   $('toggle-block').disabled = !online || pending || !!state.storageFault;
   for (const b of $('route-catalog').querySelectorAll('button')) b.disabled = !usable() || pending;
-  html('active-routes', state.routes.map(r => `<div class="route-item"><strong>${esc(r.label)}<span class="route-state ${esc(r.state)}">${esc(statuses[r.state])}</span></strong><small>${esc(r.reason)}${r.passage&&r.enteredAt?' · '+r.passage.filter(p=>p.state==='clear').length+'/'+r.passage.length+' avsnitt passerade':''}</small><button data-cancel="${esc(r.id)}" ${!online || r.cancelRequested ? 'disabled' : ''}>${r.cancelRequested ? 'Inväntar frigivning' : 'Återta'}</button></div>`).join(''));
+  html('active-routes', state.routes.map(r => `<div class="route-item"><strong>${esc(displayName('routes',r.definitionId,r.label))}<span class="route-state ${esc(r.state)}">${esc(statuses[r.state])}</span></strong><small>${esc(r.reason)}${r.passage&&r.enteredAt?' · '+r.passage.filter(p=>p.state==='clear').length+'/'+r.passage.length+' avsnitt passerade':''}</small><button data-cancel="${esc(r.id)}" ${!online || r.cancelRequested ? 'disabled' : ''}>${r.cancelRequested ? 'Inväntar frigivning' : 'Återta'}</button></div>`).join(''));
   $('event-status').textContent = state.routes.length + ' tågvägslås · ' + Object.keys(config.turnouts).length + ' anslutna växlar';
   html('events', state.events.filter(e => !['report', 'transport'].includes(e.kind)).slice(0, 7).map(e => `<div class="event-row"><time>${time(e.at)}</time><span>${esc(e.message)}</span></div>`).join(''));
   $('wire').textContent = (state.trace || []).slice(0, 40).map(e => `${time(e.at)}  ${e.direction === 'out' ? 'SKICKAT ' : 'MOTTAGET'}  ${e.hex}`).join('\n');
@@ -223,7 +236,8 @@ function paintInspector() {
   const sourceKind = kind === 'signal' ? 'signals' : 'layoutTurnouts';
   const sourceButton = `<button class="source-inspect" data-source-kind="${sourceKind}" data-source-name="${esc(name)}">Visa alla källuppgifter →</button>`;
   const original = kind === 'signal' ? registry.signals.find(r=>r.id===name) : null;
-  const sourceInfo = original ? `<p class="muted">${esc(original.type)} · Besked i XML: ${esc(original.aspects.join(', '))}</p>` : '';
+  const presentationKind=kind==='signal'?'signals':'turnouts', display=displayName(presentationKind,name), description=presentationDescription(presentationKind,name);
+  const sourceInfo = (display!==name?`<h2>${esc(display)}</h2>`:'')+(description?`<p>${esc(description)}</p>`:'')+(original ? `<p class="muted">${esc(original.type)} · Besked i XML: ${esc(original.aspects.join(', '))}</p>` : '');
   if (!b) { html('inspector', `<h2>${kind === 'signal' ? 'Signal' : 'Växel'} ${esc(name)}</h2><p class="muted">Importerad från JMRI. Återrapport och manövrering är ännu inte inkopplade för detta objekt.</p>` + sourceInfo + sourceButton); return; }
   const s = kind === 'signal' ? state.signals[name] : state.turnouts[name];
   const locked = state.routes.filter(r => kind === 'signal' ? r.signals.includes(name) : r.turnouts[name]);
@@ -238,7 +252,7 @@ async function start() {
   // Each displayed variant is decoded before it can replace the dark indication.
   Promise.allSettled(files.map(async file => { const i = new Image(); imageCache.push(i); i.src = icon(file); await i.decode(); decodedIcons.add(file); if(state) paintPlan(); }))
     .then(results => { if(results.some(r=>r.status==='rejected')) message('En signalbild kunde inte laddas. Berörd signal visas som okänd.'); });
-  sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note})});
+  sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   buildPlan();
   $('compact-toggle').onclick=()=>{ const compact=document.body.classList.toggle('panel-compact'); $('compact-toggle').textContent=compact?'Visa verktyg':'Dölj verktyg'; };
 
@@ -265,8 +279,16 @@ async function start() {
   $('zoom').onchange = () => { $('track-plan').style.width = $('zoom').value + '%'; };
   for (const page of ['panel','admin']) $(page+'-tab').onclick=()=>setPage(page);
   setPage(location.hash==='#register'?'admin':'panel');
+  applyPresentation(config.presentation);
   const source = new EventSource('/api/events');
-  source.onmessage = e => { state = JSON.parse(e.data); serverOffset=state.serverTime-Date.now(); online = true; lastEvent = Date.now(); paint(); };
+  let presentationLoading=false;
+  source.onmessage = e => {
+    state = JSON.parse(e.data); serverOffset=state.serverTime-Date.now(); online = true; lastEvent = Date.now(); paint();
+    if(!presentationLoading && state.configurationVersion!==config.presentation?.activeVersion) {
+      presentationLoading=true;
+      fetch('/api/presentation').then(r=>{if(!r.ok)throw Error('Kunde inte hämta nya visningsinställningar.');return r.json();}).then(applyPresentation).catch(e=>message(e.message)).finally(()=>{presentationLoading=false;});
+    }
+  };
   source.onerror = () => { online = false; paint(); };
   setInterval(() => { if (Date.now() - lastEvent > 3000 && online) { online = false; paint(); } }, 750);
   function animation() { if (state?.routes.some(r => r.state === 'establishing')) animateFlow(); requestAnimationFrame(animation); } animation();
