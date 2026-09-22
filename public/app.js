@@ -182,11 +182,12 @@ function renderRegistry() {
   for (const b of $('registry-tabs').children) b.classList.toggle('selected', b.dataset.kind === registryKind);
 }
 async function start() {
-  [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/admin.json'].map(async url => { const r = await fetch(url); if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
+  [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/admin.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set(Object.values(iconTypes).flatMap(a => a.slice(0, 3)))];
   await Promise.all(files.map(async file => { const i = new Image(); imageCache.push(i); i.src = icon(file); await i.decode(); }));
   buildPlan();
-  $('field-link').href = config.fieldUrl; $('field-link').hidden = false;
+  $('account-link').hidden = !config.accountUrl;
+  $('field-link').href = config.fieldUrl || 'http://127.0.0.1:8911/'; $('field-link').hidden = false;
   $('route-catalog').innerHTML = config.routes.map(r => `<button data-route="${r.id}" disabled>${esc(r.label)} <span aria-hidden="true">↗</span></button>`).join('');
   $('route-catalog').onclick = e => { const r = config.routes.find(r => r.id === e.target.closest('button')?.dataset.route); if (r) api('route', { from: r.from, to: r.to }); };
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };

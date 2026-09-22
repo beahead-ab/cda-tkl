@@ -14,7 +14,7 @@ test('separate processes exchange LocoNet, reject conflicts, persist locks and r
   const [httpPort, simPort, wirePort] = await Promise.all([freePort(), freePort(), freePort()]);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'charlottendal-integration-'));
   const children = []; let output = '';
-  const env = { ...process.env, CHARLOTTENDAL_PORT: String(httpPort), CHARLOTTENDAL_SIM_PORT: String(simPort), CHARLOTTENDAL_WIRE_PORT: String(wirePort), CHARLOTTENDAL_STATE_DIR: dir,
+  const env = { ...process.env, CHARLOTTENDAL_AUTH_MODE: 'cloudflare', CHARLOTTENDAL_PORT: String(httpPort), CHARLOTTENDAL_SIM_PORT: String(simPort), CHARLOTTENDAL_WIRE_PORT: String(wirePort), CHARLOTTENDAL_STATE_DIR: dir,
     CHARLOTTENDAL_PUBLIC_ORIGIN: '', CHARLOTTENDAL_FIELD_URL: '/anlaggning/', CHARLOTTENDAL_TKL_URL: '/' };
   const launch = file => { const c = spawn(process.execPath, [file], { cwd: root, env }); c.stdout.on('data', d => output += d); c.stderr.on('data', d => output += d); children.push(c); return c; };
   const get = async (port, url = '/api/state') => { const r = await fetch(`http://127.0.0.1:${port}${url}`); assert.equal(r.status, 200); return r.json(); };
@@ -52,7 +52,7 @@ test('separate processes exchange LocoNet, reject conflicts, persist locks and r
 test('both public servers protect pages and controls even when the edge is bypassed', { timeout: 15000 }, async () => {
   const [httpPort, simPort, wirePort] = await Promise.all([freePort(), freePort(), freePort()]);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'charlottendal-auth-'));
-  const env = { ...process.env, CHARLOTTENDAL_PORT: String(httpPort), CHARLOTTENDAL_SIM_PORT: String(simPort),
+  const env = { ...process.env, CHARLOTTENDAL_AUTH_MODE: 'cloudflare', CHARLOTTENDAL_PORT: String(httpPort), CHARLOTTENDAL_SIM_PORT: String(simPort),
     CHARLOTTENDAL_WIRE_PORT: String(wirePort), CHARLOTTENDAL_STATE_DIR: dir,
     CHARLOTTENDAL_PUBLIC_ORIGIN: 'https://cda-tkl.trainmeet.app',
     CHARLOTTENDAL_ACCESS_ISSUER: 'https://test-team.cloudflareaccess.com',

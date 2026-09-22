@@ -1,0 +1,41 @@
+const $ = id => document.getElementById(id);
+let state, busy = false;
+function showError(error) { $('error').textContent = error.message; $('error').hidden = false; }
+async function call(action, data) {
+  const res = await fetch('/api/auth/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  const result = await res.json();
+  if (!res.ok) throw Error(result.error || 'Kunde inte logga in');
+  return result;
+}
+function render() {
+  const authenticated = state.authenticated;
+  $('login').hidden = authenticated; $('change').hidden = !authenticated;
+  $('account-actions').hidden = !authenticated; $('back').hidden = state.mustChange;
+  $('heading').textContent = authenticated ? 'Välj ditt lösenord' : 'Logga in';
+  $('intro').textContent = authenticated ? (state.mustChange ? 'Byt det tillfälliga lösenordet innan du öppnar ställverket.' : 'Här kan du byta lösenord. Övriga inloggningar avslutas när du sparar.') : 'Ange ditt lösenord för att öppna ställverket.';
+}
+async function submit(form, action) {
+  if (busy) return; busy = true; $('error').hidden = true;
+  const button = form.querySelector('button[type=submit]'); button.disabled = true;
+  try { await action(); } catch (e) { showError(e); } finally { button.disabled = false; busy = false; }
+}
+$('login').onsubmit = e => { e.preventDefault(); submit($('login'), async () => {
+  const password = $('password').value, result = await call('login', { password });
+  $('password').value = '';
+  if (!result.mustChange) { location.replace('/'); return; }
+  state = { authenticated: true, mustChange: true }; render();
+  // Retain the just-entered temporary password only in this form until it is changed.
+  $('current').value = password; $('current-row').hidden = true; $('new').focus();
+}); };
+$('change').onsubmit = e => { e.preventDefault(); submit($('change'), async () => {
+  if ($('new').value !== $('repeat').value) throw Error('De nya lösenorden är inte lika');
+  await call('password', { currentPassword: $('current').value, newPassword: $('new').value });
+  $('change').reset(); location.replace('/');
+}); };
+$('logout').onclick = async () => { try { await call('logout', {}); location.replace('/login'); } catch (e) { showError(e); } };
+try {
+  const response = await fetch('/api/auth/session'); if (!response.ok) throw Error('Inloggningen är inte tillgänglig');
+  state = await response.json();
+  if (state.authenticated && !state.mustChange && location.pathname === '/login') location.replace('/');
+  else render();
+} catch (e) { showError(e); }

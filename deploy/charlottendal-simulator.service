@@ -6,6 +6,7 @@ After=network.target
 Type=simple
 User=charlottendal-sim
 Group=charlottendal-sim
+SupplementaryGroups=charlottendal-auth
 WorkingDirectory=/opt/charlottendal/current
 EnvironmentFile=/etc/charlottendal-tkl/app.env
 ExecStart=/usr/local/bin/node src/simulator.mjs

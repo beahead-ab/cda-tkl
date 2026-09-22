@@ -8,7 +8,7 @@ async function act(path, data) {
 }
 async function poll() {
   try {
-    const response = await fetch('api/state'); state = await response.json();
+    const response = await fetch('api/state'); if (response.status === 401 || response.status === 428) { location.assign('/login'); return; } state = await response.json();
     if (!ready) {
       $('blocks').innerHTML = Object.keys(state.blocks).map(n => `<button data-block="${n}">${n}</button>`).join('');
       $('trains').innerHTML = state.scenarios.map(s => `<button data-train="${s.id}">${esc(s.label)}</button>`).join('');

@@ -4,16 +4,17 @@ import { fileURLToPath } from 'node:url';
 import { Engine } from './engine.mjs';
 import { Storage } from './storage.mjs';
 import { LocoNetClient } from './transport.mjs';
-import { createAccessGuard } from './access.mjs';
+import { createAuth } from './auth.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
 
 const profile = JSON.parse(fs.readFileSync(new URL('../profiles/charlottendal.json', import.meta.url)));
-const authenticate = createAccessGuard();
 const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
+const auth = createAuth(root, true);
 const storage = new Storage(process.env.CHARLOTTENDAL_STATE_DIR || fileURLToPath(new URL('../var', import.meta.url)));
 const client = new LocoNetClient({ ...profile.transport, port: Number(process.env.CHARLOTTENDAL_WIRE_PORT || profile.transport.port), silenceMs: profile.staleMs });
 const engine = new Engine(profile, { storage, send: bytes => client.send(bytes) });
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
+auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
 function protect(action) { try { return action(); } catch (e) { engine.log('error', e.message); } }
 engine.on('change', () => { dirty = true; });
 client.on('connection', connected => protect(() => engine.connection(connected)));
@@ -23,10 +24,12 @@ client.on('wire', event => { trace.unshift({ ...event, at: Date.now() }); trace.
 const snapshot = () => ({ ...engine.snapshot(), trace });
 const server = http.createServer(async (req, res) => {
   try {
-    guard(req, port); const expires = await authenticate(req); const url = new URL(req.url, `http://127.0.0.1:${port}`);
+    guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
+    if (await auth.handle(req, res, url)) return;
+    const expires = await auth.authenticate(req);
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
-      if (url.pathname === '/api/config') return json(res, { ...profile, notes, fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || 'http://127.0.0.1:8911/' });
+      if (url.pathname === '/api/config') return json(res, { ...profile, notes, fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || 'http://127.0.0.1:8911/', accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
       if (url.pathname === '/api/events') {
         res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive', 'X-Content-Type-Options': 'nosniff' });
         if (req.method === 'HEAD') return res.end();
