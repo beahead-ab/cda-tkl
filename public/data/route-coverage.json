@@ -1,0 +1,4920 @@
+{
+  "sourceHash": "c69a865ae9a85cdb842d70c34d2573dde4b11c50f601a561d5b941136ac6fa87",
+  "allowedRules": 210,
+  "routes": [
+    {
+      "id": "htvAu--htvSpIA",
+      "from": "htvAu",
+      "to": "htvSpIA",
+      "label": "Au → Spår 1c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C21"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs1/7"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpIIA",
+      "from": "htvAu",
+      "to": "htvSpIIA",
+      "label": "Au → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C22"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs2/7"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:429040bc-67f8-49a6-8934-ae57c3462b1e"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpIIIA",
+      "from": "htvAu",
+      "to": "htvSpIIIA",
+      "label": "Au → Spår 11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C23"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs3/5"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpIVA",
+      "from": "htvAu",
+      "to": "htvSpIVA",
+      "label": "Au → Spår 12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C24"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs4/5"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpVA",
+      "from": "htvAu",
+      "to": "htvSpVA",
+      "label": "Au → Spår 13",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C25"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs5/5"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpIB",
+      "from": "htvAu",
+      "to": "htvSpIB",
+      "label": "Au → Spår 1b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C26"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs1/9"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5",
+        "1/7"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpIIB",
+      "from": "htvAu",
+      "to": "htvSpIIB",
+      "label": "Au → Spår 2b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C27"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs2/9"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpIIIB",
+      "from": "htvAu",
+      "to": "htvSpIIIB",
+      "label": "Au → Spår 3b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C28"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs3/9"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+        "IN:a4607e61-cc12-4f46-9c30-fb534204d98a"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpIVB",
+      "from": "htvAu",
+      "to": "htvSpIVB",
+      "label": "Au → Spår 4b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C29"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs4/9"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+        "IN:52be6d9f-956b-4e6c-a476-1f8803639586"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpVB",
+      "from": "htvAu",
+      "to": "htvSpVB",
+      "label": "Au → Spår 5b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C30"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs5/9"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5",
+        "3/5"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+        "IN:8b500613-a031-465d-a3b7-de0b654f22a0"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpIC",
+      "from": "htvAu",
+      "to": "htvSpIC",
+      "label": "Au → Spår 1a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C32"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs1/11"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5",
+        "1/7",
+        "1/9"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a"
+      ]
+    },
+    {
+      "id": "htvAu--htvSpIIC",
+      "from": "htvAu",
+      "to": "htvSpIIC",
+      "label": "Au → Spår 2a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C33"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs2/11"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5",
+        "1/7",
+        "1/9"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:e9518f14-ef23-4c67-9935-abec0d8732da"
+      ]
+    },
+    {
+      "id": "htvAu--htvBu",
+      "from": "htvAu",
+      "to": "htvBu",
+      "label": "Au → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C35"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5",
+        "1/7",
+        "1/9",
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+        "IN:7270481f-f9e5-43f2-9ee7-b78863087ebf"
+      ]
+    },
+    {
+      "id": "htvAu--htvBn",
+      "from": "htvAu",
+      "to": "htvBn",
+      "label": "Au → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C36"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5",
+        "1/7",
+        "1/9",
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+        "IN:75288d04-f50b-4816-9879-11c6a45eff47"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpIIA",
+      "from": "htvAn",
+      "to": "htvSpIIA",
+      "label": "An → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C40"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs2/7"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpIIIA",
+      "from": "htvAn",
+      "to": "htvSpIIIA",
+      "label": "An → Spår 11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C41"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs3/5"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpIVA",
+      "from": "htvAn",
+      "to": "htvSpIVA",
+      "label": "An → Spår 12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C42"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs4/5"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpVA",
+      "from": "htvAn",
+      "to": "htvSpVA",
+      "label": "An → Spår 13",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C43"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs5/5"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:871a7269-712d-4f47-9cb9-c5b316eb2967"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpIB",
+      "from": "htvAn",
+      "to": "htvSpIB",
+      "label": "An → Spår 1b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C44"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs1/9"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:a7396c65-4eea-46f6-b197-ff6119abe71a"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpIIB",
+      "from": "htvAn",
+      "to": "htvSpIIB",
+      "label": "An → Spår 2b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C45"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs2/9"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpIIIB",
+      "from": "htvAn",
+      "to": "htvSpIIIB",
+      "label": "An → Spår 3b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C46"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs3/9"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:a4607e61-cc12-4f46-9c30-fb534204d98a"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpIVB",
+      "from": "htvAn",
+      "to": "htvSpIVB",
+      "label": "An → Spår 4b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C47"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs4/9"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:52be6d9f-956b-4e6c-a476-1f8803639586"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpVB",
+      "from": "htvAn",
+      "to": "htvSpVB",
+      "label": "An → Spår 5b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C48"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs5/9"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5",
+        "3/5"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+        "IN:8b500613-a031-465d-a3b7-de0b654f22a0"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpIC",
+      "from": "htvAn",
+      "to": "htvSpIC",
+      "label": "An → Spår 1a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C50"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs1/11"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5",
+        "2/7",
+        "2/9"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:a98d6d8d-ff9c-4125-8689-291682944520"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpIIC",
+      "from": "htvAn",
+      "to": "htvSpIIC",
+      "label": "An → Spår 2a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C51"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs2/11"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5",
+        "2/7",
+        "2/9"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e"
+      ]
+    },
+    {
+      "id": "htvAn--htvBu",
+      "from": "htvAn",
+      "to": "htvBu",
+      "label": "An → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C53"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5",
+        "2/7",
+        "2/9",
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e",
+        "IN:347531c7-bd3d-4311-8688-d9613e64b03a"
+      ]
+    },
+    {
+      "id": "htvAn--htvBn",
+      "from": "htvAn",
+      "to": "htvBn",
+      "label": "An → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C54"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5",
+        "2/7",
+        "2/9",
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e",
+        "IN:df91a6da-781b-434b-ac6a-88aa95244141"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpIA",
+      "from": "htvCu",
+      "to": "htvSpIA",
+      "label": "Cu → Spår 1c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C57"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs1/7"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpIIA",
+      "from": "htvCu",
+      "to": "htvSpIIA",
+      "label": "Cu → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C58"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs2/7"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:429040bc-67f8-49a6-8934-ae57c3462b1e"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpIIIA",
+      "from": "htvCu",
+      "to": "htvSpIIIA",
+      "label": "Cu → Spår 11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C59"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs3/5"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpIVA",
+      "from": "htvCu",
+      "to": "htvSpIVA",
+      "label": "Cu → Spår 12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C60"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs4/5"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpVA",
+      "from": "htvCu",
+      "to": "htvSpVA",
+      "label": "Cu → Spår 13",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C61"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs5/5"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpIB",
+      "from": "htvCu",
+      "to": "htvSpIB",
+      "label": "Cu → Spår 1b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C62"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs1/9"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5",
+        "1/7"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpIIB",
+      "from": "htvCu",
+      "to": "htvSpIIB",
+      "label": "Cu → Spår 2b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C63"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs2/9"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpIIIB",
+      "from": "htvCu",
+      "to": "htvSpIIIB",
+      "label": "Cu → Spår 3b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C64"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs3/9"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+        "IN:a4607e61-cc12-4f46-9c30-fb534204d98a"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpIVB",
+      "from": "htvCu",
+      "to": "htvSpIVB",
+      "label": "Cu → Spår 4b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C65"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs4/9"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+        "IN:52be6d9f-956b-4e6c-a476-1f8803639586"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpVB",
+      "from": "htvCu",
+      "to": "htvSpVB",
+      "label": "Cu → Spår 5b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C66"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs5/9"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5",
+        "4/5"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+        "IN:6af610f4-2e48-4b05-b33b-c327971b047d"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpIC",
+      "from": "htvCu",
+      "to": "htvSpIC",
+      "label": "Cu → Spår 1a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C68"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs1/11"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5",
+        "1/7",
+        "1/9"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a"
+      ]
+    },
+    {
+      "id": "htvCu--htvSpIIC",
+      "from": "htvCu",
+      "to": "htvSpIIC",
+      "label": "Cu → Spår 2a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C69"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs2/11"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5",
+        "1/7",
+        "1/9"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:e9518f14-ef23-4c67-9935-abec0d8732da"
+      ]
+    },
+    {
+      "id": "htvCu--htvBu",
+      "from": "htvCu",
+      "to": "htvBu",
+      "label": "Cu → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C73"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5",
+        "1/7",
+        "1/9",
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+        "IN:7270481f-f9e5-43f2-9ee7-b78863087ebf"
+      ]
+    },
+    {
+      "id": "htvCu--htvBn",
+      "from": "htvCu",
+      "to": "htvBn",
+      "label": "Cu → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C74"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5",
+        "1/7",
+        "1/9",
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+        "IN:75288d04-f50b-4816-9879-11c6a45eff47"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpIIA",
+      "from": "htvCn",
+      "to": "htvSpIIA",
+      "label": "Cn → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C76"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs2/7"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpIIIA",
+      "from": "htvCn",
+      "to": "htvSpIIIA",
+      "label": "Cn → Spår 11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C77"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs3/5"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpIVA",
+      "from": "htvCn",
+      "to": "htvSpIVA",
+      "label": "Cn → Spår 12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C78"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs4/5"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpVA",
+      "from": "htvCn",
+      "to": "htvSpVA",
+      "label": "Cn → Spår 13",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C79"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs5/5"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:871a7269-712d-4f47-9cb9-c5b316eb2967"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpIB",
+      "from": "htvCn",
+      "to": "htvSpIB",
+      "label": "Cn → Spår 1b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C80"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs1/9"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:a7396c65-4eea-46f6-b197-ff6119abe71a"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpIIB",
+      "from": "htvCn",
+      "to": "htvSpIIB",
+      "label": "Cn → Spår 2b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C81"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs2/9"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpIIIB",
+      "from": "htvCn",
+      "to": "htvSpIIIB",
+      "label": "Cn → Spår 3b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C82"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs3/9"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:a4607e61-cc12-4f46-9c30-fb534204d98a"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpIVB",
+      "from": "htvCn",
+      "to": "htvSpIVB",
+      "label": "Cn → Spår 4b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C83"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs4/9"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5",
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:52be6d9f-956b-4e6c-a476-1f8803639586"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpVB",
+      "from": "htvCn",
+      "to": "htvSpVB",
+      "label": "Cn → Spår 5b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C84"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs5/9"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5",
+        "4/5"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+        "IN:6af610f4-2e48-4b05-b33b-c327971b047d"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpIC",
+      "from": "htvCn",
+      "to": "htvSpIC",
+      "label": "Cn → Spår 1a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C86"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs1/11"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5",
+        "2/7",
+        "2/9"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:a98d6d8d-ff9c-4125-8689-291682944520"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpIIC",
+      "from": "htvCn",
+      "to": "htvSpIIC",
+      "label": "Cn → Spår 2a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C87"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs2/11"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5",
+        "2/7",
+        "2/9"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e"
+      ]
+    },
+    {
+      "id": "htvCn--htvBu",
+      "from": "htvCn",
+      "to": "htvBu",
+      "label": "Cn → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C91"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5",
+        "2/7",
+        "2/9",
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e",
+        "IN:347531c7-bd3d-4311-8688-d9613e64b03a"
+      ]
+    },
+    {
+      "id": "htvCn--htvBn",
+      "from": "htvCn",
+      "to": "htvBn",
+      "label": "Cn → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C92"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5",
+        "2/7",
+        "2/9",
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e",
+        "IN:df91a6da-781b-434b-ac6a-88aa95244141"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpIA",
+      "from": "htvBu",
+      "to": "htvSpIA",
+      "label": "Bu → Spår 1c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C93"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs1/10"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "1/6",
+        "1/8"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+        "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpIIA",
+      "from": "htvBu",
+      "to": "htvSpIIA",
+      "label": "Bu → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C94"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "1/6",
+        "2/8"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+        "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpIIIA",
+      "from": "htvBu",
+      "to": "htvSpIIIA",
+      "label": "Bu → Spår 11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C95"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs3/10"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "3/6",
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+        "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpIVA",
+      "from": "htvBu",
+      "to": "htvSpIVA",
+      "label": "Bu → Spår 12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C96"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs4/10"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "3/6",
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+        "IN:30bca77d-457b-4e67-a418-1c1190064ebf"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpVA",
+      "from": "htvBu",
+      "to": "htvSpVA",
+      "label": "Bu → Spår 13",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C97"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs5/10"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "3/6",
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+        "IN:a7c38e71-3385-46d7-825d-ad64f78e9fbf"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpIB",
+      "from": "htvBu",
+      "to": "htvSpIB",
+      "label": "Bu → Spår 1b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C98"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs1/8"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "1/6"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+        "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpIIB",
+      "from": "htvBu",
+      "to": "htvSpIIB",
+      "label": "Bu → Spår 2b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C99"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs2/8"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "1/6"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+        "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpIIIB",
+      "from": "htvBu",
+      "to": "htvSpIIIB",
+      "label": "Bu → Spår 3b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C100"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs3/8"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:c8e0a325-eec5-4ce7-803b-90d7514b12bf"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpIVB",
+      "from": "htvBu",
+      "to": "htvSpIVB",
+      "label": "Bu → Spår 4b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C101"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs4/8"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:28420481-c3c3-4304-9a12-f02b5295b7aa"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpVB",
+      "from": "htvBu",
+      "to": "htvSpVB",
+      "label": "Bu → Spår 5b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C102"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs5/8"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpIC",
+      "from": "htvBu",
+      "to": "htvSpIC",
+      "label": "Bu → Spår 1a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C104"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs1/6"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpIIC",
+      "from": "htvBu",
+      "to": "htvSpIIC",
+      "label": "Bu → Spår 2a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C105"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs2/6"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:a11b8ed1-24f9-4827-b96a-25daace45b25"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpX",
+      "from": "htvBu",
+      "to": "htvSpX",
+      "label": "Bu → Spår 10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C106"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvsXv"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:711c1b7f-8d0f-4f98-bec6-205260b2ef25"
+      ]
+    },
+    {
+      "id": "htvBu--htvAu",
+      "from": "htvBu",
+      "to": "htvAu",
+      "label": "Bu → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C107"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "1/6",
+        "1/8",
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+        "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvBu--htvAn",
+      "from": "htvBu",
+      "to": "htvAn",
+      "label": "Bu → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C108"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "1/6",
+        "2/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+        "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvBu--htvCu",
+      "from": "htvBu",
+      "to": "htvCu",
+      "label": "Bu → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C109"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "1/6",
+        "1/8",
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+        "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvBu--htvCn",
+      "from": "htvBu",
+      "to": "htvCn",
+      "label": "Bu → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C110"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "1/6",
+        "2/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+        "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpIA",
+      "from": "htvBn",
+      "to": "htvSpIA",
+      "label": "Bn → Spår 1c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C111"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs1/10"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "2/6",
+        "1/8"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+        "IN:671e0660-36cb-4d49-b155-e0307c177596",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpIIA",
+      "from": "htvBn",
+      "to": "htvSpIIA",
+      "label": "Bn → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C112"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "2/6",
+        "2/8"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+        "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpIIIA",
+      "from": "htvBn",
+      "to": "htvSpIIIA",
+      "label": "Bn → Spår 11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C113"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs3/10"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "3/6",
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+        "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpIVA",
+      "from": "htvBn",
+      "to": "htvSpIVA",
+      "label": "Bn → Spår 12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C114"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs4/10"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "3/6",
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+        "IN:30bca77d-457b-4e67-a418-1c1190064ebf"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpVA",
+      "from": "htvBn",
+      "to": "htvSpVA",
+      "label": "Bn → Spår 13",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C115"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs5/10"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "3/6",
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+        "IN:a7c38e71-3385-46d7-825d-ad64f78e9fbf"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpIB",
+      "from": "htvBn",
+      "to": "htvSpIB",
+      "label": "Bn → Spår 1b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C116"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs1/8"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "2/6"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+        "IN:671e0660-36cb-4d49-b155-e0307c177596"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpIIB",
+      "from": "htvBn",
+      "to": "htvSpIIB",
+      "label": "Bn → Spår 2b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C117"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs2/8"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "2/6"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+        "IN:478af43f-3bfc-4c77-9380-bdb8586d815f"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpIIIB",
+      "from": "htvBn",
+      "to": "htvSpIIIB",
+      "label": "Bn → Spår 3b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C118"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs3/8"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:c8e0a325-eec5-4ce7-803b-90d7514b12bf"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpIVB",
+      "from": "htvBn",
+      "to": "htvSpIVB",
+      "label": "Bn → Spår 4b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C119"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs4/8"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:28420481-c3c3-4304-9a12-f02b5295b7aa"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpVB",
+      "from": "htvBn",
+      "to": "htvSpVB",
+      "label": "Bn → Spår 5b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C120"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs5/8"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpIC",
+      "from": "htvBn",
+      "to": "htvSpIC",
+      "label": "Bn → Spår 1a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C122"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs1/6"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:38153432-a6c0-4029-92b1-875f06fde7c6"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpIIC",
+      "from": "htvBn",
+      "to": "htvSpIIC",
+      "label": "Bn → Spår 2a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C123"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs2/6"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpX",
+      "from": "htvBn",
+      "to": "htvSpX",
+      "label": "Bn → Spår 10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C124"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvsXv"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:7d509c52-6580-4349-9a19-fa78faecef2d"
+      ]
+    },
+    {
+      "id": "htvBn--htvAu",
+      "from": "htvBn",
+      "to": "htvAu",
+      "label": "Bn → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C125"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "2/6",
+        "1/8",
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+        "IN:671e0660-36cb-4d49-b155-e0307c177596",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvBn--htvAn",
+      "from": "htvBn",
+      "to": "htvAn",
+      "label": "Bn → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C126"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "2/6",
+        "2/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+        "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvBn--htvCu",
+      "from": "htvBn",
+      "to": "htvCu",
+      "label": "Bn → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C127"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "2/6",
+        "1/8",
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+        "IN:671e0660-36cb-4d49-b155-e0307c177596",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvBn--htvCn",
+      "from": "htvBn",
+      "to": "htvCn",
+      "label": "Bn → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C128"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "2/6",
+        "2/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+        "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpIA--htvSpIB",
+      "from": "htvSpIA",
+      "to": "htvSpIB",
+      "label": "Spår 1c → Spår 1b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C133"
+        ],
+        "nxButtons": [
+          "tvs1/7",
+          "tvs1/9"
+        ]
+      },
+      "signals": [
+        "1/7"
+      ],
+      "nxIds": [
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478"
+      ]
+    },
+    {
+      "id": "htvSpIA--htvSpIC",
+      "from": "htvSpIA",
+      "to": "htvSpIC",
+      "label": "Spår 1c → Spår 1a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C139"
+        ],
+        "nxButtons": [
+          "tvs1/7",
+          "tvs1/11"
+        ]
+      },
+      "signals": [
+        "1/7",
+        "1/9"
+      ],
+      "nxIds": [
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a"
+      ]
+    },
+    {
+      "id": "htvSpIA--htvSpIIC",
+      "from": "htvSpIA",
+      "to": "htvSpIIC",
+      "label": "Spår 1c → Spår 2a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C140"
+        ],
+        "nxButtons": [
+          "tvs1/7",
+          "tvs2/11"
+        ]
+      },
+      "signals": [
+        "1/7",
+        "1/9"
+      ],
+      "nxIds": [
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:e9518f14-ef23-4c67-9935-abec0d8732da"
+      ]
+    },
+    {
+      "id": "htvSpIA--htvAu",
+      "from": "htvSpIA",
+      "to": "htvAu",
+      "label": "Spår 1c → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C143"
+        ],
+        "nxButtons": [
+          "tvs1/10",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpIA--htvBn",
+      "from": "htvSpIA",
+      "to": "htvBn",
+      "label": "Spår 1c → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C144"
+        ],
+        "nxButtons": [
+          "tvs1/7",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "1/7",
+        "1/9",
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+        "IN:75288d04-f50b-4816-9879-11c6a45eff47"
+      ]
+    },
+    {
+      "id": "htvSpIA--htvBu",
+      "from": "htvSpIA",
+      "to": "htvBu",
+      "label": "Spår 1c → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C145"
+        ],
+        "nxButtons": [
+          "tvs1/7",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "1/7",
+        "1/9",
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+        "IN:7270481f-f9e5-43f2-9ee7-b78863087ebf"
+      ]
+    },
+    {
+      "id": "htvSpIA--htvCu",
+      "from": "htvSpIA",
+      "to": "htvCu",
+      "label": "Spår 1c → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C147"
+        ],
+        "nxButtons": [
+          "tvs1/10",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvSpIB",
+      "from": "htvSpIIA",
+      "to": "htvSpIB",
+      "label": "Spår 2c → Spår 1b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C152"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvs1/9"
+        ]
+      },
+      "signals": [
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:a7396c65-4eea-46f6-b197-ff6119abe71a"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvSpIIB",
+      "from": "htvSpIIA",
+      "to": "htvSpIIB",
+      "label": "Spår 2c → Spår 2b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C153"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvs2/9"
+        ]
+      },
+      "signals": [
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvSpIIIB",
+      "from": "htvSpIIA",
+      "to": "htvSpIIIB",
+      "label": "Spår 2c → Spår 3b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C154"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvs3/9"
+        ]
+      },
+      "signals": [
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:a4607e61-cc12-4f46-9c30-fb534204d98a"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvSpIVB",
+      "from": "htvSpIIA",
+      "to": "htvSpIVB",
+      "label": "Spår 2c → Spår 4b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C155"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvs4/9"
+        ]
+      },
+      "signals": [
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:52be6d9f-956b-4e6c-a476-1f8803639586"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvSpIC",
+      "from": "htvSpIIA",
+      "to": "htvSpIC",
+      "label": "Spår 2c → Spår 1a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C158"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvs1/11"
+        ]
+      },
+      "signals": [
+        "2/7",
+        "2/9"
+      ],
+      "nxIds": [
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:a98d6d8d-ff9c-4125-8689-291682944520"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvSpIIC",
+      "from": "htvSpIIA",
+      "to": "htvSpIIC",
+      "label": "Spår 2c → Spår 2a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C159"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvs2/11"
+        ]
+      },
+      "signals": [
+        "2/7",
+        "2/9"
+      ],
+      "nxIds": [
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvAn",
+      "from": "htvSpIIA",
+      "to": "htvAn",
+      "label": "Spår 2c → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C161"
+        ],
+        "nxButtons": [
+          "tvs2/10",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvAu",
+      "from": "htvSpIIA",
+      "to": "htvAu",
+      "label": "Spår 2c → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C162"
+        ],
+        "nxButtons": [
+          "tvs2/10",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "2/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvBn",
+      "from": "htvSpIIA",
+      "to": "htvBn",
+      "label": "Spår 2c → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C163"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "2/7",
+        "2/9",
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e",
+        "IN:df91a6da-781b-434b-ac6a-88aa95244141"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvBu",
+      "from": "htvSpIIA",
+      "to": "htvBu",
+      "label": "Spår 2c → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C164"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "2/7",
+        "2/9",
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e",
+        "IN:347531c7-bd3d-4311-8688-d9613e64b03a"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvCn",
+      "from": "htvSpIIA",
+      "to": "htvCn",
+      "label": "Spår 2c → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C165"
+        ],
+        "nxButtons": [
+          "tvs2/10",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpIIA--htvCu",
+      "from": "htvSpIIA",
+      "to": "htvCu",
+      "label": "Spår 2c → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C166"
+        ],
+        "nxButtons": [
+          "tvs2/10",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "2/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpIIIA--htvSpVB",
+      "from": "htvSpIIIA",
+      "to": "htvSpVB",
+      "label": "Spår 11 → Spår 5b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C175"
+        ],
+        "nxButtons": [
+          "tvs3/5",
+          "tvs5/9"
+        ]
+      },
+      "signals": [
+        "3/5"
+      ],
+      "nxIds": [
+        "IN:8b500613-a031-465d-a3b7-de0b654f22a0"
+      ]
+    },
+    {
+      "id": "htvSpIIIA--htvAn",
+      "from": "htvSpIIIA",
+      "to": "htvAn",
+      "label": "Spår 11 → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C180"
+        ],
+        "nxButtons": [
+          "tvs3/10",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "3/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpIIIA--htvAu",
+      "from": "htvSpIIIA",
+      "to": "htvAu",
+      "label": "Spår 11 → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C181"
+        ],
+        "nxButtons": [
+          "tvs3/10",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "3/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpIIIA--htvBn",
+      "from": "htvSpIIIA",
+      "to": "htvBn",
+      "label": "Spår 11 → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C182"
+        ],
+        "nxButtons": [
+          "tvs3/5",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "3/5",
+        "5/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:8b500613-a031-465d-a3b7-de0b654f22a0",
+        "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+        "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167"
+      ]
+    },
+    {
+      "id": "htvSpIIIA--htvBu",
+      "from": "htvSpIIIA",
+      "to": "htvBu",
+      "label": "Spår 11 → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C183"
+        ],
+        "nxButtons": [
+          "tvs3/5",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "3/5",
+        "5/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:8b500613-a031-465d-a3b7-de0b654f22a0",
+        "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+        "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+      ]
+    },
+    {
+      "id": "htvSpIIIA--htvCn",
+      "from": "htvSpIIIA",
+      "to": "htvCn",
+      "label": "Spår 11 → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C184"
+        ],
+        "nxButtons": [
+          "tvs3/10",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "3/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpIIIA--htvCu",
+      "from": "htvSpIIIA",
+      "to": "htvCu",
+      "label": "Spår 11 → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C185"
+        ],
+        "nxButtons": [
+          "tvs3/10",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "3/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpIVA--htvSpVB",
+      "from": "htvSpIVA",
+      "to": "htvSpVB",
+      "label": "Spår 12 → Spår 5b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C194"
+        ],
+        "nxButtons": [
+          "tvs4/5",
+          "tvs5/9"
+        ]
+      },
+      "signals": [
+        "4/5"
+      ],
+      "nxIds": [
+        "IN:6af610f4-2e48-4b05-b33b-c327971b047d"
+      ]
+    },
+    {
+      "id": "htvSpIVA--htvAn",
+      "from": "htvSpIVA",
+      "to": "htvAn",
+      "label": "Spår 12 → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C199"
+        ],
+        "nxButtons": [
+          "tvs4/10",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "4/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpIVA--htvAu",
+      "from": "htvSpIVA",
+      "to": "htvAu",
+      "label": "Spår 12 → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C200"
+        ],
+        "nxButtons": [
+          "tvs4/10",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "4/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpIVA--htvBn",
+      "from": "htvSpIVA",
+      "to": "htvBn",
+      "label": "Spår 12 → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C201"
+        ],
+        "nxButtons": [
+          "tvs4/5",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "4/5",
+        "5/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:6af610f4-2e48-4b05-b33b-c327971b047d",
+        "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+        "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167"
+      ]
+    },
+    {
+      "id": "htvSpIVA--htvBu",
+      "from": "htvSpIVA",
+      "to": "htvBu",
+      "label": "Spår 12 → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C202"
+        ],
+        "nxButtons": [
+          "tvs4/5",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "4/5",
+        "5/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:6af610f4-2e48-4b05-b33b-c327971b047d",
+        "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+        "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+      ]
+    },
+    {
+      "id": "htvSpIVA--htvCn",
+      "from": "htvSpIVA",
+      "to": "htvCn",
+      "label": "Spår 12 → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C203"
+        ],
+        "nxButtons": [
+          "tvs4/10",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "4/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpIVA--htvCu",
+      "from": "htvSpIVA",
+      "to": "htvCu",
+      "label": "Spår 12 → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C204"
+        ],
+        "nxButtons": [
+          "tvs4/10",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "4/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpVA--htvSpVB",
+      "from": "htvSpVA",
+      "to": "htvSpVB",
+      "label": "Spår 13 → Spår 5b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C213"
+        ],
+        "nxButtons": [
+          "tvs5/5",
+          "tvs5/9"
+        ]
+      },
+      "signals": [
+        "5/5"
+      ],
+      "nxIds": [
+        "IN:1a77e99e-db90-453b-aa4e-85b71071b2db"
+      ]
+    },
+    {
+      "id": "htvSpVA--htvAn",
+      "from": "htvSpVA",
+      "to": "htvAn",
+      "label": "Spår 13 → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C218"
+        ],
+        "nxButtons": [
+          "tvs5/10",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "5/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:a1600f94-e4a0-4013-8607-455702f83e44",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpVA--htvAu",
+      "from": "htvSpVA",
+      "to": "htvAu",
+      "label": "Spår 13 → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C219"
+        ],
+        "nxButtons": [
+          "tvs5/10",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "5/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpVA--htvBn",
+      "from": "htvSpVA",
+      "to": "htvBn",
+      "label": "Spår 13 → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C220"
+        ],
+        "nxButtons": [
+          "tvs5/5",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "5/5",
+        "5/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:1a77e99e-db90-453b-aa4e-85b71071b2db",
+        "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+        "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167"
+      ]
+    },
+    {
+      "id": "htvSpVA--htvBu",
+      "from": "htvSpVA",
+      "to": "htvBu",
+      "label": "Spår 13 → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C221"
+        ],
+        "nxButtons": [
+          "tvs5/5",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "5/5",
+        "5/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:1a77e99e-db90-453b-aa4e-85b71071b2db",
+        "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+        "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+      ]
+    },
+    {
+      "id": "htvSpVA--htvCn",
+      "from": "htvSpVA",
+      "to": "htvCn",
+      "label": "Spår 13 → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C222"
+        ],
+        "nxButtons": [
+          "tvs5/10",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "5/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:a1600f94-e4a0-4013-8607-455702f83e44",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpVA--htvCu",
+      "from": "htvSpVA",
+      "to": "htvCu",
+      "label": "Spår 13 → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C223"
+        ],
+        "nxButtons": [
+          "tvs5/10",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "5/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpIB--htvSpIA",
+      "from": "htvSpIB",
+      "to": "htvSpIA",
+      "label": "Spår 1b → Spår 1c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C224"
+        ],
+        "nxButtons": [
+          "tvs1/8",
+          "tvs1/10"
+        ]
+      },
+      "signals": [
+        "1/8"
+      ],
+      "nxIds": [
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f"
+      ]
+    },
+    {
+      "id": "htvSpIB--htvSpIIA",
+      "from": "htvSpIB",
+      "to": "htvSpIIA",
+      "label": "Spår 1b → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C225"
+        ],
+        "nxButtons": [
+          "tvs1/8",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "1/8"
+      ],
+      "nxIds": [
+        "IN:c664f521-df47-4557-89d7-f65fb3644fd3"
+      ]
+    },
+    {
+      "id": "htvSpIB--htvSpIC",
+      "from": "htvSpIB",
+      "to": "htvSpIC",
+      "label": "Spår 1b → Spår 1a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C234"
+        ],
+        "nxButtons": [
+          "tvs1/9",
+          "tvs1/11"
+        ]
+      },
+      "signals": [
+        "1/9"
+      ],
+      "nxIds": [
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a"
+      ]
+    },
+    {
+      "id": "htvSpIB--htvSpIIC",
+      "from": "htvSpIB",
+      "to": "htvSpIIC",
+      "label": "Spår 1b → Spår 2a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C235"
+        ],
+        "nxButtons": [
+          "tvs1/9",
+          "tvs2/11"
+        ]
+      },
+      "signals": [
+        "1/9"
+      ],
+      "nxIds": [
+        "IN:e9518f14-ef23-4c67-9935-abec0d8732da"
+      ]
+    },
+    {
+      "id": "htvSpIB--htvAn",
+      "from": "htvSpIB",
+      "to": "htvAn",
+      "label": "Spår 1b → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C237"
+        ],
+        "nxButtons": [
+          "tvs1/8",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "1/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:c664f521-df47-4557-89d7-f65fb3644fd3",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpIB--htvAu",
+      "from": "htvSpIB",
+      "to": "htvAu",
+      "label": "Spår 1b → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C238"
+        ],
+        "nxButtons": [
+          "tvs1/8",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "1/8",
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpIB--htvBn",
+      "from": "htvSpIB",
+      "to": "htvBn",
+      "label": "Spår 1b → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C239"
+        ],
+        "nxButtons": [
+          "tvs1/9",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "1/9",
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+        "IN:75288d04-f50b-4816-9879-11c6a45eff47"
+      ]
+    },
+    {
+      "id": "htvSpIB--htvBu",
+      "from": "htvSpIB",
+      "to": "htvBu",
+      "label": "Spår 1b → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C240"
+        ],
+        "nxButtons": [
+          "tvs1/9",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "1/9",
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+        "IN:7270481f-f9e5-43f2-9ee7-b78863087ebf"
+      ]
+    },
+    {
+      "id": "htvSpIB--htvCn",
+      "from": "htvSpIB",
+      "to": "htvCn",
+      "label": "Spår 1b → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C241"
+        ],
+        "nxButtons": [
+          "tvs1/8",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "1/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:c664f521-df47-4557-89d7-f65fb3644fd3",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpIB--htvCu",
+      "from": "htvSpIB",
+      "to": "htvCu",
+      "label": "Spår 1b → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C242"
+        ],
+        "nxButtons": [
+          "tvs1/8",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "1/8",
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpIIB--htvSpIIA",
+      "from": "htvSpIIB",
+      "to": "htvSpIIA",
+      "label": "Spår 2b → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C244"
+        ],
+        "nxButtons": [
+          "tvs2/8",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "2/8"
+      ],
+      "nxIds": [
+        "IN:941b374c-f243-4308-8829-b77dad2253dd"
+      ]
+    },
+    {
+      "id": "htvSpIIB--htvSpIC",
+      "from": "htvSpIIB",
+      "to": "htvSpIC",
+      "label": "Spår 2b → Spår 1a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C253"
+        ],
+        "nxButtons": [
+          "tvs2/9",
+          "tvs1/11"
+        ]
+      },
+      "signals": [
+        "2/9"
+      ],
+      "nxIds": [
+        "IN:a98d6d8d-ff9c-4125-8689-291682944520"
+      ]
+    },
+    {
+      "id": "htvSpIIB--htvSpIIC",
+      "from": "htvSpIIB",
+      "to": "htvSpIIC",
+      "label": "Spår 2b → Spår 2a",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C254"
+        ],
+        "nxButtons": [
+          "tvs2/9",
+          "tvs2/11"
+        ]
+      },
+      "signals": [
+        "2/9"
+      ],
+      "nxIds": [
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e"
+      ]
+    },
+    {
+      "id": "htvSpIIB--htvAn",
+      "from": "htvSpIIB",
+      "to": "htvAn",
+      "label": "Spår 2b → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C256"
+        ],
+        "nxButtons": [
+          "tvs2/8",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "2/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpIIB--htvAu",
+      "from": "htvSpIIB",
+      "to": "htvAu",
+      "label": "Spår 2b → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C257"
+        ],
+        "nxButtons": [
+          "tvs2/8",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "2/8",
+        "2/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpIIB--htvBn",
+      "from": "htvSpIIB",
+      "to": "htvBn",
+      "label": "Spår 2b → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C258"
+        ],
+        "nxButtons": [
+          "tvs2/9",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "2/9",
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e",
+        "IN:df91a6da-781b-434b-ac6a-88aa95244141"
+      ]
+    },
+    {
+      "id": "htvSpIIB--htvBu",
+      "from": "htvSpIIB",
+      "to": "htvBu",
+      "label": "Spår 2b → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C259"
+        ],
+        "nxButtons": [
+          "tvs2/9",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "2/9",
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e",
+        "IN:347531c7-bd3d-4311-8688-d9613e64b03a"
+      ]
+    },
+    {
+      "id": "htvSpIIB--htvCn",
+      "from": "htvSpIIB",
+      "to": "htvCn",
+      "label": "Spår 2b → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C260"
+        ],
+        "nxButtons": [
+          "tvs2/8",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "2/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpIIB--htvCu",
+      "from": "htvSpIIB",
+      "to": "htvCu",
+      "label": "Spår 2b → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C261"
+        ],
+        "nxButtons": [
+          "tvs2/8",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "2/8",
+        "2/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpIIIB--htvSpIIA",
+      "from": "htvSpIIIB",
+      "to": "htvSpIIA",
+      "label": "Spår 3b → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C263"
+        ],
+        "nxButtons": [
+          "tvs3/8",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "3/8"
+      ],
+      "nxIds": [
+        "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8"
+      ]
+    },
+    {
+      "id": "htvSpIIIB--htvAn",
+      "from": "htvSpIIIB",
+      "to": "htvAn",
+      "label": "Spår 3b → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C275"
+        ],
+        "nxButtons": [
+          "tvs3/8",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "3/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpIIIB--htvAu",
+      "from": "htvSpIIIB",
+      "to": "htvAu",
+      "label": "Spår 3b → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C276"
+        ],
+        "nxButtons": [
+          "tvs3/8",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "3/8",
+        "2/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8",
+        "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpIIIB--htvBn",
+      "from": "htvSpIIIB",
+      "to": "htvBn",
+      "label": "Spår 3b → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C277"
+        ],
+        "nxButtons": [
+          "tvs3/9",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "3/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:c86e61af-d30f-4034-8c84-234f9d601f62",
+        "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167"
+      ]
+    },
+    {
+      "id": "htvSpIIIB--htvBu",
+      "from": "htvSpIIIB",
+      "to": "htvBu",
+      "label": "Spår 3b → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C278"
+        ],
+        "nxButtons": [
+          "tvs3/9",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "3/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:c86e61af-d30f-4034-8c84-234f9d601f62",
+        "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+      ]
+    },
+    {
+      "id": "htvSpIIIB--htvCn",
+      "from": "htvSpIIIB",
+      "to": "htvCn",
+      "label": "Spår 3b → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C279"
+        ],
+        "nxButtons": [
+          "tvs3/8",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "3/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpIIIB--htvCu",
+      "from": "htvSpIIIB",
+      "to": "htvCu",
+      "label": "Spår 3b → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C280"
+        ],
+        "nxButtons": [
+          "tvs3/8",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "3/8",
+        "2/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8",
+        "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpIVB--htvSpIIA",
+      "from": "htvSpIVB",
+      "to": "htvSpIIA",
+      "label": "Spår 4b → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C282"
+        ],
+        "nxButtons": [
+          "tvs4/8",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "4/8"
+      ],
+      "nxIds": [
+        "IN:02071f89-8e14-4603-8b23-4f86301200ed"
+      ]
+    },
+    {
+      "id": "htvSpIVB--htvAn",
+      "from": "htvSpIVB",
+      "to": "htvAn",
+      "label": "Spår 4b → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C294"
+        ],
+        "nxButtons": [
+          "tvs4/8",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "4/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:02071f89-8e14-4603-8b23-4f86301200ed",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpIVB--htvAu",
+      "from": "htvSpIVB",
+      "to": "htvAu",
+      "label": "Spår 4b → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C295"
+        ],
+        "nxButtons": [
+          "tvs4/8",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "4/8",
+        "2/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:02071f89-8e14-4603-8b23-4f86301200ed",
+        "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpIVB--htvBn",
+      "from": "htvSpIVB",
+      "to": "htvBn",
+      "label": "Spår 4b → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C296"
+        ],
+        "nxButtons": [
+          "tvs4/9",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "4/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:899f9f4c-f813-44f7-9797-11130faad22c",
+        "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167"
+      ]
+    },
+    {
+      "id": "htvSpIVB--htvBu",
+      "from": "htvSpIVB",
+      "to": "htvBu",
+      "label": "Spår 4b → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C297"
+        ],
+        "nxButtons": [
+          "tvs4/9",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "4/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:899f9f4c-f813-44f7-9797-11130faad22c",
+        "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+      ]
+    },
+    {
+      "id": "htvSpIVB--htvCn",
+      "from": "htvSpIVB",
+      "to": "htvCn",
+      "label": "Spår 4b → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C298"
+        ],
+        "nxButtons": [
+          "tvs4/8",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "4/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:02071f89-8e14-4603-8b23-4f86301200ed",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpIVB--htvCu",
+      "from": "htvSpIVB",
+      "to": "htvCu",
+      "label": "Spår 4b → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C299"
+        ],
+        "nxButtons": [
+          "tvs4/8",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "4/8",
+        "2/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:02071f89-8e14-4603-8b23-4f86301200ed",
+        "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpVB--htvSpIIIA",
+      "from": "htvSpVB",
+      "to": "htvSpIIIA",
+      "label": "Spår 5b → Spår 11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C302"
+        ],
+        "nxButtons": [
+          "tvs5/8",
+          "tvs3/10"
+        ]
+      },
+      "signals": [
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97"
+      ]
+    },
+    {
+      "id": "htvSpVB--htvSpIVA",
+      "from": "htvSpVB",
+      "to": "htvSpIVA",
+      "label": "Spår 5b → Spår 12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C303"
+        ],
+        "nxButtons": [
+          "tvs5/8",
+          "tvs4/10"
+        ]
+      },
+      "signals": [
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:30bca77d-457b-4e67-a418-1c1190064ebf"
+      ]
+    },
+    {
+      "id": "htvSpVB--htvSpVA",
+      "from": "htvSpVB",
+      "to": "htvSpVA",
+      "label": "Spår 5b → Spår 13",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C304"
+        ],
+        "nxButtons": [
+          "tvs5/8",
+          "tvs5/10"
+        ]
+      },
+      "signals": [
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:a7c38e71-3385-46d7-825d-ad64f78e9fbf"
+      ]
+    },
+    {
+      "id": "htvSpVB--htvAn",
+      "from": "htvSpVB",
+      "to": "htvAn",
+      "label": "Spår 5b → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C313"
+        ],
+        "nxButtons": [
+          "tvs5/8",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "5/8",
+        "3/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97",
+        "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpVB--htvAu",
+      "from": "htvSpVB",
+      "to": "htvAu",
+      "label": "Spår 5b → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C314"
+        ],
+        "nxButtons": [
+          "tvs5/8",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "5/8",
+        "3/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97",
+        "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpVB--htvBn",
+      "from": "htvSpVB",
+      "to": "htvBn",
+      "label": "Spår 5b → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C315"
+        ],
+        "nxButtons": [
+          "tvs5/9",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "5/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+        "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167"
+      ]
+    },
+    {
+      "id": "htvSpVB--htvBu",
+      "from": "htvSpVB",
+      "to": "htvBu",
+      "label": "Spår 5b → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C316"
+        ],
+        "nxButtons": [
+          "tvs5/9",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "5/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+        "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+      ]
+    },
+    {
+      "id": "htvSpVB--htvCn",
+      "from": "htvSpVB",
+      "to": "htvCn",
+      "label": "Spår 5b → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C317"
+        ],
+        "nxButtons": [
+          "tvs5/8",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "5/8",
+        "3/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97",
+        "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpVB--htvCu",
+      "from": "htvSpVB",
+      "to": "htvCu",
+      "label": "Spår 5b → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C318"
+        ],
+        "nxButtons": [
+          "tvs5/8",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "5/8",
+        "3/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97",
+        "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpIC--htvSpIA",
+      "from": "htvSpIC",
+      "to": "htvSpIA",
+      "label": "Spår 1a → Spår 1c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C338"
+        ],
+        "nxButtons": [
+          "tvs1/6",
+          "tvs1/10"
+        ]
+      },
+      "signals": [
+        "1/6",
+        "1/8"
+      ],
+      "nxIds": [
+        "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f"
+      ]
+    },
+    {
+      "id": "htvSpIC--htvSpIIA",
+      "from": "htvSpIC",
+      "to": "htvSpIIA",
+      "label": "Spår 1a → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C339"
+        ],
+        "nxButtons": [
+          "tvs1/6",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "1/6",
+        "2/8"
+      ],
+      "nxIds": [
+        "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd"
+      ]
+    },
+    {
+      "id": "htvSpIC--htvSpIB",
+      "from": "htvSpIC",
+      "to": "htvSpIB",
+      "label": "Spår 1a → Spår 1b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C343"
+        ],
+        "nxButtons": [
+          "tvs1/6",
+          "tvs1/8"
+        ]
+      },
+      "signals": [
+        "1/6"
+      ],
+      "nxIds": [
+        "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76"
+      ]
+    },
+    {
+      "id": "htvSpIC--htvSpIIB",
+      "from": "htvSpIC",
+      "to": "htvSpIIB",
+      "label": "Spår 1a → Spår 2b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C344"
+        ],
+        "nxButtons": [
+          "tvs1/6",
+          "tvs2/8"
+        ]
+      },
+      "signals": [
+        "1/6"
+      ],
+      "nxIds": [
+        "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db"
+      ]
+    },
+    {
+      "id": "htvSpIC--htvAn",
+      "from": "htvSpIC",
+      "to": "htvAn",
+      "label": "Spår 1a → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C351"
+        ],
+        "nxButtons": [
+          "tvs1/6",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "1/6",
+        "2/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpIC--htvAu",
+      "from": "htvSpIC",
+      "to": "htvAu",
+      "label": "Spår 1a → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C352"
+        ],
+        "nxButtons": [
+          "tvs1/6",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "1/6",
+        "1/8",
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpIC--htvBn",
+      "from": "htvSpIC",
+      "to": "htvBn",
+      "label": "Spår 1a → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C353"
+        ],
+        "nxButtons": [
+          "tvs1/11",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:75288d04-f50b-4816-9879-11c6a45eff47"
+      ]
+    },
+    {
+      "id": "htvSpIC--htvBu",
+      "from": "htvSpIC",
+      "to": "htvBu",
+      "label": "Spår 1a → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C354"
+        ],
+        "nxButtons": [
+          "tvs1/11",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:7270481f-f9e5-43f2-9ee7-b78863087ebf"
+      ]
+    },
+    {
+      "id": "htvSpIC--htvCn",
+      "from": "htvSpIC",
+      "to": "htvCn",
+      "label": "Spår 1a → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C355"
+        ],
+        "nxButtons": [
+          "tvs1/6",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "1/6",
+        "2/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpIC--htvCu",
+      "from": "htvSpIC",
+      "to": "htvCu",
+      "label": "Spår 1a → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C356"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "2/6",
+        "1/8",
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+        "IN:671e0660-36cb-4d49-b155-e0307c177596",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpIIC--htvSpIA",
+      "from": "htvSpIIC",
+      "to": "htvSpIA",
+      "label": "Spår 2a → Spår 1c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C357"
+        ],
+        "nxButtons": [
+          "tvs2/6",
+          "tvs1/10"
+        ]
+      },
+      "signals": [
+        "2/6",
+        "1/8"
+      ],
+      "nxIds": [
+        "IN:671e0660-36cb-4d49-b155-e0307c177596",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f"
+      ]
+    },
+    {
+      "id": "htvSpIIC--htvSpIIA",
+      "from": "htvSpIIC",
+      "to": "htvSpIIA",
+      "label": "Spår 2a → Spår 2c",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C358"
+        ],
+        "nxButtons": [
+          "tvs2/6",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "2/6",
+        "2/8"
+      ],
+      "nxIds": [
+        "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd"
+      ]
+    },
+    {
+      "id": "htvSpIIC--htvSpIB",
+      "from": "htvSpIIC",
+      "to": "htvSpIB",
+      "label": "Spår 2a → Spår 1b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C362"
+        ],
+        "nxButtons": [
+          "tvs2/6",
+          "tvs1/8"
+        ]
+      },
+      "signals": [
+        "2/6"
+      ],
+      "nxIds": [
+        "IN:671e0660-36cb-4d49-b155-e0307c177596"
+      ]
+    },
+    {
+      "id": "htvSpIIC--htvSpIIB",
+      "from": "htvSpIIC",
+      "to": "htvSpIIB",
+      "label": "Spår 2a → Spår 2b",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C363"
+        ],
+        "nxButtons": [
+          "tvs2/6",
+          "tvs2/8"
+        ]
+      },
+      "signals": [
+        "2/6"
+      ],
+      "nxIds": [
+        "IN:478af43f-3bfc-4c77-9380-bdb8586d815f"
+      ]
+    },
+    {
+      "id": "htvSpIIC--htvAn",
+      "from": "htvSpIIC",
+      "to": "htvAn",
+      "label": "Spår 2a → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C370"
+        ],
+        "nxButtons": [
+          "tvs2/6",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "2/6",
+        "2/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpIIC--htvAu",
+      "from": "htvSpIIC",
+      "to": "htvAu",
+      "label": "Spår 2a → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C371"
+        ],
+        "nxButtons": [
+          "tvs2/6",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "2/6",
+        "1/8",
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:671e0660-36cb-4d49-b155-e0307c177596",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpIIC--htvBn",
+      "from": "htvSpIIC",
+      "to": "htvBn",
+      "label": "Spår 2a → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C372"
+        ],
+        "nxButtons": [
+          "tvs2/11",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:df91a6da-781b-434b-ac6a-88aa95244141"
+      ]
+    },
+    {
+      "id": "htvSpIIC--htvBu",
+      "from": "htvSpIIC",
+      "to": "htvBu",
+      "label": "Spår 2a → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C373"
+        ],
+        "nxButtons": [
+          "tvs2/11",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:347531c7-bd3d-4311-8688-d9613e64b03a"
+      ]
+    },
+    {
+      "id": "htvSpIIC--htvCn",
+      "from": "htvSpIIC",
+      "to": "htvCn",
+      "label": "Spår 2a → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C374"
+        ],
+        "nxButtons": [
+          "tvs2/6",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "2/6",
+        "2/8",
+        "2/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+        "IN:941b374c-f243-4308-8829-b77dad2253dd",
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpIIC--htvCu",
+      "from": "htvSpIIC",
+      "to": "htvCu",
+      "label": "Spår 2a → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C375"
+        ],
+        "nxButtons": [
+          "tvs2/6",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "2/6",
+        "1/8",
+        "1/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:671e0660-36cb-4d49-b155-e0307c177596",
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpX--htvBn",
+      "from": "htvSpX",
+      "to": "htvBn",
+      "label": "Spår 10 → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C391"
+        ],
+        "nxButtons": [
+          "tvs10/11",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "10/11"
+      ],
+      "nxIds": [
+        "IN:9925d20b-5e18-4f47-a8d5-6fdcf0664a0c"
+      ]
+    },
+    {
+      "id": "htvSpX--htvBu",
+      "from": "htvSpX",
+      "to": "htvBu",
+      "label": "Spår 10 → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C392"
+        ],
+        "nxButtons": [
+          "tvs10/11",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "10/11"
+      ],
+      "nxIds": [
+        "IN:915d1120-9a5f-4302-8ca8-acdb62708add"
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "from": "htvAu",
+      "to": "htvSpVI",
+      "rules": [
+        "IX:AUTO:0013C31"
+      ],
+      "nxButtons": [
+        "tvs1/1",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvAn",
+      "to": "htvSpVI",
+      "rules": [
+        "IX:AUTO:0013C49"
+      ],
+      "nxButtons": [
+        "tvs2/1",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvCu",
+      "to": "htvSpVI",
+      "rules": [
+        "IX:AUTO:0013C67"
+      ],
+      "nxButtons": [
+        "tvs1/3",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvCn",
+      "to": "htvSpVI",
+      "rules": [
+        "IX:AUTO:0013C85"
+      ],
+      "nxButtons": [
+        "tvs2/3",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvBu",
+      "to": "htvSpVI",
+      "rules": [
+        "IX:AUTO:0013C103"
+      ],
+      "nxButtons": [
+        "tvs1/2",
+        "tvs6/8"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvBn",
+      "to": "htvSpVI",
+      "rules": [
+        "IX:AUTO:0013C121"
+      ],
+      "nxButtons": [
+        "tvs2/2",
+        "tvs6/8"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpIIIA",
+      "to": "htvSpVI",
+      "rules": [
+        "IX:AUTO:0013C176"
+      ],
+      "nxButtons": [
+        "tvs3/5",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpIVA",
+      "to": "htvSpVI",
+      "rules": [
+        "IX:AUTO:0013C195"
+      ],
+      "nxButtons": [
+        "tvs4/5",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpVA",
+      "to": "htvSpVI",
+      "rules": [
+        "IX:AUTO:0013C214"
+      ],
+      "nxButtons": [
+        "tvs5/5",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpVI",
+      "to": "htvSpIIIA",
+      "rules": [
+        "IX:AUTO:0013C321"
+      ],
+      "nxButtons": [
+        "tvs6/8",
+        "tvs3/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpVI",
+      "to": "htvSpIVA",
+      "rules": [
+        "IX:AUTO:0013C322"
+      ],
+      "nxButtons": [
+        "tvs6/8",
+        "tvs4/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpVI",
+      "to": "htvSpVA",
+      "rules": [
+        "IX:AUTO:0013C323"
+      ],
+      "nxButtons": [
+        "tvs6/8",
+        "tvs5/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpVI",
+      "to": "htvAn",
+      "rules": [
+        "IX:AUTO:0013C332"
+      ],
+      "nxButtons": [
+        "tvs6/8",
+        "tvsN2"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpVI",
+      "to": "htvAu",
+      "rules": [
+        "IX:AUTO:0013C333"
+      ],
+      "nxButtons": [
+        "tvs6/8",
+        "tvsU2"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpVI",
+      "to": "htvBn",
+      "rules": [
+        "IX:AUTO:0013C334"
+      ],
+      "nxButtons": [
+        "tvs6/9",
+        "tvsN1"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpVI",
+      "to": "htvBu",
+      "rules": [
+        "IX:AUTO:0013C335"
+      ],
+      "nxButtons": [
+        "tvs6/9",
+        "tvsU1"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpVI",
+      "to": "htvCn",
+      "rules": [
+        "IX:AUTO:0013C336"
+      ],
+      "nxButtons": [
+        "tvs6/8",
+        "tvsN4"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "htvSpVI",
+      "to": "htvCu",
+      "rules": [
+        "IX:AUTO:0013C337"
+      ],
+      "nxButtons": [
+        "tvs6/8",
+        "tvsU4"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    }
+  ]
+}

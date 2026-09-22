@@ -36,13 +36,13 @@ export class Topology {
     const first = this.buttons[from]?.segment, last = this.buttons[to]?.segment;
     if (!first || !last || first === last || blocked.has(this.segments[first].b) || blocked.has(this.segments[last].b)) return null;
     const length = s => Math.hypot(s.x2 - s.x1, s.y2 - s.y1);
-    const queue = [1, 2].map(end => ({ id: first, end, settings: {}, path: [{ kind: 'segment', id: first, end }], blocks: [this.segments[first].b], crossings: [], used: [first], cost: length(this.segments[first]) }));
+    const queue = (this.buttons[from].end ? [this.buttons[from].end] : [1, 2]).map(end => ({ id: first, end, settings: {}, path: [{ kind: 'segment', id: first, end }], blocks: [this.segments[first].b], crossings: [], used: [first], cost: length(this.segments[first]) }));
     const seen = new Map();
     let attempts = 0;
     while (queue.length && attempts++ < 30000) {
       queue.sort((a, b) => a.cost - b.cost);
       const n = queue.shift();
-      if (n.id === last) return { ...n, blocks: [...new Set(n.blocks.filter(Boolean))], flow: this.flow(n.path) };
+      if (n.id === last && (!this.buttons[to].end || this.buttons[to].end === n.end)) return { ...n, blocks: [...new Set(n.blocks.filter(Boolean))], flow: this.flow(n.path) };
       const key = n.id + ':' + n.end + ':' + JSON.stringify(Object.entries(n.settings).sort());
       if (seen.has(key) && seen.get(key) <= n.cost) continue;
       seen.set(key, n.cost);

@@ -10,11 +10,40 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
 async function freePort() { const s = net.createServer(); await new Promise((ok, no) => { s.once('error', no); s.listen(0, '127.0.0.1', ok); }); const p = s.address().port; await new Promise(r => s.close(r)); return p; }
 async function until(fn, timeout = 10000) { const end = Date.now() + timeout; let error; while (Date.now() < end) { try { const result = await fn(); if (result) return result; } catch (e) { error = e; } await new Promise(r => setTimeout(r, 100)); } throw error || Error('Timed out waiting for state'); }
+test('network profile runs parallel trains across separate processes and releases only after passage', { timeout: 45000 }, async () => {
+  const [httpPort, simPort, wirePort] = await Promise.all([freePort(), freePort(), freePort()]);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'charlottendal-network-'));
+  const env = { ...process.env, CHARLOTTENDAL_PROFILE: 'network', CHARLOTTENDAL_AUTH_MODE: 'cloudflare', CHARLOTTENDAL_PUBLIC_ORIGIN: '',
+    CHARLOTTENDAL_PORT: String(httpPort), CHARLOTTENDAL_SIM_PORT: String(simPort), CHARLOTTENDAL_WIRE_PORT: String(wirePort), CHARLOTTENDAL_STATE_DIR: dir };
+  let output = ''; const children = [];
+  const launch = file => { const child = spawn(process.execPath, [file], { cwd: root, env }); children.push(child); child.stdout.on('data', d => output += d); child.stderr.on('data', d => output += d); return child; };
+  const get = async port => (await fetch(`http://127.0.0.1:${port}/api/state`)).json();
+  const post = async (port, command, data, expected = 200) => {
+    const response = await fetch(`http://127.0.0.1:${port}/api/${command}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    const result = await response.json(); assert.equal(response.status, expected, JSON.stringify(result)); return result;
+  };
+  try {
+    launch('src/simulator.mjs'); launch('src/server.mjs');
+    await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && s.blocks.S100.occupied === false; });
+    for (const [from, to] of [['htvCu','htvSpIA'], ['htvAn','htvSpIIA']]) await post(httpPort, 'route', { from, to });
+    await until(async () => { const s = await get(httpPort); return s.routes.length === 2 && s.routes.every(r => r.state === 'active'); });
+    await post(httpPort, 'turnout', { name:'Vx102', position:'T' }, 400);
+    await post(httpPort, 'route', { from:'htvAn', to:'htvSpIA' }, 400);
+    const ready = await get(httpPort);
+    for (const r of ready.routes) await post(simPort, 'train', { id:r.definitionId });
+    await until(async () => (await get(simPort)).trains.length === 2);
+    await until(async () => (await get(httpPort)).routes.every(r => r.state === 'traversing'));
+    await until(async () => { const s = await get(httpPort); return !s.routes.length; }, 22000);
+    assert.equal((await get(simPort)).trains.length, 0);
+    assert.equal(JSON.parse(fs.readFileSync(path.join(dir,'routes.json'))).routes.length, 0);
+  } catch (e) { e.message += '\nChild output: ' + output; throw e; }
+  finally { await Promise.all(children.filter(c => c.exitCode === null).map(c => new Promise(resolve => { c.once('exit', resolve); c.kill('SIGTERM'); }))); fs.rmSync(dir, { recursive:true, force:true }); }
+});
 test('separate processes exchange LocoNet, reject conflicts, persist locks and recover safely', { timeout: 40000 }, async () => {
   const [httpPort, simPort, wirePort] = await Promise.all([freePort(), freePort(), freePort()]);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'charlottendal-integration-'));
   const children = []; let output = '';
-  const env = { ...process.env, CHARLOTTENDAL_AUTH_MODE: 'cloudflare', CHARLOTTENDAL_PORT: String(httpPort), CHARLOTTENDAL_SIM_PORT: String(simPort), CHARLOTTENDAL_WIRE_PORT: String(wirePort), CHARLOTTENDAL_STATE_DIR: dir,
+  const env = { ...process.env, CHARLOTTENDAL_PROFILE:'legacy', CHARLOTTENDAL_AUTH_MODE: 'cloudflare', CHARLOTTENDAL_PORT: String(httpPort), CHARLOTTENDAL_SIM_PORT: String(simPort), CHARLOTTENDAL_WIRE_PORT: String(wirePort), CHARLOTTENDAL_STATE_DIR: dir,
     CHARLOTTENDAL_PUBLIC_ORIGIN: '', CHARLOTTENDAL_FIELD_URL: '/anlaggning/', CHARLOTTENDAL_TKL_URL: '/' };
   const launch = file => { const c = spawn(process.execPath, [file], { cwd: root, env }); c.stdout.on('data', d => output += d); c.stderr.on('data', d => output += d); children.push(c); return c; };
   const get = async (port, url = '/api/state') => { const r = await fetch(`http://127.0.0.1:${port}${url}`); assert.equal(r.status, 200); return r.json(); };

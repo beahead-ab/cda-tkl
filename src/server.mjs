@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { Engine } from './engine.mjs';
@@ -6,8 +5,9 @@ import { Storage } from './storage.mjs';
 import { LocoNetClient } from './transport.mjs';
 import { createAuth } from './auth.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
+import { loadProfile } from './profile.mjs';
 
-const profile = JSON.parse(fs.readFileSync(new URL('../profiles/charlottendal.json', import.meta.url)));
+const profile = loadProfile();
 const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
 const auth = createAuth(root, true);
 const storage = new Storage(process.env.CHARLOTTENDAL_STATE_DIR || fileURLToPath(new URL('../var', import.meta.url)));

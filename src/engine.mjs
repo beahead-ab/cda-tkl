@@ -1,12 +1,14 @@
 import { EventEmitter } from 'node:events';
 import { randomUUID, createHash } from 'node:crypto';
 import { decode, hex, switchOrder } from './protocol.mjs';
+import { RoutePolicy } from './route-policy.mjs';
 
 export class Engine extends EventEmitter {
   constructor(profile, { send = () => {}, storage, now = Date.now } = {}) {
     super(); this.profile = profile; this.send = send; this.storage = storage; this.now = now;
+    this.policy = profile.sourcePolicy ? new RoutePolicy({mainRoutePolicies:profile.sourcePolicy}) : null;
     this.fingerprint = createHash('sha256').update(JSON.stringify(profile)).digest('hex');
-    this.connected = false; this.connectionAt = 0; this.storageFault = null; this.revision = 0; this.events = [];
+    this.connected = false; this.connectionAt = 0; this.storageFault = null; this.revision = 0; this.events = []; this.reportSequence=0;
     this.turnouts = Object.fromEntries(Object.keys(profile.turnouts).map(n => [n, { position: 'unknown', desired: null, updatedAt: 0 }]));
     this.blocks = Object.fromEntries(Object.keys(profile.blocks).map(n => [n, { occupied: null, updatedAt: 0 }]));
     this.signals = Object.fromEntries(Object.keys(profile.signals).map(n => [n, { aspect: 'unknown', code: null, desired: 'STOP', updatedAt: 0, commandAt: 0 }]));
@@ -40,42 +42,44 @@ export class Engine extends EventEmitter {
   }
   fresh(s) { return this.connected && s.updatedAt >= this.connectionAt && this.now() - s.updatedAt <= this.profile.staleMs && s.updatedAt > 0; }
   guardSignals(route) {
+    if (route.guardSignals) return route.guardSignals;
     return [...new Set(this.profile.routes.filter(r => r.blocks.some(b => route.blocks.includes(b))).flatMap(r => r.signals))].filter(n => !route.signals.includes(n));
   }
   receive(bytes) {
     let d; try { d = decode(bytes); } catch (e) { this.log('bad-frame', e.message, { frame: hex(bytes) }); return; }
     // B0 echo and SENT OK are not field feedback.
     if (d.kind === 'order' || d.kind === 'unsupported') return;
-    const now = this.now(); let changed = false;
+    const now = this.now(); const sequence=++this.reportSequence; let changed = false;
     if (d.kind === 'turnout') for (const [name, binding] of Object.entries(this.profile.turnouts)) {
       if (binding.address !== d.address) continue;
       const pos = d.position === 'unknown' ? 'unknown' : binding.inverted ? (d.position === 'C' ? 'T' : 'C') : d.position;
       const state = this.turnouts[name]; changed ||= state.position !== pos;
-      state.position = pos; state.updatedAt = now;
+      state.position = pos; state.updatedAt = now; state.reportSequence=sequence;
     }
     if (d.kind === 'sensor') for (const [name, binding] of Object.entries(this.profile.blocks)) {
       if (binding.address !== d.address) continue;
       const occupied = binding.activeMeansOccupied ? d.active : !d.active;
       const state = this.blocks[name]; changed ||= state.occupied !== occupied;
-      state.occupied = occupied; state.updatedAt = now;
+      state.occupied = occupied; state.updatedAt = now; state.reportSequence=sequence;
     }
     if (d.kind === 'signal') for (const [name, binding] of Object.entries(this.profile.signals)) {
       if (binding.reportAddress !== d.address) continue;
       const aspect = binding.stopCodes.includes(d.code) ? 'stop' : binding.goCodes.includes(d.code) ? 'go' : 'unknown';
       const state = this.signals[name]; changed ||= state.aspect !== aspect || state.code !== d.code;
       const unexpected = aspect === 'go' && state.desired === 'STOP';
-      state.aspect = aspect; state.updatedAt = now; state.code = d.code;
+      state.aspect = aspect; state.updatedAt = now; state.code = d.code; state.reportSequence=sequence;
       if (unexpected && now - state.commandAt > 200) {
         this.log('unexpected-go', `Signal ${name} rapporterar kör utan medgivande. Begär stopp.`);
         this.permission(name, 'STOP');
       }
     }
+    if(d.kind==='sensor') this.observePassage(d);
     if (changed) this.log('report', describe(d), { frame: hex(bytes) });
     this.tick(); this.emit('change');
   }
   permission(name, desired) {
     if (desired === 'GO' && (!this.connected || this.storageFault)) throw Error('Körmedgivande spärrat.');
-    const s = this.signals[name]; s.desired = desired; s.commandAt = this.now();
+    const s = this.signals[name]; s.desired = desired; s.commandAt = this.now(); s.commandSequence=this.reportSequence;
     if (this.connected) this.send(switchOrder(this.profile.signals[name].address, desired === 'GO' ? 'C' : 'T'));
     this.log('permission', `Signal ${name}: begär ${desired === 'GO' ? 'körmedgivande' : 'stopp'}.`);
   }
@@ -90,17 +94,20 @@ export class Engine extends EventEmitter {
     const existing = this.routes.find(r => r.from === from && r.to === to);
     if (existing) return this.cancel(existing.id);
     if (!this.connected || this.storageFault) throw Error(this.storageFault ? 'Lagringsfel; manövrering spärrad.' : 'Ingen LocoNet-anslutning.');
+    if(this.policy) {const decision=this.policy.inspect(from,to); if(!decision.allowed) throw Error(decision.reason);}
     const def = this.profile.routes.find(r => r.from === from && r.to === to);
-    if (!def) throw Error('Den här tågvägen ingår inte i etapp 1. Välj någon av provtågvägarna.');
+    if (!def) throw Error('Tågvägens fullständiga koppling är ännu inte verifierad i den aktiva profilen.');
     for (const b of def.blocks) if (!this.fresh(this.blocks[b]) || this.blocks[b].occupied !== false) throw Error(`${b} är belagt eller saknar aktuell återrapport.`);
     for (const name of [...def.signals, ...this.guardSignals(def)]) if (!this.fresh(this.signals[name]) || this.signals[name].aspect !== 'stop') throw Error(`Signal ${name} är inte bekräftat i stopp.`);
     for (const route of this.routes) {
-      const hit = def.blocks.find(b => route.blocks.includes(b));
+      const occupiedResources = new Set(route.blocks.map(b => this.profile.blocks[b].address));
+      const hit = def.blocks.find(b => occupiedResources.has(this.profile.blocks[b].address));
       if (hit || def.crossings.some(x => route.crossings.includes(x))) throw Error('Tågvägen korsar en reserverad väg. Ingen godkänd alternativ väg finns i denna profil.');
       if (def.signals.some(s => route.signals.includes(s))) throw Error('Signal används av en annan tågväg.');
       if (Object.entries(def.turnouts).some(([n, p]) => route.turnouts[n] && route.turnouts[n] !== p)) throw Error('En kopplad växel är låst i motsatt läge.');
     }
     const r = { ...structuredClone(def), definitionId: def.id, id: randomUUID(), state: 'setting', createdAt: this.now(), cancelRequested: false, nextSignal: def.signals.length - 1, reason: 'Inväntar växlarnas återrapporter.' };
+    if(r.autoRelease) r.passage=[...new Set(r.blocks.map(b=>this.profile.blocks[b].address))].map(address=>({address,state:'pending'}));
     this.routes.push(r); this.persist(); // Locks are durable BEFORE any field commands.
     this.log('route-request', `${r.label}: resurser reserverade.`);
     for (const [n, p] of Object.entries(r.turnouts)) {
@@ -112,7 +119,7 @@ export class Engine extends EventEmitter {
   cancel(id) {
     const r = this.routes.find(r => r.id === id); if (!r) throw Error('Tågvägen finns inte.');
     if (!r.cancelRequested) {
-      r.cancelRequested = true; r.cancelAt = this.now(); r.state = 'cancelling'; r.reason = 'Begärt stopp. Inväntar fria avsnitt och stoppåterrapport.';
+      r.cancelRequested = true; r.cancelAt = this.now(); r.cancelSequence=this.reportSequence; r.state = 'cancelling'; r.reason = 'Begärt stopp. Inväntar fria avsnitt och stoppåterrapport.';
       this.persist();
       for (const n of r.signals) this.permission(n, 'STOP');
       this.log('cancel', `${r.label}: återtagning begärd. Låsen ligger kvar tills villkoren är uppfyllda.`);
@@ -133,6 +140,30 @@ export class Engine extends EventEmitter {
     for (const name of r.signals) this.permission(name, 'STOP'); this.persist();
     this.log('route-held', `${r.label}: ${reason} Låsen ligger kvar.`);
   }
+  observePassage(report) {
+    for(const r of this.routes) {
+      if(!r.autoRelease || r.cancelRequested || ['held','occupied','cancelling'].includes(r.state)) continue;
+      const index=r.passage.findIndex(p=>p.address===report.address);
+      if(index<0) continue;
+      const part=r.passage[index], name=r.blocks.find(b=>this.profile.blocks[b].address===report.address);
+      const occupied=this.profile.blocks[name].activeMeansOccupied?report.active:!report.active;
+      if(occupied && part.state==='pending') {
+        const canEnter=r.state==='active' || r.state==='traversing' || (r.state==='clearing' && r.nextSignal<=0 && this.signals[r.signals[0]].aspect==='go');
+        if(!canEnter || r.passage.slice(0,index).some(p=>p.state==='pending')) {this.hold(r,'Beläggning kom utanför den förväntade tågpassagen.');continue;}
+        part.state='occupied'; part.enteredAt=this.now();
+        if(r.state!=='traversing') {
+          r.state='traversing';r.enteredAt=this.now();r.nextSignal=-1;r.reason='Tåg i tågvägen. Passerade signaler återtas; låsen ligger kvar under passagen.';
+          this.log('train-entered',`${r.label}: ordnad tågpassage påbörjad.`);
+        }
+        const passed = r.signalEntries ? r.signalEntries.filter(e => e.index <= index).map(e => e.signal) : r.signals;
+        for (const name of passed) if (this.signals[name].desired !== 'STOP') this.permission(name, 'STOP');
+        this.persist();
+      } else if(!occupied && part.state==='occupied') {
+        if(r.passage.slice(0,index).some(p=>p.state!=='clear')) {this.hold(r,'Spårledningar blev fria i oväntad ordning.');continue;}
+        part.state='clear';part.clearedAt=this.now();this.persist();
+      } else if(occupied && part.state==='clear') this.hold(r,'Ett passerat avsnitt blev belagt igen.');
+    }
+  }
   tick() {
     const now = this.now();
     for (const s of Object.values(this.turnouts)) if (!this.fresh(s)) s.position = 'unknown';
@@ -144,7 +175,7 @@ export class Engine extends EventEmitter {
       const correct = known && Object.entries(r.turnouts).every(([n, p]) => this.turnouts[n].position === p);
       const protectedSignals = this.guardSignals(r).every(n => this.fresh(this.signals[n]) && this.signals[n].aspect === 'stop');
       if (r.cancelRequested) {
-        const stopped = r.signals.every(n => this.fresh(this.signals[n]) && this.signals[n].aspect === 'stop' && this.signals[n].updatedAt >= r.cancelAt);
+        const stopped = r.signals.every(n => this.fresh(this.signals[n]) && this.signals[n].aspect === 'stop' && this.signals[n].updatedAt >= r.cancelAt && this.signals[n].reportSequence > (r.cancelSequence ?? -1));
         if (free && known && stopped && protectedSignals && !this.storageFault) {
           const previous = this.routes; this.routes = this.routes.filter(x => x.id !== r.id);
           try { this.persist(); } catch (e) { this.routes = previous; throw e; }
@@ -153,6 +184,17 @@ export class Engine extends EventEmitter {
         continue;
       }
       if (['held', 'occupied'].includes(r.state)) continue;
+      if(r.state==='traversing') {
+        if(!this.connected || this.storageFault || !correct || !protectedSignals || r.blocks.some(b=>!this.fresh(this.blocks[b]))) {this.hold(r,'Återrapport eller skyddsvillkor saknas under tågpassage.');continue;}
+        const lostSignal = r.signals.some(n => {
+          const s = this.signals[n];
+          if (s.desired === 'GO') return !this.fresh(s) || s.aspect !== 'go';
+          return (!this.fresh(s) || s.aspect !== 'stop') && now-s.commandAt > this.profile.commandTimeoutMs;
+        });
+        if(lostSignal) {this.hold(r,'Signalbesked under tågpassagen stämmer inte med medgivandet.');continue;}
+        if(free && r.passage.every(p=>p.state==='clear')) this.cancel(r.id);
+        continue;
+      }
       if (!protectedSignals && this.connected) { this.hold(r, 'En annan signal till samma provområde saknar bekräftat stopp.'); continue; }
       if (this.storageFault || !this.connected || !free) {
         this.hold(r, this.storageFault ? 'Lagringsfel.' : !this.connected ? 'Ingen anslutning.' : 'Beläggning eller okänd detektor.', free ? 'held' : 'occupied'); continue;

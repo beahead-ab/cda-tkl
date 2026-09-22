@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import net from 'node:net';
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
@@ -6,8 +5,9 @@ import { Field } from './field.mjs';
 import { hex, fromHex, LineReader } from './protocol.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
 import { createAuth } from './auth.mjs';
+import { loadProfile } from './profile.mjs';
 
-const profile = JSON.parse(fs.readFileSync(new URL('../profiles/simulator.json', import.meta.url)));
+const profile = loadProfile('field');
 const port = Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911), wirePort = Number(process.env.CHARLOTTENDAL_WIRE_PORT || 8912);
 const field = new Field(profile), clients = new Set(), trace = [];
 let link = true;

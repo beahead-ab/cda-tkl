@@ -51,6 +51,7 @@ function choose(id) {
   else { const from = chosen; clearChoice(); api('route', { from, to: id }); }
 }
 function label(id) {
+  if(config.buttons?.[id]) return config.buttons[id].label;
   const found = config.routes.find(r => r.from === id || r.to === id);
   if (found) return found.label.split(' → ')[found.from === id ? 0 : 1];
   return id.replace('htv', '');
@@ -194,14 +195,14 @@ function animateFlow() {
     }
   }
 }
-const statuses = { setting: 'Lägger växlar', establishing: 'Etablerar', clearing: 'Klarsätter', active: 'Klar', held: 'Stopp · lås kvar', occupied: 'Lås kvar', cancelling: 'Återtar' };
+const statuses = { setting: 'Lägger växlar', establishing: 'Etablerar', clearing: 'Klarsätter', active: 'Klar', traversing:'Tåg passerar', held: 'Stopp · lås kvar', occupied: 'Lås kvar', cancelling: 'Återtar' };
 function paint() {
   if (!state) return;
   const c = $('connection'); c.textContent = !online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad';
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
   paintPlan(); paintInspector();
   for (const b of $('route-catalog').querySelectorAll('button')) b.disabled = !usable() || pending;
-  html('active-routes', state.routes.map(r => `<div class="route-item"><strong>${esc(r.label)}<span class="route-state ${esc(r.state)}">${esc(statuses[r.state])}</span></strong><small>${esc(r.reason)}</small><button data-cancel="${esc(r.id)}" ${!online || r.cancelRequested ? 'disabled' : ''}>${r.cancelRequested ? 'Inväntar frigivning' : 'Återta'}</button></div>`).join(''));
+  html('active-routes', state.routes.map(r => `<div class="route-item"><strong>${esc(r.label)}<span class="route-state ${esc(r.state)}">${esc(statuses[r.state])}</span></strong><small>${esc(r.reason)}${r.passage&&r.enteredAt?' · '+r.passage.filter(p=>p.state==='clear').length+'/'+r.passage.length+' avsnitt passerade':''}</small><button data-cancel="${esc(r.id)}" ${!online || r.cancelRequested ? 'disabled' : ''}>${r.cancelRequested ? 'Inväntar frigivning' : 'Återta'}</button></div>`).join(''));
   $('event-status').textContent = state.routes.length + ' tågvägslås · ' + Object.keys(config.turnouts).length + ' anslutna växlar';
   html('events', state.events.filter(e => !['report', 'transport'].includes(e.kind)).slice(0, 7).map(e => `<div class="event-row"><time>${time(e.at)}</time><span>${esc(e.message)}</span></div>`).join(''));
   $('wire').textContent = (state.trace || []).slice(0, 40).map(e => `${time(e.at)}  ${e.direction === 'out' ? 'SKICKAT ' : 'MOTTAGET'}  ${e.hex}`).join('\n');
@@ -233,8 +234,12 @@ async function start() {
 
   $('account-link').hidden = !config.accountUrl;
   $('field-link').href = config.fieldUrl || 'http://127.0.0.1:8911/'; $('field-link').hidden = false;
-  $('route-catalog').innerHTML = config.routes.map(r => `<button data-route="${r.id}" disabled>${esc(r.label)} <span aria-hidden="true">↗</span></button>`).join('');
-  $('route-catalog').onclick = e => { const r = config.routes.find(r => r.id === e.target.closest('button')?.dataset.route); if (r) api('route', { from: r.from, to: r.to }); };
+  $('profile-summary').textContent=`${config.routes.length} tågvägar · ${Object.keys(config.turnouts).length} växlar · ${Object.keys(config.signals).length} signaler i provanläggningen.`;
+  const starts=[...new Set(config.routes.map(r=>r.from))];
+  $('route-catalog').innerHTML=`<label>Från<select id="catalog-from">${starts.map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('')}</select></label><label>Till<select id="catalog-to"></select></label><button id="catalog-request" class="primary" disabled>Lägg / återta tågväg</button>`;
+  function targets(){const from=$('catalog-from').value;$('catalog-to').innerHTML=config.routes.filter(r=>r.from===from).map(r=>`<option value="${esc(r.to)}">${esc(label(r.to))}</option>`).join('');}
+  $('catalog-from').onchange=targets;targets();
+  $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) api('turnout', { name: inspected.name, position }); };
   $('clear-selection').onclick = clearChoice;
