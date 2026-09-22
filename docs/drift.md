@@ -43,12 +43,45 @@ ssh -i ~/.ssh/trainmeet_digitalocean root@161.35.25.62
 - Nginx hanterar adressen på den nya Dropleten. HTTP omdirigeras till HTTPS.
 - Ett Cloudflare Origin CA-certifikat för enbart `cda-tkl.trainmeet.app` är installerat på servern, giltigt till 18 september 2041. Den privata nyckeln finns endast på servern.
 - Cloudflares befintliga zoninställning är automatiskt SSL-läge **Full**. Den har inte ändrats för övriga TrainMeet-adresser. Origin CA-certifikatet förutsätter att Cloudflare-proxyn används.
-- Domänkonfiguration: `/etc/nginx/sites-available/cda-tkl`. Källversion: [deploy/nginx-connection.conf](../deploy/nginx-connection.conf).
-- Tillfällig startsida: `/var/www/cda-tkl/index.html`, från [deploy/holding.html](../deploy/holding.html).
-- Verifierat 22 september 2026: HTTPS svarar 200 med rätt startsida via Cloudflare; HTTP svarar 308 till HTTPS; sidan öppnas utan certifikatfel i webbläsaren.
+- Domänkonfiguration: `/etc/nginx/sites-available/cda-tkl`. Aktiv källversion: [deploy/nginx-app.conf](../deploy/nginx-app.conf).
+- Den tillfälliga startsidan är ersatt av appen. Den gamla konfigurationen finns kvar som `/etc/nginx/sites-available/cda-tkl.holding-backup` för felsökning.
 
 ## Status för publicering
 
-Domänen och HTTPS är anslutna till instansen. Adressen visar en tillfällig startsida. TKL-appen och simulatorn är ännu inte installerade eller internetpublicerade där; de körs fortfarande lokalt på utvecklingsdatorn.
+TKL och anläggningssimulatorn är installerade och startade som separata systemtjänster. TKL finns på `/`, simulatorns webbgränssnitt på `/anlaggning/`. De kommunicerar endast via LocoNet-over-TCP och har separata anläggningstillstånd. Den lokala installationen är oberoende av serverversionen.
 
-Node.js 22.23.2, Nginx, tjänstekonton och en brandvägg för SSH/HTTP/HTTPS är förberedda. Nästa steg för apppublicering är att installera TKL och simulatorn som separata tjänster med beständig lagring och inloggning. Cloudflare Access är ännu inte konfigurerat. Inga ändringar har gjorts i befintliga Droplets eller i TrainMeet-systemet.
+| Del | Plats / inställning |
+|---|---|
+| Driftsatt kodversion | `d6209b4` |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/d6209b4` |
+| TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
+| Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
+| Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
+| Lås, anteckningar, journal | `/var/lib/charlottendal-tkl`, skrivbar endast för TKL-tjänsten |
+| Driftinställningar | `/etc/charlottendal-tkl/app.env`, endast läsbar för root/systemd |
+| Interna portar | 8910, 8911 och 8912 lyssnar enbart på `127.0.0.1` |
+| Node.js | 22.23.2 |
+
+Inga ändringar har gjorts i befintliga Droplets eller i TrainMeet-systemet. Webbversionen är samma utvecklingsprofil som den lokala appen, med preliminära MGP-signalbesked och utan fysisk LocoBuffer-anslutning.
+
+## Inloggning
+
+Cloudflare Zero Trust Free aktiverades efter användarens uttryckliga godkännande av villkoren, inklusive eventuell debitering över gratisgränserna. Aktiveringen visade 0 USD/månad och upp till 50 användare.
+
+- Team: `wild-field-8422.cloudflareaccess.com`.
+- Access-app: `Charlottendal TKL`, ID `070f6609-baf9-4ed8-808c-a84a92ff2734`.
+- Endast engångskod via e-post är vald för denna app. Policyn tillåter `casper@winsnes.se`.
+- Skyddet gäller hela värdnamnet, inklusive simulatorn, statiska filer och API. Ingen bypass-regel används.
+- Båda apptjänsterna verifierar dessutom Cloudflares JWT-signatur, utfärdare, applikation, giltighetstid och tillåten e-postadress. En förfalskad e-postheader ger ingen åtkomst.
+- Sessionstid: 24 timmar; HttpOnly aktiverat. TKL:s händelseström avslutas när JWT:n löper ut.
+
+Verifierat på servern: 23 enhetstester och 2 processbaserade helhetstester godkända; båda tjänsterna aktiva och automatiskt startande; LocoNet-rapporter når TKL. Direktanrop till respektive API utan inloggning svarar 403. Externa anrop till panel, simulator och API hänvisas till Access-inloggning. Den första engångskoden har begärts; manuell kontroll av den publicerade panelen efter inloggning återstår.
+
+## Drift och uppdatering
+
+```sh
+systemctl status charlottendal-tkl charlottendal-simulator
+journalctl -u charlottendal-tkl -u charlottendal-simulator -n 100
+```
+
+En uppdatering läggs i en ny releasekatalog med `npm ci --omit=dev --ignore-scripts`. Testa före byte av `current` och omstart av tjänsterna. Flytta aldrig driftdata in i releasekatalogen. Ta en separat kopia av `/var/lib/charlottendal-tkl` och driftkonfigurationen före ändringar; ta inte bort lås för att kringgå återstående frigivningsvillkor. En omstart återtar aldrig körmedgivanden automatiskt.
