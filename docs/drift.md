@@ -36,8 +36,19 @@ SSH-åtkomst och serverns hostname/operativsystem har verifierats. Den privata S
 ssh -i ~/.ssh/trainmeet_digitalocean root@161.35.25.62
 ```
 
+## Domän och HTTPS
+
+- Adress: **https://cda-tkl.trainmeet.app/**.
+- Cloudflare: proxierad A-post `cda-tkl` → `161.35.25.62`, automatisk TTL. Den ersätter tidigare `charlottendal-tkl`.
+- Nginx hanterar adressen på den nya Dropleten. HTTP omdirigeras till HTTPS.
+- Ett Cloudflare Origin CA-certifikat för enbart `cda-tkl.trainmeet.app` är installerat på servern, giltigt till 18 september 2041. Den privata nyckeln finns endast på servern.
+- Cloudflares befintliga zoninställning är automatiskt SSL-läge **Full**. Den har inte ändrats för övriga TrainMeet-adresser. Origin CA-certifikatet förutsätter att Cloudflare-proxyn används.
+- Domänkonfiguration: `/etc/nginx/sites-available/cda-tkl`. Källversion: [deploy/nginx-connection.conf](../deploy/nginx-connection.conf).
+- Tillfällig startsida: `/var/www/cda-tkl/index.html`, från [deploy/holding.html](../deploy/holding.html).
+- Verifierat 22 september 2026: HTTPS svarar 200 med rätt startsida via Cloudflare; HTTP svarar 308 till HTTPS; sidan öppnas utan certifikatfel i webbläsaren.
+
 ## Status för publicering
 
-Den nya Dropleten är skapad och tillgänglig. Applikationen är ännu inte installerad eller internetpublicerad där. Den tidigare lokala appen och simulatorn finns kvar på utvecklingsdatorn.
+Domänen och HTTPS är anslutna till instansen. Adressen visar en tillfällig startsida. TKL-appen och simulatorn är ännu inte installerade eller internetpublicerade där; de körs fortfarande lokalt på utvecklingsdatorn.
 
-Nästa steg är att installera TKL och simulatorn som separata tjänster, ordna beständig lagring, ange domän och HTTPS samt lägga till inloggning innan webbgränssnitten öppnas utåt. Inga ändringar har gjorts i befintliga Droplets eller i TrainMeet-systemet.
+Node.js 22.23.2, Nginx, tjänstekonton och en brandvägg för SSH/HTTP/HTTPS är förberedda. Nästa steg för apppublicering är att installera TKL och simulatorn som separata tjänster med beständig lagring och inloggning. Cloudflare Access är ännu inte konfigurerat. Inga ändringar har gjorts i befintliga Droplets eller i TrainMeet-systemet.
