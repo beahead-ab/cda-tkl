@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `fec8129` |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/fec8129` |
+| Driftsatt kodversion | `31d2f8b` |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/31d2f8b` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -66,7 +66,7 @@ Inga ändringar har gjorts i befintliga Droplets eller i TrainMeet-systemet. Web
 
 ## Inloggning
 
-Appen använder nu lösenord på användarens begäran. Det tillfälliga lösenordet måste bytas innan panelen eller simulatorn kan öppnas. **Byt lösenord** finns därefter i panelen. Lösenordet är inte sparat i Git.
+Appen använder nu lösenord på användarens begäran. Minimilängden är 6 tecken. Det tillfälliga lösenordet måste bytas innan panelen eller simulatorn kan öppnas. **Byt lösenord** finns därefter i panelen. Lösenordet är inte sparat i Git.
 
 - Läge: `CHARLOTTENDAL_AUTH_MODE=password`.
 - Skyddad autentiseringsfil: `/var/lib/charlottendal-auth/auth.json`, ägare `charlottendal:charlottendal-auth`, rättighet 0640; katalog 2750.
