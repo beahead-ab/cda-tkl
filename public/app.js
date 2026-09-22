@@ -1,7 +1,16 @@
+import { createSourceRegister } from './source-register.js';
 const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
-let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, registryKind = 'signals', noteKey, pending = false;
+let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = false;
+let sourceRegister;
+function setPage(page) {
+  history.replaceState(null,'',page==='admin'?'#register':'#panel');
+  if(page==='admin') document.body.classList.remove('panel-compact');
+  for (const p of ['panel','admin']) { $(p+'-view').hidden=p!==page; $(p+'-tab').classList.toggle('selected',p===page); }
+  if(page==='admin') return sourceRegister.open().catch(e=>message(e.message));
+}
+async function openSource(kind,name) { await setPage('admin'); await sourceRegister.open(kind,name); }
 const rails = [], switches = [], signals = [], buttons = [], routeNodes = new Map();
 const iconTypes = {
   hsi_2: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_4: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_5: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32],
@@ -50,6 +59,7 @@ function buildPlan() {
   const flow = svg('g', { id: 'flow-layer', 'pointer-events': 'none' }, root), labels = svg('g', {}, root), icons = svg('g', {}, root), controls = svg('g', {}, root);
   for (const s of panel.segs.filter(s => s.b !== 'frame' && !s.hide && Math.min(s.y1, s.y2) < 850)) {
     const node = svg('line', { x1: s.x1, y1: s.y1, x2: s.x2, y2: s.y2, class: 'rail unconfigured' }, track);
+    svg('title', {}, node, 'Spårsegment '+s.id+' · '+s.b);
     rails.push({ node, block: s.b });
   }
   for (const t of Object.values(panel.turnouts)) {
@@ -70,7 +80,7 @@ function buildPlan() {
   for (const m of panel.micons.filter(m => m.y < 850)) {
     const type = iconTypes[m.type] || iconTypes.hsi_2;
     const sample = imageCache.find(i => i.src.endsWith(encodeURIComponent(type[0]) + '.gif'));
-    const w = sample?.naturalWidth || type[3], h = sample?.naturalHeight || type[4];
+    const w = (sample?.naturalWidth || type[3]) * (m.scale || 1), h = (sample?.naturalHeight || type[4]) * (m.scale || 1);
     const rad = m.deg * Math.PI / 180, rw = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad)), rh = Math.abs(h * Math.cos(rad)) + Math.abs(w * Math.sin(rad));
     const g = svg('g', { transform: `translate(${m.x + rw / 2},${m.y + rh / 2})`, class: 'touch-target signal-target' }, icons);
     svg('rect', { x: -rw / 2 - 5, y: -rh / 2 - 6, width: rw + 10, height: rh + 12, class: 'hit' }, g);
@@ -159,51 +169,39 @@ function paint() {
 function paintInspector() {
   if (!inspected || !state) return;
   const { kind, name } = inspected, b = kind === 'signal' ? config.signals[name] : config.turnouts[name];
-  if (!b) { html('inspector', `<h2>${kind === 'signal' ? 'Signal' : 'Växel'} ${esc(name)}</h2><p class="muted">Importerad från JMRI. Återrapport och manövrering är ännu inte inkopplade för detta objekt.</p>`); return; }
+  const sourceKind = kind === 'signal' ? 'signals' : 'layoutTurnouts';
+  const sourceButton = `<button class="source-inspect" data-source-kind="${sourceKind}" data-source-name="${esc(name)}">Visa alla källuppgifter →</button>`;
+  const original = kind === 'signal' ? registry.signals.find(r=>r.id===name) : null;
+  const sourceInfo = original ? `<p class="muted">${esc(original.type)} · Besked i XML: ${esc(original.aspects.join(', '))}</p>` : '';
+  if (!b) { html('inspector', `<h2>${kind === 'signal' ? 'Signal' : 'Växel'} ${esc(name)}</h2><p class="muted">Importerad från JMRI. Återrapport och manövrering är ännu inte inkopplade för detta objekt.</p>` + sourceInfo + sourceButton); return; }
   const s = kind === 'signal' ? state.signals[name] : state.turnouts[name];
   const locked = state.routes.filter(r => kind === 'signal' ? r.signals.includes(name) : r.turnouts[name]);
   const value = !online ? 'Okänt' : kind === 'signal' ? ({ go: 'Kör återrapporterat', stop: 'Stopp återrapporterat', unknown: 'Okänt besked' }[s.aspect]) : ({ C: 'Rakt', T: 'Avvikande', unknown: 'Okänt / omläggning' }[s.position]);
   const detail = `<dl><dt>${kind === 'signal' ? 'Signal' : 'Växel'}</dt><dd><strong>${esc(name)}</strong></dd><dt>Rapporterat</dt><dd>${esc(value)}</dd><dt>Tågvägslås</dt><dd>${esc(locked.map(r => r.label).join(', ') || 'Inga')}</dd><dt>${kind === 'signal' ? 'Provadress / råkod' : 'Källadress'}</dt><dd>${kind === 'signal' ? b.address + ' / ' + (s.code ?? '—') : esc(b.source) + (b.inverted ? ' · inverterad' : '')}</dd></dl>`;
-  html('inspector', detail + (kind === 'turnout' ? `<div class="actions"><button data-manual="C" ${locked.length || !usable() ? 'disabled' : ''}>Lägg rakt</button><button data-manual="T" ${locked.length || !usable() ? 'disabled' : ''}>Lägg avvikande</button></div>` : `<p class="muted">Beskedskoderna är en preliminär provmappning. Fullständiga svenska signalbilder kräver verifiering mot din MGP-utrustning.</p>`));
-}
-const registries = { signals: 'Signaler', layoutTurnouts: 'Växlar i spårplan', turnouts: 'Alla växelobjekt', sensors: 'Sensorer', blocks: 'Block' };
-function renderRegistry() {
-  const search = $('search').value.toLowerCase();
-  const items = registry[registryKind].map((obj, i) => ({ obj, i })).filter(({ obj }) => JSON.stringify(obj).toLowerCase().includes(search));
-  $('registry-count').textContent = `${items.length} objekt · ${config.routes.length} provtågvägar i den lokala kärnan`;
-  $('registry-rows').innerHTML = items.slice(0, 200).map(({ obj, i }) => {
-    const name = obj.id || obj.name || obj.user || obj.mast || obj.sys || 'Objekt ' + i;
-    const source = obj.sys || obj.systemName || obj.sensor || obj.type || 'JMRI-layout';
-    const binding = registryKind === 'signals' ? config.signals[name] : ['layoutTurnouts', 'turnouts'].includes(registryKind) ? config.turnouts[name] : config.blocks[name];
-    const key = registryKind + ':' + i;
-    return `<tr><td><strong>${esc(name)}</strong>${obj.comment ? '<br><span class="muted">' + esc(obj.comment) + '</span>' : ''}</td><td>${esc(source)}</td><td>${binding ? esc((binding.source ? binding.source : 'Provadress ' + binding.address)) : '<span class="muted">Ej inkopplat</span>'}</td><td><button data-note="${esc(key)}">${esc(config.notes[key] || 'Lägg till anteckning')}</button></td></tr>`;
-  }).join('');
-  if (items.length > 200) $('registry-count').textContent += ' · visar de första 200, sök för att begränsa';
-  for (const b of $('registry-tabs').children) b.classList.toggle('selected', b.dataset.kind === registryKind);
+  html('inspector', detail + sourceInfo + sourceButton + (kind === 'turnout' ? `<div class="actions"><button data-manual="C" ${locked.length || !usable() ? 'disabled' : ''}>Lägg rakt</button><button data-manual="T" ${locked.length || !usable() ? 'disabled' : ''}>Lägg avvikande</button></div>` : `<p class="muted">Beskedskoderna är en preliminär provmappning. Fullständiga svenska signalbilder kräver verifiering mot din MGP-utrustning.</p>`));
 }
 async function start() {
-  [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/admin.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
+  [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set(Object.values(iconTypes).flatMap(a => a.slice(0, 3)))];
   await Promise.all(files.map(async file => { const i = new Image(); imageCache.push(i); i.src = icon(file); await i.decode(); }));
+  sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note})});
   buildPlan();
+  $('compact-toggle').onclick=()=>{ const compact=document.body.classList.toggle('panel-compact'); $('compact-toggle').textContent=compact?'Visa verktyg':'Dölj verktyg'; };
+
   $('account-link').hidden = !config.accountUrl;
   $('field-link').href = config.fieldUrl || 'http://127.0.0.1:8911/'; $('field-link').hidden = false;
   $('route-catalog').innerHTML = config.routes.map(r => `<button data-route="${r.id}" disabled>${esc(r.label)} <span aria-hidden="true">↗</span></button>`).join('');
   $('route-catalog').onclick = e => { const r = config.routes.find(r => r.id === e.target.closest('button')?.dataset.route); if (r) api('route', { from: r.from, to: r.to }); };
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
-  $('inspector').onclick = e => { const position = e.target.closest('button')?.dataset.manual; if (position) api('turnout', { name: inspected.name, position }); };
+  $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) api('turnout', { name: inspected.name, position }); };
   $('clear-selection').onclick = clearChoice;
   document.addEventListener('keydown', e => { if (e.key === 'Escape') clearChoice(); });
   for (const b of document.querySelectorAll('.skin-picker button')) b.onclick = () => setSkin(b.dataset.skin);
   function setSkin(value) { document.body.dataset.skin = value; localStorage.setItem('charlottendal-skin', value); for (const b of document.querySelectorAll('.skin-picker button')) b.classList.toggle('selected', b.dataset.skin === value); }
   setSkin(localStorage.getItem('charlottendal-skin') || 'relay');
   $('zoom').onchange = () => { $('track-plan').style.width = $('zoom').value + '%'; };
-  for (const page of ['panel', 'admin']) $(page + '-tab').onclick = () => { for (const p of ['panel', 'admin']) { $(p + '-view').hidden = p !== page; $(p + '-tab').classList.toggle('selected', p === page); } if (page === 'admin') renderRegistry(); };
-  $('registry-tabs').innerHTML = Object.entries(registries).map(([key, name]) => `<button data-kind="${key}">${name} <span class="muted">${registry[key].length}</span></button>`).join('');
-  $('registry-tabs').onclick = e => { const k = e.target.closest('button')?.dataset.kind; if (k) { registryKind = k; renderRegistry(); } };
-  $('search').oninput = renderRegistry;
-  $('registry-rows').onclick = e => { noteKey = e.target.closest('button')?.dataset.note; if (noteKey) { const obj = registry[registryKind][Number(noteKey.split(':')[1])]; $('note-heading').textContent = 'Anteckning · ' + (obj.id || obj.name || obj.user || obj.sys); $('note-text').value = config.notes[noteKey] || ''; $('note-dialog').showModal(); } };
-  $('save-note').onclick = async () => { const note = $('note-text').value; if (await api('note', { key: noteKey, note })) { config.notes[noteKey] = note; $('note-dialog').close(); renderRegistry(); } };
+  for (const page of ['panel','admin']) $(page+'-tab').onclick=()=>setPage(page);
+  setPage(location.hash==='#register'?'admin':'panel');
   const source = new EventSource('/api/events');
   source.onmessage = e => { state = JSON.parse(e.data); online = true; lastEvent = Date.now(); paint(); };
   source.onerror = () => { online = false; paint(); };

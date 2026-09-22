@@ -32,7 +32,7 @@ Om appen redan är igång öppnar du länkarna direkt. Avsluta med Ctrl+C i dess
 - Okända eller gamla återrapporter behandlas som okända. Eko och transportkvittens räknas aldrig som bekräftat växelläge eller signalbesked.
 - Körbegäran i omvänd signalordning efter bekräftade växellägen. Kör visas först efter signalrapport. Oväntat kör från en motriktad signal stoppar den berörda provtågvägen.
 - Beständiga lås och händelsejournal. Omstart eller återanslutning återupptar aldrig körmedgivanden automatiskt.
-- Sökbart register: 66 signaler, 49 layoutväxlar, 727 växelobjekt, 604 sensorer och 404 block. Anteckningar sparas lokalt, separat från importerade källuppgifter.
+- Komplett sökbart XML-register med 25 kategorier, bland annat 66 signaler, 727 växelobjekt, 604 sensorer, 404 block, 174 minnen, 1 377 conditionals, signalmastlogik och 153 start-/målpar. Samtliga fält och referenser kan granskas, med paginering och nedladdning av oförändrad originalfil. Anteckningar sparas separat och kan exporteras.
 - Oberoende simulator som skickar bytekorrekta meddelanden genom LocoNet-over-TCP och tar emot order samma väg.
 
 Spårbeteckningarna i gränssnittet följer **den tryckta spårplanen**. Exempelvis heter knappen vid tryckt **2c** internt `htvSpIIA`. Dessa två beteckningar får inte blandas ihop.
@@ -44,7 +44,7 @@ Detta är en utvecklingsprofil för modelljärnvägen. Simulatorn är en uttryck
 - Identifiera LocoBuffer-modell, serialinställningar och MGP-moduler/firmware. Den här leveransen använder en simulerad TCP-buffert; den innehåller ännu ingen USB/seriell hårdvaruanslutning.
 - Ersätt provadresserna för detektorer (3001–3023) och signaler (1501–1504) med uppmätta bindningar. Växeladresserna kommer från LT-objekten i JMRI, inklusive inverteringen av Vx131. Elektriskt beteende och återrapport måste ändå kontrolleras.
 - Verifiera svenska Signal10-besked. Kod 0, 8 och 18 kommer från ett dokumenterat CZ-exempel och används endast som preliminär stopp/kör-mappning. Gränssnittet återger inte ännu fullständiga svenska huvud- och försignalbesked eller skillnaden mellan 8 och 18.
-- Fastställ alla signalriktningar, tågvägsregler, flankskydd, skyddsavstånd, tidsvillkor, automatisk upplåsning och lokala växlingsregler. De importerade 1 377 JMRI-conditionals bevaras i underlaget men körs inte i denna kärna.
+- Fastställ alla signalriktningar, tågvägsregler, flankskydd, skyddsavstånd, tidsvillkor, automatisk upplåsning och lokala växlingsregler. De importerade 1 377 JMRI-conditionals finns i appens register med samtliga variabler, åtgärdsvärden och tidsparametrar, men körs inte i denna kärna.
 - Utöka stegvis till resten av Charlottendal och godkända alternativa vägar. Okonfigurerade objekt manövreras inte.
 - Bygg TrainMeet-adaptern. TrainMeet behåller ansvaret för tidtabell, trafikpass och tågrörelser. Den lokala kärnan hanterar spåranläggningen. Ingen anslutning till det befintliga TrainMeet-systemet görs i denna version.
 
@@ -60,6 +60,8 @@ npm run simulator         # endast anläggningen
 npm test                  # protokoll-, kärn- och inloggningstester
 npm run test:integration  # helhetstest med separata processer och tillfälliga portar
 npm run check             # syntaxkontroll
+npm run verify:xml        # jämför varje källfält med original-XML
+npm run import:xml        # återskapa källregistret (Python 3 behövs)
 ```
 
 Allt lyssnar på datorns loopback-adress. Portar: 8910 TKL, 8911 simulatorns egen manöverpanel, 8912 LocoNet-over-TCP. Ingen molntjänst eller databasinstallation krävs. Lagring finns i `var/`: `routes.json`, `notes.json` och roterande `events.ndjson`. Ta kopia av hela mappen för att säkerhetskopiera lokalt arbete; radera inte låsfilen för att kringgå kvarstående lås.
@@ -67,6 +69,8 @@ Allt lyssnar på datorns loopback-adress. Portar: 8910 TKL, 8911 simulatorns ege
 Profilerna ligger i `profiles/`. Byt inte profil medan sparade tågvägslås finns. Verktyget `scripts/make-profile.mjs` genererar provprofiler från originaldata och de fyra uttryckliga signalplanerna; kör det endast under avsiktligt profilarbete.
 
 Se [arkitektur och gränser](docs/arkitektur.md), [provresultat](docs/provresultat.md) och [protokollunderlag](docs/protokollunderlag.md).
+
+Se även [genomgång mot Claude Design och XML](docs/design-xml-granskning.md).
 
 ## Underlag och rättigheter
 

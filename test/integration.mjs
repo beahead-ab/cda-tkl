@@ -74,7 +74,7 @@ test('both public servers protect pages and controls even when the edge is bypas
       const url = `http://127.0.0.1:${port}`;
       const headers = { Host: 'cda-tkl.trainmeet.app' };
       await until(async () => (await send(url, { headers })).status === 403);
-      for (const resource of ['/', '/api/config', '/api/state', '/app.css']) {
+      for (const resource of ['/', '/api/config', '/api/state', '/app.css', '/data/source/index.json', '/data/source/Cda60.xml']) {
         assert.equal((await send(url + resource, { headers })).status, 403);
         assert.equal((await send(url + resource, { headers: { ...headers, 'cf-access-jwt-assertion': 'forged' } })).status, 403);
       }

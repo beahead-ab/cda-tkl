@@ -39,4 +39,4 @@ Rapporter äldre än sju sekunder blir okända. Simulatorn upprepar rapporter va
 | `src/topology.mjs` | Importerad graf, växelkopplingar och sökning |
 | `public/` | Panel, tre utseenden, simulatorpanel, tillgångar och originaldata |
 
-Ingen extern JavaScript-kod eller font laddas. HTTP-servrarna lyssnar endast lokalt och kontrollerar Host/Origin samt JSON för ändrande anrop. Det är en lokal utvecklingsapp utan fleranvändarinloggning, driftsättningstjänst eller fjärråtkomst.
+Ingen extern JavaScript-kod eller font laddas. HTTP-servrarna lyssnar endast lokalt och kontrollerar Host/Origin samt JSON för ändrande anrop. Lokal körning behöver ingen inloggning. Webbdriften har lösenordsskydd och systemtjänster enligt driftbeskrivningen. Det kompletta XML-registret är skrivskyddat och laddas vid behov; det driver inte automatiskt förreglingskärnan.
