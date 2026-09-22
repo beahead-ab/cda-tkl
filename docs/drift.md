@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `d6209b4` |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/d6209b4` |
+| Driftsatt kodversion | `fec8129` |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/fec8129` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -66,16 +66,18 @@ Inga ändringar har gjorts i befintliga Droplets eller i TrainMeet-systemet. Web
 
 ## Inloggning
 
-Cloudflare Zero Trust Free aktiverades efter användarens uttryckliga godkännande av villkoren, inklusive eventuell debitering över gratisgränserna. Aktiveringen visade 0 USD/månad och upp till 50 användare.
+Appen använder nu lösenord på användarens begäran. Det tillfälliga lösenordet måste bytas innan panelen eller simulatorn kan öppnas. **Byt lösenord** finns därefter i panelen. Lösenordet är inte sparat i Git.
 
-- Team: `wild-field-8422.cloudflareaccess.com`.
-- Access-app: `Charlottendal TKL`, ID `070f6609-baf9-4ed8-808c-a84a92ff2734`.
-- Endast engångskod via e-post är vald för denna app. Policyn tillåter `casper@winsnes.se`.
-- Skyddet gäller hela värdnamnet, inklusive simulatorn, statiska filer och API. Ingen bypass-regel används.
-- Båda apptjänsterna verifierar dessutom Cloudflares JWT-signatur, utfärdare, applikation, giltighetstid och tillåten e-postadress. En förfalskad e-postheader ger ingen åtkomst.
-- Sessionstid: 24 timmar; HttpOnly aktiverat. TKL:s händelseström avslutas när JWT:n löper ut.
+- Läge: `CHARLOTTENDAL_AUTH_MODE=password`.
+- Skyddad autentiseringsfil: `/var/lib/charlottendal-auth/auth.json`, ägare `charlottendal:charlottendal-auth`, rättighet 0640; katalog 2750.
+- Scrypt, slumpade sessioner, obligatoriskt första byte, återkallelse vid lösenordsbyte, 12 timmars session och begränsning av felaktiga försök. Se [lösenordsdrift](losenord.md).
+- Hela panelen och simulatorn, deras filer och API:er kräver inloggning. Endast själva inloggningssidan och dess hjälpfiler är öppna.
+- Cloudflare fortsätter hantera DNS, proxy och HTTPS. Den tidigare e-postinloggningen är vilande: Access-app `070f6609-baf9-4ed8-808c-a84a92ff2734` heter nu **Charlottendal TKL – e-postinloggning vilande** och ligger på `cda-tkl-access.trainmeet.app`. Ingen ny DNS-post skapades för den adressen. Befintlig e-postpolicy är bevarad för eventuell återgång.
+- Zero Trust Free-kontot och teamet `wild-field-8422.cloudflareaccess.com` finns kvar. Planen aktiverades efter uttryckligt godkännande av villkoren (0 USD/månad upp till gratisgränserna). Ingen betalplan har lagts till.
 
-Verifierat på servern: 23 enhetstester och 2 processbaserade helhetstester godkända; båda tjänsterna aktiva och automatiskt startande; LocoNet-rapporter når TKL. Direktanrop till respektive API utan inloggning svarar 403. Externa anrop till panel, simulator och API hänvisas till Access-inloggning. Den första engångskoden har begärts; manuell kontroll av den publicerade panelen efter inloggning återstår.
+Verifierat: 23 enhetstester och 3 processbaserade helhetstester godkända lokalt; alla tre helhetstester även godkända på servern. Båda tjänsterna är aktiva. Det tillfälliga lösenordet fungerar; båda API:erna nekar åtkomst tills första bytet är gjort. Externa anrop visar inloggningssidan (200) och nekas till panelens och simulatorns API (401). Lösenordet har inte bytts åt användaren.
+
+Säkerhetskopia före övergången finns på servern i `/root/charlottendal-backups/password-20260922/` med gamla driftinställningar, tjänstefiler och anläggningsdata. För återgång behöver både tidigare kod/miljö och Access-appens värdnamn återställas tillsammans.
 
 ## Drift och uppdatering
 
