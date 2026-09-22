@@ -32,7 +32,7 @@ function sourceXML(node, depth=0) {
   return `${indent}<${node.tag}${attrs}>${node.text?.trim()?esc(node.text.trim()):''}${node.children.length?'\n'+node.children.map(c=>sourceXML(c,depth+1)).join('\n')+'\n'+indent:''}</${node.tag}>`;
 }
 export function createSourceRegister({config, saveNote}) {
-  let index, ready, treeReady, nodeMap, category='signals', page=0, selected, query='', status='all';
+  let index, migration, ready, treeReady, nodeMap, category='signals', page=0, selected, query='', status='all';
   const $=id=>document.getElementById(id), pageSize=50;
   const binding=r=> {
     if(r.category==='signals') return config.signals[r.name];
@@ -41,6 +41,8 @@ export function createSourceRegister({config, saveNote}) {
     if(['blocks','layoutBlocks'].includes(r.category)) return config.blocks[r.name];
     return null;
   };
+  const migrationLabels={tested:'Provad i simulatorn',replaced:'Ersatt beteende',partial:'Delvis införd',pending:'Återstår',external:'Anslutning återstår',disabled:'Avstängd i källan',denied:'Nekas enligt källan',unresolved:'Källmotsägelse · spärrad',excluded:'Ej ansluten'};
+  const operational=r=>migration?.byRule[r.system] || migration?.groups.find(g=>g.id===r.system);
   const recordByKey=key=>index.records.find(r=>r.key===key);
   const loadTree=()=>treeReady ||= fetch('/data/source/tree.json').then(check).then(root=>{
     nodeMap=new Map(); const walk=n=>{nodeMap.set(n.path,n);n.children.forEach(walk);};walk(root);return nodeMap;
@@ -53,8 +55,8 @@ export function createSourceRegister({config, saveNote}) {
     const start=page*pageSize, current=found.slice(start,start+pageSize);
     $('registry-count').textContent=found.length?`${start+1}–${Math.min(start+pageSize,found.length)} av ${found.length.toLocaleString('sv-SE')} poster`:'Inga träffar';
     $('registry-rows').innerHTML=current.map(r=>{
-      const b=binding(r), noteKey=r.noteKey||'xml:'+r.key;
-      return `<tr><td><button class="source-open" data-source="${r.key}">${esc(r.name)}</button>${r.comment?`<div class="muted">${esc(r.comment)}</div>`:''}</td><td>${esc(index.meta.categories.find(c=>c.key===r.category)?.label)}</td><td>${esc(r.system || r.element)}${r.context?`<div class="muted source-context">${esc(r.context)}</div>`:''}</td><td><span class="source-badge ${b?'connected':''}">${b?'Inkopplad i provprofil':'Importerad'}</span>${config.notes[noteKey]?'<div class="muted">Anteckning finns</div>':''}</td><td><button data-source="${r.key}" aria-label="Visa detaljer för ${esc(r.name)}">Visa →</button></td></tr>`;
+      const b=binding(r), noteKey=r.noteKey||'xml:'+r.key, op=operational(r);
+      return `<tr><td><button class="source-open" data-source="${r.key}">${esc(r.name)}</button>${r.comment?`<div class="muted">${esc(r.comment)}</div>`:''}</td><td>${esc(index.meta.categories.find(c=>c.key===r.category)?.label)}</td><td>${esc(r.system || r.element)}${r.context?`<div class="muted source-context">${esc(r.context)}</div>`:''}</td><td><span class="source-badge ${b?'connected':''}">${b?'Inkopplad i provprofil':'Importerad'}</span>${op?`<div class="source-operational">${esc(migrationLabels[op.status])}</div>`:''}${config.notes[noteKey]?'<div class="muted">Anteckning finns</div>':''}</td><td><button data-source="${r.key}" aria-label="Visa detaljer för ${esc(r.name)}">Visa →</button></td></tr>`;
     }).join('');
     $('registry-prev').disabled=page===0; $('registry-next').disabled=start+pageSize>=found.length;
     $('registry-page').textContent=`Sida ${page+1} av ${Math.max(1,Math.ceil(found.length/pageSize))}`;
@@ -70,6 +72,7 @@ export function createSourceRegister({config, saveNote}) {
       const node=nodeMap.get(record.path), b=binding(record);
       const holder=$('source-detail-body'); holder.replaceChildren();
       const statusText=document.createElement('p');statusText.className='muted';statusText.textContent=b?`Inkopplad i provprofil · ${b.source||'provadress '+b.address}. Källuppgifterna nedan är bevarade separat.`:'Importerad källinformation. Dessa JMRI-inställningar och regler körs inte automatiskt av TKL-kärnan.';holder.append(statusText);
+      const op=operational(record);if(op){const text=document.createElement('p');text.className='source-operational';text.textContent=migrationLabels[op.status]+' · '+op.behavior;holder.append(text);}
       if(record.context) { const context=document.createElement('p');context.className='muted';context.textContent=record.context;holder.append(context); }
       holder.append(treeView(node));
       if(record.refs?.length) {
@@ -86,10 +89,13 @@ export function createSourceRegister({config, saveNote}) {
   function initialize() {
     $('admin-view').innerHTML=`<div class="toolbar"><div><span class="eyebrow">CHARLOTTENDALS KÄLLUNDERLAG</span><h1>Anläggningsregister</h1></div><a class="source-download" href="/data/source/Cda60.xml" download="Cda60.xml">Hämta original-XML ↓</a></div>
       <div class="source-overview"><div><strong>Hela XML-filen bevarad</strong><p id="source-counts"></p></div><div><strong>${config.routes.length} provtågvägar i drift</strong><p>Importerade regler är tillgängliga att granska. De är inte automatiskt inkopplade.</p></div></div>
-      <div class="source-filters"><label>Visa <select id="registry-category"><option value="">Alla kategorier</option><option value="_addresses">Adressmappning (${index.meta.categories.filter(c=>['turnouts','sensors'].includes(c.key)).reduce((n,c)=>n+c.count,0)})</option>${index.meta.categories.map(c=>`<option value="${c.key}">${esc(c.label)} (${c.count})</option>`).join('')}</select></label><label class="source-search">Sök i alla källfält<input id="search" type="search" placeholder="Namn, adress, regel, värde…"></label><label>Funktion <select id="registry-status"><option value="all">Alla</option><option value="connected">Inkopplad i provprofil</option><option value="imported">Endast importerad</option><option value="noted">Med egen anteckning</option></select></label><button id="source-all">Sök i hela XML-filen</button><button id="source-export-notes">Exportera anteckningar</button></div>
+      <details class="source-migration card"><summary>Införandestatus för alla regelgrupper</summary><p class="muted">Varje källregel har en uttrycklig status. Att ett objekt är importerat betyder inte att dess funktion är körklar.</p><div id="migration-groups"></div><p id="migration-limitations" class="muted"></p></details><div class="source-filters"><label>Visa <select id="registry-category"><option value="">Alla kategorier</option><option value="_addresses">Adressmappning (${index.meta.categories.filter(c=>['turnouts','sensors'].includes(c.key)).reduce((n,c)=>n+c.count,0)})</option>${index.meta.categories.map(c=>`<option value="${c.key}">${esc(c.label)} (${c.count})</option>`).join('')}</select></label><label class="source-search">Sök i alla källfält<input id="search" type="search" placeholder="Namn, adress, regel, värde…"></label><label>Funktion <select id="registry-status"><option value="all">Alla</option><option value="connected">Inkopplad i provprofil</option><option value="imported">Endast importerad</option><option value="noted">Med egen anteckning</option></select></label><button id="source-all">Sök i hela XML-filen</button><button id="source-export-notes">Exportera anteckningar</button></div>
       <section class="card"><div class="card-heading"><h2 id="registry-count"></h2><span class="muted">Välj ett objekt för samtliga källfält</span></div><div class="table-wrap"><table><thead><tr><th>Objekt</th><th>Kategori</th><th>Källidentitet</th><th>Status</th><th></th></tr></thead><tbody id="registry-rows"></tbody></table></div><div class="source-pagination"><button id="registry-prev">← Föregående</button><span id="registry-page"></span><button id="registry-next">Nästa →</button></div></section>
       <section id="source-detail" class="card source-detail" hidden><div class="card-heading"><h2 id="source-detail-heading"></h2><button id="source-close">Stäng detaljer</button></div><div id="source-detail-body"></div><p id="source-path" class="source-path"></p><button id="source-xml-button">Visa XML för objektet</button><pre id="source-xml" hidden></pre><div class="source-note"><label for="source-note">Egen anteckning</label><textarea id="source-note" maxlength="4000" rows="3"></textarea><button id="source-save">Spara anteckning</button><span id="source-note-status" role="status"></span></div></section>
       <details class="source-audit"><summary>Importkontroll och källfil</summary><p>Originalfilen kan hämtas oförändrad. Alla element, attribut, texter och ordningen i dokumentträdet är bevarade. Filens ursprungliga formatering, XML-deklaration och namnrymder finns i originalet.</p><p id="source-hash"></p><div id="source-sections"></div><p>Registerposter kan överlappa: exempelvis visas en signalrelation både i signalmastlogiken och som egen post. Avsnittet Inställningar och historik ger tillgång till hela dokumentträdet, inklusive managerinställningar.</p></details>`;
+    $('migration-groups').innerHTML=(migration?.groups||[]).map(g=>`<div class="migration-row"><button data-group="${esc(g.id)}">${esc(g.name)}</button><span>${esc(migrationLabels[g.status])} · ${g.rules.length} ${g.rules.length===1?'regel':'regler'}</span><p>${esc(g.behavior)}</p></div>`).join('');
+    $('migration-limitations').textContent=migration?.limitations.join(' ')||'';
+    $('migration-groups').onclick=e=>{const id=e.target.closest('button')?.dataset.group;if(id){const record=index.records.find(r=>r.system===id);if(record)showRecord(record);}};
     $('source-counts').textContent=`${index.meta.sectionCount} avsnitt · ${index.meta.nodeCount.toLocaleString('sv-SE')} XML-noder · ${index.meta.attributeCount.toLocaleString('sv-SE')} attribut`;
     $('source-hash').textContent=`${index.meta.file} · ${index.meta.bytes.toLocaleString('sv-SE')} byte · SHA-256 ${index.meta.sha256}`;
     $('source-sections').innerHTML=index.meta.sections.map(s=>`<button class="source-section" data-section="${esc(s.path)}">${esc(s.tag)} · ${s.children} poster</button>`).join('');
@@ -112,7 +118,7 @@ export function createSourceRegister({config, saveNote}) {
     render();
   }
   async function open(kind, name) {
-    ready ||= fetch('/data/source/index.json').then(check).then(data=>{index=data;initialize();}).catch(e=>{ready=null;document.getElementById('admin-view').textContent=e.message;throw e;});
+    ready ||= Promise.all([fetch('/data/source/index.json').then(check),fetch('/data/migration.json').then(check)]).then(([data,status])=>{index=data;migration=status;initialize();}).catch(e=>{ready=null;document.getElementById('admin-view').textContent=e.message;throw e;});
     await ready;
     if(kind){category=kind;query='';status='all';page=0;$('search').value='';$('registry-status').value='all';render();if(name){const record=index.records.find(r=>r.category===kind&&r.name===name);if(record)await showRecord(record);}}
   }

@@ -1,9 +1,10 @@
 {
   "sourceHash": "c69a865ae9a85cdb842d70c34d2573dde4b11c50f601a561d5b941136ac6fa87",
-  "allowedRules": 210,
+  "allowedRules": 355,
   "routes": [
     {
       "id": "htvAu--htvSpIA",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpIA",
       "label": "Au → Spår 1c",
@@ -27,6 +28,7 @@
     },
     {
       "id": "htvAu--htvSpIIA",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpIIA",
       "label": "Au → Spår 2c",
@@ -50,6 +52,7 @@
     },
     {
       "id": "htvAu--htvSpIIIA",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpIIIA",
       "label": "Au → Spår 11",
@@ -73,6 +76,7 @@
     },
     {
       "id": "htvAu--htvSpIVA",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpIVA",
       "label": "Au → Spår 12",
@@ -96,6 +100,7 @@
     },
     {
       "id": "htvAu--htvSpVA",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpVA",
       "label": "Au → Spår 13",
@@ -119,6 +124,7 @@
     },
     {
       "id": "htvAu--htvSpIB",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpIB",
       "label": "Au → Spår 1b",
@@ -144,6 +150,7 @@
     },
     {
       "id": "htvAu--htvSpIIB",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpIIB",
       "label": "Au → Spår 2b",
@@ -169,6 +176,7 @@
     },
     {
       "id": "htvAu--htvSpIIIB",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpIIIB",
       "label": "Au → Spår 3b",
@@ -194,6 +202,7 @@
     },
     {
       "id": "htvAu--htvSpIVB",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpIVB",
       "label": "Au → Spår 4b",
@@ -219,6 +228,7 @@
     },
     {
       "id": "htvAu--htvSpVB",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpVB",
       "label": "Au → Spår 5b",
@@ -244,6 +254,7 @@
     },
     {
       "id": "htvAu--htvSpIC",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpIC",
       "label": "Au → Spår 1a",
@@ -271,6 +282,7 @@
     },
     {
       "id": "htvAu--htvSpIIC",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvSpIIC",
       "label": "Au → Spår 2a",
@@ -298,6 +310,7 @@
     },
     {
       "id": "htvAu--htvBu",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvBu",
       "label": "Au → Bu",
@@ -327,6 +340,7 @@
     },
     {
       "id": "htvAu--htvBn",
+      "kind": "main",
       "from": "htvAu",
       "to": "htvBn",
       "label": "Au → Bn",
@@ -356,6 +370,7 @@
     },
     {
       "id": "htvAn--htvSpIIA",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpIIA",
       "label": "An → Spår 2c",
@@ -379,6 +394,7 @@
     },
     {
       "id": "htvAn--htvSpIIIA",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpIIIA",
       "label": "An → Spår 11",
@@ -402,6 +418,7 @@
     },
     {
       "id": "htvAn--htvSpIVA",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpIVA",
       "label": "An → Spår 12",
@@ -425,6 +442,7 @@
     },
     {
       "id": "htvAn--htvSpVA",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpVA",
       "label": "An → Spår 13",
@@ -448,6 +466,7 @@
     },
     {
       "id": "htvAn--htvSpIB",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpIB",
       "label": "An → Spår 1b",
@@ -473,6 +492,7 @@
     },
     {
       "id": "htvAn--htvSpIIB",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpIIB",
       "label": "An → Spår 2b",
@@ -498,6 +518,7 @@
     },
     {
       "id": "htvAn--htvSpIIIB",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpIIIB",
       "label": "An → Spår 3b",
@@ -523,6 +544,7 @@
     },
     {
       "id": "htvAn--htvSpIVB",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpIVB",
       "label": "An → Spår 4b",
@@ -548,6 +570,7 @@
     },
     {
       "id": "htvAn--htvSpVB",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpVB",
       "label": "An → Spår 5b",
@@ -573,6 +596,7 @@
     },
     {
       "id": "htvAn--htvSpIC",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpIC",
       "label": "An → Spår 1a",
@@ -600,6 +624,7 @@
     },
     {
       "id": "htvAn--htvSpIIC",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvSpIIC",
       "label": "An → Spår 2a",
@@ -627,6 +652,7 @@
     },
     {
       "id": "htvAn--htvBu",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvBu",
       "label": "An → Bu",
@@ -656,6 +682,7 @@
     },
     {
       "id": "htvAn--htvBn",
+      "kind": "main",
       "from": "htvAn",
       "to": "htvBn",
       "label": "An → Bn",
@@ -685,6 +712,7 @@
     },
     {
       "id": "htvCu--htvSpIA",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpIA",
       "label": "Cu → Spår 1c",
@@ -708,6 +736,7 @@
     },
     {
       "id": "htvCu--htvSpIIA",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpIIA",
       "label": "Cu → Spår 2c",
@@ -731,6 +760,7 @@
     },
     {
       "id": "htvCu--htvSpIIIA",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpIIIA",
       "label": "Cu → Spår 11",
@@ -754,6 +784,7 @@
     },
     {
       "id": "htvCu--htvSpIVA",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpIVA",
       "label": "Cu → Spår 12",
@@ -777,6 +808,7 @@
     },
     {
       "id": "htvCu--htvSpVA",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpVA",
       "label": "Cu → Spår 13",
@@ -800,6 +832,7 @@
     },
     {
       "id": "htvCu--htvSpIB",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpIB",
       "label": "Cu → Spår 1b",
@@ -825,6 +858,7 @@
     },
     {
       "id": "htvCu--htvSpIIB",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpIIB",
       "label": "Cu → Spår 2b",
@@ -850,6 +884,7 @@
     },
     {
       "id": "htvCu--htvSpIIIB",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpIIIB",
       "label": "Cu → Spår 3b",
@@ -875,6 +910,7 @@
     },
     {
       "id": "htvCu--htvSpIVB",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpIVB",
       "label": "Cu → Spår 4b",
@@ -900,6 +936,7 @@
     },
     {
       "id": "htvCu--htvSpVB",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpVB",
       "label": "Cu → Spår 5b",
@@ -925,6 +962,7 @@
     },
     {
       "id": "htvCu--htvSpIC",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpIC",
       "label": "Cu → Spår 1a",
@@ -952,6 +990,7 @@
     },
     {
       "id": "htvCu--htvSpIIC",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvSpIIC",
       "label": "Cu → Spår 2a",
@@ -979,6 +1018,7 @@
     },
     {
       "id": "htvCu--htvBu",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvBu",
       "label": "Cu → Bu",
@@ -1008,6 +1048,7 @@
     },
     {
       "id": "htvCu--htvBn",
+      "kind": "main",
       "from": "htvCu",
       "to": "htvBn",
       "label": "Cu → Bn",
@@ -1037,6 +1078,7 @@
     },
     {
       "id": "htvCn--htvSpIIA",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpIIA",
       "label": "Cn → Spår 2c",
@@ -1060,6 +1102,7 @@
     },
     {
       "id": "htvCn--htvSpIIIA",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpIIIA",
       "label": "Cn → Spår 11",
@@ -1083,6 +1126,7 @@
     },
     {
       "id": "htvCn--htvSpIVA",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpIVA",
       "label": "Cn → Spår 12",
@@ -1106,6 +1150,7 @@
     },
     {
       "id": "htvCn--htvSpVA",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpVA",
       "label": "Cn → Spår 13",
@@ -1129,6 +1174,7 @@
     },
     {
       "id": "htvCn--htvSpIB",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpIB",
       "label": "Cn → Spår 1b",
@@ -1154,6 +1200,7 @@
     },
     {
       "id": "htvCn--htvSpIIB",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpIIB",
       "label": "Cn → Spår 2b",
@@ -1179,6 +1226,7 @@
     },
     {
       "id": "htvCn--htvSpIIIB",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpIIIB",
       "label": "Cn → Spår 3b",
@@ -1204,6 +1252,7 @@
     },
     {
       "id": "htvCn--htvSpIVB",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpIVB",
       "label": "Cn → Spår 4b",
@@ -1229,6 +1278,7 @@
     },
     {
       "id": "htvCn--htvSpVB",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpVB",
       "label": "Cn → Spår 5b",
@@ -1254,6 +1304,7 @@
     },
     {
       "id": "htvCn--htvSpIC",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpIC",
       "label": "Cn → Spår 1a",
@@ -1281,6 +1332,7 @@
     },
     {
       "id": "htvCn--htvSpIIC",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvSpIIC",
       "label": "Cn → Spår 2a",
@@ -1308,6 +1360,7 @@
     },
     {
       "id": "htvCn--htvBu",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvBu",
       "label": "Cn → Bu",
@@ -1337,6 +1390,7 @@
     },
     {
       "id": "htvCn--htvBn",
+      "kind": "main",
       "from": "htvCn",
       "to": "htvBn",
       "label": "Cn → Bn",
@@ -1366,6 +1420,7 @@
     },
     {
       "id": "htvBu--htvSpIA",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpIA",
       "label": "Bu → Spår 1c",
@@ -1393,6 +1448,7 @@
     },
     {
       "id": "htvBu--htvSpIIA",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpIIA",
       "label": "Bu → Spår 2c",
@@ -1420,6 +1476,7 @@
     },
     {
       "id": "htvBu--htvSpIIIA",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpIIIA",
       "label": "Bu → Spår 11",
@@ -1447,6 +1504,7 @@
     },
     {
       "id": "htvBu--htvSpIVA",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpIVA",
       "label": "Bu → Spår 12",
@@ -1474,6 +1532,7 @@
     },
     {
       "id": "htvBu--htvSpVA",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpVA",
       "label": "Bu → Spår 13",
@@ -1501,6 +1560,7 @@
     },
     {
       "id": "htvBu--htvSpIB",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpIB",
       "label": "Bu → Spår 1b",
@@ -1526,6 +1586,7 @@
     },
     {
       "id": "htvBu--htvSpIIB",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpIIB",
       "label": "Bu → Spår 2b",
@@ -1551,6 +1612,7 @@
     },
     {
       "id": "htvBu--htvSpIIIB",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpIIIB",
       "label": "Bu → Spår 3b",
@@ -1576,6 +1638,7 @@
     },
     {
       "id": "htvBu--htvSpIVB",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpIVB",
       "label": "Bu → Spår 4b",
@@ -1601,6 +1664,7 @@
     },
     {
       "id": "htvBu--htvSpVB",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpVB",
       "label": "Bu → Spår 5b",
@@ -1626,6 +1690,7 @@
     },
     {
       "id": "htvBu--htvSpIC",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpIC",
       "label": "Bu → Spår 1a",
@@ -1649,6 +1714,7 @@
     },
     {
       "id": "htvBu--htvSpIIC",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpIIC",
       "label": "Bu → Spår 2a",
@@ -1672,6 +1738,7 @@
     },
     {
       "id": "htvBu--htvSpX",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvSpX",
       "label": "Bu → Spår 10",
@@ -1695,6 +1762,7 @@
     },
     {
       "id": "htvBu--htvAu",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvAu",
       "label": "Bu → Au",
@@ -1726,6 +1794,7 @@
     },
     {
       "id": "htvBu--htvAn",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvAn",
       "label": "Bu → An",
@@ -1757,6 +1826,7 @@
     },
     {
       "id": "htvBu--htvCu",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvCu",
       "label": "Bu → Cu",
@@ -1788,6 +1858,7 @@
     },
     {
       "id": "htvBu--htvCn",
+      "kind": "main",
       "from": "htvBu",
       "to": "htvCn",
       "label": "Bu → Cn",
@@ -1819,6 +1890,7 @@
     },
     {
       "id": "htvBn--htvSpIA",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpIA",
       "label": "Bn → Spår 1c",
@@ -1846,6 +1918,7 @@
     },
     {
       "id": "htvBn--htvSpIIA",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpIIA",
       "label": "Bn → Spår 2c",
@@ -1873,6 +1946,7 @@
     },
     {
       "id": "htvBn--htvSpIIIA",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpIIIA",
       "label": "Bn → Spår 11",
@@ -1900,6 +1974,7 @@
     },
     {
       "id": "htvBn--htvSpIVA",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpIVA",
       "label": "Bn → Spår 12",
@@ -1927,6 +2002,7 @@
     },
     {
       "id": "htvBn--htvSpVA",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpVA",
       "label": "Bn → Spår 13",
@@ -1954,6 +2030,7 @@
     },
     {
       "id": "htvBn--htvSpIB",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpIB",
       "label": "Bn → Spår 1b",
@@ -1979,6 +2056,7 @@
     },
     {
       "id": "htvBn--htvSpIIB",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpIIB",
       "label": "Bn → Spår 2b",
@@ -2004,6 +2082,7 @@
     },
     {
       "id": "htvBn--htvSpIIIB",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpIIIB",
       "label": "Bn → Spår 3b",
@@ -2029,6 +2108,7 @@
     },
     {
       "id": "htvBn--htvSpIVB",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpIVB",
       "label": "Bn → Spår 4b",
@@ -2054,6 +2134,7 @@
     },
     {
       "id": "htvBn--htvSpVB",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpVB",
       "label": "Bn → Spår 5b",
@@ -2079,6 +2160,7 @@
     },
     {
       "id": "htvBn--htvSpIC",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpIC",
       "label": "Bn → Spår 1a",
@@ -2102,6 +2184,7 @@
     },
     {
       "id": "htvBn--htvSpIIC",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpIIC",
       "label": "Bn → Spår 2a",
@@ -2125,6 +2208,7 @@
     },
     {
       "id": "htvBn--htvSpX",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvSpX",
       "label": "Bn → Spår 10",
@@ -2148,6 +2232,7 @@
     },
     {
       "id": "htvBn--htvAu",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvAu",
       "label": "Bn → Au",
@@ -2179,6 +2264,7 @@
     },
     {
       "id": "htvBn--htvAn",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvAn",
       "label": "Bn → An",
@@ -2210,6 +2296,7 @@
     },
     {
       "id": "htvBn--htvCu",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvCu",
       "label": "Bn → Cu",
@@ -2241,6 +2328,7 @@
     },
     {
       "id": "htvBn--htvCn",
+      "kind": "main",
       "from": "htvBn",
       "to": "htvCn",
       "label": "Bn → Cn",
@@ -2272,6 +2360,7 @@
     },
     {
       "id": "htvSpIA--htvSpIB",
+      "kind": "main",
       "from": "htvSpIA",
       "to": "htvSpIB",
       "label": "Spår 1c → Spår 1b",
@@ -2293,6 +2382,7 @@
     },
     {
       "id": "htvSpIA--htvSpIC",
+      "kind": "main",
       "from": "htvSpIA",
       "to": "htvSpIC",
       "label": "Spår 1c → Spår 1a",
@@ -2316,6 +2406,7 @@
     },
     {
       "id": "htvSpIA--htvSpIIC",
+      "kind": "main",
       "from": "htvSpIA",
       "to": "htvSpIIC",
       "label": "Spår 1c → Spår 2a",
@@ -2339,6 +2430,7 @@
     },
     {
       "id": "htvSpIA--htvAu",
+      "kind": "main",
       "from": "htvSpIA",
       "to": "htvAu",
       "label": "Spår 1c → Au",
@@ -2362,6 +2454,7 @@
     },
     {
       "id": "htvSpIA--htvBn",
+      "kind": "main",
       "from": "htvSpIA",
       "to": "htvBn",
       "label": "Spår 1c → Bn",
@@ -2387,6 +2480,7 @@
     },
     {
       "id": "htvSpIA--htvBu",
+      "kind": "main",
       "from": "htvSpIA",
       "to": "htvBu",
       "label": "Spår 1c → Bu",
@@ -2412,6 +2506,7 @@
     },
     {
       "id": "htvSpIA--htvCu",
+      "kind": "main",
       "from": "htvSpIA",
       "to": "htvCu",
       "label": "Spår 1c → Cu",
@@ -2435,6 +2530,7 @@
     },
     {
       "id": "htvSpIIA--htvSpIB",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvSpIB",
       "label": "Spår 2c → Spår 1b",
@@ -2456,6 +2552,7 @@
     },
     {
       "id": "htvSpIIA--htvSpIIB",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvSpIIB",
       "label": "Spår 2c → Spår 2b",
@@ -2477,6 +2574,7 @@
     },
     {
       "id": "htvSpIIA--htvSpIIIB",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvSpIIIB",
       "label": "Spår 2c → Spår 3b",
@@ -2498,6 +2596,7 @@
     },
     {
       "id": "htvSpIIA--htvSpIVB",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvSpIVB",
       "label": "Spår 2c → Spår 4b",
@@ -2519,6 +2618,7 @@
     },
     {
       "id": "htvSpIIA--htvSpIC",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvSpIC",
       "label": "Spår 2c → Spår 1a",
@@ -2542,6 +2642,7 @@
     },
     {
       "id": "htvSpIIA--htvSpIIC",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvSpIIC",
       "label": "Spår 2c → Spår 2a",
@@ -2565,6 +2666,7 @@
     },
     {
       "id": "htvSpIIA--htvAn",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvAn",
       "label": "Spår 2c → An",
@@ -2588,6 +2690,7 @@
     },
     {
       "id": "htvSpIIA--htvAu",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvAu",
       "label": "Spår 2c → Au",
@@ -2611,6 +2714,7 @@
     },
     {
       "id": "htvSpIIA--htvBn",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvBn",
       "label": "Spår 2c → Bn",
@@ -2636,6 +2740,7 @@
     },
     {
       "id": "htvSpIIA--htvBu",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvBu",
       "label": "Spår 2c → Bu",
@@ -2661,6 +2766,7 @@
     },
     {
       "id": "htvSpIIA--htvCn",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvCn",
       "label": "Spår 2c → Cn",
@@ -2684,6 +2790,7 @@
     },
     {
       "id": "htvSpIIA--htvCu",
+      "kind": "main",
       "from": "htvSpIIA",
       "to": "htvCu",
       "label": "Spår 2c → Cu",
@@ -2707,6 +2814,7 @@
     },
     {
       "id": "htvSpIIIA--htvSpVB",
+      "kind": "main",
       "from": "htvSpIIIA",
       "to": "htvSpVB",
       "label": "Spår 11 → Spår 5b",
@@ -2728,6 +2836,7 @@
     },
     {
       "id": "htvSpIIIA--htvAn",
+      "kind": "main",
       "from": "htvSpIIIA",
       "to": "htvAn",
       "label": "Spår 11 → An",
@@ -2751,6 +2860,7 @@
     },
     {
       "id": "htvSpIIIA--htvAu",
+      "kind": "main",
       "from": "htvSpIIIA",
       "to": "htvAu",
       "label": "Spår 11 → Au",
@@ -2774,6 +2884,7 @@
     },
     {
       "id": "htvSpIIIA--htvBn",
+      "kind": "main",
       "from": "htvSpIIIA",
       "to": "htvBn",
       "label": "Spår 11 → Bn",
@@ -2799,6 +2910,7 @@
     },
     {
       "id": "htvSpIIIA--htvBu",
+      "kind": "main",
       "from": "htvSpIIIA",
       "to": "htvBu",
       "label": "Spår 11 → Bu",
@@ -2824,6 +2936,7 @@
     },
     {
       "id": "htvSpIIIA--htvCn",
+      "kind": "main",
       "from": "htvSpIIIA",
       "to": "htvCn",
       "label": "Spår 11 → Cn",
@@ -2847,6 +2960,7 @@
     },
     {
       "id": "htvSpIIIA--htvCu",
+      "kind": "main",
       "from": "htvSpIIIA",
       "to": "htvCu",
       "label": "Spår 11 → Cu",
@@ -2870,6 +2984,7 @@
     },
     {
       "id": "htvSpIVA--htvSpVB",
+      "kind": "main",
       "from": "htvSpIVA",
       "to": "htvSpVB",
       "label": "Spår 12 → Spår 5b",
@@ -2891,6 +3006,7 @@
     },
     {
       "id": "htvSpIVA--htvAn",
+      "kind": "main",
       "from": "htvSpIVA",
       "to": "htvAn",
       "label": "Spår 12 → An",
@@ -2914,6 +3030,7 @@
     },
     {
       "id": "htvSpIVA--htvAu",
+      "kind": "main",
       "from": "htvSpIVA",
       "to": "htvAu",
       "label": "Spår 12 → Au",
@@ -2937,6 +3054,7 @@
     },
     {
       "id": "htvSpIVA--htvBn",
+      "kind": "main",
       "from": "htvSpIVA",
       "to": "htvBn",
       "label": "Spår 12 → Bn",
@@ -2962,6 +3080,7 @@
     },
     {
       "id": "htvSpIVA--htvBu",
+      "kind": "main",
       "from": "htvSpIVA",
       "to": "htvBu",
       "label": "Spår 12 → Bu",
@@ -2987,6 +3106,7 @@
     },
     {
       "id": "htvSpIVA--htvCn",
+      "kind": "main",
       "from": "htvSpIVA",
       "to": "htvCn",
       "label": "Spår 12 → Cn",
@@ -3010,6 +3130,7 @@
     },
     {
       "id": "htvSpIVA--htvCu",
+      "kind": "main",
       "from": "htvSpIVA",
       "to": "htvCu",
       "label": "Spår 12 → Cu",
@@ -3033,6 +3154,7 @@
     },
     {
       "id": "htvSpVA--htvSpVB",
+      "kind": "main",
       "from": "htvSpVA",
       "to": "htvSpVB",
       "label": "Spår 13 → Spår 5b",
@@ -3054,6 +3176,7 @@
     },
     {
       "id": "htvSpVA--htvAn",
+      "kind": "main",
       "from": "htvSpVA",
       "to": "htvAn",
       "label": "Spår 13 → An",
@@ -3077,6 +3200,7 @@
     },
     {
       "id": "htvSpVA--htvAu",
+      "kind": "main",
       "from": "htvSpVA",
       "to": "htvAu",
       "label": "Spår 13 → Au",
@@ -3100,6 +3224,7 @@
     },
     {
       "id": "htvSpVA--htvBn",
+      "kind": "main",
       "from": "htvSpVA",
       "to": "htvBn",
       "label": "Spår 13 → Bn",
@@ -3125,6 +3250,7 @@
     },
     {
       "id": "htvSpVA--htvBu",
+      "kind": "main",
       "from": "htvSpVA",
       "to": "htvBu",
       "label": "Spår 13 → Bu",
@@ -3150,6 +3276,7 @@
     },
     {
       "id": "htvSpVA--htvCn",
+      "kind": "main",
       "from": "htvSpVA",
       "to": "htvCn",
       "label": "Spår 13 → Cn",
@@ -3173,6 +3300,7 @@
     },
     {
       "id": "htvSpVA--htvCu",
+      "kind": "main",
       "from": "htvSpVA",
       "to": "htvCu",
       "label": "Spår 13 → Cu",
@@ -3196,6 +3324,7 @@
     },
     {
       "id": "htvSpIB--htvSpIA",
+      "kind": "main",
       "from": "htvSpIB",
       "to": "htvSpIA",
       "label": "Spår 1b → Spår 1c",
@@ -3217,6 +3346,7 @@
     },
     {
       "id": "htvSpIB--htvSpIIA",
+      "kind": "main",
       "from": "htvSpIB",
       "to": "htvSpIIA",
       "label": "Spår 1b → Spår 2c",
@@ -3238,6 +3368,7 @@
     },
     {
       "id": "htvSpIB--htvSpIC",
+      "kind": "main",
       "from": "htvSpIB",
       "to": "htvSpIC",
       "label": "Spår 1b → Spår 1a",
@@ -3259,6 +3390,7 @@
     },
     {
       "id": "htvSpIB--htvSpIIC",
+      "kind": "main",
       "from": "htvSpIB",
       "to": "htvSpIIC",
       "label": "Spår 1b → Spår 2a",
@@ -3280,6 +3412,7 @@
     },
     {
       "id": "htvSpIB--htvAn",
+      "kind": "main",
       "from": "htvSpIB",
       "to": "htvAn",
       "label": "Spår 1b → An",
@@ -3305,6 +3438,7 @@
     },
     {
       "id": "htvSpIB--htvAu",
+      "kind": "main",
       "from": "htvSpIB",
       "to": "htvAu",
       "label": "Spår 1b → Au",
@@ -3330,6 +3464,7 @@
     },
     {
       "id": "htvSpIB--htvBn",
+      "kind": "main",
       "from": "htvSpIB",
       "to": "htvBn",
       "label": "Spår 1b → Bn",
@@ -3353,6 +3488,7 @@
     },
     {
       "id": "htvSpIB--htvBu",
+      "kind": "main",
       "from": "htvSpIB",
       "to": "htvBu",
       "label": "Spår 1b → Bu",
@@ -3376,6 +3512,7 @@
     },
     {
       "id": "htvSpIB--htvCn",
+      "kind": "main",
       "from": "htvSpIB",
       "to": "htvCn",
       "label": "Spår 1b → Cn",
@@ -3401,6 +3538,7 @@
     },
     {
       "id": "htvSpIB--htvCu",
+      "kind": "main",
       "from": "htvSpIB",
       "to": "htvCu",
       "label": "Spår 1b → Cu",
@@ -3426,6 +3564,7 @@
     },
     {
       "id": "htvSpIIB--htvSpIIA",
+      "kind": "main",
       "from": "htvSpIIB",
       "to": "htvSpIIA",
       "label": "Spår 2b → Spår 2c",
@@ -3447,6 +3586,7 @@
     },
     {
       "id": "htvSpIIB--htvSpIC",
+      "kind": "main",
       "from": "htvSpIIB",
       "to": "htvSpIC",
       "label": "Spår 2b → Spår 1a",
@@ -3468,6 +3608,7 @@
     },
     {
       "id": "htvSpIIB--htvSpIIC",
+      "kind": "main",
       "from": "htvSpIIB",
       "to": "htvSpIIC",
       "label": "Spår 2b → Spår 2a",
@@ -3489,6 +3630,7 @@
     },
     {
       "id": "htvSpIIB--htvAn",
+      "kind": "main",
       "from": "htvSpIIB",
       "to": "htvAn",
       "label": "Spår 2b → An",
@@ -3514,6 +3656,7 @@
     },
     {
       "id": "htvSpIIB--htvAu",
+      "kind": "main",
       "from": "htvSpIIB",
       "to": "htvAu",
       "label": "Spår 2b → Au",
@@ -3539,6 +3682,7 @@
     },
     {
       "id": "htvSpIIB--htvBn",
+      "kind": "main",
       "from": "htvSpIIB",
       "to": "htvBn",
       "label": "Spår 2b → Bn",
@@ -3562,6 +3706,7 @@
     },
     {
       "id": "htvSpIIB--htvBu",
+      "kind": "main",
       "from": "htvSpIIB",
       "to": "htvBu",
       "label": "Spår 2b → Bu",
@@ -3585,6 +3730,7 @@
     },
     {
       "id": "htvSpIIB--htvCn",
+      "kind": "main",
       "from": "htvSpIIB",
       "to": "htvCn",
       "label": "Spår 2b → Cn",
@@ -3610,6 +3756,7 @@
     },
     {
       "id": "htvSpIIB--htvCu",
+      "kind": "main",
       "from": "htvSpIIB",
       "to": "htvCu",
       "label": "Spår 2b → Cu",
@@ -3635,6 +3782,7 @@
     },
     {
       "id": "htvSpIIIB--htvSpIIA",
+      "kind": "main",
       "from": "htvSpIIIB",
       "to": "htvSpIIA",
       "label": "Spår 3b → Spår 2c",
@@ -3656,6 +3804,7 @@
     },
     {
       "id": "htvSpIIIB--htvAn",
+      "kind": "main",
       "from": "htvSpIIIB",
       "to": "htvAn",
       "label": "Spår 3b → An",
@@ -3681,6 +3830,7 @@
     },
     {
       "id": "htvSpIIIB--htvAu",
+      "kind": "main",
       "from": "htvSpIIIB",
       "to": "htvAu",
       "label": "Spår 3b → Au",
@@ -3706,6 +3856,7 @@
     },
     {
       "id": "htvSpIIIB--htvBn",
+      "kind": "main",
       "from": "htvSpIIIB",
       "to": "htvBn",
       "label": "Spår 3b → Bn",
@@ -3729,6 +3880,7 @@
     },
     {
       "id": "htvSpIIIB--htvBu",
+      "kind": "main",
       "from": "htvSpIIIB",
       "to": "htvBu",
       "label": "Spår 3b → Bu",
@@ -3752,6 +3904,7 @@
     },
     {
       "id": "htvSpIIIB--htvCn",
+      "kind": "main",
       "from": "htvSpIIIB",
       "to": "htvCn",
       "label": "Spår 3b → Cn",
@@ -3777,6 +3930,7 @@
     },
     {
       "id": "htvSpIIIB--htvCu",
+      "kind": "main",
       "from": "htvSpIIIB",
       "to": "htvCu",
       "label": "Spår 3b → Cu",
@@ -3802,6 +3956,7 @@
     },
     {
       "id": "htvSpIVB--htvSpIIA",
+      "kind": "main",
       "from": "htvSpIVB",
       "to": "htvSpIIA",
       "label": "Spår 4b → Spår 2c",
@@ -3823,6 +3978,7 @@
     },
     {
       "id": "htvSpIVB--htvAn",
+      "kind": "main",
       "from": "htvSpIVB",
       "to": "htvAn",
       "label": "Spår 4b → An",
@@ -3848,6 +4004,7 @@
     },
     {
       "id": "htvSpIVB--htvAu",
+      "kind": "main",
       "from": "htvSpIVB",
       "to": "htvAu",
       "label": "Spår 4b → Au",
@@ -3873,6 +4030,7 @@
     },
     {
       "id": "htvSpIVB--htvBn",
+      "kind": "main",
       "from": "htvSpIVB",
       "to": "htvBn",
       "label": "Spår 4b → Bn",
@@ -3896,6 +4054,7 @@
     },
     {
       "id": "htvSpIVB--htvBu",
+      "kind": "main",
       "from": "htvSpIVB",
       "to": "htvBu",
       "label": "Spår 4b → Bu",
@@ -3919,6 +4078,7 @@
     },
     {
       "id": "htvSpIVB--htvCn",
+      "kind": "main",
       "from": "htvSpIVB",
       "to": "htvCn",
       "label": "Spår 4b → Cn",
@@ -3944,6 +4104,7 @@
     },
     {
       "id": "htvSpIVB--htvCu",
+      "kind": "main",
       "from": "htvSpIVB",
       "to": "htvCu",
       "label": "Spår 4b → Cu",
@@ -3969,6 +4130,7 @@
     },
     {
       "id": "htvSpVB--htvSpIIIA",
+      "kind": "main",
       "from": "htvSpVB",
       "to": "htvSpIIIA",
       "label": "Spår 5b → Spår 11",
@@ -3990,6 +4152,7 @@
     },
     {
       "id": "htvSpVB--htvSpIVA",
+      "kind": "main",
       "from": "htvSpVB",
       "to": "htvSpIVA",
       "label": "Spår 5b → Spår 12",
@@ -4011,6 +4174,7 @@
     },
     {
       "id": "htvSpVB--htvSpVA",
+      "kind": "main",
       "from": "htvSpVB",
       "to": "htvSpVA",
       "label": "Spår 5b → Spår 13",
@@ -4032,6 +4196,7 @@
     },
     {
       "id": "htvSpVB--htvAn",
+      "kind": "main",
       "from": "htvSpVB",
       "to": "htvAn",
       "label": "Spår 5b → An",
@@ -4057,6 +4222,7 @@
     },
     {
       "id": "htvSpVB--htvAu",
+      "kind": "main",
       "from": "htvSpVB",
       "to": "htvAu",
       "label": "Spår 5b → Au",
@@ -4082,6 +4248,7 @@
     },
     {
       "id": "htvSpVB--htvBn",
+      "kind": "main",
       "from": "htvSpVB",
       "to": "htvBn",
       "label": "Spår 5b → Bn",
@@ -4105,6 +4272,7 @@
     },
     {
       "id": "htvSpVB--htvBu",
+      "kind": "main",
       "from": "htvSpVB",
       "to": "htvBu",
       "label": "Spår 5b → Bu",
@@ -4128,6 +4296,7 @@
     },
     {
       "id": "htvSpVB--htvCn",
+      "kind": "main",
       "from": "htvSpVB",
       "to": "htvCn",
       "label": "Spår 5b → Cn",
@@ -4153,6 +4322,7 @@
     },
     {
       "id": "htvSpVB--htvCu",
+      "kind": "main",
       "from": "htvSpVB",
       "to": "htvCu",
       "label": "Spår 5b → Cu",
@@ -4178,6 +4348,7 @@
     },
     {
       "id": "htvSpIC--htvSpIA",
+      "kind": "main",
       "from": "htvSpIC",
       "to": "htvSpIA",
       "label": "Spår 1a → Spår 1c",
@@ -4201,6 +4372,7 @@
     },
     {
       "id": "htvSpIC--htvSpIIA",
+      "kind": "main",
       "from": "htvSpIC",
       "to": "htvSpIIA",
       "label": "Spår 1a → Spår 2c",
@@ -4224,6 +4396,7 @@
     },
     {
       "id": "htvSpIC--htvSpIB",
+      "kind": "main",
       "from": "htvSpIC",
       "to": "htvSpIB",
       "label": "Spår 1a → Spår 1b",
@@ -4245,6 +4418,7 @@
     },
     {
       "id": "htvSpIC--htvSpIIB",
+      "kind": "main",
       "from": "htvSpIC",
       "to": "htvSpIIB",
       "label": "Spår 1a → Spår 2b",
@@ -4266,6 +4440,7 @@
     },
     {
       "id": "htvSpIC--htvAn",
+      "kind": "main",
       "from": "htvSpIC",
       "to": "htvAn",
       "label": "Spår 1a → An",
@@ -4293,6 +4468,7 @@
     },
     {
       "id": "htvSpIC--htvAu",
+      "kind": "main",
       "from": "htvSpIC",
       "to": "htvAu",
       "label": "Spår 1a → Au",
@@ -4320,6 +4496,7 @@
     },
     {
       "id": "htvSpIC--htvBn",
+      "kind": "main",
       "from": "htvSpIC",
       "to": "htvBn",
       "label": "Spår 1a → Bn",
@@ -4341,6 +4518,7 @@
     },
     {
       "id": "htvSpIC--htvBu",
+      "kind": "main",
       "from": "htvSpIC",
       "to": "htvBu",
       "label": "Spår 1a → Bu",
@@ -4362,6 +4540,7 @@
     },
     {
       "id": "htvSpIC--htvCn",
+      "kind": "main",
       "from": "htvSpIC",
       "to": "htvCn",
       "label": "Spår 1a → Cn",
@@ -4389,6 +4568,7 @@
     },
     {
       "id": "htvSpIC--htvCu",
+      "kind": "main",
       "from": "htvSpIC",
       "to": "htvCu",
       "label": "Spår 1a → Cu",
@@ -4420,6 +4600,7 @@
     },
     {
       "id": "htvSpIIC--htvSpIA",
+      "kind": "main",
       "from": "htvSpIIC",
       "to": "htvSpIA",
       "label": "Spår 2a → Spår 1c",
@@ -4443,6 +4624,7 @@
     },
     {
       "id": "htvSpIIC--htvSpIIA",
+      "kind": "main",
       "from": "htvSpIIC",
       "to": "htvSpIIA",
       "label": "Spår 2a → Spår 2c",
@@ -4466,6 +4648,7 @@
     },
     {
       "id": "htvSpIIC--htvSpIB",
+      "kind": "main",
       "from": "htvSpIIC",
       "to": "htvSpIB",
       "label": "Spår 2a → Spår 1b",
@@ -4487,6 +4670,7 @@
     },
     {
       "id": "htvSpIIC--htvSpIIB",
+      "kind": "main",
       "from": "htvSpIIC",
       "to": "htvSpIIB",
       "label": "Spår 2a → Spår 2b",
@@ -4508,6 +4692,7 @@
     },
     {
       "id": "htvSpIIC--htvAn",
+      "kind": "main",
       "from": "htvSpIIC",
       "to": "htvAn",
       "label": "Spår 2a → An",
@@ -4535,6 +4720,7 @@
     },
     {
       "id": "htvSpIIC--htvAu",
+      "kind": "main",
       "from": "htvSpIIC",
       "to": "htvAu",
       "label": "Spår 2a → Au",
@@ -4562,6 +4748,7 @@
     },
     {
       "id": "htvSpIIC--htvBn",
+      "kind": "main",
       "from": "htvSpIIC",
       "to": "htvBn",
       "label": "Spår 2a → Bn",
@@ -4583,6 +4770,7 @@
     },
     {
       "id": "htvSpIIC--htvBu",
+      "kind": "main",
       "from": "htvSpIIC",
       "to": "htvBu",
       "label": "Spår 2a → Bu",
@@ -4604,6 +4792,7 @@
     },
     {
       "id": "htvSpIIC--htvCn",
+      "kind": "main",
       "from": "htvSpIIC",
       "to": "htvCn",
       "label": "Spår 2a → Cn",
@@ -4631,6 +4820,7 @@
     },
     {
       "id": "htvSpIIC--htvCu",
+      "kind": "main",
       "from": "htvSpIIC",
       "to": "htvCu",
       "label": "Spår 2a → Cu",
@@ -4658,6 +4848,7 @@
     },
     {
       "id": "htvSpX--htvBn",
+      "kind": "main",
       "from": "htvSpX",
       "to": "htvBn",
       "label": "Spår 10 → Bn",
@@ -4679,6 +4870,7 @@
     },
     {
       "id": "htvSpX--htvBu",
+      "kind": "main",
       "from": "htvSpX",
       "to": "htvBu",
       "label": "Spår 10 → Bu",
@@ -4696,6 +4888,1362 @@
       ],
       "nxIds": [
         "IN:915d1120-9a5f-4302-8ca8-acdb62708add"
+      ]
+    },
+    {
+      "id": "tvv3/6--tvv3/8",
+      "kind": "shunt",
+      "from": "tvv3/6",
+      "to": "tvv3/8",
+      "label": "3/6 → 3/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C1"
+        ],
+        "nxButtons": [
+          "tvs3/6",
+          "tvs3/8"
+        ]
+      },
+      "signals": [
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:c8e0a325-eec5-4ce7-803b-90d7514b12bf"
+      ]
+    },
+    {
+      "id": "tvv3/6--tvv4/8",
+      "kind": "shunt",
+      "from": "tvv3/6",
+      "to": "tvv4/8",
+      "label": "3/6 → 4/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C2"
+        ],
+        "nxButtons": [
+          "tvs3/6",
+          "tvs4/8"
+        ]
+      },
+      "signals": [
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:28420481-c3c3-4304-9a12-f02b5295b7aa"
+      ]
+    },
+    {
+      "id": "tvv3/6--tvv5/8",
+      "kind": "shunt",
+      "from": "tvv3/6",
+      "to": "tvv5/8",
+      "label": "3/6 → 5/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C3"
+        ],
+        "nxButtons": [
+          "tvs3/6",
+          "tvs5/8"
+        ]
+      },
+      "signals": [
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf"
+      ]
+    },
+    {
+      "id": "tvv3/6--tvv6/6",
+      "kind": "shunt",
+      "from": "tvv3/6",
+      "to": "tvv6/6",
+      "label": "3/6 → 6/6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C4"
+        ],
+        "nxButtons": [
+          "tvs3/6",
+          "tvs6/6"
+        ]
+      },
+      "signals": [
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b"
+      ]
+    },
+    {
+      "id": "tvv5/9--tvv3/11",
+      "kind": "shunt",
+      "from": "tvv5/9",
+      "to": "tvv3/11",
+      "label": "5/9 → 3/11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C5"
+        ],
+        "nxButtons": [
+          "tvs5/9",
+          "tvs3/11"
+        ]
+      },
+      "signals": [
+        "5/9"
+      ],
+      "nxIds": [
+        "IN:c718d9b8-d667-40bf-9279-26a6110d33be"
+      ]
+    },
+    {
+      "id": "tvv3/11--tvvN1",
+      "kind": "shunt",
+      "from": "tvv3/11",
+      "to": "tvvN1",
+      "label": "3/11 → N1",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C19"
+        ],
+        "nxButtons": [
+          "tvs3/11",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167"
+      ]
+    },
+    {
+      "id": "tvv3/11--tvvIIIdo",
+      "kind": "shunt",
+      "from": "tvv3/11",
+      "to": "tvvIIIdo",
+      "label": "3/11 → IIIdo",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C20"
+        ],
+        "nxButtons": [
+          "tvs3/11",
+          "tvsIIIdo"
+        ]
+      },
+      "signals": [
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:b7da8647-7366-4a3a-b2e1-5e60acc04527"
+      ]
+    },
+    {
+      "id": "tvv3/11--tvvU1",
+      "kind": "shunt",
+      "from": "tvv3/11",
+      "to": "tvvU1",
+      "label": "3/11 → U1",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C21"
+        ],
+        "nxButtons": [
+          "tvs3/11",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+      ]
+    },
+    {
+      "id": "tvv3/10--tvvIIIev",
+      "kind": "shunt",
+      "from": "tvv3/10",
+      "to": "tvvIIIev",
+      "label": "3/10 → IIIev",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C24"
+        ],
+        "nxButtons": [
+          "tvs3/10",
+          "tvsIIIev"
+        ]
+      },
+      "signals": [
+        "3/10"
+      ],
+      "nxIds": [
+        "IN:8be10a2c-1459-4b9d-9437-49d4a1e30a63"
+      ]
+    },
+    {
+      "id": "tvv3/9--tvv3/11",
+      "kind": "shunt",
+      "from": "tvv3/9",
+      "to": "tvv3/11",
+      "label": "3/9 → 3/11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C28"
+        ],
+        "nxButtons": [
+          "tvs3/9",
+          "tvs3/11"
+        ]
+      },
+      "signals": [
+        "3/9"
+      ],
+      "nxIds": [
+        "IN:c86e61af-d30f-4034-8c84-234f9d601f62"
+      ]
+    },
+    {
+      "id": "tvv3/5--tvv6/7",
+      "kind": "shunt",
+      "from": "tvv3/5",
+      "to": "tvv6/7",
+      "label": "3/5 → 6/7",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C31"
+        ],
+        "nxButtons": [
+          "tvs3/5",
+          "tvs6/7"
+        ]
+      },
+      "signals": [
+        "3/5"
+      ],
+      "nxIds": [
+        "IN:ef097bcf-7770-4019-a1d7-60731f8b254a"
+      ]
+    },
+    {
+      "id": "tvv3/5--tvv5/9",
+      "kind": "shunt",
+      "from": "tvv3/5",
+      "to": "tvv5/9",
+      "label": "3/5 → 5/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C32"
+        ],
+        "nxButtons": [
+          "tvs3/5",
+          "tvs5/9"
+        ]
+      },
+      "signals": [
+        "3/5"
+      ],
+      "nxIds": [
+        "IN:8b500613-a031-465d-a3b7-de0b654f22a0"
+      ]
+    },
+    {
+      "id": "tvv1/4--tvv1/6",
+      "kind": "shunt",
+      "from": "tvv1/4",
+      "to": "tvv1/6",
+      "label": "1/4 → 1/6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C39"
+        ],
+        "nxButtons": [
+          "tvs1/4",
+          "tvs1/6"
+        ]
+      },
+      "signals": [
+        "1/4"
+      ],
+      "nxIds": [
+        "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92"
+      ]
+    },
+    {
+      "id": "tvv1/4--tvv3/8",
+      "kind": "shunt",
+      "from": "tvv1/4",
+      "to": "tvv3/8",
+      "label": "1/4 → 3/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C40"
+        ],
+        "nxButtons": [
+          "tvs1/4",
+          "tvs3/8"
+        ]
+      },
+      "signals": [
+        "1/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:c8e0a325-eec5-4ce7-803b-90d7514b12bf"
+      ]
+    },
+    {
+      "id": "tvv1/4--tvv4/8",
+      "kind": "shunt",
+      "from": "tvv1/4",
+      "to": "tvv4/8",
+      "label": "1/4 → 4/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C41"
+        ],
+        "nxButtons": [
+          "tvs1/4",
+          "tvs4/8"
+        ]
+      },
+      "signals": [
+        "1/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:28420481-c3c3-4304-9a12-f02b5295b7aa"
+      ]
+    },
+    {
+      "id": "tvv1/4--tvv5/8",
+      "kind": "shunt",
+      "from": "tvv1/4",
+      "to": "tvv5/8",
+      "label": "1/4 → 5/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C42"
+        ],
+        "nxButtons": [
+          "tvs1/4",
+          "tvs5/8"
+        ]
+      },
+      "signals": [
+        "1/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf"
+      ]
+    },
+    {
+      "id": "tvv4/10--tvvIIIev",
+      "kind": "shunt",
+      "from": "tvv4/10",
+      "to": "tvvIIIev",
+      "label": "4/10 → IIIev",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C49"
+        ],
+        "nxButtons": [
+          "tvs4/10",
+          "tvsIIIev"
+        ]
+      },
+      "signals": [
+        "4/10"
+      ],
+      "nxIds": [
+        "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2"
+      ]
+    },
+    {
+      "id": "tvv2/4--tvv3/6",
+      "kind": "shunt",
+      "from": "tvv2/4",
+      "to": "tvv3/6",
+      "label": "2/4 → 3/6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C62"
+        ],
+        "nxButtons": [
+          "tvs2/4",
+          "tvs3/6"
+        ]
+      },
+      "signals": [
+        "2/4"
+      ],
+      "nxIds": [
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325"
+      ]
+    },
+    {
+      "id": "tvv2/4--tvvXv",
+      "kind": "shunt",
+      "from": "tvv2/4",
+      "to": "tvvXv",
+      "label": "2/4 → Xv",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C63"
+        ],
+        "nxButtons": [
+          "tvs2/4",
+          "tvsXv"
+        ]
+      },
+      "signals": [
+        "2/4"
+      ],
+      "nxIds": [
+        "IN:7d509c52-6580-4349-9a19-fa78faecef2d"
+      ]
+    },
+    {
+      "id": "tvv2/4--tvv2/6",
+      "kind": "shunt",
+      "from": "tvv2/4",
+      "to": "tvv2/6",
+      "label": "2/4 → 2/6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C64"
+        ],
+        "nxButtons": [
+          "tvs2/4",
+          "tvs2/6"
+        ]
+      },
+      "signals": [
+        "2/4"
+      ],
+      "nxIds": [
+        "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8"
+      ]
+    },
+    {
+      "id": "tvv2/4--tvv1/6",
+      "kind": "shunt",
+      "from": "tvv2/4",
+      "to": "tvv1/6",
+      "label": "2/4 → 1/6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C65"
+        ],
+        "nxButtons": [
+          "tvs2/4",
+          "tvs1/6"
+        ]
+      },
+      "signals": [
+        "2/4"
+      ],
+      "nxIds": [
+        "IN:38153432-a6c0-4029-92b1-875f06fde7c6"
+      ]
+    },
+    {
+      "id": "tvv2/4--tvv3/8",
+      "kind": "shunt",
+      "from": "tvv2/4",
+      "to": "tvv3/8",
+      "label": "2/4 → 3/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C66"
+        ],
+        "nxButtons": [
+          "tvs2/4",
+          "tvs3/8"
+        ]
+      },
+      "signals": [
+        "2/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:c8e0a325-eec5-4ce7-803b-90d7514b12bf"
+      ]
+    },
+    {
+      "id": "tvv2/4--tvv4/8",
+      "kind": "shunt",
+      "from": "tvv2/4",
+      "to": "tvv4/8",
+      "label": "2/4 → 4/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C67"
+        ],
+        "nxButtons": [
+          "tvs2/4",
+          "tvs4/8"
+        ]
+      },
+      "signals": [
+        "2/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:28420481-c3c3-4304-9a12-f02b5295b7aa"
+      ]
+    },
+    {
+      "id": "tvv2/4--tvv5/8",
+      "kind": "shunt",
+      "from": "tvv2/4",
+      "to": "tvv5/8",
+      "label": "2/4 → 5/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C68"
+        ],
+        "nxButtons": [
+          "tvs2/4",
+          "tvs5/8"
+        ]
+      },
+      "signals": [
+        "2/4",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf"
+      ]
+    },
+    {
+      "id": "tvv10/11--tvvN1",
+      "kind": "shunt",
+      "from": "tvv10/11",
+      "to": "tvvN1",
+      "label": "10/11 → N1",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C70"
+        ],
+        "nxButtons": [
+          "tvs10/11",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "10/11"
+      ],
+      "nxIds": [
+        "IN:9925d20b-5e18-4f47-a8d5-6fdcf0664a0c"
+      ]
+    },
+    {
+      "id": "tvv10/11--tvvU1",
+      "kind": "shunt",
+      "from": "tvv10/11",
+      "to": "tvvU1",
+      "label": "10/11 → U1",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C71"
+        ],
+        "nxButtons": [
+          "tvs10/11",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "10/11"
+      ],
+      "nxIds": [
+        "IN:915d1120-9a5f-4302-8ca8-acdb62708add"
+      ]
+    },
+    {
+      "id": "tvv5/10--tvvIIIev",
+      "kind": "shunt",
+      "from": "tvv5/10",
+      "to": "tvvIIIev",
+      "label": "5/10 → IIIev",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C75"
+        ],
+        "nxButtons": [
+          "tvs5/10",
+          "tvsIIIev"
+        ]
+      },
+      "signals": [
+        "5/10"
+      ],
+      "nxIds": [
+        "IN:c5877801-d9df-4504-a527-52f4ad57ed62"
+      ]
+    },
+    {
+      "id": "tvv6/7--tvv6/11",
+      "kind": "shunt",
+      "from": "tvv6/7",
+      "to": "tvv6/11",
+      "label": "6/7 → 6/11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C82"
+        ],
+        "nxButtons": [
+          "tvs6/7",
+          "tvs6/11"
+        ]
+      },
+      "signals": [
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:aca159e6-947d-4248-a417-12249bbd9d20"
+      ]
+    },
+    {
+      "id": "tvv1/11--tvvN1",
+      "kind": "shunt",
+      "from": "tvv1/11",
+      "to": "tvvN1",
+      "label": "1/11 → N1",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C85"
+        ],
+        "nxButtons": [
+          "tvs1/11",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:75288d04-f50b-4816-9879-11c6a45eff47"
+      ]
+    },
+    {
+      "id": "tvv1/11--tvvU1",
+      "kind": "shunt",
+      "from": "tvv1/11",
+      "to": "tvvU1",
+      "label": "1/11 → U1",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C86"
+        ],
+        "nxButtons": [
+          "tvs1/11",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "1/11"
+      ],
+      "nxIds": [
+        "IN:7270481f-f9e5-43f2-9ee7-b78863087ebf"
+      ]
+    },
+    {
+      "id": "tvv6/11--tvvIIIdo",
+      "kind": "shunt",
+      "from": "tvv6/11",
+      "to": "tvvIIIdo",
+      "label": "6/11 → IIIdo",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C90"
+        ],
+        "nxButtons": [
+          "tvs6/11",
+          "tvsIIIdo"
+        ]
+      },
+      "signals": [
+        "6/11"
+      ],
+      "nxIds": [
+        "IN:8c8af86b-6435-43c2-aa35-9a8b58768e5e"
+      ]
+    },
+    {
+      "id": "tvv3/2--tvv3/6",
+      "kind": "shunt",
+      "from": "tvv3/2",
+      "to": "tvv3/6",
+      "label": "3/2 → 3/6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C91"
+        ],
+        "nxButtons": [
+          "tvs3/2",
+          "tvs3/6"
+        ]
+      },
+      "signals": [
+        "3/2"
+      ],
+      "nxIds": [
+        "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0"
+      ]
+    },
+    {
+      "id": "tvv3/2--tvv6/6",
+      "kind": "shunt",
+      "from": "tvv3/2",
+      "to": "tvv6/6",
+      "label": "3/2 → 6/6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C93"
+        ],
+        "nxButtons": [
+          "tvs3/2",
+          "tvs6/6"
+        ]
+      },
+      "signals": [
+        "3/2",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0",
+        "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b"
+      ]
+    },
+    {
+      "id": "tvv1/9--tvv2/11",
+      "kind": "shunt",
+      "from": "tvv1/9",
+      "to": "tvv2/11",
+      "label": "1/9 → 2/11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C94"
+        ],
+        "nxButtons": [
+          "tvs1/9",
+          "tvs2/11"
+        ]
+      },
+      "signals": [
+        "1/9"
+      ],
+      "nxIds": [
+        "IN:e9518f14-ef23-4c67-9935-abec0d8732da"
+      ]
+    },
+    {
+      "id": "tvv1/9--tvv1/11",
+      "kind": "shunt",
+      "from": "tvv1/9",
+      "to": "tvv1/11",
+      "label": "1/9 → 1/11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C95"
+        ],
+        "nxButtons": [
+          "tvs1/9",
+          "tvs1/11"
+        ]
+      },
+      "signals": [
+        "1/9"
+      ],
+      "nxIds": [
+        "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a"
+      ]
+    },
+    {
+      "id": "tvv4/5--tvv6/7",
+      "kind": "shunt",
+      "from": "tvv4/5",
+      "to": "tvv6/7",
+      "label": "4/5 → 6/7",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C100"
+        ],
+        "nxButtons": [
+          "tvs4/5",
+          "tvs6/7"
+        ]
+      },
+      "signals": [
+        "4/5"
+      ],
+      "nxIds": [
+        "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450"
+      ]
+    },
+    {
+      "id": "tvv4/5--tvv5/9",
+      "kind": "shunt",
+      "from": "tvv4/5",
+      "to": "tvv5/9",
+      "label": "4/5 → 5/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C101"
+        ],
+        "nxButtons": [
+          "tvs4/5",
+          "tvs5/9"
+        ]
+      },
+      "signals": [
+        "4/5"
+      ],
+      "nxIds": [
+        "IN:6af610f4-2e48-4b05-b33b-c327971b047d"
+      ]
+    },
+    {
+      "id": "tvv2/11--tvvN1",
+      "kind": "shunt",
+      "from": "tvv2/11",
+      "to": "tvvN1",
+      "label": "2/11 → N1",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C123"
+        ],
+        "nxButtons": [
+          "tvs2/11",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:df91a6da-781b-434b-ac6a-88aa95244141"
+      ]
+    },
+    {
+      "id": "tvv2/11--tvvU1",
+      "kind": "shunt",
+      "from": "tvv2/11",
+      "to": "tvvU1",
+      "label": "2/11 → U1",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C124"
+        ],
+        "nxButtons": [
+          "tvs2/11",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "2/11"
+      ],
+      "nxIds": [
+        "IN:347531c7-bd3d-4311-8688-d9613e64b03a"
+      ]
+    },
+    {
+      "id": "tvv2/9--tvv2/11",
+      "kind": "shunt",
+      "from": "tvv2/9",
+      "to": "tvv2/11",
+      "label": "2/9 → 2/11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C127"
+        ],
+        "nxButtons": [
+          "tvs2/9",
+          "tvs2/11"
+        ]
+      },
+      "signals": [
+        "2/9"
+      ],
+      "nxIds": [
+        "IN:5b52eaa8-1395-441d-be3e-15657f40349e"
+      ]
+    },
+    {
+      "id": "tvv2/9--tvv1/11",
+      "kind": "shunt",
+      "from": "tvv2/9",
+      "to": "tvv1/11",
+      "label": "2/9 → 1/11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C128"
+        ],
+        "nxButtons": [
+          "tvs2/9",
+          "tvs1/11"
+        ]
+      },
+      "signals": [
+        "2/9"
+      ],
+      "nxIds": [
+        "IN:a98d6d8d-ff9c-4125-8689-291682944520"
+      ]
+    },
+    {
+      "id": "tvv5/5--tvv6/7",
+      "kind": "shunt",
+      "from": "tvv5/5",
+      "to": "tvv6/7",
+      "label": "5/5 → 6/7",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C131"
+        ],
+        "nxButtons": [
+          "tvs5/5",
+          "tvs6/7"
+        ]
+      },
+      "signals": [
+        "5/5"
+      ],
+      "nxIds": [
+        "IN:d3a73449-9685-4aac-ae15-3d7b7e6cbee5"
+      ]
+    },
+    {
+      "id": "tvv5/5--tvv5/9",
+      "kind": "shunt",
+      "from": "tvv5/5",
+      "to": "tvv5/9",
+      "label": "5/5 → 5/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C132"
+        ],
+        "nxButtons": [
+          "tvs5/5",
+          "tvs5/9"
+        ]
+      },
+      "signals": [
+        "5/5"
+      ],
+      "nxIds": [
+        "IN:1a77e99e-db90-453b-aa4e-85b71071b2db"
+      ]
+    },
+    {
+      "id": "tvv5/8--tvv5/10",
+      "kind": "shunt",
+      "from": "tvv5/8",
+      "to": "tvv5/10",
+      "label": "5/8 → 5/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C135"
+        ],
+        "nxButtons": [
+          "tvs5/8",
+          "tvs5/10"
+        ]
+      },
+      "signals": [
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:a7c38e71-3385-46d7-825d-ad64f78e9fbf"
+      ]
+    },
+    {
+      "id": "tvv5/8--tvv3/10",
+      "kind": "shunt",
+      "from": "tvv5/8",
+      "to": "tvv3/10",
+      "label": "5/8 → 3/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C136"
+        ],
+        "nxButtons": [
+          "tvs5/8",
+          "tvs3/10"
+        ]
+      },
+      "signals": [
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97"
+      ]
+    },
+    {
+      "id": "tvv5/8--tvv4/10",
+      "kind": "shunt",
+      "from": "tvv5/8",
+      "to": "tvv4/10",
+      "label": "5/8 → 4/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C137"
+        ],
+        "nxButtons": [
+          "tvs5/8",
+          "tvs4/10"
+        ]
+      },
+      "signals": [
+        "5/8"
+      ],
+      "nxIds": [
+        "IN:30bca77d-457b-4e67-a418-1c1190064ebf"
+      ]
+    },
+    {
+      "id": "tvv4/9--tvv3/11",
+      "kind": "shunt",
+      "from": "tvv4/9",
+      "to": "tvv3/11",
+      "label": "4/9 → 3/11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C138"
+        ],
+        "nxButtons": [
+          "tvs4/9",
+          "tvs3/11"
+        ]
+      },
+      "signals": [
+        "4/9"
+      ],
+      "nxIds": [
+        "IN:899f9f4c-f813-44f7-9797-11130faad22c"
+      ]
+    },
+    {
+      "id": "tvv1/4--tvv2/6",
+      "kind": "shunt",
+      "from": "tvv1/4",
+      "to": "tvv2/6",
+      "label": "1/4 → 2/6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C140"
+        ],
+        "nxButtons": [
+          "tvs1/4",
+          "tvs2/6"
+        ]
+      },
+      "signals": [
+        "1/4"
+      ],
+      "nxIds": [
+        "IN:a11b8ed1-24f9-4827-b96a-25daace45b25"
+      ]
+    },
+    {
+      "id": "tvv1/4--tvvXv",
+      "kind": "shunt",
+      "from": "tvv1/4",
+      "to": "tvvXv",
+      "label": "1/4 → Xv",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C141"
+        ],
+        "nxButtons": [
+          "tvs1/4",
+          "tvsXv"
+        ]
+      },
+      "signals": [
+        "1/4"
+      ],
+      "nxIds": [
+        "IN:711c1b7f-8d0f-4f98-bec6-205260b2ef25"
+      ]
+    },
+    {
+      "id": "tvv1/4--tvv3/6",
+      "kind": "shunt",
+      "from": "tvv1/4",
+      "to": "tvv3/6",
+      "label": "1/4 → 3/6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C142"
+        ],
+        "nxButtons": [
+          "tvs1/4",
+          "tvs3/6"
+        ]
+      },
+      "signals": [
+        "1/4"
+      ],
+      "nxIds": [
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7"
+      ]
+    },
+    {
+      "id": "tvv3/1--tvv3/5",
+      "kind": "shunt",
+      "from": "tvv3/1",
+      "to": "tvv3/5",
+      "label": "3/1 → 3/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C143"
+        ],
+        "nxButtons": [
+          "tvs3/1",
+          "tvs3/5"
+        ]
+      },
+      "signals": [
+        "3/1",
+        "3/3"
+      ],
+      "nxIds": [
+        "IN:175be8fb-84e8-47dd-b696-3fc1a5ccd8d0",
+        "IN:4114a7e3-f4c1-43cd-a92e-a4844d979ad6"
+      ]
+    },
+    {
+      "id": "tvv3/1--tvv4/5",
+      "kind": "shunt",
+      "from": "tvv3/1",
+      "to": "tvv4/5",
+      "label": "3/1 → 4/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C144"
+        ],
+        "nxButtons": [
+          "tvs3/1",
+          "tvs4/5"
+        ]
+      },
+      "signals": [
+        "3/1",
+        "3/3"
+      ],
+      "nxIds": [
+        "IN:175be8fb-84e8-47dd-b696-3fc1a5ccd8d0",
+        "IN:57ba1105-5758-43de-9110-7f48a66b528b"
+      ]
+    },
+    {
+      "id": "tvv3/1--tvv5/5",
+      "kind": "shunt",
+      "from": "tvv3/1",
+      "to": "tvv5/5",
+      "label": "3/1 → 5/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C145"
+        ],
+        "nxButtons": [
+          "tvs3/1",
+          "tvs5/5"
+        ]
+      },
+      "signals": [
+        "3/1",
+        "3/3"
+      ],
+      "nxIds": [
+        "IN:175be8fb-84e8-47dd-b696-3fc1a5ccd8d0",
+        "IN:7d4463d7-4c9f-4296-9f98-b8ee8433e7fa"
+      ]
+    },
+    {
+      "id": "tvv3/2--tvv3/8",
+      "kind": "shunt",
+      "from": "tvv3/2",
+      "to": "tvv3/8",
+      "label": "3/2 → 3/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C146"
+        ],
+        "nxButtons": [
+          "tvs3/2",
+          "tvs3/8"
+        ]
+      },
+      "signals": [
+        "3/2",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0",
+        "IN:c8e0a325-eec5-4ce7-803b-90d7514b12bf"
+      ]
+    },
+    {
+      "id": "tvv3/2--tvv4/8",
+      "kind": "shunt",
+      "from": "tvv3/2",
+      "to": "tvv4/8",
+      "label": "3/2 → 4/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C147"
+        ],
+        "nxButtons": [
+          "tvs3/2",
+          "tvs4/8"
+        ]
+      },
+      "signals": [
+        "3/2",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0",
+        "IN:28420481-c3c3-4304-9a12-f02b5295b7aa"
+      ]
+    },
+    {
+      "id": "tvv3/2--tvv5/8",
+      "kind": "shunt",
+      "from": "tvv3/2",
+      "to": "tvv5/8",
+      "label": "3/2 → 5/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C148"
+        ],
+        "nxButtons": [
+          "tvs3/2",
+          "tvs5/8"
+        ]
+      },
+      "signals": [
+        "3/2",
+        "3/6"
+      ],
+      "nxIds": [
+        "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0",
+        "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf"
+      ]
+    },
+    {
+      "id": "tvv6/6--tvv3/10",
+      "kind": "shunt",
+      "from": "tvv6/6",
+      "to": "tvv3/10",
+      "label": "6/6 → 3/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C158"
+        ],
+        "nxButtons": [
+          "tvs6/6",
+          "tvs3/10"
+        ]
+      },
+      "signals": [
+        "6/6",
+        "6/8"
+      ],
+      "nxIds": [
+        "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973",
+        "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654"
+      ]
+    },
+    {
+      "id": "tvv6/6--tvv4/10",
+      "kind": "shunt",
+      "from": "tvv6/6",
+      "to": "tvv4/10",
+      "label": "6/6 → 4/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C159"
+        ],
+        "nxButtons": [
+          "tvs6/6",
+          "tvs4/10"
+        ]
+      },
+      "signals": [
+        "6/6",
+        "6/8"
+      ],
+      "nxIds": [
+        "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973",
+        "IN:9af8d60e-52c9-4694-b1d6-1cb7d1a25b2b"
+      ]
+    },
+    {
+      "id": "tvv6/6--tvv5/10",
+      "kind": "shunt",
+      "from": "tvv6/6",
+      "to": "tvv5/10",
+      "label": "6/6 → 5/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C160"
+        ],
+        "nxButtons": [
+          "tvs6/6",
+          "tvs5/10"
+        ]
+      },
+      "signals": [
+        "6/6",
+        "6/8"
+      ],
+      "nxIds": [
+        "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973",
+        "IN:68af5f58-3f09-460e-95fc-d88791f18a73"
+      ]
+    },
+    {
+      "id": "tvv6/7--tvvN1",
+      "kind": "shunt",
+      "from": "tvv6/7",
+      "to": "tvvN1",
+      "label": "6/7 → N1",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C161"
+        ],
+        "nxButtons": [
+          "tvs6/7",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "6/7",
+        "6/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d",
+        "IN:ae76e106-8150-4ea1-a430-678127a4c5e0",
+        "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167"
       ]
     }
   ],
@@ -4915,6 +6463,3249 @@
         "tvsU4"
       ],
       "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvvkolgardut",
+      "to": "tvvLastSp3in",
+      "rules": [
+        "IX:AUTO:0019C6"
+      ],
+      "nxButtons": [
+        "tvskolgardut",
+        "tvsLastSp3in"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvvkolgardut",
+      "to": "tvv6/6",
+      "rules": [
+        "IX:AUTO:0019C7"
+      ],
+      "nxButtons": [
+        "tvskolgardut",
+        "tvs6/6"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvvLastSp1ut",
+      "to": "tvv9/5",
+      "rules": [
+        "IX:AUTO:0019C8"
+      ],
+      "nxButtons": [
+        "tvsLastSp1ut",
+        "tvs9/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/2",
+      "to": "tvv1/4",
+      "rules": [
+        "IX:AUTO:0019C9"
+      ],
+      "nxButtons": [
+        "tvs1/2",
+        "tvs1/4"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv9/10",
+      "to": "tvvIIIev",
+      "rules": [
+        "IX:AUTO:0019C10"
+      ],
+      "nxButtons": [
+        "tvs9/10",
+        "tvsIIIev"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv9/10",
+      "to": "tvvLastSp1in",
+      "rules": [
+        "IX:AUTO:0019C11"
+      ],
+      "nxButtons": [
+        "tvs9/10",
+        "tvsLastSp1in"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv9/10",
+      "to": "tvvLastSp2in",
+      "rules": [
+        "IX:AUTO:0019C12"
+      ],
+      "nxButtons": [
+        "tvs9/10",
+        "tvsLastSp2in"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/5",
+      "to": "tvv2/7",
+      "rules": [
+        "IX:AUTO:0019C13"
+      ],
+      "nxButtons": [
+        "tvs2/5",
+        "tvs2/7"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/5",
+      "to": "tvv5/5",
+      "rules": [
+        "IX:AUTO:0019C14"
+      ],
+      "nxButtons": [
+        "tvs2/5",
+        "tvs5/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/5",
+      "to": "tvv3/5",
+      "rules": [
+        "IX:AUTO:0019C15"
+      ],
+      "nxButtons": [
+        "tvs2/5",
+        "tvs3/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/5",
+      "to": "tvv4/5",
+      "rules": [
+        "IX:AUTO:0019C16"
+      ],
+      "nxButtons": [
+        "tvs2/5",
+        "tvs4/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv7/10",
+      "to": "tvvIIIev",
+      "rules": [
+        "IX:AUTO:0019C17"
+      ],
+      "nxButtons": [
+        "tvs7/10",
+        "tvsIIIev"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv9/5",
+      "to": "tvv6/7",
+      "rules": [
+        "IX:AUTO:0019C18"
+      ],
+      "nxButtons": [
+        "tvs9/5",
+        "tvs6/7"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/8",
+      "to": "tvv2/10",
+      "rules": [
+        "IX:AUTO:0019C22"
+      ],
+      "nxButtons": [
+        "tvs2/8",
+        "tvs2/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/3",
+      "to": "tvv2/5",
+      "rules": [
+        "IX:AUTO:0019C29"
+      ],
+      "nxButtons": [
+        "tvs2/3",
+        "tvs2/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/8",
+      "to": "tvv2/10",
+      "rules": [
+        "IX:AUTO:0019C30"
+      ],
+      "nxButtons": [
+        "tvs3/8",
+        "tvs2/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/5",
+      "to": "tvv6/9",
+      "rules": [
+        "IX:AUTO:0019C33"
+      ],
+      "nxButtons": [
+        "tvs3/5",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/10",
+      "to": "tvvIIIev",
+      "rules": [
+        "IX:AUTO:0019C34"
+      ],
+      "nxButtons": [
+        "tvs6/10",
+        "tvsIIIev"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/6",
+      "to": "tvv6/10",
+      "rules": [
+        "IX:AUTO:0019C35"
+      ],
+      "nxButtons": [
+        "tvs6/6",
+        "tvs6/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/6",
+      "to": "tvv8/10",
+      "rules": [
+        "IX:AUTO:0019C36"
+      ],
+      "nxButtons": [
+        "tvs6/6",
+        "tvs8/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/6",
+      "to": "tvv9/10",
+      "rules": [
+        "IX:AUTO:0019C37"
+      ],
+      "nxButtons": [
+        "tvs6/6",
+        "tvs9/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/6",
+      "to": "tvv7/10",
+      "rules": [
+        "IX:AUTO:0019C38"
+      ],
+      "nxButtons": [
+        "tvs6/6",
+        "tvs7/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/4",
+      "to": "tvv6/8",
+      "rules": [
+        "IX:AUTO:0019C43"
+      ],
+      "nxButtons": [
+        "tvs1/4",
+        "tvs6/8"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv8/5",
+      "to": "tvv6/7",
+      "rules": [
+        "IX:AUTO:0019C44"
+      ],
+      "nxButtons": [
+        "tvs8/5",
+        "tvs6/7"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/10",
+      "to": "tvv1/12",
+      "rules": [
+        "IX:AUTO:0019C45"
+      ],
+      "nxButtons": [
+        "tvs1/10",
+        "tvs1/12"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/12",
+      "to": "tvvU4",
+      "rules": [
+        "IX:AUTO:0019C46"
+      ],
+      "nxButtons": [
+        "tvs1/12",
+        "tvsU4"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvvLastSp2ut",
+      "to": "tvv9/5",
+      "rules": [
+        "IX:AUTO:0019C47"
+      ],
+      "nxButtons": [
+        "tvsLastSp2ut",
+        "tvs9/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/12",
+      "to": "tvvU2",
+      "rules": [
+        "IX:AUTO:0019C48"
+      ],
+      "nxButtons": [
+        "tvs1/12",
+        "tvsU2"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/12",
+      "to": "tvvN2",
+      "rules": [
+        "IX:AUTO:0019C50"
+      ],
+      "nxButtons": [
+        "tvs2/12",
+        "tvsN2"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv4/10",
+      "to": "tvv1/12",
+      "rules": [
+        "IX:AUTO:0019C51"
+      ],
+      "nxButtons": [
+        "tvs4/10",
+        "tvs1/12"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv4/10",
+      "to": "tvv2/12",
+      "rules": [
+        "IX:AUTO:0019C52"
+      ],
+      "nxButtons": [
+        "tvs4/10",
+        "tvs2/12"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/7",
+      "to": "tvv4/9",
+      "rules": [
+        "IX:AUTO:0019C53"
+      ],
+      "nxButtons": [
+        "tvs2/7",
+        "tvs4/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/7",
+      "to": "tvv2/9",
+      "rules": [
+        "IX:AUTO:0019C54"
+      ],
+      "nxButtons": [
+        "tvs2/7",
+        "tvs2/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/7",
+      "to": "tvv3/9",
+      "rules": [
+        "IX:AUTO:0019C55"
+      ],
+      "nxButtons": [
+        "tvs2/7",
+        "tvs3/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/7",
+      "to": "tvv1/9",
+      "rules": [
+        "IX:AUTO:0019C56"
+      ],
+      "nxButtons": [
+        "tvs2/7",
+        "tvs1/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/7",
+      "to": "tvv1/9",
+      "rules": [
+        "IX:AUTO:0019C57"
+      ],
+      "nxButtons": [
+        "tvs1/7",
+        "tvs1/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/10",
+      "to": "tvv1/12",
+      "rules": [
+        "IX:AUTO:0019C58"
+      ],
+      "nxButtons": [
+        "tvs2/10",
+        "tvs1/12"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/10",
+      "to": "tvv2/12",
+      "rules": [
+        "IX:AUTO:0019C59"
+      ],
+      "nxButtons": [
+        "tvs2/10",
+        "tvs2/12"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/12",
+      "to": "tvvN4",
+      "rules": [
+        "IX:AUTO:0019C60"
+      ],
+      "nxButtons": [
+        "tvs2/12",
+        "tvsN4"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/4",
+      "to": "tvv6/8",
+      "rules": [
+        "IX:AUTO:0019C69"
+      ],
+      "nxButtons": [
+        "tvs2/4",
+        "tvs6/8"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv8/10",
+      "to": "tvvIIIev",
+      "rules": [
+        "IX:AUTO:0019C72"
+      ],
+      "nxButtons": [
+        "tvs8/10",
+        "tvsIIIev"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/3",
+      "to": "tvv1/5",
+      "rules": [
+        "IX:AUTO:0019C73"
+      ],
+      "nxButtons": [
+        "tvs1/3",
+        "tvs1/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv5/10",
+      "to": "tvv1/12",
+      "rules": [
+        "IX:AUTO:0019C77"
+      ],
+      "nxButtons": [
+        "tvs5/10",
+        "tvs1/12"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv5/10",
+      "to": "tvv2/12",
+      "rules": [
+        "IX:AUTO:0019C78"
+      ],
+      "nxButtons": [
+        "tvs5/10",
+        "tvs2/12"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/7",
+      "to": "tvvkolgardin",
+      "rules": [
+        "IX:AUTO:0019C79"
+      ],
+      "nxButtons": [
+        "tvs6/7",
+        "tvskolgardin"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/7",
+      "to": "tvvlokstallin",
+      "rules": [
+        "IX:AUTO:0019C80"
+      ],
+      "nxButtons": [
+        "tvs6/7",
+        "tvslokstallin"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/7",
+      "to": "tvv6/9",
+      "rules": [
+        "IX:AUTO:0019C81"
+      ],
+      "nxButtons": [
+        "tvs6/7",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvvlokstallut",
+      "to": "tvvLastSp3in",
+      "rules": [
+        "IX:AUTO:0019C83"
+      ],
+      "nxButtons": [
+        "tvslokstallut",
+        "tvsLastSp3in"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvvlokstallut",
+      "to": "tvv6/6",
+      "rules": [
+        "IX:AUTO:0019C84"
+      ],
+      "nxButtons": [
+        "tvslokstallut",
+        "tvs6/6"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv7/5",
+      "to": "tvv6/7",
+      "rules": [
+        "IX:AUTO:0019C87"
+      ],
+      "nxButtons": [
+        "tvs7/5",
+        "tvs6/7"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/6",
+      "to": "tvv1/8",
+      "rules": [
+        "IX:AUTO:0019C88"
+      ],
+      "nxButtons": [
+        "tvs1/6",
+        "tvs1/8"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/6",
+      "to": "tvv2/8",
+      "rules": [
+        "IX:AUTO:0019C89"
+      ],
+      "nxButtons": [
+        "tvs1/6",
+        "tvs2/8"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/2",
+      "to": "tvvLastSp3in",
+      "rules": [
+        "IX:AUTO:0019C92"
+      ],
+      "nxButtons": [
+        "tvs3/2",
+        "tvsLastSp3in"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv4/8",
+      "to": "tvv2/10",
+      "rules": [
+        "IX:AUTO:0019C96"
+      ],
+      "nxButtons": [
+        "tvs4/8",
+        "tvs2/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/8",
+      "to": "tvv5/10",
+      "rules": [
+        "IX:AUTO:0019C97"
+      ],
+      "nxButtons": [
+        "tvs6/8",
+        "tvs5/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/8",
+      "to": "tvv3/10",
+      "rules": [
+        "IX:AUTO:0019C98"
+      ],
+      "nxButtons": [
+        "tvs6/8",
+        "tvs3/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/8",
+      "to": "tvv4/10",
+      "rules": [
+        "IX:AUTO:0019C99"
+      ],
+      "nxButtons": [
+        "tvs6/8",
+        "tvs4/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv4/5",
+      "to": "tvv6/9",
+      "rules": [
+        "IX:AUTO:0019C102"
+      ],
+      "nxButtons": [
+        "tvs4/5",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/5",
+      "to": "tvv6/7",
+      "rules": [
+        "IX:AUTO:0019C103"
+      ],
+      "nxButtons": [
+        "tvs6/5",
+        "tvs6/7"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/3",
+      "to": "tvv5/5",
+      "rules": [
+        "IX:AUTO:0019C104"
+      ],
+      "nxButtons": [
+        "tvs3/3",
+        "tvs5/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/3",
+      "to": "tvv3/5",
+      "rules": [
+        "IX:AUTO:0019C105"
+      ],
+      "nxButtons": [
+        "tvs3/3",
+        "tvs3/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/3",
+      "to": "tvv4/5",
+      "rules": [
+        "IX:AUTO:0019C106"
+      ],
+      "nxButtons": [
+        "tvs3/3",
+        "tvs4/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/9",
+      "to": "tvv3/11",
+      "rules": [
+        "IX:AUTO:0019C107"
+      ],
+      "nxButtons": [
+        "tvs6/9",
+        "tvs3/11"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvvLastSp3ut",
+      "to": "tvvkolgardin",
+      "rules": [
+        "IX:AUTO:0019C108"
+      ],
+      "nxButtons": [
+        "tvsLastSp3ut",
+        "tvskolgardin"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvvLastSp3ut",
+      "to": "tvvlokstallin",
+      "rules": [
+        "IX:AUTO:0019C109"
+      ],
+      "nxButtons": [
+        "tvsLastSp3ut",
+        "tvslokstallin"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvvLastSp3ut",
+      "to": "tvv6/11",
+      "rules": [
+        "IX:AUTO:0019C110"
+      ],
+      "nxButtons": [
+        "tvsLastSp3ut",
+        "tvs6/11"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/5",
+      "to": "tvv1/7",
+      "rules": [
+        "IX:AUTO:0019C111"
+      ],
+      "nxButtons": [
+        "tvs1/5",
+        "tvs1/7"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/5",
+      "to": "tvv2/7",
+      "rules": [
+        "IX:AUTO:0019C112"
+      ],
+      "nxButtons": [
+        "tvs1/5",
+        "tvs2/7"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/5",
+      "to": "tvv5/5",
+      "rules": [
+        "IX:AUTO:0019C113"
+      ],
+      "nxButtons": [
+        "tvs1/5",
+        "tvs5/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/5",
+      "to": "tvv3/5",
+      "rules": [
+        "IX:AUTO:0019C114"
+      ],
+      "nxButtons": [
+        "tvs1/5",
+        "tvs3/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/5",
+      "to": "tvv4/5",
+      "rules": [
+        "IX:AUTO:0019C115"
+      ],
+      "nxButtons": [
+        "tvs1/5",
+        "tvs4/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/1",
+      "to": "tvv8/5",
+      "rules": [
+        "IX:AUTO:0019C116"
+      ],
+      "nxButtons": [
+        "tvs3/1",
+        "tvs8/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/1",
+      "to": "tvv6/5",
+      "rules": [
+        "IX:AUTO:0019C117"
+      ],
+      "nxButtons": [
+        "tvs3/1",
+        "tvs6/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/1",
+      "to": "tvv3/3",
+      "rules": [
+        "IX:AUTO:0019C118"
+      ],
+      "nxButtons": [
+        "tvs3/1",
+        "tvs3/3"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/1",
+      "to": "tvv7/5",
+      "rules": [
+        "IX:AUTO:0019C119"
+      ],
+      "nxButtons": [
+        "tvs3/1",
+        "tvs7/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv3/1",
+      "to": "tvv9/5",
+      "rules": [
+        "IX:AUTO:0019C120"
+      ],
+      "nxButtons": [
+        "tvs3/1",
+        "tvs9/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/8",
+      "to": "tvv1/10",
+      "rules": [
+        "IX:AUTO:0019C121"
+      ],
+      "nxButtons": [
+        "tvs1/8",
+        "tvs1/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/8",
+      "to": "tvv2/10",
+      "rules": [
+        "IX:AUTO:0019C122"
+      ],
+      "nxButtons": [
+        "tvs1/8",
+        "tvs2/10"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/6",
+      "to": "tvv1/8",
+      "rules": [
+        "IX:AUTO:0019C125"
+      ],
+      "nxButtons": [
+        "tvs2/6",
+        "tvs1/8"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/6",
+      "to": "tvv2/8",
+      "rules": [
+        "IX:AUTO:0019C126"
+      ],
+      "nxButtons": [
+        "tvs2/6",
+        "tvs2/8"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/2",
+      "to": "tvv2/4",
+      "rules": [
+        "IX:AUTO:0019C129"
+      ],
+      "nxButtons": [
+        "tvs2/2",
+        "tvs2/4"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv1/1",
+      "to": "tvv1/5",
+      "rules": [
+        "IX:AUTO:0019C130"
+      ],
+      "nxButtons": [
+        "tvs1/1",
+        "tvs1/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv5/5",
+      "to": "tvv6/9",
+      "rules": [
+        "IX:AUTO:0019C133"
+      ],
+      "nxButtons": [
+        "tvs5/5",
+        "tvs6/9"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv2/1",
+      "to": "tvv2/5",
+      "rules": [
+        "IX:AUTO:0019C134"
+      ],
+      "nxButtons": [
+        "tvs2/1",
+        "tvs2/5"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    },
+    {
+      "from": "tvv6/6",
+      "to": "tvv6/8",
+      "rules": [
+        "IX:AUTO:0019C139"
+      ],
+      "nxButtons": [
+        "tvs6/6",
+        "tvs6/8"
+      ],
+      "reason": "Knappen är dold eller saknas i operatörspanelen."
+    }
+  ],
+  "nx": [
+    {
+      "id": "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+      "fromSensor": "tvs1/1",
+      "toSensor": "tvs1/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIA",
+        "htvAu--htvSpIIA",
+        "htvAu--htvSpIIIA",
+        "htvAu--htvSpIVA",
+        "htvAu--htvSpVA",
+        "htvAu--htvSpIB",
+        "htvAu--htvSpIIB",
+        "htvAu--htvSpIIIB",
+        "htvAu--htvSpIVB",
+        "htvAu--htvSpVB",
+        "htvAu--htvSpIC",
+        "htvAu--htvSpIIC",
+        "htvAu--htvBu",
+        "htvAu--htvBn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C130"
+      ]
+    },
+    {
+      "id": "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+      "fromSensor": "tvs1/7",
+      "toSensor": "tvs1/9",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIB",
+        "htvAu--htvSpIC",
+        "htvAu--htvSpIIC",
+        "htvAu--htvBu",
+        "htvAu--htvBn",
+        "htvCu--htvSpIB",
+        "htvCu--htvSpIC",
+        "htvCu--htvSpIIC",
+        "htvCu--htvBu",
+        "htvCu--htvBn",
+        "htvSpIA--htvSpIB",
+        "htvSpIA--htvSpIC",
+        "htvSpIA--htvSpIIC",
+        "htvSpIA--htvBn",
+        "htvSpIA--htvBu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C57"
+      ]
+    },
+    {
+      "id": "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+      "fromSensor": "tvs1/9",
+      "toSensor": "tvs1/11",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIC",
+        "htvAu--htvBu",
+        "htvAu--htvBn",
+        "htvCu--htvSpIC",
+        "htvCu--htvBu",
+        "htvCu--htvBn",
+        "htvSpIA--htvSpIC",
+        "htvSpIA--htvBn",
+        "htvSpIA--htvBu",
+        "htvSpIB--htvSpIC",
+        "htvSpIB--htvBn",
+        "htvSpIB--htvBu",
+        "tvv1/9--tvv1/11"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C95"
+      ]
+    },
+    {
+      "id": "IN:e9518f14-ef23-4c67-9935-abec0d8732da",
+      "fromSensor": "tvs1/9",
+      "toSensor": "tvs2/11",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIIC",
+        "htvCu--htvSpIIC",
+        "htvSpIA--htvSpIIC",
+        "htvSpIB--htvSpIIC",
+        "tvv1/9--tvv2/11"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C94"
+      ]
+    },
+    {
+      "id": "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+      "fromSensor": "tvs1/2",
+      "toSensor": "tvs1/4",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIA",
+        "htvBu--htvSpIIA",
+        "htvBu--htvSpIIIA",
+        "htvBu--htvSpIVA",
+        "htvBu--htvSpVA",
+        "htvBu--htvSpIB",
+        "htvBu--htvSpIIB",
+        "htvBu--htvSpIIIB",
+        "htvBu--htvSpIVB",
+        "htvBu--htvSpVB",
+        "htvBu--htvSpIC",
+        "htvBu--htvSpIIC",
+        "htvBu--htvSpX",
+        "htvBu--htvAu",
+        "htvBu--htvAn",
+        "htvBu--htvCu",
+        "htvBu--htvCn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C9"
+      ]
+    },
+    {
+      "id": "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+      "fromSensor": "tvs1/6",
+      "toSensor": "tvs1/8",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIA",
+        "htvBu--htvSpIB",
+        "htvBu--htvAu",
+        "htvBu--htvCu",
+        "htvSpIC--htvSpIA",
+        "htvSpIC--htvSpIB",
+        "htvSpIC--htvAu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C88"
+      ]
+    },
+    {
+      "id": "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+      "fromSensor": "tvs1/6",
+      "toSensor": "tvs2/8",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIIA",
+        "htvBu--htvSpIIB",
+        "htvBu--htvAn",
+        "htvBu--htvCn",
+        "htvSpIC--htvSpIIA",
+        "htvSpIC--htvSpIIB",
+        "htvSpIC--htvAn",
+        "htvSpIC--htvCn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C89"
+      ]
+    },
+    {
+      "id": "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+      "fromSensor": "tvs1/8",
+      "toSensor": "tvs1/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIA",
+        "htvBu--htvAu",
+        "htvBu--htvCu",
+        "htvBn--htvSpIA",
+        "htvBn--htvAu",
+        "htvBn--htvCu",
+        "htvSpIB--htvSpIA",
+        "htvSpIB--htvAu",
+        "htvSpIB--htvCu",
+        "htvSpIC--htvSpIA",
+        "htvSpIC--htvAu",
+        "htvSpIC--htvCu",
+        "htvSpIIC--htvSpIA",
+        "htvSpIIC--htvAu",
+        "htvSpIIC--htvCu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C121"
+      ]
+    },
+    {
+      "id": "IN:c664f521-df47-4557-89d7-f65fb3644fd3",
+      "fromSensor": "tvs1/8",
+      "toSensor": "tvs2/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIB--htvSpIIA",
+        "htvSpIB--htvAn",
+        "htvSpIB--htvCn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C122"
+      ]
+    },
+    {
+      "id": "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+      "fromSensor": "tvs1/10",
+      "toSensor": "tvs1/12",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvAu",
+        "htvBu--htvCu",
+        "htvBn--htvAu",
+        "htvBn--htvCu",
+        "htvSpIA--htvAu",
+        "htvSpIA--htvCu",
+        "htvSpIB--htvAu",
+        "htvSpIB--htvCu",
+        "htvSpIC--htvAu",
+        "htvSpIC--htvCu",
+        "htvSpIIC--htvAu",
+        "htvSpIIC--htvCu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C45"
+      ]
+    },
+    {
+      "id": "IN:915d1120-9a5f-4302-8ca8-acdb62708add",
+      "fromSensor": "tvs10/11",
+      "toSensor": "tvsU1",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpX--htvBu",
+        "tvv10/11--tvvU1"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C71"
+      ]
+    },
+    {
+      "id": "IN:9925d20b-5e18-4f47-a8d5-6fdcf0664a0c",
+      "fromSensor": "tvs10/11",
+      "toSensor": "tvsN1",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpX--htvBn",
+        "tvv10/11--tvvN1"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C70"
+      ]
+    },
+    {
+      "id": "IN:8bb461c8-3766-4e1b-94d1-ae7976ea1adf",
+      "fromSensor": "tvs10/11",
+      "toSensor": "tvsL1",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C162"
+      ]
+    },
+    {
+      "id": "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+      "fromSensor": "tvs2/1",
+      "toSensor": "tvs2/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAn--htvSpIIA",
+        "htvAn--htvSpIIIA",
+        "htvAn--htvSpIVA",
+        "htvAn--htvSpVA",
+        "htvAn--htvSpIB",
+        "htvAn--htvSpIIB",
+        "htvAn--htvSpIIIB",
+        "htvAn--htvSpIVB",
+        "htvAn--htvSpVB",
+        "htvAn--htvSpIC",
+        "htvAn--htvSpIIC",
+        "htvAn--htvBu",
+        "htvAn--htvBn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C134"
+      ]
+    },
+    {
+      "id": "IN:a7396c65-4eea-46f6-b197-ff6119abe71a",
+      "fromSensor": "tvs2/7",
+      "toSensor": "tvs1/9",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAn--htvSpIB",
+        "htvCn--htvSpIB",
+        "htvSpIIA--htvSpIB"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C56"
+      ]
+    },
+    {
+      "id": "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+      "fromSensor": "tvs2/7",
+      "toSensor": "tvs2/9",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIIB",
+        "htvAn--htvSpIIB",
+        "htvAn--htvSpIC",
+        "htvAn--htvSpIIC",
+        "htvAn--htvBu",
+        "htvAn--htvBn",
+        "htvCu--htvSpIIB",
+        "htvCn--htvSpIIB",
+        "htvCn--htvSpIC",
+        "htvCn--htvSpIIC",
+        "htvCn--htvBu",
+        "htvCn--htvBn",
+        "htvSpIIA--htvSpIIB",
+        "htvSpIIA--htvSpIC",
+        "htvSpIIA--htvSpIIC",
+        "htvSpIIA--htvBn",
+        "htvSpIIA--htvBu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C54"
+      ]
+    },
+    {
+      "id": "IN:a4607e61-cc12-4f46-9c30-fb534204d98a",
+      "fromSensor": "tvs2/7",
+      "toSensor": "tvs3/9",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIIIB",
+        "htvAn--htvSpIIIB",
+        "htvCu--htvSpIIIB",
+        "htvCn--htvSpIIIB",
+        "htvSpIIA--htvSpIIIB"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C55"
+      ]
+    },
+    {
+      "id": "IN:52be6d9f-956b-4e6c-a476-1f8803639586",
+      "fromSensor": "tvs2/7",
+      "toSensor": "tvs4/9",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIVB",
+        "htvAn--htvSpIVB",
+        "htvCu--htvSpIVB",
+        "htvCn--htvSpIVB",
+        "htvSpIIA--htvSpIVB"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C53"
+      ]
+    },
+    {
+      "id": "IN:a98d6d8d-ff9c-4125-8689-291682944520",
+      "fromSensor": "tvs2/9",
+      "toSensor": "tvs1/11",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAn--htvSpIC",
+        "htvCn--htvSpIC",
+        "htvSpIIA--htvSpIC",
+        "htvSpIIB--htvSpIC",
+        "tvv2/9--tvv1/11"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C128"
+      ]
+    },
+    {
+      "id": "IN:5b52eaa8-1395-441d-be3e-15657f40349e",
+      "fromSensor": "tvs2/9",
+      "toSensor": "tvs2/11",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAn--htvSpIIC",
+        "htvAn--htvBu",
+        "htvAn--htvBn",
+        "htvCn--htvSpIIC",
+        "htvCn--htvBu",
+        "htvCn--htvBn",
+        "htvSpIIA--htvSpIIC",
+        "htvSpIIA--htvBn",
+        "htvSpIIA--htvBu",
+        "htvSpIIB--htvSpIIC",
+        "htvSpIIB--htvBn",
+        "htvSpIIB--htvBu",
+        "tvv2/9--tvv2/11"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C127"
+      ]
+    },
+    {
+      "id": "IN:4114a7e3-f4c1-43cd-a92e-a4844d979ad6",
+      "fromSensor": "tvs3/3",
+      "toSensor": "tvs3/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv3/1--tvv3/5"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C105"
+      ]
+    },
+    {
+      "id": "IN:57ba1105-5758-43de-9110-7f48a66b528b",
+      "fromSensor": "tvs3/3",
+      "toSensor": "tvs4/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv3/1--tvv4/5"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C106"
+      ]
+    },
+    {
+      "id": "IN:7d4463d7-4c9f-4296-9f98-b8ee8433e7fa",
+      "fromSensor": "tvs3/3",
+      "toSensor": "tvs5/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv3/1--tvv5/5"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C104"
+      ]
+    },
+    {
+      "id": "IN:671e0660-36cb-4d49-b155-e0307c177596",
+      "fromSensor": "tvs2/6",
+      "toSensor": "tvs1/8",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBn--htvSpIA",
+        "htvBn--htvSpIB",
+        "htvBn--htvAu",
+        "htvBn--htvCu",
+        "htvSpIC--htvCu",
+        "htvSpIIC--htvSpIA",
+        "htvSpIIC--htvSpIB",
+        "htvSpIIC--htvAu",
+        "htvSpIIC--htvCu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C125"
+      ]
+    },
+    {
+      "id": "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+      "fromSensor": "tvs2/6",
+      "toSensor": "tvs2/8",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBn--htvSpIIA",
+        "htvBn--htvSpIIB",
+        "htvBn--htvAn",
+        "htvBn--htvCn",
+        "htvSpIIC--htvSpIIA",
+        "htvSpIIC--htvSpIIB",
+        "htvSpIIC--htvAn",
+        "htvSpIIC--htvCn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C126"
+      ]
+    },
+    {
+      "id": "IN:941b374c-f243-4308-8829-b77dad2253dd",
+      "fromSensor": "tvs2/8",
+      "toSensor": "tvs2/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIIA",
+        "htvBu--htvAn",
+        "htvBu--htvCn",
+        "htvBn--htvSpIIA",
+        "htvBn--htvAn",
+        "htvBn--htvCn",
+        "htvSpIIB--htvSpIIA",
+        "htvSpIIB--htvAn",
+        "htvSpIIB--htvAu",
+        "htvSpIIB--htvCn",
+        "htvSpIIB--htvCu",
+        "htvSpIC--htvSpIIA",
+        "htvSpIC--htvAn",
+        "htvSpIC--htvCn",
+        "htvSpIIC--htvSpIIA",
+        "htvSpIIC--htvAn",
+        "htvSpIIC--htvCn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C22"
+      ]
+    },
+    {
+      "id": "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+      "fromSensor": "tvs2/10",
+      "toSensor": "tvs1/12",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIIA--htvAu",
+        "htvSpIIA--htvCu",
+        "htvSpIIB--htvAu",
+        "htvSpIIB--htvCu",
+        "htvSpIIIB--htvAu",
+        "htvSpIIIB--htvCu",
+        "htvSpIVB--htvAu",
+        "htvSpIVB--htvCu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C58"
+      ]
+    },
+    {
+      "id": "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+      "fromSensor": "tvs2/10",
+      "toSensor": "tvs2/12",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvAn",
+        "htvBu--htvCn",
+        "htvBn--htvAn",
+        "htvBn--htvCn",
+        "htvSpIIA--htvAn",
+        "htvSpIIA--htvCn",
+        "htvSpIB--htvAn",
+        "htvSpIB--htvCn",
+        "htvSpIIB--htvAn",
+        "htvSpIIB--htvCn",
+        "htvSpIIIB--htvAn",
+        "htvSpIIIB--htvCn",
+        "htvSpIVB--htvAn",
+        "htvSpIVB--htvCn",
+        "htvSpIC--htvAn",
+        "htvSpIC--htvCn",
+        "htvSpIIC--htvAn",
+        "htvSpIIC--htvCn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C59"
+      ]
+    },
+    {
+      "id": "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+      "fromSensor": "tvs2/2",
+      "toSensor": "tvs2/4",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBn--htvSpIA",
+        "htvBn--htvSpIIA",
+        "htvBn--htvSpIIIA",
+        "htvBn--htvSpIVA",
+        "htvBn--htvSpVA",
+        "htvBn--htvSpIB",
+        "htvBn--htvSpIIB",
+        "htvBn--htvSpIIIB",
+        "htvBn--htvSpIVB",
+        "htvBn--htvSpVB",
+        "htvBn--htvSpIC",
+        "htvBn--htvSpIIC",
+        "htvBn--htvSpX",
+        "htvBn--htvAu",
+        "htvBn--htvAn",
+        "htvBn--htvCu",
+        "htvBn--htvCn",
+        "htvSpIC--htvCu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C129"
+      ]
+    },
+    {
+      "id": "IN:8be10a2c-1459-4b9d-9437-49d4a1e30a63",
+      "fromSensor": "tvs3/10",
+      "toSensor": "tvsIIIev",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv3/10--tvvIIIev"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C24"
+      ]
+    },
+    {
+      "id": "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+      "fromSensor": "tvs3/10",
+      "toSensor": "tvs1/12",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIIIA--htvAu",
+        "htvSpIIIA--htvCu",
+        "htvSpVB--htvAu",
+        "htvSpVB--htvCu"
+      ],
+      "sourceRules": []
+    },
+    {
+      "id": "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+      "fromSensor": "tvs3/10",
+      "toSensor": "tvs2/12",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIIIA--htvAn",
+        "htvSpIIIA--htvCn",
+        "htvSpVB--htvAn",
+        "htvSpVB--htvCn"
+      ],
+      "sourceRules": []
+    },
+    {
+      "id": "IN:8b500613-a031-465d-a3b7-de0b654f22a0",
+      "fromSensor": "tvs3/5",
+      "toSensor": "tvs5/9",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpVB",
+        "htvAn--htvSpVB",
+        "htvSpIIIA--htvSpVB",
+        "htvSpIIIA--htvBn",
+        "htvSpIIIA--htvBu",
+        "tvv3/5--tvv5/9"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C32"
+      ]
+    },
+    {
+      "id": "IN:39525608-38c1-4fcb-a4e4-d58cf419e20c",
+      "fromSensor": "tvs3/5",
+      "toSensor": "tvs6/9",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C33"
+      ]
+    },
+    {
+      "id": "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+      "fromSensor": "tvs3/5",
+      "toSensor": "tvs6/7",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv3/5--tvv6/7"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C31"
+      ]
+    },
+    {
+      "id": "IN:8a9730c3-0c76-4dc8-8b37-efe796f815f8",
+      "fromSensor": "tvs3/2",
+      "toSensor": "tvs3/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C146"
+      ]
+    },
+    {
+      "id": "IN:7fc9083f-96f0-42e4-a763-0fc32655e421",
+      "fromSensor": "tvs3/2",
+      "toSensor": "tvs4/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C147"
+      ]
+    },
+    {
+      "id": "IN:40ad801a-35a7-42da-865e-f5c86741d65f",
+      "fromSensor": "tvs3/2",
+      "toSensor": "tvs5/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C148"
+      ]
+    },
+    {
+      "id": "IN:4e5ca277-55c7-409c-9b8c-ca2531f711be",
+      "fromSensor": "tvs3/2",
+      "toSensor": "tvsLastSp3in",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C92"
+      ]
+    },
+    {
+      "id": "IN:bbfb9823-1ff0-4ca5-96ca-7f6498bd93fc",
+      "fromSensor": "tvs3/2",
+      "toSensor": "tvs6/6",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C93"
+      ]
+    },
+    {
+      "id": "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0",
+      "fromSensor": "tvs3/2",
+      "toSensor": "tvs3/6",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv3/2--tvv3/6",
+        "tvv3/2--tvv6/6",
+        "tvv3/2--tvv3/8",
+        "tvv3/2--tvv4/8",
+        "tvv3/2--tvv5/8"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C91"
+      ]
+    },
+    {
+      "id": "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2",
+      "fromSensor": "tvs4/10",
+      "toSensor": "tvsIIIev",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv4/10--tvvIIIev"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C49"
+      ]
+    },
+    {
+      "id": "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+      "fromSensor": "tvs4/10",
+      "toSensor": "tvs1/12",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIVA--htvAu",
+        "htvSpIVA--htvCu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C51"
+      ]
+    },
+    {
+      "id": "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+      "fromSensor": "tvs4/10",
+      "toSensor": "tvs2/12",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIVA--htvAn",
+        "htvSpIVA--htvCn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C52"
+      ]
+    },
+    {
+      "id": "IN:6af610f4-2e48-4b05-b33b-c327971b047d",
+      "fromSensor": "tvs4/5",
+      "toSensor": "tvs5/9",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvCu--htvSpVB",
+        "htvCn--htvSpVB",
+        "htvSpIVA--htvSpVB",
+        "htvSpIVA--htvBn",
+        "htvSpIVA--htvBu",
+        "tvv4/5--tvv5/9"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C101"
+      ]
+    },
+    {
+      "id": "IN:5367f79a-7894-4990-bf94-1fc81c465384",
+      "fromSensor": "tvs4/5",
+      "toSensor": "tvs6/9",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C102"
+      ]
+    },
+    {
+      "id": "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450",
+      "fromSensor": "tvs4/5",
+      "toSensor": "tvs6/7",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv4/5--tvv6/7"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C100"
+      ]
+    },
+    {
+      "id": "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8",
+      "fromSensor": "tvs3/8",
+      "toSensor": "tvs2/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIIIB--htvSpIIA",
+        "htvSpIIIB--htvAn",
+        "htvSpIIIB--htvAu",
+        "htvSpIIIB--htvCn",
+        "htvSpIIIB--htvCu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C30"
+      ]
+    },
+    {
+      "id": "IN:c86e61af-d30f-4034-8c84-234f9d601f62",
+      "fromSensor": "tvs3/9",
+      "toSensor": "tvs3/11",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIIIB--htvBn",
+        "htvSpIIIB--htvBu",
+        "tvv3/9--tvv3/11"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C28"
+      ]
+    },
+    {
+      "id": "IN:c5877801-d9df-4504-a527-52f4ad57ed62",
+      "fromSensor": "tvs5/10",
+      "toSensor": "tvsIIIev",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv5/10--tvvIIIev"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C75"
+      ]
+    },
+    {
+      "id": "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+      "fromSensor": "tvs5/10",
+      "toSensor": "tvs1/12",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpVA--htvAu",
+        "htvSpVA--htvCu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C77"
+      ]
+    },
+    {
+      "id": "IN:a1600f94-e4a0-4013-8607-455702f83e44",
+      "fromSensor": "tvs5/10",
+      "toSensor": "tvs2/12",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpVA--htvAn",
+        "htvSpVA--htvCn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C78"
+      ]
+    },
+    {
+      "id": "IN:1a77e99e-db90-453b-aa4e-85b71071b2db",
+      "fromSensor": "tvs5/5",
+      "toSensor": "tvs5/9",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpVA--htvSpVB",
+        "htvSpVA--htvBn",
+        "htvSpVA--htvBu",
+        "tvv5/5--tvv5/9"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C132"
+      ]
+    },
+    {
+      "id": "IN:7a3e565f-9c20-4c9b-a80f-885c1cc18d92",
+      "fromSensor": "tvs5/5",
+      "toSensor": "tvs6/9",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C133"
+      ]
+    },
+    {
+      "id": "IN:d3a73449-9685-4aac-ae15-3d7b7e6cbee5",
+      "fromSensor": "tvs5/5",
+      "toSensor": "tvs6/7",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv5/5--tvv6/7"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C131"
+      ]
+    },
+    {
+      "id": "IN:02071f89-8e14-4603-8b23-4f86301200ed",
+      "fromSensor": "tvs4/8",
+      "toSensor": "tvs2/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIVB--htvSpIIA",
+        "htvSpIVB--htvAn",
+        "htvSpIVB--htvAu",
+        "htvSpIVB--htvCn",
+        "htvSpIVB--htvCu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C96"
+      ]
+    },
+    {
+      "id": "IN:899f9f4c-f813-44f7-9797-11130faad22c",
+      "fromSensor": "tvs4/9",
+      "toSensor": "tvs3/11",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIVB--htvBn",
+        "htvSpIVB--htvBu",
+        "tvv4/9--tvv3/11"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C138"
+      ]
+    },
+    {
+      "id": "IN:7270481f-f9e5-43f2-9ee7-b78863087ebf",
+      "fromSensor": "tvs1/11",
+      "toSensor": "tvsU1",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvBu",
+        "htvCu--htvBu",
+        "htvSpIA--htvBu",
+        "htvSpIB--htvBu",
+        "htvSpIC--htvBu",
+        "tvv1/11--tvvU1"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C86"
+      ]
+    },
+    {
+      "id": "IN:75288d04-f50b-4816-9879-11c6a45eff47",
+      "fromSensor": "tvs1/11",
+      "toSensor": "tvsN1",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvBn",
+        "htvCu--htvBn",
+        "htvSpIA--htvBn",
+        "htvSpIB--htvBn",
+        "htvSpIC--htvBn",
+        "tvv1/11--tvvN1"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C85"
+      ]
+    },
+    {
+      "id": "IN:8cd17e79-0b53-4069-817b-927d96651bcf",
+      "fromSensor": "tvs1/11",
+      "toSensor": "tvsL1",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C162"
+      ]
+    },
+    {
+      "id": "IN:347531c7-bd3d-4311-8688-d9613e64b03a",
+      "fromSensor": "tvs2/11",
+      "toSensor": "tvsU1",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAn--htvBu",
+        "htvCn--htvBu",
+        "htvSpIIA--htvBu",
+        "htvSpIIB--htvBu",
+        "htvSpIIC--htvBu",
+        "tvv2/11--tvvU1"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C124"
+      ]
+    },
+    {
+      "id": "IN:df91a6da-781b-434b-ac6a-88aa95244141",
+      "fromSensor": "tvs2/11",
+      "toSensor": "tvsN1",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAn--htvBn",
+        "htvCn--htvBn",
+        "htvSpIIA--htvBn",
+        "htvSpIIB--htvBn",
+        "htvSpIIC--htvBn",
+        "tvv2/11--tvvN1"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C123"
+      ]
+    },
+    {
+      "id": "IN:8dd72135-1f25-4e76-93f4-5ac0e677f598",
+      "fromSensor": "tvs2/11",
+      "toSensor": "tvsL1",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C162"
+      ]
+    },
+    {
+      "id": "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97",
+      "fromSensor": "tvs5/8",
+      "toSensor": "tvs3/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIIIA",
+        "htvBn--htvSpIIIA",
+        "htvSpVB--htvSpIIIA",
+        "htvSpVB--htvAn",
+        "htvSpVB--htvAu",
+        "htvSpVB--htvCn",
+        "htvSpVB--htvCu",
+        "tvv5/8--tvv3/10"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C136"
+      ]
+    },
+    {
+      "id": "IN:30bca77d-457b-4e67-a418-1c1190064ebf",
+      "fromSensor": "tvs5/8",
+      "toSensor": "tvs4/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIVA",
+        "htvBn--htvSpIVA",
+        "htvSpVB--htvSpIVA",
+        "tvv5/8--tvv4/10"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C137"
+      ]
+    },
+    {
+      "id": "IN:a7c38e71-3385-46d7-825d-ad64f78e9fbf",
+      "fromSensor": "tvs5/8",
+      "toSensor": "tvs5/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpVA",
+        "htvBn--htvSpVA",
+        "htvSpVB--htvSpVA",
+        "tvv5/8--tvv5/10"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C135"
+      ]
+    },
+    {
+      "id": "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+      "fromSensor": "tvs5/9",
+      "toSensor": "tvs3/11",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIIIA--htvBn",
+        "htvSpIIIA--htvBu",
+        "htvSpIVA--htvBn",
+        "htvSpIVA--htvBu",
+        "htvSpVA--htvBn",
+        "htvSpVA--htvBu",
+        "htvSpVB--htvBn",
+        "htvSpVB--htvBu",
+        "tvv5/9--tvv3/11"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C5"
+      ]
+    },
+    {
+      "id": "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654",
+      "fromSensor": "tvs6/8",
+      "toSensor": "tvs3/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv6/6--tvv3/10"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C98"
+      ]
+    },
+    {
+      "id": "IN:9af8d60e-52c9-4694-b1d6-1cb7d1a25b2b",
+      "fromSensor": "tvs6/8",
+      "toSensor": "tvs4/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv6/6--tvv4/10"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C99"
+      ]
+    },
+    {
+      "id": "IN:68af5f58-3f09-460e-95fc-d88791f18a73",
+      "fromSensor": "tvs6/8",
+      "toSensor": "tvs5/10",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv6/6--tvv5/10"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C97"
+      ]
+    },
+    {
+      "id": "IN:ae76e106-8150-4ea1-a430-678127a4c5e0",
+      "fromSensor": "tvs6/9",
+      "toSensor": "tvs3/11",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv6/7--tvvN1"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C107"
+      ]
+    },
+    {
+      "id": "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+      "fromSensor": "tvs1/5",
+      "toSensor": "tvs1/7",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIA",
+        "htvAu--htvSpIB",
+        "htvAu--htvSpIC",
+        "htvAu--htvSpIIC",
+        "htvAu--htvBu",
+        "htvAu--htvBn",
+        "htvCu--htvSpIA",
+        "htvCu--htvSpIB",
+        "htvCu--htvSpIC",
+        "htvCu--htvSpIIC",
+        "htvCu--htvBu",
+        "htvCu--htvBn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C111"
+      ]
+    },
+    {
+      "id": "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+      "fromSensor": "tvs1/5",
+      "toSensor": "tvs2/7",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIIA",
+        "htvAu--htvSpIIB",
+        "htvAu--htvSpIIIB",
+        "htvAu--htvSpIVB",
+        "htvCu--htvSpIIA",
+        "htvCu--htvSpIIB",
+        "htvCu--htvSpIIIB",
+        "htvCu--htvSpIVB"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C112"
+      ]
+    },
+    {
+      "id": "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+      "fromSensor": "tvs1/5",
+      "toSensor": "tvs3/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIIIA",
+        "htvAu--htvSpVB",
+        "htvCu--htvSpIIIA"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C114"
+      ]
+    },
+    {
+      "id": "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+      "fromSensor": "tvs1/5",
+      "toSensor": "tvs4/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpIVA",
+        "htvCu--htvSpIVA",
+        "htvCu--htvSpVB"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C115"
+      ]
+    },
+    {
+      "id": "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+      "fromSensor": "tvs1/5",
+      "toSensor": "tvs5/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAu--htvSpVA",
+        "htvCu--htvSpVA"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C113"
+      ]
+    },
+    {
+      "id": "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+      "fromSensor": "tvs2/5",
+      "toSensor": "tvs2/7",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAn--htvSpIIA",
+        "htvAn--htvSpIB",
+        "htvAn--htvSpIIB",
+        "htvAn--htvSpIIIB",
+        "htvAn--htvSpIVB",
+        "htvAn--htvSpIC",
+        "htvAn--htvSpIIC",
+        "htvAn--htvBu",
+        "htvAn--htvBn",
+        "htvCn--htvSpIIA",
+        "htvCn--htvSpIB",
+        "htvCn--htvSpIIB",
+        "htvCn--htvSpIIIB",
+        "htvCn--htvSpIVB",
+        "htvCn--htvSpIC",
+        "htvCn--htvSpIIC",
+        "htvCn--htvBu",
+        "htvCn--htvBn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C13"
+      ]
+    },
+    {
+      "id": "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+      "fromSensor": "tvs2/5",
+      "toSensor": "tvs3/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAn--htvSpIIIA",
+        "htvAn--htvSpVB",
+        "htvCn--htvSpIIIA"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C15"
+      ]
+    },
+    {
+      "id": "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+      "fromSensor": "tvs2/5",
+      "toSensor": "tvs4/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAn--htvSpIVA",
+        "htvCn--htvSpIVA",
+        "htvCn--htvSpVB"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C16"
+      ]
+    },
+    {
+      "id": "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+      "fromSensor": "tvs2/5",
+      "toSensor": "tvs5/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvAn--htvSpVA",
+        "htvCn--htvSpVA"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C14"
+      ]
+    },
+    {
+      "id": "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+      "fromSensor": "tvs1/4",
+      "toSensor": "tvs1/6",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIA",
+        "htvBu--htvSpIIA",
+        "htvBu--htvSpIB",
+        "htvBu--htvSpIIB",
+        "htvBu--htvSpIC",
+        "htvBu--htvAu",
+        "htvBu--htvAn",
+        "htvBu--htvCu",
+        "htvBu--htvCn",
+        "tvv1/4--tvv1/6"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C39"
+      ]
+    },
+    {
+      "id": "IN:711c1b7f-8d0f-4f98-bec6-205260b2ef25",
+      "fromSensor": "tvs1/4",
+      "toSensor": "tvsXv",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpX",
+        "tvv1/4--tvvXv"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C141"
+      ]
+    },
+    {
+      "id": "IN:a11b8ed1-24f9-4827-b96a-25daace45b25",
+      "fromSensor": "tvs1/4",
+      "toSensor": "tvs2/6",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIIC",
+        "tvv1/4--tvv2/6"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C140"
+      ]
+    },
+    {
+      "id": "IN:e9a8fa4c-941d-43ee-ab70-c8989d46d23c",
+      "fromSensor": "tvs1/4",
+      "toSensor": "tvs3/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C40"
+      ]
+    },
+    {
+      "id": "IN:6c38eb36-1fe5-4fe8-b99a-62e71e7616bb",
+      "fromSensor": "tvs1/4",
+      "toSensor": "tvs4/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C41"
+      ]
+    },
+    {
+      "id": "IN:bba5b9ff-a964-4011-941b-74f116fab229",
+      "fromSensor": "tvs1/4",
+      "toSensor": "tvs5/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C42"
+      ]
+    },
+    {
+      "id": "IN:8dcffeba-642c-4e46-8c60-b0fefd88842a",
+      "fromSensor": "tvs1/4",
+      "toSensor": "tvs6/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C43"
+      ]
+    },
+    {
+      "id": "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+      "fromSensor": "tvs1/4",
+      "toSensor": "tvs3/6",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIIIA",
+        "htvBu--htvSpIVA",
+        "htvBu--htvSpVA",
+        "htvBu--htvSpIIIB",
+        "htvBu--htvSpIVB",
+        "htvBu--htvSpVB",
+        "tvv1/4--tvv3/8",
+        "tvv1/4--tvv4/8",
+        "tvv1/4--tvv5/8",
+        "tvv1/4--tvv3/6"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C142"
+      ]
+    },
+    {
+      "id": "IN:38153432-a6c0-4029-92b1-875f06fde7c6",
+      "fromSensor": "tvs2/4",
+      "toSensor": "tvs1/6",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBn--htvSpIC",
+        "tvv2/4--tvv1/6"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C65"
+      ]
+    },
+    {
+      "id": "IN:7d509c52-6580-4349-9a19-fa78faecef2d",
+      "fromSensor": "tvs2/4",
+      "toSensor": "tvsXv",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBn--htvSpX",
+        "tvv2/4--tvvXv"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C63"
+      ]
+    },
+    {
+      "id": "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+      "fromSensor": "tvs2/4",
+      "toSensor": "tvs2/6",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBn--htvSpIA",
+        "htvBn--htvSpIIA",
+        "htvBn--htvSpIB",
+        "htvBn--htvSpIIB",
+        "htvBn--htvSpIIC",
+        "htvBn--htvAu",
+        "htvBn--htvAn",
+        "htvBn--htvCu",
+        "htvBn--htvCn",
+        "htvSpIC--htvCu",
+        "tvv2/4--tvv2/6"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C64"
+      ]
+    },
+    {
+      "id": "IN:c7d7f0f3-bff2-4b31-a29a-1ca66a51978e",
+      "fromSensor": "tvs2/4",
+      "toSensor": "tvs3/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C66"
+      ]
+    },
+    {
+      "id": "IN:95f771d4-907f-416b-960a-3759707490cc",
+      "fromSensor": "tvs2/4",
+      "toSensor": "tvs4/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C67"
+      ]
+    },
+    {
+      "id": "IN:69dea982-e53f-46e1-a324-daa8dfb35b2f",
+      "fromSensor": "tvs2/4",
+      "toSensor": "tvs5/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C68"
+      ]
+    },
+    {
+      "id": "IN:fc6cb44f-d08c-4ece-a98e-61d420abdd1b",
+      "fromSensor": "tvs2/4",
+      "toSensor": "tvs6/8",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C69"
+      ]
+    },
+    {
+      "id": "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+      "fromSensor": "tvs2/4",
+      "toSensor": "tvs3/6",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBn--htvSpIIIA",
+        "htvBn--htvSpIVA",
+        "htvBn--htvSpVA",
+        "htvBn--htvSpIIIB",
+        "htvBn--htvSpIVB",
+        "htvBn--htvSpVB",
+        "tvv2/4--tvv3/6",
+        "tvv2/4--tvv3/8",
+        "tvv2/4--tvv4/8",
+        "tvv2/4--tvv5/8"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C62"
+      ]
+    },
+    {
+      "id": "IN:fc05bf08-09e9-493b-b9db-2f3aa6446c34",
+      "fromSensor": "tvslokstallut",
+      "toSensor": "tvsLastSp3in",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C83"
+      ]
+    },
+    {
+      "id": "IN:03942f9b-cfc0-4779-85dd-a52c310e8a63",
+      "fromSensor": "tvslokstallut",
+      "toSensor": "tvs6/6",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C84"
+      ]
+    },
+    {
+      "id": "IN:b0c82045-3dfe-49f5-92ae-2c1b8f0a00fa",
+      "fromSensor": "tvskolgardut",
+      "toSensor": "tvsLastSp3in",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C6"
+      ]
+    },
+    {
+      "id": "IN:8f1f7f38-cb7c-4349-81a3-f6a0e5dc78be",
+      "fromSensor": "tvskolgardut",
+      "toSensor": "tvs6/6",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C7"
+      ]
+    },
+    {
+      "id": "IN:191dce9e-3a56-411e-bac3-92df25fb9c02",
+      "fromSensor": "tvs6/10",
+      "toSensor": "tvsIIIev",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C34"
+      ]
+    },
+    {
+      "id": "IN:9982aa3c-ff40-41e0-bff3-78cc97fa910d",
+      "fromSensor": "tvs7/10",
+      "toSensor": "tvsIIIev",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C17"
+      ]
+    },
+    {
+      "id": "IN:dd499956-c2e9-474b-bf11-f0dffae62507",
+      "fromSensor": "tvs8/10",
+      "toSensor": "tvsIIIev",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C72"
+      ]
+    },
+    {
+      "id": "IN:84c62fd8-2843-452d-825e-5487a68a6d8d",
+      "fromSensor": "tvs9/10",
+      "toSensor": "tvsIIIev",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C10"
+      ]
+    },
+    {
+      "id": "IN:38a2817f-928f-46b9-8467-90cee94ffa5f",
+      "fromSensor": "tvs9/10",
+      "toSensor": "tvsLastSp1in",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C11"
+      ]
+    },
+    {
+      "id": "IN:98f1e18d-6c98-402a-a654-9d3c807a1f0a",
+      "fromSensor": "tvs9/10",
+      "toSensor": "tvsLastSp2in",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C12"
+      ]
+    },
+    {
+      "id": "IN:175be8fb-84e8-47dd-b696-3fc1a5ccd8d0",
+      "fromSensor": "tvs3/1",
+      "toSensor": "tvs3/3",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv3/1--tvv3/5",
+        "tvv3/1--tvv4/5",
+        "tvv3/1--tvv5/5"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C118"
+      ]
+    },
+    {
+      "id": "IN:35e88fa5-8ea0-4311-b0dd-75ec534b2ca4",
+      "fromSensor": "tvs3/1",
+      "toSensor": "tvs3/5",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C143"
+      ]
+    },
+    {
+      "id": "IN:0918b0bf-0753-464e-9e68-952d48c07df8",
+      "fromSensor": "tvs3/1",
+      "toSensor": "tvs4/5",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C144"
+      ]
+    },
+    {
+      "id": "IN:36a90eab-a0ea-491f-baf8-f3eb596bbdf5",
+      "fromSensor": "tvs3/1",
+      "toSensor": "tvs5/5",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C145"
+      ]
+    },
+    {
+      "id": "IN:b03a6776-1851-46bc-839c-878145f6b949",
+      "fromSensor": "tvs3/1",
+      "toSensor": "tvs6/5",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C117"
+      ]
+    },
+    {
+      "id": "IN:cf714c10-830f-49ba-8b6d-886d2c755876",
+      "fromSensor": "tvs3/1",
+      "toSensor": "tvs7/5",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C119"
+      ]
+    },
+    {
+      "id": "IN:6b9dd993-29d8-4964-a975-9c180c3868b7",
+      "fromSensor": "tvs3/1",
+      "toSensor": "tvs8/5",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C116"
+      ]
+    },
+    {
+      "id": "IN:4d96cbd2-21ef-484a-8949-a156abde3825",
+      "fromSensor": "tvs3/1",
+      "toSensor": "tvs9/5",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C120"
+      ]
+    },
+    {
+      "id": "IN:879b4f03-de61-4f8b-bcfb-132c85e4785d",
+      "fromSensor": "tvsLastSp1ut",
+      "toSensor": "tvs9/5",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C8"
+      ]
+    },
+    {
+      "id": "IN:afc2b3dd-02e4-4a07-8fea-3d3b9ab65cc0",
+      "fromSensor": "tvsLastSp2ut",
+      "toSensor": "tvs9/5",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C47"
+      ]
+    },
+    {
+      "id": "IN:0632870a-0526-43c4-a82f-0a371537bf8e",
+      "fromSensor": "tvsLastSp3ut",
+      "toSensor": "tvslokstallin",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C109"
+      ]
+    },
+    {
+      "id": "IN:721d8239-bf96-4733-a4c4-277eed3c5003",
+      "fromSensor": "tvsLastSp3ut",
+      "toSensor": "tvskolgardin",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C108"
+      ]
+    },
+    {
+      "id": "IN:8b3b3a92-0ebc-4099-838c-a3baa13e53f4",
+      "fromSensor": "tvsLastSp3ut",
+      "toSensor": "tvs6/11",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C110"
+      ]
+    },
+    {
+      "id": "IN:28fd5177-1f83-4b70-ab20-8dfa7d9d5bca",
+      "fromSensor": "tvs6/5",
+      "toSensor": "tvs6/7",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C103"
+      ]
+    },
+    {
+      "id": "IN:3d360610-3f48-455c-9476-5d3d877014b2",
+      "fromSensor": "tvs7/5",
+      "toSensor": "tvs6/7",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C87"
+      ]
+    },
+    {
+      "id": "IN:82fca6a8-90ed-41b7-8780-4c6afe4b8ac5",
+      "fromSensor": "tvs8/5",
+      "toSensor": "tvs6/7",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C44"
+      ]
+    },
+    {
+      "id": "IN:6ab85d5e-781c-4fc5-82c1-35ee572f6b28",
+      "fromSensor": "tvs9/5",
+      "toSensor": "tvs6/7",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C18"
+      ]
+    },
+    {
+      "id": "IN:9cd87f1f-7e1b-4d5e-81b0-64a9d5f16871",
+      "fromSensor": "tvs6/6",
+      "toSensor": "tvs3/10",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C158"
+      ]
+    },
+    {
+      "id": "IN:76cc2685-28fc-4d82-b07a-998f5164b9ad",
+      "fromSensor": "tvs6/6",
+      "toSensor": "tvs4/10",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C159"
+      ]
+    },
+    {
+      "id": "IN:4c476d59-fd1f-49ec-9d2a-9e7ddf129c7e",
+      "fromSensor": "tvs6/6",
+      "toSensor": "tvs5/10",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C160"
+      ]
+    },
+    {
+      "id": "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973",
+      "fromSensor": "tvs6/6",
+      "toSensor": "tvs6/8",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv6/6--tvv3/10",
+        "tvv6/6--tvv4/10",
+        "tvv6/6--tvv5/10"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C139"
+      ]
+    },
+    {
+      "id": "IN:b40d2819-0552-4586-ab45-2a7aa2087544",
+      "fromSensor": "tvs6/6",
+      "toSensor": "tvs6/10",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C35"
+      ]
+    },
+    {
+      "id": "IN:d29a79dc-dc0b-48ff-8553-ba218dac09fe",
+      "fromSensor": "tvs6/6",
+      "toSensor": "tvs7/10",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C38"
+      ]
+    },
+    {
+      "id": "IN:9637bfe4-0334-4ee1-8b2a-6f54d18b80d7",
+      "fromSensor": "tvs6/6",
+      "toSensor": "tvs8/10",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C36"
+      ]
+    },
+    {
+      "id": "IN:60c05de6-7b87-4156-8000-a73c8a4c9c45",
+      "fromSensor": "tvs6/6",
+      "toSensor": "tvs9/10",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C37"
+      ]
+    },
+    {
+      "id": "IN:316057e9-dcbe-4078-b3b8-b9a9a9137221",
+      "fromSensor": "tvs6/7",
+      "toSensor": "tvsU1",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C162"
+      ]
+    },
+    {
+      "id": "IN:bb8f5739-2d8d-4bd2-9122-51d434ce1faf",
+      "fromSensor": "tvs6/7",
+      "toSensor": "tvsN1",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C161"
+      ]
+    },
+    {
+      "id": "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d",
+      "fromSensor": "tvs6/7",
+      "toSensor": "tvs6/9",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv6/7--tvvN1"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C81"
+      ]
+    },
+    {
+      "id": "IN:27d9d2ff-a551-440c-8095-4f8a6713efac",
+      "fromSensor": "tvs6/7",
+      "toSensor": "tvslokstallin",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C80"
+      ]
+    },
+    {
+      "id": "IN:bff6c4b1-e623-4ebb-b4a4-71d03691011b",
+      "fromSensor": "tvs6/7",
+      "toSensor": "tvskolgardin",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C79"
+      ]
+    },
+    {
+      "id": "IN:aca159e6-947d-4248-a417-12249bbd9d20",
+      "fromSensor": "tvs6/7",
+      "toSensor": "tvs6/11",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv6/7--tvv6/11"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C82"
+      ]
+    },
+    {
+      "id": "IN:8c8af86b-6435-43c2-aa35-9a8b58768e5e",
+      "fromSensor": "tvs6/11",
+      "toSensor": "tvsIIIdo",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv6/11--tvvIIIdo"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C90"
+      ]
+    },
+    {
+      "id": "IN:c8e0a325-eec5-4ce7-803b-90d7514b12bf",
+      "fromSensor": "tvs3/6",
+      "toSensor": "tvs3/8",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIIIB",
+        "htvBn--htvSpIIIB",
+        "tvv3/6--tvv3/8",
+        "tvv1/4--tvv3/8",
+        "tvv2/4--tvv3/8",
+        "tvv3/2--tvv3/8"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C1"
+      ]
+    },
+    {
+      "id": "IN:28420481-c3c3-4304-9a12-f02b5295b7aa",
+      "fromSensor": "tvs3/6",
+      "toSensor": "tvs4/8",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIVB",
+        "htvBn--htvSpIVB",
+        "tvv3/6--tvv4/8",
+        "tvv1/4--tvv4/8",
+        "tvv2/4--tvv4/8",
+        "tvv3/2--tvv4/8"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C2"
+      ]
+    },
+    {
+      "id": "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+      "fromSensor": "tvs3/6",
+      "toSensor": "tvs5/8",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvSpIIIA",
+        "htvBu--htvSpIVA",
+        "htvBu--htvSpVA",
+        "htvBu--htvSpVB",
+        "htvBn--htvSpIIIA",
+        "htvBn--htvSpIVA",
+        "htvBn--htvSpVA",
+        "htvBn--htvSpVB",
+        "tvv3/6--tvv5/8",
+        "tvv1/4--tvv5/8",
+        "tvv2/4--tvv5/8",
+        "tvv3/2--tvv5/8"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C3"
+      ]
+    },
+    {
+      "id": "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b",
+      "fromSensor": "tvs3/6",
+      "toSensor": "tvs6/6",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv3/6--tvv6/6",
+        "tvv3/2--tvv6/6"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C4"
+      ]
+    },
+    {
+      "id": "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455",
+      "fromSensor": "tvs3/11",
+      "toSensor": "tvsU1",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIIIA--htvBu",
+        "htvSpIVA--htvBu",
+        "htvSpVA--htvBu",
+        "htvSpIIIB--htvBu",
+        "htvSpIVB--htvBu",
+        "htvSpVB--htvBu",
+        "tvv3/11--tvvU1"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C21"
+      ]
+    },
+    {
+      "id": "IN:b7da8647-7366-4a3a-b2e1-5e60acc04527",
+      "fromSensor": "tvs3/11",
+      "toSensor": "tvsIIIdo",
+      "type": "fullinterlocking",
+      "routes": [
+        "tvv3/11--tvvIIIdo"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C20"
+      ]
+    },
+    {
+      "id": "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167",
+      "fromSensor": "tvs3/11",
+      "toSensor": "tvsN1",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvSpIIIA--htvBn",
+        "htvSpIVA--htvBn",
+        "htvSpVA--htvBn",
+        "htvSpIIIB--htvBn",
+        "htvSpIVB--htvBn",
+        "htvSpVB--htvBn",
+        "tvv3/11--tvvN1",
+        "tvv6/7--tvvN1"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C19"
+      ]
+    },
+    {
+      "id": "IN:58925a22-8259-405b-963d-a42ecb513be5",
+      "fromSensor": "tvs3/11",
+      "toSensor": "tvsL1",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": [
+        "IX:AUTO:0019C162"
+      ]
+    },
+    {
+      "id": "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+      "fromSensor": "tvs1/3",
+      "toSensor": "tvs1/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvCu--htvSpIA",
+        "htvCu--htvSpIIA",
+        "htvCu--htvSpIIIA",
+        "htvCu--htvSpIVA",
+        "htvCu--htvSpVA",
+        "htvCu--htvSpIB",
+        "htvCu--htvSpIIB",
+        "htvCu--htvSpIIIB",
+        "htvCu--htvSpIVB",
+        "htvCu--htvSpVB",
+        "htvCu--htvSpIC",
+        "htvCu--htvSpIIC",
+        "htvCu--htvBu",
+        "htvCu--htvBn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C73"
+      ]
+    },
+    {
+      "id": "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+      "fromSensor": "tvs2/3",
+      "toSensor": "tvs2/5",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvCn--htvSpIIA",
+        "htvCn--htvSpIIIA",
+        "htvCn--htvSpIVA",
+        "htvCn--htvSpVA",
+        "htvCn--htvSpIB",
+        "htvCn--htvSpIIB",
+        "htvCn--htvSpIIIB",
+        "htvCn--htvSpIVB",
+        "htvCn--htvSpVB",
+        "htvCn--htvSpIC",
+        "htvCn--htvSpIIC",
+        "htvCn--htvBu",
+        "htvCn--htvBn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C29"
+      ]
+    },
+    {
+      "id": "IN:4eadefa7-37c8-42f0-9a14-8bda9962c8e6",
+      "fromSensor": "tvs4/2",
+      "toSensor": "tvs2/4",
+      "type": "fullinterlocking",
+      "routes": [],
+      "sourceRules": []
+    },
+    {
+      "id": "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452",
+      "fromSensor": "tvs1/12",
+      "toSensor": "tvsU2",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvAu",
+        "htvBn--htvAu",
+        "htvSpIA--htvAu",
+        "htvSpIIA--htvAu",
+        "htvSpIIIA--htvAu",
+        "htvSpIVA--htvAu",
+        "htvSpVA--htvAu",
+        "htvSpIB--htvAu",
+        "htvSpIIB--htvAu",
+        "htvSpIIIB--htvAu",
+        "htvSpIVB--htvAu",
+        "htvSpVB--htvAu",
+        "htvSpIC--htvAu",
+        "htvSpIIC--htvAu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C48"
+      ]
+    },
+    {
+      "id": "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1",
+      "fromSensor": "tvs1/12",
+      "toSensor": "tvsU4",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvCu",
+        "htvBn--htvCu",
+        "htvSpIA--htvCu",
+        "htvSpIIA--htvCu",
+        "htvSpIIIA--htvCu",
+        "htvSpIVA--htvCu",
+        "htvSpVA--htvCu",
+        "htvSpIB--htvCu",
+        "htvSpIIB--htvCu",
+        "htvSpIIIB--htvCu",
+        "htvSpIVB--htvCu",
+        "htvSpVB--htvCu",
+        "htvSpIC--htvCu",
+        "htvSpIIC--htvCu"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C46"
+      ]
+    },
+    {
+      "id": "IN:4eabd950-d9ce-414a-a5bd-cb8177149880",
+      "fromSensor": "tvs2/12",
+      "toSensor": "tvsN2",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvAn",
+        "htvBn--htvAn",
+        "htvSpIIA--htvAn",
+        "htvSpIIIA--htvAn",
+        "htvSpIVA--htvAn",
+        "htvSpVA--htvAn",
+        "htvSpIB--htvAn",
+        "htvSpIIB--htvAn",
+        "htvSpIIIB--htvAn",
+        "htvSpIVB--htvAn",
+        "htvSpVB--htvAn",
+        "htvSpIC--htvAn",
+        "htvSpIIC--htvAn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C50"
+      ]
+    },
+    {
+      "id": "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f",
+      "fromSensor": "tvs2/12",
+      "toSensor": "tvsN4",
+      "type": "fullinterlocking",
+      "routes": [
+        "htvBu--htvCn",
+        "htvBn--htvCn",
+        "htvSpIIA--htvCn",
+        "htvSpIIIA--htvCn",
+        "htvSpIVA--htvCn",
+        "htvSpVA--htvCn",
+        "htvSpIB--htvCn",
+        "htvSpIIB--htvCn",
+        "htvSpIIIB--htvCn",
+        "htvSpIVB--htvCn",
+        "htvSpVB--htvCn",
+        "htvSpIC--htvCn",
+        "htvSpIIC--htvCn"
+      ],
+      "sourceRules": [
+        "IX:AUTO:0019C60"
+      ]
     }
   ]
 }

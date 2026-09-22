@@ -15,6 +15,8 @@ export class Engine extends EventEmitter {
     const saved = storage?.load('routes.json', { fingerprint: this.fingerprint, routes: [] });
     if (saved?.routes.length && saved.fingerprint !== this.fingerprint) throw Error('Profilen har ändrats medan lås finns kvar. Återställ profilen före start.');
     this.routes = (saved?.routes || []).map(r => ({ ...r, state: 'held', cancelRequested: false, reason: 'Återställd efter omstart. Kontrollera återrapporter och återta vägen.', nextSignal: -1 }));
+    this.controls = storage?.load('controls.json', { version:1, stopAll:false, blocked:[] }) || { version:1, stopAll:false, blocked:[] };
+    if (this.controls.version !== 1 || typeof this.controls.stopAll !== 'boolean' || !Array.isArray(this.controls.blocked) || this.controls.blocked.some(n => !profile.blocks[n])) throw Error('Sparade manöverspärrar stämmer inte med profilen. Kontrollera före start.');
     this.log('startup', this.routes.length ? `${this.routes.length} tågvägslås återställda; inget körmedgivande återupptas.` : 'TKL startad. Väntar på återrapporter.');
   }
   log(kind, message, details) {
@@ -78,7 +80,7 @@ export class Engine extends EventEmitter {
     this.tick(); this.emit('change');
   }
   permission(name, desired) {
-    if (desired === 'GO' && (!this.connected || this.storageFault)) throw Error('Körmedgivande spärrat.');
+    if (desired === 'GO' && (!this.connected || this.storageFault || this.controls.stopAll)) throw Error('Körmedgivande spärrat.');
     const s = this.signals[name]; s.desired = desired; s.commandAt = this.now(); s.commandSequence=this.reportSequence;
     if (this.connected) this.send(switchOrder(this.profile.signals[name].address, desired === 'GO' ? 'C' : 'T'));
     this.log('permission', `Signal ${name}: begär ${desired === 'GO' ? 'körmedgivande' : 'stopp'}.`);
@@ -94,9 +96,12 @@ export class Engine extends EventEmitter {
     const existing = this.routes.find(r => r.from === from && r.to === to);
     if (existing) return this.cancel(existing.id);
     if (!this.connected || this.storageFault) throw Error(this.storageFault ? 'Lagringsfel; manövrering spärrad.' : 'Ingen LocoNet-anslutning.');
+    if (this.controls.stopAll) throw Error('Alla signaler i stopp är aktiverat. Återställ AIS före ny tågväg.');
     if(this.policy) {const decision=this.policy.inspect(from,to); if(!decision.allowed) throw Error(decision.reason);}
     const def = this.profile.routes.find(r => r.from === from && r.to === to);
     if (!def) throw Error('Tågvägens fullständiga koppling är ännu inte verifierad i den aktiva profilen.');
+    const blocked = def.blocks.find(b => this.trackBlocked(b));
+    if (blocked) throw Error(`${blocked} är administrativt spärrat.`);
     for (const b of def.blocks) if (!this.fresh(this.blocks[b]) || this.blocks[b].occupied !== false) throw Error(`${b} är belagt eller saknar aktuell återrapport.`);
     for (const name of [...def.signals, ...this.guardSignals(def)]) if (!this.fresh(this.signals[name]) || this.signals[name].aspect !== 'stop') throw Error(`Signal ${name} är inte bekräftat i stopp.`);
     for (const route of this.routes) {
@@ -128,12 +133,45 @@ export class Engine extends EventEmitter {
   }
   manual(name, position) {
     if (!this.profile.turnouts[name] || !['C', 'T'].includes(position)) throw Error('Okänd växel eller manöver.');
-    if (!this.connected || this.storageFault) throw Error('Manövrering spärrad.');
+    if (!this.connected || this.storageFault || this.controls.stopAll) throw Error('Manövrering spärrad.');
     const names = this.profile.coupled?.[name] || [name];
     if (this.routes.some(r => names.some(n => r.turnouts[n]))) throw Error(`${name} är låst av tågväg — manöver vägras.`);
+    if (names.some(n => this.trackBlocked(this.profile.turnouts[n].block))) throw Error('Växelns spårledning är administrativt spärrad.');
     // Conservative commissioning rule: manual turnout control requires the whole configured area free and stopped.
     if (Object.values(this.blocks).some(s => !this.fresh(s) || s.occupied !== false) || Object.values(this.signals).some(s => !this.fresh(s) || s.aspect !== 'stop')) throw Error('Provområdet måste vara fritt med bekräftat stopp före manuell omläggning.');
     for (const n of names) this.turnoutOrder(n, position);
+  }
+  trackBlocked(name) {
+    const address = this.profile.blocks[name]?.address;
+    return address != null && this.controls.blocked.some(n => this.profile.blocks[n].address === address);
+  }
+  persistControls() {
+    try { this.storage?.save('controls.json', this.controls); }
+    catch (e) { this.storageFault = e.message; for (const n of Object.keys(this.signals)) this.permission(n, 'STOP'); throw Error('Kunde inte spara manöverspärr. All manövrering spärrad.'); }
+  }
+  blockTrack(name, blocked) {
+    if (!this.profile.blocks[name] || typeof blocked !== 'boolean') throw Error('Okänd spårledning eller spärrmanöver.');
+    if (this.storageFault) throw Error('Lagringsfel; manövrering spärrad.');
+    const address = this.profile.blocks[name].address;
+    this.controls.blocked = this.controls.blocked.filter(n => this.profile.blocks[n].address !== address);
+    if (blocked) this.controls.blocked.push(name);
+    this.persistControls();
+    if (blocked) for (const route of this.routes) if (route.blocks.some(n => this.profile.blocks[n].address === address)) this.hold(route, `${name} har spärrats av operatören.`);
+    this.log('track-block', `${name}: administrativ spärr ${blocked ? 'lagd' : 'borttagen'}. Detektorns återrapport är oförändrad.`);
+  }
+  allStop(enabled) {
+    if (typeof enabled !== 'boolean') throw Error('Ogiltig AIS-manöver.');
+    if (!enabled) {
+      if (this.storageFault || !this.connected || Object.values(this.signals).some(s => !this.fresh(s) || s.aspect !== 'stop' || s.reportSequence <= (s.commandSequence ?? -1))) throw Error('Alla signaler måste återrapportera stopp innan AIS kan återställas.');
+      this.controls.stopAll = false; this.persistControls();
+      this.log('all-stop', 'AIS återställd. Tidigare tågvägar behåller sina lås och återupptas inte.'); return;
+    }
+    this.controls.stopAll = true;
+    try {
+      this.persistControls();
+      for (const route of this.routes) this.hold(route, 'Alla signaler i stopp begärt av operatören.');
+    } finally { for (const name of Object.keys(this.signals)) this.permission(name, 'STOP'); }
+    this.log('all-stop', 'Alla signaler i stopp begärt. Tågvägslås behålls.');
   }
   hold(r, reason, state = 'held') {
     r.state = state; r.reason = reason; r.nextSignal = -1;
@@ -227,7 +265,7 @@ export class Engine extends EventEmitter {
   snapshot() {
     return { serverTime: this.now(), revision: this.revision, connection: this.connected ? 'connected' : 'disconnected', storageFault: this.storageFault,
       profile: { id: this.profile.id, title: this.profile.title, commissioned: this.profile.commissioned, description: this.profile.description },
-      turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, routes: this.routes, events: this.events,
+      turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, routes: this.routes, controls:this.controls, events: this.events,
       catalog: this.profile.routes.map(r => ({ id: r.id, from: r.from, to: r.to, label: r.label })) };
   }
 }

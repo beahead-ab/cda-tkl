@@ -46,10 +46,21 @@ def build():
             if mast or sensor:turnoutEnds.append(dict(turnout=t.get('turnoutname'),id=t.get('ident'),leg=leg,mast=mast,sensor=sensor,segment=t.get('connect'+leg.lower()+'name')))
     nx=[dict(id=d.get('uniqueid'),fromSensor=s.get('item'),toSensor=d.get('item'),type=d.get('nxType'))
         for s in r.findall('./entryexitpairs/layoutPanel/source') for d in s.findall('destination')]
+    shunts=[]
+    for c in rules.values():
+        if not c['id'].startswith('IX:AUTO:0019'):continue
+        buttons=[v['systemName'] for v in c['variables'] if v['type']=='1' and v['systemName'].startswith('tvv')]
+        ids=[a['systemName'] for a in c['actions'] if a['type']=='53']
+        paths=[n for n in nx if n['id'] in ids];problems=[]
+        if len(buttons)!=2:problems.append('Exakt två växeltågvägsknappar saknas.')
+        if len(ids)!=1 or len(paths)!=1:problems.append('Regeln begär flera NX-vägar eller saknar entydigt NX-par.')
+        if len(buttons)==2 and len(paths)==1 and [b.replace('tvv','tvs',1) for b in buttons]!=[paths[0]['fromSensor'],paths[0]['toSensor']]:problems.append('Knapparna stämmer inte med NX-vägens ändpunkter.')
+        shunts.append(dict(rule=c['id'],name=c['name'],fromButton=buttons[0] if buttons else None,toButton=buttons[1] if len(buttons)>1 else None,
+            status='unresolved' if problems else 'allowed',nxButtons=[paths[0]['fromSensor'],paths[0]['toSensor']] if len(paths)==1 else [],nxIds=ids,problems=problems))
     relations=[dict(source=s.get('source'),destination=d.get('destination'),values={x.tag:x.text for x in d})
         for s in r.findall('./signalmastlogics/signalmastlogic') for d in s.findall('destinationMast')]
     sensors=[dict(system=s.findtext('systemName'),name=s.findtext('userName'),attributes=dict(s.attrib)) for s in r.findall('./sensors/sensor')]
-    return dict(sourceHash=hashlib.sha256(raw).hexdigest(),groups=groups,rules=list(rules.values()),mainRoutePolicies=policies,
+    return dict(sourceHash=hashlib.sha256(raw).hexdigest(),groups=groups,rules=list(rules.values()),mainRoutePolicies=policies,shuntRoutePolicies=shunts,
         anchors=anchors,turnoutEnds=turnoutEnds,nxPairs=nx,signalRelations=relations,sensors=sensors,
         externalScripts=dict(scripts),disabledGroups=[g['id'] for g in groups if not g['enabled']],
         note='Källfakta. Importerade regler är inte automatiskt aktiverade funktioner. Provbindningar är inte verifierade fysiska adresser.')

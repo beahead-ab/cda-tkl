@@ -36,6 +36,18 @@ test('network profile runs parallel trains across separate processes and release
     await until(async () => { const s = await get(httpPort); return !s.routes.length; }, 22000);
     assert.equal((await get(simPort)).trains.length, 0);
     assert.equal(JSON.parse(fs.readFileSync(path.join(dir,'routes.json'))).routes.length, 0);
+    await post(httpPort, 'track-block', { name:'SIA', blocked:true });
+    await post(httpPort, 'route', { from:'htvCu', to:'htvSpIA' }, 400);
+    assert.equal((await get(httpPort)).blocks.SIA.occupied, false);
+    await post(httpPort, 'track-block', { name:'SIA', blocked:false });
+    await post(httpPort, 'all-stop', { enabled:true });
+    await post(httpPort, 'route', { from:'htvAn', to:'htvSpIIA' }, 400);
+    await until(async () => Object.values((await get(httpPort)).signals).every(s => s.aspect === 'stop' && s.reportSequence > s.commandSequence));
+    await post(httpPort, 'all-stop', { enabled:false });
+    await post(httpPort, 'route', { from:'tvv3/6', to:'tvv3/8' });
+    await until(async () => (await get(httpPort)).routes[0]?.state === 'active');
+    await post(httpPort, 'route', { from:'tvv3/6', to:'tvv3/8' });
+    await until(async () => !(await get(httpPort)).routes.length);
   } catch (e) { e.message += '\nChild output: ' + output; throw e; }
   finally { await Promise.all(children.filter(c => c.exitCode === null).map(c => new Promise(resolve => { c.once('exit', resolve); c.kill('SIGTERM'); }))); fs.rmSync(dir, { recursive:true, force:true }); }
 });

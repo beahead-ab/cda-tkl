@@ -44,6 +44,8 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/api/route') engine.request(data.from, data.to);
     else if (url.pathname === '/api/cancel') engine.cancel(data.id);
     else if (url.pathname === '/api/turnout') engine.manual(data.name, data.position);
+    else if (url.pathname === '/api/track-block') engine.blockTrack(data.name, data.blocked);
+    else if (url.pathname === '/api/all-stop') engine.allStop(data.enabled);
     else if (url.pathname === '/api/note') {
       if (typeof data.key !== 'string' || data.key.length > 120 || typeof data.note !== 'string' || data.note.length > 4000 || ['__proto__', 'constructor', 'prototype'].includes(data.key)) throw Error('Ogiltig anteckning');
       const next = { ...notes, [data.key]: data.note }; storage.save('notes.json', next); notes = next;

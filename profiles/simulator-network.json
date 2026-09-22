@@ -2780,6 +2780,28 @@
             "Vx160": "T"
           },
           "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S165a",
+            "S165",
+            "S165c",
+            "S163c",
+            "S163",
+            "S161a",
+            "S161",
+            "S161c",
+            "S153",
+            "S153b"
+          ],
+          "turnouts": {
+            "Vx165": "T",
+            "Vx163": "T",
+            "Vx161": "T",
+            "Vx153": "T",
+            "Vx162": "T"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -3498,6 +3520,26 @@
             "Vx165": "T"
           },
           "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S166a",
+            "S166",
+            "S166b",
+            "S163",
+            "S161a",
+            "S161",
+            "S161c",
+            "S153",
+            "S153b"
+          ],
+          "turnouts": {
+            "Vx166": "C",
+            "Vx163": "C",
+            "Vx161": "T",
+            "Vx153": "T"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -3880,7 +3922,19 @@
       ]
     },
     "3/1": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "S103b",
+            "S103",
+            "S103a"
+          ],
+          "turnouts": {
+            "Vx103": "C"
+          },
+          "nextSignal": "3/3"
+        }
+      ]
     },
     "3/10": {
       "alternatives": [
@@ -3924,6 +3978,25 @@
             "Vx100": "T"
           },
           "nextSignal": "1/12"
+        },
+        {
+          "blocks": [
+            "S113b",
+            "S113",
+            "S113a",
+            "S112",
+            "S112b",
+            "S103a",
+            "S103",
+            "S103b",
+            "SIIIE"
+          ],
+          "turnouts": {
+            "Vx113": "T",
+            "Vx112": "T",
+            "Vx103": "C"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -3974,14 +4047,109 @@
             "Vx162": "T"
           },
           "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S153",
+            "S153c",
+            "S164",
+            "SIIID"
+          ],
+          "turnouts": {
+            "Vx153": "C",
+            "Vx164": "C",
+            "Vx161": "C"
+          },
+          "nextSignal": null
         }
       ]
     },
     "3/2": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "S164",
+            "S153c",
+            "S153",
+            "S153b"
+          ],
+          "turnouts": {
+            "Vx164": "C",
+            "Vx153": "C",
+            "Vx161": "C"
+          },
+          "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S164",
+            "S153c",
+            "S153",
+            "S153b"
+          ],
+          "turnouts": {
+            "Vx164": "C",
+            "Vx153": "C",
+            "Vx161": "C"
+          },
+          "nextSignal": "3/6"
+        }
+      ]
     },
     "3/3": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "S112b",
+            "S112",
+            "S113a",
+            "S113",
+            "S113b",
+            "SIIIA"
+          ],
+          "turnouts": {
+            "Vx112": "T",
+            "Vx113": "T"
+          },
+          "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S112b",
+            "S112",
+            "S113a",
+            "S113",
+            "S113c",
+            "S116",
+            "S116c",
+            "SIVA"
+          ],
+          "turnouts": {
+            "Vx112": "T",
+            "Vx113": "C",
+            "Vx116": "T"
+          },
+          "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S112b",
+            "S112",
+            "S113a",
+            "S113",
+            "S113c",
+            "S116",
+            "S116a",
+            "SVA"
+          ],
+          "turnouts": {
+            "Vx112": "T",
+            "Vx113": "C",
+            "Vx116": "C"
+          },
+          "nextSignal": null
+        }
+      ]
     },
     "3/5": {
       "alternatives": [
@@ -4020,6 +4188,28 @@
             "Vx131": "C"
           },
           "nextSignal": "5/9"
+        },
+        {
+          "blocks": [
+            "S123b",
+            "S123",
+            "S123a",
+            "S126",
+            "S126a",
+            "S131",
+            "S131a",
+            "S132b",
+            "S132",
+            "S132a",
+            "SVI"
+          ],
+          "turnouts": {
+            "Vx123": "C",
+            "Vx126": "C",
+            "Vx131": "T",
+            "Vx132": "T"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -4083,6 +4273,29 @@
             "Vx154": "C"
           },
           "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S152",
+            "S152b",
+            "S151",
+            "S151b",
+            "S154",
+            "S154b",
+            "S144b",
+            "S144",
+            "S133a",
+            "S133",
+            "SVI"
+          ],
+          "turnouts": {
+            "Vx152": "C",
+            "Vx151": "C",
+            "Vx154": "T",
+            "Vx144": "T",
+            "Vx133": "C"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -4128,6 +4341,17 @@
             "Vx152": "T"
           },
           "nextSignal": "3/11"
+        },
+        {
+          "blocks": [
+            "S152c",
+            "S152",
+            "S153b"
+          ],
+          "turnouts": {
+            "Vx152": "T"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -4179,6 +4403,28 @@
             "Vx100": "T"
           },
           "nextSignal": "1/12"
+        },
+        {
+          "blocks": [
+            "S116c",
+            "S116",
+            "S113c",
+            "S113",
+            "S113a",
+            "S112",
+            "S112b",
+            "S103a",
+            "S103",
+            "S103b",
+            "SIIIE"
+          ],
+          "turnouts": {
+            "Vx116": "T",
+            "Vx113": "C",
+            "Vx112": "T",
+            "Vx103": "C"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -4222,6 +4468,28 @@
             "Vx131": "C"
           },
           "nextSignal": "5/9"
+        },
+        {
+          "blocks": [
+            "S123c",
+            "S123",
+            "S123a",
+            "S126",
+            "S126a",
+            "S131",
+            "S131a",
+            "S132b",
+            "S132",
+            "S132a",
+            "SVI"
+          ],
+          "turnouts": {
+            "Vx123": "T",
+            "Vx126": "C",
+            "Vx131": "T",
+            "Vx132": "T"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -4270,6 +4538,20 @@
             "Vx152": "C"
           },
           "nextSignal": "3/11"
+        },
+        {
+          "blocks": [
+            "S151c",
+            "S151",
+            "S152b",
+            "S152",
+            "S153b"
+          ],
+          "turnouts": {
+            "Vx151": "T",
+            "Vx152": "C"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -4321,6 +4603,28 @@
             "Vx100": "T"
           },
           "nextSignal": "1/12"
+        },
+        {
+          "blocks": [
+            "S116a",
+            "S116",
+            "S113c",
+            "S113",
+            "S113a",
+            "S112",
+            "S112b",
+            "S103a",
+            "S103",
+            "S103b",
+            "SIIIE"
+          ],
+          "turnouts": {
+            "Vx116": "C",
+            "Vx113": "C",
+            "Vx112": "T",
+            "Vx103": "C"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -4355,6 +4659,25 @@
             "Vx131": "C"
           },
           "nextSignal": "5/9"
+        },
+        {
+          "blocks": [
+            "S126c",
+            "S126",
+            "S126a",
+            "S131",
+            "S131a",
+            "S132b",
+            "S132",
+            "S132a",
+            "SVI"
+          ],
+          "turnouts": {
+            "Vx126": "T",
+            "Vx131": "T",
+            "Vx132": "T"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -4449,6 +4772,23 @@
             "Vx152": "C"
           },
           "nextSignal": "3/11"
+        },
+        {
+          "blocks": [
+            "S154c",
+            "S154",
+            "S151b",
+            "S151",
+            "S152b",
+            "S152",
+            "S153b"
+          ],
+          "turnouts": {
+            "Vx154": "C",
+            "Vx151": "C",
+            "Vx152": "C"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -4456,22 +4796,150 @@
       "alternatives": []
     },
     "6/11": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "S164b",
+            "S164",
+            "SIIID"
+          ],
+          "turnouts": {
+            "Vx164": "T"
+          },
+          "nextSignal": null
+        }
+      ]
     },
     "6/5": {
       "alternatives": []
     },
     "6/6": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "S132a",
+            "S132",
+            "S132b"
+          ],
+          "turnouts": {
+            "Vx132": "T"
+          },
+          "nextSignal": "6/8"
+        }
+      ]
     },
     "6/7": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "S133",
+            "S133a",
+            "S144",
+            "S144a",
+            "S150a",
+            "S150",
+            "S150b",
+            "S155",
+            "S155b"
+          ],
+          "turnouts": {
+            "Vx133": "C",
+            "Vx144": "C",
+            "Vx150": "T",
+            "Vx155": "T"
+          },
+          "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S133",
+            "S133a",
+            "S144",
+            "S144b"
+          ],
+          "turnouts": {
+            "Vx133": "C",
+            "Vx144": "T"
+          },
+          "nextSignal": "6/9"
+        }
+      ]
     },
     "6/8": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "S131a",
+            "S131",
+            "S126a",
+            "S126",
+            "S123a",
+            "S123",
+            "S123b",
+            "SIIIA"
+          ],
+          "turnouts": {
+            "Vx131": "T",
+            "Vx126": "C",
+            "Vx123": "C"
+          },
+          "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S131a",
+            "S131",
+            "S126a",
+            "S126",
+            "S123a",
+            "S123",
+            "S123c",
+            "SIVA"
+          ],
+          "turnouts": {
+            "Vx131": "T",
+            "Vx126": "C",
+            "Vx123": "T"
+          },
+          "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S131a",
+            "S131",
+            "S126a",
+            "S126",
+            "S126c",
+            "SVA"
+          ],
+          "turnouts": {
+            "Vx131": "T",
+            "Vx126": "T"
+          },
+          "nextSignal": null
+        }
+      ]
     },
     "6/9": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "S154b",
+            "S154",
+            "S151b",
+            "S151",
+            "S152b",
+            "S152",
+            "S153b"
+          ],
+          "turnouts": {
+            "Vx154": "T",
+            "Vx151": "C",
+            "Vx152": "C"
+          },
+          "nextSignal": "3/11"
+        }
+      ]
     },
     "7/10": {
       "alternatives": []
@@ -13914,6 +14382,1971 @@
         "Vx160": "T",
         "Vx162": "C",
         "Vx165": "C"
+      }
+    },
+    {
+      "id": "tvv3/6--tvv3/8",
+      "label": "3/6 → 3/8",
+      "blocks": [
+        "S152",
+        "S152c",
+        "SIIIB"
+      ],
+      "signal": "3/6",
+      "signals": [
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/6",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx152": "T"
+      }
+    },
+    {
+      "id": "tvv3/6--tvv4/8",
+      "label": "3/6 → 4/8",
+      "blocks": [
+        "S152",
+        "S152b",
+        "S151",
+        "S151c",
+        "SIVB"
+      ],
+      "signal": "3/6",
+      "signals": [
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/6",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx152": "C",
+        "Vx151": "T"
+      }
+    },
+    {
+      "id": "tvv3/6--tvv5/8",
+      "label": "3/6 → 5/8",
+      "blocks": [
+        "S152",
+        "S152b",
+        "S151",
+        "S151b",
+        "S154",
+        "S154c",
+        "SVB"
+      ],
+      "signal": "3/6",
+      "signals": [
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/6",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx152": "C",
+        "Vx151": "C",
+        "Vx154": "C"
+      }
+    },
+    {
+      "id": "tvv3/6--tvv6/6",
+      "label": "3/6 → 6/6",
+      "blocks": [
+        "S152",
+        "S152b",
+        "S151",
+        "S151b",
+        "S154",
+        "S154b",
+        "S144b",
+        "S144",
+        "S133a",
+        "S133",
+        "SVI"
+      ],
+      "signal": "3/6",
+      "signals": [
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/6",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx152": "C",
+        "Vx151": "C",
+        "Vx154": "T",
+        "Vx144": "T",
+        "Vx133": "C"
+      }
+    },
+    {
+      "id": "tvv5/9--tvv3/11",
+      "label": "5/9 → 3/11",
+      "blocks": [
+        "S154c",
+        "S154",
+        "S151b",
+        "S151",
+        "S152b",
+        "S152",
+        "S153b"
+      ],
+      "signal": "5/9",
+      "signals": [
+        "5/9"
+      ],
+      "signalEntries": [
+        {
+          "signal": "5/9",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx154": "C",
+        "Vx151": "C",
+        "Vx152": "C"
+      }
+    },
+    {
+      "id": "tvv3/11--tvvN1",
+      "label": "3/11 → N1",
+      "blocks": [
+        "S153",
+        "S161c",
+        "S161",
+        "S161a",
+        "S163",
+        "S166b",
+        "S166",
+        "S166a",
+        "S170",
+        "S171",
+        "SN1B"
+      ],
+      "signal": "3/11",
+      "signals": [
+        "3/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/11",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx153": "T",
+        "Vx161": "T",
+        "Vx163": "C",
+        "Vx166": "C",
+        "Vx170": "C",
+        "Vx171": "C"
+      }
+    },
+    {
+      "id": "tvv3/11--tvvIIIdo",
+      "label": "3/11 → IIIdo",
+      "blocks": [
+        "S153",
+        "S153c",
+        "S164",
+        "SIIID"
+      ],
+      "signal": "3/11",
+      "signals": [
+        "3/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/11",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx153": "C",
+        "Vx161": "C",
+        "Vx164": "C"
+      }
+    },
+    {
+      "id": "tvv3/11--tvvU1",
+      "label": "3/11 → U1",
+      "blocks": [
+        "S153",
+        "S161c",
+        "S161",
+        "S161a",
+        "S163",
+        "S163c",
+        "S165c",
+        "S165",
+        "S165a",
+        "SU1B"
+      ],
+      "signal": "3/11",
+      "signals": [
+        "3/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/11",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx153": "T",
+        "Vx161": "T",
+        "Vx163": "T",
+        "Vx165": "T",
+        "Vx162": "T"
+      }
+    },
+    {
+      "id": "tvv3/10--tvvIIIev",
+      "label": "3/10 → IIIev",
+      "blocks": [
+        "S113b",
+        "S113",
+        "S113a",
+        "S112",
+        "S112b",
+        "S103a",
+        "S103",
+        "S103b",
+        "SIIIE"
+      ],
+      "signal": "3/10",
+      "signals": [
+        "3/10"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/10",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx113": "T",
+        "Vx112": "T",
+        "Vx103": "C"
+      }
+    },
+    {
+      "id": "tvv3/9--tvv3/11",
+      "label": "3/9 → 3/11",
+      "blocks": [
+        "S152c",
+        "S152",
+        "S153b"
+      ],
+      "signal": "3/9",
+      "signals": [
+        "3/9"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/9",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx152": "T"
+      }
+    },
+    {
+      "id": "tvv3/5--tvv6/7",
+      "label": "3/5 → 6/7",
+      "blocks": [
+        "S123b",
+        "S123",
+        "S123a",
+        "S126",
+        "S126a",
+        "S131",
+        "S131a",
+        "S132b",
+        "S132",
+        "S132a",
+        "SVI"
+      ],
+      "signal": "3/5",
+      "signals": [
+        "3/5"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/5",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx123": "C",
+        "Vx126": "C",
+        "Vx131": "T",
+        "Vx132": "T"
+      }
+    },
+    {
+      "id": "tvv3/5--tvv5/9",
+      "label": "3/5 → 5/9",
+      "blocks": [
+        "S123b",
+        "S123",
+        "S123a",
+        "S126",
+        "S126a",
+        "S131",
+        "S131c",
+        "SVB"
+      ],
+      "signal": "3/5",
+      "signals": [
+        "3/5"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/5",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx123": "C",
+        "Vx126": "C",
+        "Vx131": "C"
+      }
+    },
+    {
+      "id": "tvv1/4--tvv1/6",
+      "label": "1/4 → 1/6",
+      "blocks": [
+        "S165a",
+        "S165",
+        "S165b",
+        "S162",
+        "S160a",
+        "S160",
+        "S160b",
+        "SIC"
+      ],
+      "signal": "1/4",
+      "signals": [
+        "1/4"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/4",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx165": "C",
+        "Vx162": "C",
+        "Vx160": "C"
+      }
+    },
+    {
+      "id": "tvv1/4--tvv3/8",
+      "label": "1/4 → 3/8",
+      "blocks": [
+        "S165a",
+        "S165",
+        "S165c",
+        "S163c",
+        "S163",
+        "S161a",
+        "S161",
+        "S161c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152c",
+        "SIIIB"
+      ],
+      "signal": "1/4",
+      "signals": [
+        "1/4",
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/4",
+          "index": 0
+        },
+        {
+          "signal": "3/6",
+          "index": 5
+        }
+      ],
+      "turnouts": {
+        "Vx165": "T",
+        "Vx162": "T",
+        "Vx163": "T",
+        "Vx161": "T",
+        "Vx153": "T",
+        "Vx152": "T"
+      }
+    },
+    {
+      "id": "tvv1/4--tvv4/8",
+      "label": "1/4 → 4/8",
+      "blocks": [
+        "S165a",
+        "S165",
+        "S165c",
+        "S163c",
+        "S163",
+        "S161a",
+        "S161",
+        "S161c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152b",
+        "S151",
+        "S151c",
+        "SIVB"
+      ],
+      "signal": "1/4",
+      "signals": [
+        "1/4",
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/4",
+          "index": 0
+        },
+        {
+          "signal": "3/6",
+          "index": 5
+        }
+      ],
+      "turnouts": {
+        "Vx165": "T",
+        "Vx162": "T",
+        "Vx163": "T",
+        "Vx161": "T",
+        "Vx153": "T",
+        "Vx152": "C",
+        "Vx151": "T"
+      }
+    },
+    {
+      "id": "tvv1/4--tvv5/8",
+      "label": "1/4 → 5/8",
+      "blocks": [
+        "S165a",
+        "S165",
+        "S165c",
+        "S163c",
+        "S163",
+        "S161a",
+        "S161",
+        "S161c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152b",
+        "S151",
+        "S151b",
+        "S154",
+        "S154c",
+        "SVB"
+      ],
+      "signal": "1/4",
+      "signals": [
+        "1/4",
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/4",
+          "index": 0
+        },
+        {
+          "signal": "3/6",
+          "index": 5
+        }
+      ],
+      "turnouts": {
+        "Vx165": "T",
+        "Vx162": "T",
+        "Vx163": "T",
+        "Vx161": "T",
+        "Vx153": "T",
+        "Vx152": "C",
+        "Vx151": "C",
+        "Vx154": "C"
+      }
+    },
+    {
+      "id": "tvv4/10--tvvIIIev",
+      "label": "4/10 → IIIev",
+      "blocks": [
+        "S116c",
+        "S116",
+        "S113c",
+        "S113",
+        "S113a",
+        "S112",
+        "S112b",
+        "S103a",
+        "S103",
+        "S103b",
+        "SIIIE"
+      ],
+      "signal": "4/10",
+      "signals": [
+        "4/10"
+      ],
+      "signalEntries": [
+        {
+          "signal": "4/10",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx116": "T",
+        "Vx113": "C",
+        "Vx112": "T",
+        "Vx103": "C"
+      }
+    },
+    {
+      "id": "tvv2/4--tvv3/6",
+      "label": "2/4 → 3/6",
+      "blocks": [
+        "S166a",
+        "S166",
+        "S166b",
+        "S163",
+        "S161a",
+        "S161",
+        "S161c",
+        "S153",
+        "S153b"
+      ],
+      "signal": "2/4",
+      "signals": [
+        "2/4"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/4",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx166": "C",
+        "Vx163": "C",
+        "Vx161": "T",
+        "Vx153": "T"
+      }
+    },
+    {
+      "id": "tvv2/4--tvvXv",
+      "label": "2/4 → Xv",
+      "blocks": [
+        "S166a",
+        "S166",
+        "S166c",
+        "S162c",
+        "S162",
+        "S160a",
+        "S160",
+        "S160c"
+      ],
+      "signal": "2/4",
+      "signals": [
+        "2/4"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/4",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx166": "T",
+        "Vx162": "T",
+        "Vx165": "T",
+        "Vx160": "T"
+      }
+    },
+    {
+      "id": "tvv2/4--tvv2/6",
+      "label": "2/4 → 2/6",
+      "blocks": [
+        "S166a",
+        "S166",
+        "S166b",
+        "S163",
+        "S161a",
+        "S161",
+        "S161b",
+        "SIIC"
+      ],
+      "signal": "2/4",
+      "signals": [
+        "2/4"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/4",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx166": "C",
+        "Vx163": "C",
+        "Vx161": "C",
+        "Vx153": "C"
+      }
+    },
+    {
+      "id": "tvv2/4--tvv1/6",
+      "label": "2/4 → 1/6",
+      "blocks": [
+        "S166a",
+        "S166",
+        "S166c",
+        "S162c",
+        "S162",
+        "S160a",
+        "S160",
+        "S160b",
+        "SIC"
+      ],
+      "signal": "2/4",
+      "signals": [
+        "2/4"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/4",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx166": "T",
+        "Vx162": "T",
+        "Vx165": "T",
+        "Vx160": "C"
+      }
+    },
+    {
+      "id": "tvv2/4--tvv3/8",
+      "label": "2/4 → 3/8",
+      "blocks": [
+        "S166a",
+        "S166",
+        "S166b",
+        "S163",
+        "S161a",
+        "S161",
+        "S161c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152c",
+        "SIIIB"
+      ],
+      "signal": "2/4",
+      "signals": [
+        "2/4",
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/4",
+          "index": 0
+        },
+        {
+          "signal": "3/6",
+          "index": 5
+        }
+      ],
+      "turnouts": {
+        "Vx166": "C",
+        "Vx163": "C",
+        "Vx161": "T",
+        "Vx153": "T",
+        "Vx152": "T"
+      }
+    },
+    {
+      "id": "tvv2/4--tvv4/8",
+      "label": "2/4 → 4/8",
+      "blocks": [
+        "S166a",
+        "S166",
+        "S166b",
+        "S163",
+        "S161a",
+        "S161",
+        "S161c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152b",
+        "S151",
+        "S151c",
+        "SIVB"
+      ],
+      "signal": "2/4",
+      "signals": [
+        "2/4",
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/4",
+          "index": 0
+        },
+        {
+          "signal": "3/6",
+          "index": 5
+        }
+      ],
+      "turnouts": {
+        "Vx166": "C",
+        "Vx163": "C",
+        "Vx161": "T",
+        "Vx153": "T",
+        "Vx152": "C",
+        "Vx151": "T"
+      }
+    },
+    {
+      "id": "tvv2/4--tvv5/8",
+      "label": "2/4 → 5/8",
+      "blocks": [
+        "S166a",
+        "S166",
+        "S166b",
+        "S163",
+        "S161a",
+        "S161",
+        "S161c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152b",
+        "S151",
+        "S151b",
+        "S154",
+        "S154c",
+        "SVB"
+      ],
+      "signal": "2/4",
+      "signals": [
+        "2/4",
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/4",
+          "index": 0
+        },
+        {
+          "signal": "3/6",
+          "index": 5
+        }
+      ],
+      "turnouts": {
+        "Vx166": "C",
+        "Vx163": "C",
+        "Vx161": "T",
+        "Vx153": "T",
+        "Vx152": "C",
+        "Vx151": "C",
+        "Vx154": "C"
+      }
+    },
+    {
+      "id": "tvv10/11--tvvN1",
+      "label": "10/11 → N1",
+      "blocks": [
+        "S160c",
+        "S160",
+        "S160a",
+        "S162",
+        "S162c",
+        "S166c",
+        "S166",
+        "S166a",
+        "S170",
+        "S171",
+        "SN1B"
+      ],
+      "signal": "10/11",
+      "signals": [
+        "10/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "10/11",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx160": "T",
+        "Vx162": "T",
+        "Vx165": "T",
+        "Vx166": "T",
+        "Vx170": "C",
+        "Vx171": "C"
+      }
+    },
+    {
+      "id": "tvv10/11--tvvU1",
+      "label": "10/11 → U1",
+      "blocks": [
+        "S160c",
+        "S160",
+        "S160a",
+        "S162",
+        "S165b",
+        "S165",
+        "S165a",
+        "SU1B"
+      ],
+      "signal": "10/11",
+      "signals": [
+        "10/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "10/11",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx160": "T",
+        "Vx162": "C",
+        "Vx165": "C"
+      }
+    },
+    {
+      "id": "tvv5/10--tvvIIIev",
+      "label": "5/10 → IIIev",
+      "blocks": [
+        "S116a",
+        "S116",
+        "S113c",
+        "S113",
+        "S113a",
+        "S112",
+        "S112b",
+        "S103a",
+        "S103",
+        "S103b",
+        "SIIIE"
+      ],
+      "signal": "5/10",
+      "signals": [
+        "5/10"
+      ],
+      "signalEntries": [
+        {
+          "signal": "5/10",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx116": "C",
+        "Vx113": "C",
+        "Vx112": "T",
+        "Vx103": "C"
+      }
+    },
+    {
+      "id": "tvv6/7--tvv6/11",
+      "label": "6/7 → 6/11",
+      "blocks": [
+        "S133",
+        "S133a",
+        "S144",
+        "S144a",
+        "S150a",
+        "S150",
+        "S150b",
+        "S155",
+        "S155b"
+      ],
+      "signal": "6/7",
+      "signals": [
+        "6/7"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/7",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx133": "C",
+        "Vx144": "C",
+        "Vx150": "T",
+        "Vx155": "T"
+      }
+    },
+    {
+      "id": "tvv1/11--tvvN1",
+      "label": "1/11 → N1",
+      "blocks": [
+        "S160b",
+        "S160",
+        "S160a",
+        "S162",
+        "S162c",
+        "S166c",
+        "S166",
+        "S166a",
+        "S170",
+        "S171",
+        "SN1B"
+      ],
+      "signal": "1/11",
+      "signals": [
+        "1/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/11",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx160": "C",
+        "Vx162": "T",
+        "Vx165": "T",
+        "Vx166": "T",
+        "Vx170": "C",
+        "Vx171": "C"
+      }
+    },
+    {
+      "id": "tvv1/11--tvvU1",
+      "label": "1/11 → U1",
+      "blocks": [
+        "S160b",
+        "S160",
+        "S160a",
+        "S162",
+        "S165b",
+        "S165",
+        "S165a",
+        "SU1B"
+      ],
+      "signal": "1/11",
+      "signals": [
+        "1/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/11",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx160": "C",
+        "Vx162": "C",
+        "Vx165": "C"
+      }
+    },
+    {
+      "id": "tvv6/11--tvvIIIdo",
+      "label": "6/11 → IIIdo",
+      "blocks": [
+        "S164b",
+        "S164",
+        "SIIID"
+      ],
+      "signal": "6/11",
+      "signals": [
+        "6/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/11",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx164": "T"
+      }
+    },
+    {
+      "id": "tvv3/2--tvv3/6",
+      "label": "3/2 → 3/6",
+      "blocks": [
+        "S164",
+        "S153c",
+        "S153",
+        "S153b"
+      ],
+      "signal": "3/2",
+      "signals": [
+        "3/2"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/2",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx164": "C",
+        "Vx153": "C",
+        "Vx161": "C"
+      }
+    },
+    {
+      "id": "tvv3/2--tvv6/6",
+      "label": "3/2 → 6/6",
+      "blocks": [
+        "S164",
+        "S153c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152b",
+        "S151",
+        "S151b",
+        "S154",
+        "S154b",
+        "S144b",
+        "S144",
+        "S133a",
+        "S133",
+        "SVI"
+      ],
+      "signal": "3/2",
+      "signals": [
+        "3/2",
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/2",
+          "index": 0
+        },
+        {
+          "signal": "3/6",
+          "index": 2
+        }
+      ],
+      "turnouts": {
+        "Vx164": "C",
+        "Vx153": "C",
+        "Vx161": "C",
+        "Vx152": "C",
+        "Vx151": "C",
+        "Vx154": "T",
+        "Vx144": "T",
+        "Vx133": "C"
+      }
+    },
+    {
+      "id": "tvv1/9--tvv2/11",
+      "label": "1/9 → 2/11",
+      "blocks": [
+        "S140a",
+        "S140",
+        "S140c",
+        "S143c",
+        "S143",
+        "S143a",
+        "SIIC"
+      ],
+      "signal": "1/9",
+      "signals": [
+        "1/9"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/9",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx140": "T",
+        "Vx142": "T",
+        "Vx143": "T"
+      }
+    },
+    {
+      "id": "tvv1/9--tvv1/11",
+      "label": "1/9 → 1/11",
+      "blocks": [
+        "S140a",
+        "S140",
+        "S140b",
+        "S142",
+        "S142a",
+        "SIC"
+      ],
+      "signal": "1/9",
+      "signals": [
+        "1/9"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/9",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx140": "C",
+        "Vx142": "C"
+      }
+    },
+    {
+      "id": "tvv4/5--tvv6/7",
+      "label": "4/5 → 6/7",
+      "blocks": [
+        "S123c",
+        "S123",
+        "S123a",
+        "S126",
+        "S126a",
+        "S131",
+        "S131a",
+        "S132b",
+        "S132",
+        "S132a",
+        "SVI"
+      ],
+      "signal": "4/5",
+      "signals": [
+        "4/5"
+      ],
+      "signalEntries": [
+        {
+          "signal": "4/5",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx123": "T",
+        "Vx126": "C",
+        "Vx131": "T",
+        "Vx132": "T"
+      }
+    },
+    {
+      "id": "tvv4/5--tvv5/9",
+      "label": "4/5 → 5/9",
+      "blocks": [
+        "S123c",
+        "S123",
+        "S123a",
+        "S126",
+        "S126a",
+        "S131",
+        "S131c",
+        "SVB"
+      ],
+      "signal": "4/5",
+      "signals": [
+        "4/5"
+      ],
+      "signalEntries": [
+        {
+          "signal": "4/5",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx123": "T",
+        "Vx126": "C",
+        "Vx131": "C"
+      }
+    },
+    {
+      "id": "tvv2/11--tvvN1",
+      "label": "2/11 → N1",
+      "blocks": [
+        "S161b",
+        "S161",
+        "S161a",
+        "S163",
+        "S166b",
+        "S166",
+        "S166a",
+        "S170",
+        "S171",
+        "SN1B"
+      ],
+      "signal": "2/11",
+      "signals": [
+        "2/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/11",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx161": "C",
+        "Vx153": "C",
+        "Vx163": "C",
+        "Vx166": "C",
+        "Vx170": "C",
+        "Vx171": "C"
+      }
+    },
+    {
+      "id": "tvv2/11--tvvU1",
+      "label": "2/11 → U1",
+      "blocks": [
+        "S161b",
+        "S161",
+        "S161a",
+        "S163",
+        "S163c",
+        "S165c",
+        "S165",
+        "S165a",
+        "SU1B"
+      ],
+      "signal": "2/11",
+      "signals": [
+        "2/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/11",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx161": "C",
+        "Vx153": "C",
+        "Vx163": "T",
+        "Vx165": "T",
+        "Vx162": "T"
+      }
+    },
+    {
+      "id": "tvv2/9--tvv2/11",
+      "label": "2/9 → 2/11",
+      "blocks": [
+        "S141a",
+        "S141",
+        "S141b",
+        "S143",
+        "S143a",
+        "SIIC"
+      ],
+      "signal": "2/9",
+      "signals": [
+        "2/9"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/9",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx141": "C",
+        "Vx143": "C"
+      }
+    },
+    {
+      "id": "tvv2/9--tvv1/11",
+      "label": "2/9 → 1/11",
+      "blocks": [
+        "S141a",
+        "S141",
+        "S141c",
+        "S142c",
+        "S142",
+        "S142a",
+        "SIC"
+      ],
+      "signal": "2/9",
+      "signals": [
+        "2/9"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/9",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx141": "T",
+        "Vx142": "T",
+        "Vx140": "T"
+      }
+    },
+    {
+      "id": "tvv5/5--tvv6/7",
+      "label": "5/5 → 6/7",
+      "blocks": [
+        "S126c",
+        "S126",
+        "S126a",
+        "S131",
+        "S131a",
+        "S132b",
+        "S132",
+        "S132a",
+        "SVI"
+      ],
+      "signal": "5/5",
+      "signals": [
+        "5/5"
+      ],
+      "signalEntries": [
+        {
+          "signal": "5/5",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx126": "T",
+        "Vx131": "T",
+        "Vx132": "T"
+      }
+    },
+    {
+      "id": "tvv5/5--tvv5/9",
+      "label": "5/5 → 5/9",
+      "blocks": [
+        "S126c",
+        "S126",
+        "S126a",
+        "S131",
+        "S131c",
+        "SVB"
+      ],
+      "signal": "5/5",
+      "signals": [
+        "5/5"
+      ],
+      "signalEntries": [
+        {
+          "signal": "5/5",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx126": "T",
+        "Vx131": "C"
+      }
+    },
+    {
+      "id": "tvv5/8--tvv5/10",
+      "label": "5/8 → 5/10",
+      "blocks": [
+        "S131c",
+        "S131",
+        "S126a",
+        "S126",
+        "S126c",
+        "SVA"
+      ],
+      "signal": "5/8",
+      "signals": [
+        "5/8"
+      ],
+      "signalEntries": [
+        {
+          "signal": "5/8",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx131": "C",
+        "Vx126": "T"
+      }
+    },
+    {
+      "id": "tvv5/8--tvv3/10",
+      "label": "5/8 → 3/10",
+      "blocks": [
+        "S131c",
+        "S131",
+        "S126a",
+        "S126",
+        "S123a",
+        "S123",
+        "S123b",
+        "SIIIA"
+      ],
+      "signal": "5/8",
+      "signals": [
+        "5/8"
+      ],
+      "signalEntries": [
+        {
+          "signal": "5/8",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx131": "C",
+        "Vx126": "C",
+        "Vx123": "C"
+      }
+    },
+    {
+      "id": "tvv5/8--tvv4/10",
+      "label": "5/8 → 4/10",
+      "blocks": [
+        "S131c",
+        "S131",
+        "S126a",
+        "S126",
+        "S123a",
+        "S123",
+        "S123c",
+        "SIVA"
+      ],
+      "signal": "5/8",
+      "signals": [
+        "5/8"
+      ],
+      "signalEntries": [
+        {
+          "signal": "5/8",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx131": "C",
+        "Vx126": "C",
+        "Vx123": "T"
+      }
+    },
+    {
+      "id": "tvv4/9--tvv3/11",
+      "label": "4/9 → 3/11",
+      "blocks": [
+        "S151c",
+        "S151",
+        "S152b",
+        "S152",
+        "S153b"
+      ],
+      "signal": "4/9",
+      "signals": [
+        "4/9"
+      ],
+      "signalEntries": [
+        {
+          "signal": "4/9",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx151": "T",
+        "Vx152": "C"
+      }
+    },
+    {
+      "id": "tvv1/4--tvv2/6",
+      "label": "1/4 → 2/6",
+      "blocks": [
+        "S165a",
+        "S165",
+        "S165c",
+        "S163c",
+        "S163",
+        "S161a",
+        "S161",
+        "S161b",
+        "SIIC"
+      ],
+      "signal": "1/4",
+      "signals": [
+        "1/4"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/4",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx165": "T",
+        "Vx162": "T",
+        "Vx163": "T",
+        "Vx161": "C",
+        "Vx153": "C"
+      }
+    },
+    {
+      "id": "tvv1/4--tvvXv",
+      "label": "1/4 → Xv",
+      "blocks": [
+        "S165a",
+        "S165",
+        "S165b",
+        "S162",
+        "S160a",
+        "S160",
+        "S160c"
+      ],
+      "signal": "1/4",
+      "signals": [
+        "1/4"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/4",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx165": "C",
+        "Vx162": "C",
+        "Vx160": "T"
+      }
+    },
+    {
+      "id": "tvv1/4--tvv3/6",
+      "label": "1/4 → 3/6",
+      "blocks": [
+        "S165a",
+        "S165",
+        "S165c",
+        "S163c",
+        "S163",
+        "S161a",
+        "S161",
+        "S161c",
+        "S153",
+        "S153b"
+      ],
+      "signal": "1/4",
+      "signals": [
+        "1/4"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/4",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx165": "T",
+        "Vx162": "T",
+        "Vx163": "T",
+        "Vx161": "T",
+        "Vx153": "T"
+      }
+    },
+    {
+      "id": "tvv3/1--tvv3/5",
+      "label": "3/1 → 3/5",
+      "blocks": [
+        "S103b",
+        "S103",
+        "S103a",
+        "S112b",
+        "S112",
+        "S113a",
+        "S113",
+        "S113b",
+        "SIIIA"
+      ],
+      "signal": "3/1",
+      "signals": [
+        "3/1",
+        "3/3"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/1",
+          "index": 0
+        },
+        {
+          "signal": "3/3",
+          "index": 1
+        }
+      ],
+      "turnouts": {
+        "Vx103": "C",
+        "Vx112": "T",
+        "Vx113": "T"
+      }
+    },
+    {
+      "id": "tvv3/1--tvv4/5",
+      "label": "3/1 → 4/5",
+      "blocks": [
+        "S103b",
+        "S103",
+        "S103a",
+        "S112b",
+        "S112",
+        "S113a",
+        "S113",
+        "S113c",
+        "S116",
+        "S116c",
+        "SIVA"
+      ],
+      "signal": "3/1",
+      "signals": [
+        "3/1",
+        "3/3"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/1",
+          "index": 0
+        },
+        {
+          "signal": "3/3",
+          "index": 1
+        }
+      ],
+      "turnouts": {
+        "Vx103": "C",
+        "Vx112": "T",
+        "Vx113": "C",
+        "Vx116": "T"
+      }
+    },
+    {
+      "id": "tvv3/1--tvv5/5",
+      "label": "3/1 → 5/5",
+      "blocks": [
+        "S103b",
+        "S103",
+        "S103a",
+        "S112b",
+        "S112",
+        "S113a",
+        "S113",
+        "S113c",
+        "S116",
+        "S116a",
+        "SVA"
+      ],
+      "signal": "3/1",
+      "signals": [
+        "3/1",
+        "3/3"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/1",
+          "index": 0
+        },
+        {
+          "signal": "3/3",
+          "index": 1
+        }
+      ],
+      "turnouts": {
+        "Vx103": "C",
+        "Vx112": "T",
+        "Vx113": "C",
+        "Vx116": "C"
+      }
+    },
+    {
+      "id": "tvv3/2--tvv3/8",
+      "label": "3/2 → 3/8",
+      "blocks": [
+        "S164",
+        "S153c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152c",
+        "SIIIB"
+      ],
+      "signal": "3/2",
+      "signals": [
+        "3/2",
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/2",
+          "index": 0
+        },
+        {
+          "signal": "3/6",
+          "index": 2
+        }
+      ],
+      "turnouts": {
+        "Vx164": "C",
+        "Vx153": "C",
+        "Vx161": "C",
+        "Vx152": "T"
+      }
+    },
+    {
+      "id": "tvv3/2--tvv4/8",
+      "label": "3/2 → 4/8",
+      "blocks": [
+        "S164",
+        "S153c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152b",
+        "S151",
+        "S151c",
+        "SIVB"
+      ],
+      "signal": "3/2",
+      "signals": [
+        "3/2",
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/2",
+          "index": 0
+        },
+        {
+          "signal": "3/6",
+          "index": 2
+        }
+      ],
+      "turnouts": {
+        "Vx164": "C",
+        "Vx153": "C",
+        "Vx161": "C",
+        "Vx152": "C",
+        "Vx151": "T"
+      }
+    },
+    {
+      "id": "tvv3/2--tvv5/8",
+      "label": "3/2 → 5/8",
+      "blocks": [
+        "S164",
+        "S153c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152b",
+        "S151",
+        "S151b",
+        "S154",
+        "S154c",
+        "SVB"
+      ],
+      "signal": "3/2",
+      "signals": [
+        "3/2",
+        "3/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/2",
+          "index": 0
+        },
+        {
+          "signal": "3/6",
+          "index": 2
+        }
+      ],
+      "turnouts": {
+        "Vx164": "C",
+        "Vx153": "C",
+        "Vx161": "C",
+        "Vx152": "C",
+        "Vx151": "C",
+        "Vx154": "C"
+      }
+    },
+    {
+      "id": "tvv6/6--tvv3/10",
+      "label": "6/6 → 3/10",
+      "blocks": [
+        "S132a",
+        "S132",
+        "S132b",
+        "S131a",
+        "S131",
+        "S126a",
+        "S126",
+        "S123a",
+        "S123",
+        "S123b",
+        "SIIIA"
+      ],
+      "signal": "6/6",
+      "signals": [
+        "6/6",
+        "6/8"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/6",
+          "index": 0
+        },
+        {
+          "signal": "6/8",
+          "index": 1
+        }
+      ],
+      "turnouts": {
+        "Vx132": "T",
+        "Vx131": "T",
+        "Vx126": "C",
+        "Vx123": "C"
+      }
+    },
+    {
+      "id": "tvv6/6--tvv4/10",
+      "label": "6/6 → 4/10",
+      "blocks": [
+        "S132a",
+        "S132",
+        "S132b",
+        "S131a",
+        "S131",
+        "S126a",
+        "S126",
+        "S123a",
+        "S123",
+        "S123c",
+        "SIVA"
+      ],
+      "signal": "6/6",
+      "signals": [
+        "6/6",
+        "6/8"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/6",
+          "index": 0
+        },
+        {
+          "signal": "6/8",
+          "index": 1
+        }
+      ],
+      "turnouts": {
+        "Vx132": "T",
+        "Vx131": "T",
+        "Vx126": "C",
+        "Vx123": "T"
+      }
+    },
+    {
+      "id": "tvv6/6--tvv5/10",
+      "label": "6/6 → 5/10",
+      "blocks": [
+        "S132a",
+        "S132",
+        "S132b",
+        "S131a",
+        "S131",
+        "S126a",
+        "S126",
+        "S126c",
+        "SVA"
+      ],
+      "signal": "6/6",
+      "signals": [
+        "6/6",
+        "6/8"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/6",
+          "index": 0
+        },
+        {
+          "signal": "6/8",
+          "index": 1
+        }
+      ],
+      "turnouts": {
+        "Vx132": "T",
+        "Vx131": "T",
+        "Vx126": "T"
+      }
+    },
+    {
+      "id": "tvv6/7--tvvN1",
+      "label": "6/7 → N1",
+      "blocks": [
+        "S133",
+        "S133a",
+        "S144",
+        "S144b",
+        "S154b",
+        "S154",
+        "S151b",
+        "S151",
+        "S152b",
+        "S152",
+        "S153b",
+        "S153",
+        "S161c",
+        "S161",
+        "S161a",
+        "S163",
+        "S166b",
+        "S166",
+        "S166a",
+        "S170",
+        "S171",
+        "SN1B"
+      ],
+      "signal": "6/7",
+      "signals": [
+        "6/7",
+        "6/9",
+        "3/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/7",
+          "index": 0
+        },
+        {
+          "signal": "6/9",
+          "index": 3
+        },
+        {
+          "signal": "3/11",
+          "index": 6
+        }
+      ],
+      "turnouts": {
+        "Vx133": "C",
+        "Vx144": "T",
+        "Vx154": "T",
+        "Vx151": "C",
+        "Vx152": "C",
+        "Vx153": "T",
+        "Vx161": "T",
+        "Vx163": "C",
+        "Vx166": "C",
+        "Vx170": "C",
+        "Vx171": "C"
       }
     }
   ],

@@ -106,18 +106,19 @@ function buildPlan() {
   }
   const used = new Set(config.routes.flatMap(r => [r.from, r.to]));
   for (const b of layout.controls) {
-    const isButton=(b.act||'').includes('S-on');
+    const isShunt=b.sensor.startsWith('tvv');
+    const isButton=(b.act||'').includes('S-on') || isShunt;
     if(!isButton && !/lamp-[gr]|blink-r|free|hw-/.test(b.act||'')) continue;
-    const isRoute=b.sensor.startsWith('htv');
+    const isRoute=b.sensor.startsWith('htv') || isShunt;
     const names=b.sensor.startsWith('vxv')?b.sensor.slice(3).split('/').map(n=>'Vx'+n):[];
     const available=isRoute?used.has(b.sensor):names.length>0&&names.every(n=>config.turnouts[n]&&(config.coupled[names[0]]||[names[0]]).includes(n));
-    const g=svg('g',{transform:`translate(${b.centerX},${b.centerY})`,class:'touch-target '+(isButton?'route-button':'source-indicator'),'data-button':b.sensor},controls);
+    const g=svg('g',{transform:`translate(${b.centerX},${b.centerY})`,class:'touch-target '+(isButton?'route-button':'source-indicator')+(isRoute?(isShunt?' shunt-control':' main-control'):''),'data-button':b.sensor},controls);
     const hit=svg('circle',{r:isButton?16:9,class:'hit'},g);
     if(isButton) {
-      svg('circle',{r:(b.act.includes('-s.')?15:21)/2,class:'dot'},g);
-      svg('rect',{x:-3.5,y:-3.5,width:7,height:7,class:'traffic-dot'},g);
+      if(isShunt) svg('path',{d:b.act.includes('arrowleft')?'M6,-5 L-3,-5 L-8,0 L-3,5 L6,5 Z':'M-6,-5 L3,-5 L8,0 L3,5 L-6,5 Z',class:'dot shunt-arrow'},g);
+      else { svg('circle',{r:(b.act.includes('-s.')?15:21)/2,class:'dot'},g); svg('rect',{x:-3.5,y:-3.5,width:7,height:7,class:'traffic-dot'},g); }
     } else svg('circle',{r:b.act.includes('free')?4.5:6.5,class:'indicator-off'},g);
-    accessible(g,isRoute?`${label(b.sensor)} · tågvägsknapp`:b.sensor,()=>{
+    accessible(g,isRoute?`${label(b.sensor)} · ${isShunt?'växeltågväg':'tågvägsknapp'}`:b.sensor,()=>{
       if(isRoute) return choose(b.sensor);
       if(names.length){
         if(!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
@@ -134,12 +135,13 @@ function buildPlan() {
     for(const b of buttons) b.hit.setAttribute('r',Math.min(b.hitCap,32*Math.min(1.6,1/Math.max(.1,scale)))/2);
   }).observe(root);
 }
+function isBlocked(name) { const address=config.blocks[name]?.address;return address!=null && (state?.controls?.blocked || []).some(n=>config.blocks[n]?.address===address); }
 function usable() { return online && state?.connection === 'connected' && !state.storageFault; }
 function paintPlan() {
   const fresh = online && state?.connection === 'connected';
   for (const r of rails) {
     const value = fresh ? state.blocks[r.block]?.occupied : null;
-    r.node.setAttribute('class', 'rail ' + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
+    r.node.setAttribute('class', 'rail ' + (isBlocked(r.block)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
   }
   for (const t of switches) {
     const value = fresh ? state.turnouts[t.name]?.position : 'unknown';
@@ -191,7 +193,7 @@ function animateFlow() {
       part.node.style.visibility = occupied ? 'hidden' : '';
       if (r.state === 'establishing' && online) part.node.setAttribute('stroke-dasharray', `${lit} ${part.length + 1}`);
       else part.node.removeAttribute('stroke-dasharray');
-      for (const lamp of part.lamps) lamp.node.style.visibility = !occupied && ['establishing', 'clearing', 'active'].includes(status) && lamp.at <= fraction * total ? 'visible' : 'hidden';
+      for (const lamp of part.lamps) lamp.node.style.visibility = !occupied && ['establishing', 'clearing', 'active', 'traversing'].includes(status) && lamp.at <= fraction * total ? 'visible' : 'hidden';
     }
   }
 }
@@ -201,6 +203,14 @@ function paint() {
   const c = $('connection'); c.textContent = !online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad';
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
   paintPlan(); paintInspector();
+  $('ais-status').hidden = !state.controls?.stopAll;
+  $('all-stop').disabled = !online || pending;
+  $('reset-ais').disabled = !usable() || pending;
+  const blocks=state.controls?.blocked || [];
+  $('blocked-count').textContent=blocks.length ? `· ${blocks.length} spärrade` : '';
+  html('blocked-list',blocks.map(n=>`<span class="field-chip blocked-chip">${esc(n)} · spärrat</span>`).join(''));
+  $('toggle-block').textContent = isBlocked($('block-choice').value)?'Ta bort spärr':'Spärra spår';
+  $('toggle-block').disabled = !online || pending || !!state.storageFault;
   for (const b of $('route-catalog').querySelectorAll('button')) b.disabled = !usable() || pending;
   html('active-routes', state.routes.map(r => `<div class="route-item"><strong>${esc(r.label)}<span class="route-state ${esc(r.state)}">${esc(statuses[r.state])}</span></strong><small>${esc(r.reason)}${r.passage&&r.enteredAt?' · '+r.passage.filter(p=>p.state==='clear').length+'/'+r.passage.length+' avsnitt passerade':''}</small><button data-cancel="${esc(r.id)}" ${!online || r.cancelRequested ? 'disabled' : ''}>${r.cancelRequested ? 'Inväntar frigivning' : 'Återta'}</button></div>`).join(''));
   $('event-status').textContent = state.routes.length + ' tågvägslås · ' + Object.keys(config.turnouts).length + ' anslutna växlar';
@@ -232,13 +242,18 @@ async function start() {
   buildPlan();
   $('compact-toggle').onclick=()=>{ const compact=document.body.classList.toggle('panel-compact'); $('compact-toggle').textContent=compact?'Visa verktyg':'Dölj verktyg'; };
 
+  $('block-choice').innerHTML=Object.keys(config.blocks).sort((a,b)=>a.localeCompare(b,'sv',{numeric:true})).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  $('block-choice').onchange=paint;
+  $('toggle-block').onclick=()=>api('track-block',{name:$('block-choice').value,blocked:!isBlocked($('block-choice').value)});
+  $('all-stop').onclick=()=>api('all-stop',{enabled:true});
+  $('reset-ais').onclick=()=>api('all-stop',{enabled:false});
   $('account-link').hidden = !config.accountUrl;
   $('field-link').href = config.fieldUrl || 'http://127.0.0.1:8911/'; $('field-link').hidden = false;
-  $('profile-summary').textContent=`${config.routes.length} tågvägar · ${Object.keys(config.turnouts).length} växlar · ${Object.keys(config.signals).length} signaler i provanläggningen.`;
-  const starts=[...new Set(config.routes.map(r=>r.from))];
-  $('route-catalog').innerHTML=`<label>Från<select id="catalog-from">${starts.map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('')}</select></label><label>Till<select id="catalog-to"></select></label><button id="catalog-request" class="primary" disabled>Lägg / återta tågväg</button>`;
+  $('profile-summary').textContent=`${config.routes.filter(r=>r.kind!=='shunt').length} huvudtågvägar och ${config.routes.filter(r=>r.kind==='shunt').length} växeltågvägar · ${Object.keys(config.turnouts).length} växlar · ${Object.keys(config.signals).length} signaler i provanläggningen.`;
+  $('route-catalog').innerHTML=`<label>Från<select id="catalog-from"></select></label><label>Till<select id="catalog-to"></select></label><button id="catalog-request" class="primary" disabled>Lägg / återta tågväg</button>`;
   function targets(){const from=$('catalog-from').value;$('catalog-to').innerHTML=config.routes.filter(r=>r.from===from).map(r=>`<option value="${esc(r.to)}">${esc(label(r.to))}</option>`).join('');}
-  $('catalog-from').onchange=targets;targets();
+  function routeMode(){ const mode=$('route-mode').value; document.body.dataset.routeMode=mode; clearChoice(); const starts=[...new Set(config.routes.filter(r=>(r.kind||'main')===mode).map(r=>r.from))]; $('catalog-from').innerHTML=starts.map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('');targets(); }
+  $('route-mode').onchange=routeMode; $('catalog-from').onchange=targets;routeMode();
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) api('turnout', { name: inspected.name, position }); };

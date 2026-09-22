@@ -7,10 +7,11 @@ import { decode, sensorReport } from '../src/protocol.mjs';
 import { RoutePolicy } from '../src/route-policy.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url)));
 const profile=read('profiles/charlottendal-network.json'), fieldProfile=read('profiles/simulator-network.json'), source=read('public/data/operations-source.json');
-function rig() {
+const mainRoutes=profile.routes.filter(r=>r.kind==='main'), shuntRoutes=profile.routes.filter(r=>r.kind==='shunt');
+function rig(storage) {
   let now=100000;const queue=[],commands=[];
   const field=new Field(fieldProfile,{now:()=>now,movementMs:100});
-  const engine=new Engine(profile,{now:()=>now,send:b=>{queue.push(['order',b]);commands.push(decode(b));}});
+  const engine=new Engine(profile,{storage,now:()=>now,send:b=>{queue.push(['order',b]);commands.push(decode(b));}});
   field.on('frame',b=>queue.push(['report',b]));
   function drain(){let guard=20000;while(queue.length&&guard--){const [kind,b]=queue.shift();if(kind==='order')field.accept(b);else engine.receive(b);}assert.ok(guard>0,'feedback must settle');}
   function advance(ms){for(let i=0;i<ms;i+=50){now+=50;field.tick();if(now%1000===0)field.allReports();drain();engine.tick();drain();}}
@@ -21,9 +22,9 @@ test('every source main-route pair is explicitly allowed, denied or unresolved; 
   assert.equal(source.groups.length,25);assert.equal(source.rules.length,1377);
   assert.equal(source.mainRoutePolicies.length,376);
   assert.deepEqual(source.disabledGroups,['IX:AUTO:0021']);
-  const policy=new RoutePolicy(source);
+  const policy=new RoutePolicy({mainRoutePolicies:source.mainRoutePolicies});
   assert.equal(policy.allowed().length,210);
-  assert.equal(profile.routes.length,192);assert.equal(profile.excluded.length,18);
+  assert.equal(mainRoutes.length,192);assert.equal(profile.excluded.filter(r=>r.from.startsWith('htv')).length,18);
   for(const pair of source.mainRoutePolicies.filter(r=>r.status!=='allowed')) assert.equal(policy.inspect(pair.fromButton,pair.toButton).allowed,false,pair.rule);
   assert.equal(Object.keys(profile.turnouts).length,49);assert.equal(Object.keys(profile.signals).length,66);
   assert.ok(profile.routes.every(r=>r.signals.length && r.source.rules.length && !r.blocks.includes('frame')));
@@ -48,7 +49,7 @@ test('independent infarts establish together, lock switches and cancel independe
   assert.throws(()=>r.request('htvAn','htvSpIA'),/motsägelse|spärrad/);
 });
 test('all 192 main routes establish and release after independent train passage', {timeout:60000},()=>{
-  for(const def of profile.routes){
+  for(const def of mainRoutes){
     const r=rig(),route=r.request(def.from,def.to);r.advance(6500);assert.equal(route.state,'active',def.label+': '+route.reason);
     r.field.startTrain(def.id);r.advance((route.passage.length+3)*850);
     assert.equal(r.field.trains.length,0,def.label+': train stopped');
@@ -76,4 +77,36 @@ test('unexpected occupation order holds locks and shared detectors remain cohere
   const address=profile.blocks[last].address;
   for(const [name,binding] of Object.entries(profile.blocks)) if(binding.address===address) assert.equal(r.engine.blocks[name].occupied,true);
   r.engine.receive(sensorReport(address,false));assert.equal(r.engine.routes.length,1);
+});
+
+test('all visible source shunt routes establish and release through independent field reports', {timeout:60000},()=>{
+  assert.equal(source.shuntRoutePolicies.length,146);assert.equal(shuntRoutes.length,60);
+  const policy=new RoutePolicy(source);
+  const bad=source.shuntRoutePolicies.find(r=>r.status==='unresolved');
+  assert.equal(policy.inspect(bad.fromButton,bad.toButton).allowed,false);
+  for(const def of shuntRoutes){
+    const r=rig(),route=r.request(def.from,def.to);r.advance(6500);assert.equal(route.state,'active',def.label+': '+route.reason);
+    r.field.startTrain(def.id);r.advance((route.passage.length+3)*850);
+    assert.equal(r.field.trains.length,0,def.label+': train stopped');assert.equal(r.engine.routes.length,0,def.label+': '+route.reason);
+  }
+});
+
+test('administrative blocks persist independently of FREE reports and stop existing routes without releasing locks',()=>{
+  const saved=new Map(),storage={load:(n,f)=>saved.has(n)?structuredClone(saved.get(n)):f,save:(n,v)=>saved.set(n,structuredClone(v)),event(){}};
+  const r=rig(storage);r.engine.blockTrack('SIA',true);
+  r.field.allReports();r.drain();assert.equal(r.engine.blocks.SIA.occupied,false);assert.equal(r.engine.trackBlocked('SIA'),true);
+  assert.throws(()=>r.request('htvCu','htvSpIA'),/administrativt spärrat/);
+  const restored=new Engine(profile,{storage});assert.equal(restored.trackBlocked('SIA'),true);
+  r.engine.blockTrack('SIA',false);const route=r.request('htvCu','htvSpIA');r.advance(4000);
+  r.engine.blockTrack('SIA',true);r.drain();assert.equal(route.state,'held');assert.equal(r.engine.routes.length,1);
+  r.engine.blockTrack('SIA',false);r.advance(1000);assert.equal(route.state,'held');
+});
+test('AIS requires new STOP acknowledgements, survives restart and never resumes old routes',()=>{
+  const saved=new Map(),storage={load:(n,f)=>saved.has(n)?structuredClone(saved.get(n)):f,save:(n,v)=>saved.set(n,structuredClone(v)),event(){}};
+  const r=rig(storage),route=r.request('htvCu','htvSpIA');r.advance(4000);
+  r.engine.allStop(true);assert.equal(route.state,'held');assert.throws(()=>r.engine.allStop(false),/återrapportera stopp/);
+  assert.throws(()=>r.request('htvAn','htvSpIIA'),/AIS/);
+  assert.equal(new Engine(profile,{storage}).controls.stopAll,true);
+  r.drain();r.advance(1000);r.engine.allStop(false);assert.equal(route.state,'held');assert.equal(r.engine.routes.length,1);
+  assert.ok(Object.values(r.engine.signals).every(s=>s.desired==='STOP'));
 });

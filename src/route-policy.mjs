@@ -2,7 +2,7 @@
 export class RoutePolicy {
   constructor(source) {
     this.pairs = new Map();
-    for (const rule of source.mainRoutePolicies) {
+    for (const rule of [...source.mainRoutePolicies, ...(source.shuntRoutePolicies || [])]) {
       const key = rule.fromButton + '\0' + rule.toButton;
       if (!this.pairs.has(key)) this.pairs.set(key, []);
       this.pairs.get(key).push(rule);
@@ -29,7 +29,7 @@ export function attachSourceEndpoints(topology, source) {
     const incoming = [a.connect1name,a.connect2name].map(id=>topology.segments[id]).filter(Boolean).filter(s=>{
       const at = s.c1===a.ident ? 1 : s.c2===a.ident ? 2 : 0;
       if (!at) return false;
-      const dx = s['x'+(at===1?2:1)] - Number(a.x);
+      const dx = deltaFromAnchor(topology, s, at, a);
       return direction==='eastbound' ? dx<0 : dx>0;
     });
     if(incoming.length===1) {
@@ -41,6 +41,18 @@ export function attachSourceEndpoints(topology, source) {
     const seg=topology.segments[e.segment];
     if(e.sensor && seg) topology.buttons[e.sensor]={segment:seg.id,end:seg.c1===e.id?2:1,label:e.sensor};
   }
+}
+
+function deltaFromAnchor(topology, segment, at, anchor) {
+  const other = at === 1 ? 2 : 1;
+  let dx = segment['x'+other] - Number(anchor.x);
+  // JMRI may place an anchor exactly on a turnout leg. The zero-length
+  // segment still has a direction: from that leg toward the turnout centre.
+  if (!dx && segment['t'+other]?.startsWith('TURNOUT_')) {
+    const turnout = topology.panel.turnouts[segment['c'+other]];
+    if (turnout) dx = turnout.cx - Number(anchor.x);
+  }
+  return dx;
 }
 
 export function searchSourceRoute(topology, fromSensor, toSensor) {
@@ -77,7 +89,7 @@ export function signalPlan(topology, source, route) {
     const anchor = anchors[entry];
     if (!anchor) continue;
     const exit = p.end === 1 ? 2 : 1;
-    const dx = seg['x' + exit] - Number(anchor.x);
+    const dx = deltaFromAnchor(topology, seg, p.end, anchor);
     if (!dx) continue; // no inferred direction for a vertical-only anchor
     const forward = dx > 0 ? 'eastbound' : 'westbound', reverse = dx > 0 ? 'westbound' : 'eastbound';
     add(anchor[forward + 'signalmast'], index, anchor[forward + 'sensor']);
