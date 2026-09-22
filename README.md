@@ -75,3 +75,5 @@ Se även [genomgång mot Claude Design och XML](docs/design-xml-granskning.md).
 ## Underlag och rättigheter
 
 Geometri och register kommer från den exporterade Charlottendal-designen och dess JMRI-underlag. Signalbilderna ligger i `public/assets/mod59`; originalets licenstext och proveniens har bevarats där. Ikonerna omfattas av angivna JMRI/GPL-villkor. Den nya källkoden levereras i denna projektmapp för fortsatt arbete. Runtime-data, lokala anteckningar och hemligheter ska inte läggas i Git.
+
+[Visningsinställningar, utkast och versionshistorik](docs/admin.md).
