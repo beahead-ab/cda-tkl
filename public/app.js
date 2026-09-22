@@ -1,9 +1,10 @@
 import { createSourceRegister } from './source-register.js';
+import { panelLayout } from './panel-layout.js';
 const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = false;
-let sourceRegister;
+let sourceRegister, layout, serverOffset = 0;
 function setPage(page) {
   history.replaceState(null,'',page==='admin'?'#register':'#panel');
   if(page==='admin') document.body.classList.remove('panel-compact');
@@ -11,14 +12,14 @@ function setPage(page) {
   if(page==='admin') return sourceRegister.open().catch(e=>message(e.message));
 }
 async function openSource(kind,name) { await setPage('admin'); await sourceRegister.open(kind,name); }
-const rails = [], switches = [], signals = [], buttons = [], routeNodes = new Map();
+const rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], routeNodes = new Map();
 const iconTypes = {
   hsi_2: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_4: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_5: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32],
-  'hsi_3+dvsi': ['Hsi0+Sh0', 'Hsi1+Sh1', 'Hsi-dark+Sh-dark', 18, 32], hdvsi_8: ['Hdvsi0+Sh0', 'Hdvsi1+Sh1', 'Hdvsi-dark', 18, 31],
+  'hsi_3+dvsi': ['Hsi0+Sh0', 'Hsi1+Sh1', 'Hsi-dark+Sh-dark', 12, 32], hdvsi_8: ['Hdvsi0+Sh0', 'Hdvsi1+Sh1', 'Hdvsi-dark', 18, 31],
   dvsi_4: ['Dvsi0', 'Dvsi1', 'Dvsi-dark', 18, 25], sly_2: ['Ssi0', 'Ssi1', 'Dark', 18, 25]
 };
 const icon = file => '/assets/mod59/icons/' + encodeURIComponent(file) + '.gif';
-const imageCache = [];
+const imageCache = [], decodedIcons = new Set();
 const rendered = new Map();
 function html(id, value) { if (rendered.get(id) !== value) { $(id).innerHTML = value; rendered.set(id, value); } }
 function svg(tag, attrs, parent, text) {
@@ -55,18 +56,27 @@ function label(id) {
   return id.replace('htv', '');
 }
 function buildPlan() {
+  layout = panelLayout(panel);
+  const {x,y,width,height}=layout.crop;
+  $('track-plan').setAttribute('viewBox',`${x} ${y} ${width} ${height}`);
   const root = $('track-plan'), track = svg('g', {}, root), turnouts = svg('g', {}, root);
   const flow = svg('g', { id: 'flow-layer', 'pointer-events': 'none' }, root), labels = svg('g', {}, root), icons = svg('g', {}, root), controls = svg('g', {}, root);
   for (const s of panel.segs.filter(s => s.b !== 'frame' && !s.hide && Math.min(s.y1, s.y2) < 850)) {
     const node = svg('line', { x1: s.x1, y1: s.y1, x2: s.x2, y2: s.y2, class: 'rail unconfigured' }, track);
     svg('title', {}, node, 'Spårsegment '+s.id+' · '+s.b);
     rails.push({ node, block: s.b });
+    if (s.d) node.setAttribute('stroke-dasharray','7 5');
+    const length=Math.hypot(s.x2-s.x1,s.y2-s.y1), count=length<26?0:Math.max(1,Math.round(length/78));
+    for(let i=0;i<count;i++){ const fraction=(i+.5)/count;
+      indicatorLamps.push({block:s.b,node:svg('circle',{cx:s.x1+(s.x2-s.x1)*fraction,cy:s.y1+(s.y2-s.y1)*fraction,r:2.5,class:'relay-lens'},track)});
+    }
   }
   for (const t of Object.values(panel.turnouts)) {
     if (t.cy > 850) continue;
     const legs = {};
     for (const [leg, x, y] of [['A', t.ax, t.ay], ['B', t.bx, t.by], ['C', t.ccx, t.ccy]]) {
       legs[leg] = svg('line', { x1: t.cx, y1: t.cy, x2: x, y2: y, class: 'rail unknown' }, turnouts);
+      indicatorLamps.push({block:t.block,node:svg('circle',{cx:(t.cx+x)/2,cy:(t.cy+y)/2,r:2.5,class:'relay-lens'},turnouts)});
     }
     switches.push({ ...t, legs });
     svg('text', { x: t.cx + 3, y: t.cy - 11, class: 'turnout-number' }, labels, t.name.replace('Vx', ''));
@@ -74,7 +84,11 @@ function buildPlan() {
     svg('circle', { cx: t.cx, cy: t.cy, r: 16, class: 'hit' }, g);
     accessible(g, `Växel ${t.name}`, () => { inspected = { kind: 'turnout', name: t.name }; paintInspector(); });
   }
-  for (const l of panel.labels.filter(l => !l.hidden && l.y < 850)) svg('text', { x: l.x, y: l.y + (l.size || 12), class: 'track-label' }, labels, l.text);
+  for (const l of panel.labels.filter(l => !l.hidden && l.y < 840)) {
+    const destination=/Lekby|Vagnsta|Kungsfors/i.test(l.text), size=destination?11:l.size||12;
+    if(l.br!=null || destination) svg('rect',{x:l.x-3,y:l.y-3,width:l.text.length*size*.58+12,height:size*1.5+3,fill:destination?'#1d211a':`rgb(${l.br},${l.bg},${l.bb})`,class:destination?'destination-plate':''},labels);
+    svg('text', { x: l.x, y: l.y + size, class: 'track-label'+(destination?' destination-label':''), style:`font-size:${size}px;font-weight:${(l.style&1)||destination?700:400}` }, labels, destination?l.text.toUpperCase():l.text);
+  }
   const tt = panel.turntable; svg('circle', { cx: tt.cx, cy: tt.cy, r: tt.r, class: 'rail unconfigured' }, track);
   svg('line', { x1: tt.cx - tt.r, y1: tt.cy, x2: tt.cx + tt.r, y2: tt.cy, class: 'rail unconfigured' }, track);
   for (const m of panel.micons.filter(m => m.y < 850)) {
@@ -84,18 +98,40 @@ function buildPlan() {
     const rad = m.deg * Math.PI / 180, rw = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad)), rh = Math.abs(h * Math.cos(rad)) + Math.abs(w * Math.sin(rad));
     const g = svg('g', { transform: `translate(${m.x + rw / 2},${m.y + rh / 2})`, class: 'touch-target signal-target' }, icons);
     svg('rect', { x: -rw / 2 - 5, y: -rh / 2 - 6, width: rw + 10, height: rh + 12, class: 'hit' }, g);
-    const img = svg('image', { x: -w / 2, y: -h / 2, width: w, height: h, transform: `rotate(${m.deg})`, href: icon(type[2]) }, g);
+    const images=type.slice(0,3).map((file,i)=>svg('image',{x:-w/2,y:-h/2,width:w,height:h,transform:`rotate(${m.deg})`,href:icon(file),visibility:i===2?'visible':'hidden','pointer-events':'none'},g));
     const unknown = svg('text', { x: rw / 2 + 1, y: 3, class: 'signal-unknown' }, g, '?');
     accessible(g, `Signal ${m.mast}`, () => { inspected = { kind: 'signal', name: m.mast }; paintInspector(); });
-    signals.push({ ...m, g, img, unknown, type });
+    signals.push({ ...m, g, images, unknown, type });
   }
   const used = new Set(config.routes.flatMap(r => [r.from, r.to]));
-  for (const b of panel.sicons.filter(b => b.sensor.startsWith('htv') && !b.hidden && b.y < 850)) {
-    const g = svg('g', { transform: `translate(${b.x + 8},${b.y + 8})`, class: 'touch-target route-button', 'data-button': b.sensor }, controls);
-    svg('circle', { r: 21, class: 'hit' }, g); svg('circle', { r: 7, class: 'dot' }, g);
-    accessible(g, `${label(b.sensor)} · tågvägsknapp${used.has(b.sensor) ? '' : ' · ej inkopplad'}`, () => choose(b.sensor));
-    buttons.push({ id: b.sensor, g, available: used.has(b.sensor) });
+  for (const b of layout.controls) {
+    const isButton=(b.act||'').includes('S-on');
+    if(!isButton && !/lamp-[gr]|blink-r|free|hw-/.test(b.act||'')) continue;
+    const isRoute=b.sensor.startsWith('htv');
+    const names=b.sensor.startsWith('vxv')?b.sensor.slice(3).split('/').map(n=>'Vx'+n):[];
+    const available=isRoute?used.has(b.sensor):names.length>0&&names.every(n=>config.turnouts[n]&&(config.coupled[names[0]]||[names[0]]).includes(n));
+    const g=svg('g',{transform:`translate(${b.centerX},${b.centerY})`,class:'touch-target '+(isButton?'route-button':'source-indicator'),'data-button':b.sensor},controls);
+    const hit=svg('circle',{r:isButton?16:9,class:'hit'},g);
+    if(isButton) {
+      svg('circle',{r:(b.act.includes('-s.')?15:21)/2,class:'dot'},g);
+      svg('rect',{x:-3.5,y:-3.5,width:7,height:7,class:'traffic-dot'},g);
+    } else svg('circle',{r:b.act.includes('free')?4.5:6.5,class:'indicator-off'},g);
+    accessible(g,isRoute?`${label(b.sensor)} · tågvägsknapp`:b.sensor,()=>{
+      if(isRoute) return choose(b.sensor);
+      if(names.length){
+        if(!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
+        if(!available) return message('Växelgruppen finns i källan men är ännu inte ansluten till driftprofilen.');
+        const name=names[0]; inspected={kind:'turnout',name}; paintInspector();
+        return api('turnout',{name,position:state.turnouts[name]?.position==='C'?'T':'C'});
+      }
+      openSource('sensors',b.sensor);
+    });
+    if(isButton) buttons.push({id:b.sensor,g,hit,hitCap:b.hitCap,available,names});
   }
+  new ResizeObserver(()=>{
+    const scale=root.getBoundingClientRect().width/layout.crop.width;
+    for(const b of buttons) b.hit.setAttribute('r',Math.min(b.hitCap,32*Math.min(1.6,1/Math.max(.1,scale)))/2);
+  }).observe(root);
 }
 function usable() { return online && state?.connection === 'connected' && !state.storageFault; }
 function paintPlan() {
@@ -112,14 +148,17 @@ function paintPlan() {
   }
   for (const s of signals) {
     const value = fresh ? state.signals[s.mast]?.aspect : 'unknown';
-    const target = icon(s.type[value === 'stop' ? 0 : value === 'go' ? 1 : 2]);
-    if (s.img.getAttribute('href') !== target) s.img.setAttribute('href', target);
-    s.unknown.style.display = value === 'go' || value === 'stop' ? 'none' : '';
+    const requested=value==='stop'?0:value==='go'?1:2;
+    const selected=decodedIcons.has(s.type[requested])?requested:2;
+    s.images.forEach((image,i)=>image.setAttribute('visibility',i===selected?'visible':'hidden'));
+    s.unknown.style.display = selected !== 2 ? 'none' : '';
     s.g.classList.toggle('unconfigured', !config.signals[s.mast]);
   }
+  for(const lamp of indicatorLamps) lamp.node.classList.toggle('occupied',fresh&&state.blocks[lamp.block]?.occupied===true);
   for (const b of buttons) {
     b.g.classList.toggle('chosen', b.id === chosen); b.g.classList.toggle('unavailable', !b.available);
     b.g.classList.toggle('in-route', !!state?.routes.some(r => r.from === b.id || r.to === b.id));
+    b.g.classList.toggle('locked',!!state?.routes.some(r=>b.names.some(n=>r.turnouts[n])));
   }
   for (const [id, data] of routeNodes) if (!state?.routes.some(r => r.id === id)) { data.g.remove(); routeNodes.delete(id); }
   for (const r of state?.routes || []) {
@@ -128,7 +167,8 @@ function paintPlan() {
       const parts = r.flow.map(part => {
         const node = svg('line', { x1: part.x1, y1: part.y1, x2: part.x2, y2: part.y2, class: 'route-flow' }, g);
         const lamps = [];
-        for (let dist = 13; dist < part.length; dist += 23) lamps.push({ at: part.distance + dist, node: svg('circle', { cx: part.x1 + (part.x2 - part.x1) * dist / part.length, cy: part.y1 + (part.y2 - part.y1) * dist / part.length, r: 2.3, class: 'lamp' }, g) });
+        const count=part.length<26?1:Math.max(1,Math.round(part.length/78));
+        for(let j=0;j<count;j++){const dist=(j+.5)/count*part.length; lamps.push({at:part.distance+dist,node:svg('circle',{cx:part.x1+(part.x2-part.x1)*(j+.5)/count,cy:part.y1+(part.y2-part.y1)*(j+.5)/count,r:3.4,class:'lamp'},g)});}
         return { ...part, node, lamps };
       });
       routeNodes.set(r.id, { g, parts });
@@ -141,7 +181,7 @@ function animateFlow() {
     const entry = routeNodes.get(r.id); if (!entry) continue;
     const total = r.flow.at(-1)?.distance + r.flow.at(-1)?.length || 1;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const fraction = online && r.state === 'establishing' && !reduced ? Math.min(1, Math.max(0, (Date.now() - r.establishedAt) / 1200)) : 1;
+    const fraction = online && r.state === 'establishing' && !reduced ? Math.min(1, Math.max(0, (Date.now() + serverOffset - r.establishedAt) / (r.flowDuration || 1200))) : 1;
     const status = !online ? 'held' : r.state;
     for (const part of entry.parts) {
       const lit = Math.max(0, Math.min(part.length, fraction * total - part.distance));
@@ -163,7 +203,7 @@ function paint() {
   for (const b of $('route-catalog').querySelectorAll('button')) b.disabled = !usable() || pending;
   html('active-routes', state.routes.map(r => `<div class="route-item"><strong>${esc(r.label)}<span class="route-state ${esc(r.state)}">${esc(statuses[r.state])}</span></strong><small>${esc(r.reason)}</small><button data-cancel="${esc(r.id)}" ${!online || r.cancelRequested ? 'disabled' : ''}>${r.cancelRequested ? 'Inväntar frigivning' : 'Återta'}</button></div>`).join(''));
   $('event-status').textContent = state.routes.length + ' tågvägslås · ' + Object.keys(config.turnouts).length + ' anslutna växlar';
-  $('events').innerHTML = state.events.filter(e => !['report', 'transport'].includes(e.kind)).slice(0, 7).map(e => `<div class="event-row"><time>${time(e.at)}</time><span>${esc(e.message)}</span></div>`).join('');
+  html('events', state.events.filter(e => !['report', 'transport'].includes(e.kind)).slice(0, 7).map(e => `<div class="event-row"><time>${time(e.at)}</time><span>${esc(e.message)}</span></div>`).join(''));
   $('wire').textContent = (state.trace || []).slice(0, 40).map(e => `${time(e.at)}  ${e.direction === 'out' ? 'SKICKAT ' : 'MOTTAGET'}  ${e.hex}`).join('\n');
 }
 function paintInspector() {
@@ -182,8 +222,11 @@ function paintInspector() {
 }
 async function start() {
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
-  const files = [...new Set(Object.values(iconTypes).flatMap(a => a.slice(0, 3)))];
-  await Promise.all(files.map(async file => { const i = new Image(); imageCache.push(i); i.src = icon(file); await i.decode(); }));
+  const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
+  // Loading a missing or slow icon must not prevent the track plan from starting.
+  // Each displayed variant is decoded before it can replace the dark indication.
+  Promise.allSettled(files.map(async file => { const i = new Image(); imageCache.push(i); i.src = icon(file); await i.decode(); decodedIcons.add(file); if(state) paintPlan(); }))
+    .then(results => { if(results.some(r=>r.status==='rejected')) message('En signalbild kunde inte laddas. Berörd signal visas som okänd.'); });
   sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note})});
   buildPlan();
   $('compact-toggle').onclick=()=>{ const compact=document.body.classList.toggle('panel-compact'); $('compact-toggle').textContent=compact?'Visa verktyg':'Dölj verktyg'; };
@@ -203,7 +246,7 @@ async function start() {
   for (const page of ['panel','admin']) $(page+'-tab').onclick=()=>setPage(page);
   setPage(location.hash==='#register'?'admin':'panel');
   const source = new EventSource('/api/events');
-  source.onmessage = e => { state = JSON.parse(e.data); online = true; lastEvent = Date.now(); paint(); };
+  source.onmessage = e => { state = JSON.parse(e.data); serverOffset=state.serverTime-Date.now(); online = true; lastEvent = Date.now(); paint(); };
   source.onerror = () => { online = false; paint(); };
   setInterval(() => { if (Date.now() - lastEvent > 3000 && online) { online = false; paint(); } }, 750);
   function animation() { if (state?.routes.some(r => r.state === 'establishing')) animateFlow(); requestAnimationFrame(animation); } animation();

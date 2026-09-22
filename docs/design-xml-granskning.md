@@ -53,7 +53,7 @@ Registerposter överlappar avsiktligt när en underpost också exponeras separat
 
 | Funktion i designen | Status i den riktiga appen |
 |---|---|
-| Tre skins, kompakthet, små mod59-ikoner, stora träffytor | Finns. Kodade tolkningar av samma spårplan; inte en pixelidentisk kopia av designverktygets komponenter |
+| Tre skins, kompakthet, små mod59-ikoner, stora träffytor | Finns. Efter direkt samarbete med Claude används samma beskärning och knappplacering, permanenta signalbildlager och återförda relälampor. Fortfarande inte en pixelidentisk kopia; se [portningsgranskningen](claude-portning.md) |
 | Val av start/slut, återtagning, växellås, ordnad tändning och klarsättning | Finns för de fyra konfigurerade provtågvägarna; servern inväntar telegramrapporter |
 | Fri vägsökning och omledning runt andra tågvägar över hela banan | Inte aktiverat i driftskärnan. De 153 källparen är importerade definitioner, inte 153 verifierade körbara vägar |
 | Simulerade tåg från valfri infart | Den separata anläggningssimulatorn har fyra definierade provrörelser |
@@ -66,7 +66,7 @@ Registerposter överlappar avsiktligt när en underpost också exponeras separat
 
 ## Kontroller
 
-- 25 enhetstester och 3 processbaserade helhetstester godkända lokalt.
+- 27 enhetstester och 3 processbaserade helhetstester godkända lokalt efter portningsgranskningen.
 - Fältvis kontroll av hela XML-trädet, originalets kontrollsumma, alla kategoriantal och upprepningsbar import.
 - Specifik regression: `IX:AUTO:0002C1` har åtgärdsvärdena `2, 4, 4, 2`, med option, delay och string bevarade.
 - Beständiga gamla anteckningsnycklar bevarade för 3 425 tidigare registerposter.

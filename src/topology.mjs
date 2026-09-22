@@ -59,7 +59,15 @@ export class Topology {
         const path = [...n.path, ...(via ? [via] : []), { kind: 'segment', id, end }];
         const vb = via?.kind === 'turnout' ? this.turnouts[via.name].block : null;
         if (vb && blocked.has(vb)) return;
-        queue.push({ id, end, settings: expanded, path, blocks: [...n.blocks, ...(vb ? [vb] : []), next.b], crossings: crossing ? [...n.crossings, crossing] : n.crossings, used: [...n.used, id], cost: n.cost + length(next) + (via ? 20 : 0) });
+        // Claude Design's porting review: the internal turnout legs are part of
+        // the physical path length. A fixed penalty can select a longer route.
+        let internalLength = 0;
+        if (via?.kind === 'turnout') {
+          const t = this.turnouts[via.name];
+          const points = { A: [t.ax,t.ay], B: [t.bx,t.by], C: [t.ccx,t.ccy] };
+          for (const leg of [via.from,via.to]) internalLength += Math.hypot(points[leg][0]-t.cx,points[leg][1]-t.cy);
+        }
+        queue.push({ id, end, settings: expanded, path, blocks: [...n.blocks, ...(vb ? [vb] : []), next.b], crossings: crossing ? [...n.crossings, crossing] : n.crossings, used: [...n.used, id], cost: n.cost + length(next) + internalLength });
       };
       if (type === 'POS_POINT') {
         for (const next of this.points[node] || []) if (next.id !== n.id) push(next.id, 'POS_POINT', n.settings);
