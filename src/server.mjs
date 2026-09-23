@@ -56,7 +56,7 @@ function installRuntime(next,start=true){
   if(client){client.removeAllListeners();client.stop();engine.removeAllListeners();recorder.removeAllListeners();}
   ({profile,client,engine,configuration,trainInformation,panelIndications,recorder}=next);trace.length=0;
   const {client:c,engine:e,trainInformation:book,recorder:recording}=next;
-  e.on('change',()=>{book.observe(e.blocks,e.connected);dirty=true;});
+  e.on('change',()=>{book.observe(e.blocks,e.connected,e.routes);dirty=true;});
   c.on('connection',connected=>{bindingReports.clear();recording.connection(connected);protect(()=>e.connection(connected));});
   c.on('frame',bytes=>protect(()=>{const d=decode(bytes);if(['turnout','sensor','signal'].includes(d.kind)){const key=d.kind+':'+d.address;if(!bindingReports.has(key)&&bindingReports.size>=6000)bindingReports.delete(bindingReports.keys().next().value);bindingReports.set(key,{at:Date.now(),data:d});}e.receive(bytes);}));
   c.on('fault',message=>{recording.fault(message);e.log('transport',String(message));});
@@ -111,9 +111,9 @@ const server = http.createServer(async (req, res) => {
     }
     if(url.pathname.startsWith('/api/train-information/')) {
       const command=url.pathname.slice('/api/train-information/'.length);
-      if(!['save','move'].includes(command)) return json(res,{error:'Okänd informationsåtgärd'},404);
+      if(!['save','move','follow','unfollow'].includes(command)) return json(res,{error:'Okänd informationsåtgärd'},404);
       const result=trainInformation[command](data);dirty=true;
-      engine.log('train-information',command==='move'?'Tågnummer flyttat manuellt mellan informationsfält.':'Tåginformation registrerad eller kontrollerad manuellt.');
+      engine.log('train-information',({move:'Tågnummer flyttat manuellt mellan informationsfält.',follow:'Tågnummer kopplat till rapporterad passage.',unfollow:'Tågnummerföljning avslutad av operatören.',save:'Tåginformation registrerad eller kontrollerad manuellt.'})[command]);
       return json(res,result);
     }
     if (url.pathname === '/api/route') engine.request(data.from, data.to);

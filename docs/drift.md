@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `2798f31` · version 0.13.0 (23 september 2026, 07:14) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/2798f31` |
+| Driftsatt kodversion | `3b3b90e` · version 0.14.0 (23 september 2026, 07:40) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/3b3b90e` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -169,3 +169,8 @@ controls.json sparas i format3 vid nästa manöver. Återgång till äldre kod f
 ### Version0.13 – seriell transport och TrainMeet-läsning
 
 Release2798f31 publicerad07:14. 108 enhetstester och sex processhelhetstester passerade på servern, inklusive POSIX-serieportprovet på Linux. Backup `/root/charlottendal-backups/network-2798f31-20260923T051427Z`, tidigare0cfc8d0. Tjänster anslutna och noll lås vid bytet. Externa HTTPS-prov: login200, TrainMeet-parkoppling401 utan session. Ingen fysisk port eller verklig TrainMeet-server aktiverad. Riktig origin/station/anslutningskod och LocoBuffer-inställningar återstår.
+
+
+### Version 0.14 – driftbindningar
+
+Release 3b3b90e publicerad 07:40. 114 enhetstester och sex processhelhetstester passerade på servern. Backup `/root/charlottendal-backups/network-3b3b90e-20260923T054032Z`, tidigare 2798f31. Efterkontroll: anslutna tjänster, inga lås, HTTPS-login 200 och bindings-API 401 utan session. bindings.json ingår i katalogbackup; äldre kod som ignorerar aktiva bindningar får inte återställas automatiskt. Se [driftbindningar](driftbindningar.md).

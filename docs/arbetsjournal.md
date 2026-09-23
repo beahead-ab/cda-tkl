@@ -290,3 +290,11 @@ Preview66183 på9030/9031/9032, samma statekatalog. TrainMeet-provkopplingen bor
 ### 23 september 07:38 – färdig lokal kontroll av driftadministration
 
 114 enhetstester och fyra utökade kärn-/inloggningsprocessprov passerar. Växelns överlappande osynliga informationsyta borttagen; väljaren Visa växel läser enbart detaljer, den ursprungliga pluppen är uttryckligen märkt Manövrera växel. Vx170 provad i UI och återställd rakt. Konfigurationsformuläret använder befintlig responsiv layout. Publicering förbereds med skydd mot återgång till äldre kod som inte läser aktiva driftbindningar.
+
+### 23 september 07:40 – version 0.14 publicerad
+
+Release 3b3b90e: 114 enhetstester och sex processhelhetstester passerade på befintlig server. Oförändrad full XML-/regelkontroll. Backup /root/charlottendal-backups/network-3b3b90e-20260923T054032Z. Efterkontroll visar båda tjänster anslutna, inga lås eller uppstartsproblem, HTTPS-inloggning 200 och driftbindningarnas API 401 utan inloggning. Privat GitHub uppdaterat.
+
+### 23 september 07:51 – nummerföljning färdig lokalt
+
+Version 0.15 tillför uttryckligen tilldelad nummerföljning längs kärnans accepterade passage. Tio nya riktade prov, befintliga informationsprov och utökat helhetstest med två samtidiga tåg passerar. UI-prov visar full passage och säkert pausläge efter avbrott; återanslutning återupptar inte följningen. Inga provnummer/lås kvar. Format 2 sparar nummer och följningssteg atomiskt och läser äldre format 1; återgång måste använda kompatibel kod. Ingen automatisk lokidentifiering eller TrainMeet-skrivning införs.

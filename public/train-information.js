@@ -9,16 +9,17 @@ export function createTrainInformation({catalog,plan,displayName,openSource}) {
   const incoming=catalog.fields.filter(f=>f.kind==='incoming').sort((a,b)=>a.sourceSystem.localeCompare(b.sourceSystem));
   const blocks=catalog.fields.filter(f=>f.kind==='block').sort((a,b)=>a.name.localeCompare(b.name,'sv',{numeric:true}));
   $('train-information').innerHTML=`<div class="train-strip"><strong>Inkommande</strong><div id="incoming-trains"></div><button id="open-train-editor">Tågnummer <span id="train-count"></span></button></div>
-    <details id="train-editor" class="card"><summary>Tåginformation · manuell registrering</summary>
-    <p class="muted">Ange eller flytta tågnummer efter egen kontroll. Beläggning rapporteras separat. Uppgifterna flyttas inte automatiskt med tåget.</p>
+    <details id="train-editor" class="card"><summary>Tåginformation och nummerföljning</summary>
+    <p class="muted">Ange tågnummer efter egen kontroll. Du kan sedan koppla numret till en klar tågväg före första beläggningen. Följningen använder rapporterad passage; detektorerna identifierar inte själva tåget.</p>
     <div class="train-editor-grid"><div><label>Plats eller inkommande fält<select id="train-field"></select></label>
     <label>Tågnummer<input id="train-value" maxlength="24" autocomplete="off" placeholder="Till exempel P421"></label>
     <div class="train-actions"><button id="train-save" class="primary">Spara / bekräfta</button><button id="train-clear">Töm fält</button><button id="train-reload">Läs in senaste</button></div>
     <div id="train-message" role="status"></div></div><div><p id="train-detail"></p><p id="train-condition" class="muted"></p>
     <button id="train-source" class="source-inspect">Visa källuppgifter →</button>
     <label>Flytta numret till<select id="train-target"></select></label><button id="train-move">Flytta tågnummer</button></div></div>
+    <div class="train-follow-controls"><label>Följ längs klar tågväg<select id="train-follow-route" aria-label="Följ längs klar tågväg"></select></label><button id="train-follow">Koppla valt tågnummer</button><p class="muted">Numret ska stå i ett inkommande fält eller vid vägens första detektor. Vid avbrott, återtagning eller oklar passage stannar följningen för kontroll. Den fortsätter aldrig själv efter omstart.</p><div id="train-follow-list"></div></div>
     <details class="train-history"><summary>Senaste ändringar</summary><div id="train-history"></div></details>
-    <details class="train-source-note"><summary>Källavvikelse i originalet</summary><p class="muted">Två visningsplatser pekar på SN2A och markeras med ?; SU2A saknar egen visningsplats. Båda blocken finns i listan.</p></details><p class="muted train-source-note">TrainMeet är ännu inte anslutet.</p></details>`;
+    <details class="train-source-note"><summary>Källavvikelse i originalet</summary><p class="muted">Två visningsplatser pekar på SN2A och markeras med ?; SU2A saknar egen visningsplats. Båda blocken finns i listan.</p></details><p class="muted train-source-note">TrainMeet visas separat. Nummerföljningen ändrar inga klareringar i TrainMeet.</p></details>`;
   const options=`<optgroup label="Inkommande tåg">${incoming.map(option).join('')}</optgroup><optgroup label="Spårblock">${blocks.map(option).join('')}</optgroup>`;
   $('train-field').innerHTML=options;$('train-target').innerHTML='<option value="">Välj mål…</option>'+options;
   let activeKey=$('train-field').value;
@@ -44,18 +45,29 @@ export function createTrainInformation({catalog,plan,displayName,openSource}) {
     (base.epochs[$('train-field').value]||0)!==(info.epochs[$('train-field').value]||0);}
   function paintEditor() {
     const key=$('train-field').value,f=fields.get(key),entry=info?.entries[key],target=$('train-target').value;
-    $('train-detail').textContent=entry?`${entry.value} · manuellt registrerat ${stamp(entry.updatedAt)}${entry.needsReview?' · behöver kontrolleras':''}${entry.duplicate?' · numret finns på flera platser':''}`:'Inget tågnummer registrerat här.';
+    $('train-detail').textContent=entry?`${entry.value} · ${entry.source==='follow'?'flyttat efter passage':'manuellt registrerat'} ${stamp(entry.updatedAt)}${entry.needsReview?' · behöver kontrolleras':''}${entry.duplicate?' · numret finns på flera platser':''}`:'Inget tågnummer registrerat här.';
     const occupied=online&&state?.connection==='connected'?state?.blocks[f.name]?.occupied:null;
     $('train-condition').textContent=f.kind==='incoming'?'Planeringsuppgift · ingen beläggningskoppling.':`${occupied===true?'Spårledningen är belagd':occupied===false?'Spårledningen är fri':'Beläggningen är okänd'} · ${f.name}. Ett registrerat nummer är inte en detektorkvittens.`;
     if(stale()&&dirty) $('train-message').textContent='Uppgifterna eller beläggningen har ändrats. Din text finns kvar; läs in senaste innan du sparar.';
-    $('train-save').disabled=!online||busy||stale()||!$('train-value').value.trim();
-    $('train-clear').disabled=!online||busy||stale()||!entry;
+    const unavailable=!online||busy||!!info?.fault;
+    $('train-follow').disabled=unavailable||dirty||stale()||!entry||entry.needsReview||entry.duplicate||!$('train-follow-route').value||info.follows.some(f=>['active','paused'].includes(f.status)&&f.key===key);
+    $('train-save').disabled=unavailable||stale()||!$('train-value').value.trim();
+    $('train-clear').disabled=unavailable||stale()||!entry;
     $('train-reload').disabled=!online||busy;
-    $('train-move').disabled=!online||busy||dirty||stale()||!entry||!target||target===key||!!info?.entries[target];
+    $('train-move').disabled=unavailable||dirty||stale()||!entry||!target||target===key||!!info?.entries[target];
+    $('train-follow-route').disabled=busy;
+    if(info?.fault)$('train-message').textContent=info.fault;
+    for(const b of $('train-follow-list').querySelectorAll('button'))b.disabled=unavailable;
     $('train-field').disabled=busy;$('train-value').disabled=busy;$('train-target').disabled=busy;
   }
   function paint() {
     if(!info)return;
+    const routes=(state?.routes||[]).filter(r=>r.state==='active'&&r.autoRelease&&r.passage?.every(p=>p.state==='pending'));
+    const select=$('train-follow-route'),chosen=select.value,options='<option value="">Välj tågväg…</option>'+routes.map(r=>`<option value="${esc(r.id)}">${esc(r.label)}</option>`).join('');
+    if(select.innerHTML!==options){select.innerHTML=options;if(routes.some(r=>r.id===chosen))select.value=chosen;}
+    const status={active:'Följer',paused:'Pausad · kontrollera',stopped:'Avslutad',complete:'Passerad · kontrollera'};
+    const follows=(info.follows||[]).slice().reverse().map(f=>`<div class="follow-row"><strong>${esc(f.value)} · ${esc(f.routeLabel)}</strong><span>${status[f.status]} · senast ${esc(f.key.replace('block:','').replace('incoming:',''))}</span><small>${esc(f.reason)}</small><button data-show-train="${esc(f.key)}">Visa plats för ${esc(f.value)}</button>${['active','paused'].includes(f.status)?`<button data-unfollow="${esc(f.id)}">Avsluta följning för ${esc(f.value)}</button>`:''}</div>`).join('');
+    if($('train-follow-list').innerHTML!==follows)$('train-follow-list').innerHTML=follows;
     for(const {f,button} of chips) {
       const e=info.entries[f.key],review=e&&(!online||e.needsReview);
       button.querySelector('strong').textContent=e?e.value+(review?' ?':''):'—';
@@ -67,22 +79,22 @@ export function createTrainInformation({catalog,plan,displayName,openSource}) {
       group.setAttribute('visibility',e?'visible':'hidden');group.setAttribute('tabindex',e?'0':'-1');group.classList.toggle('needs-review',!!review);
       const label=e?e.value+(review?' ?':''):'';
       text.textContent=label;rect.setAttribute('width',Math.max(34,label.length*8+6));
-      const description=`${a.block}: ${label||'inget tågnummer'} · manuellt${a.duplicate?' · dubblerad blockreferens i originalet':''}${e?.needsReview?' · placeringen behöver kontrolleras':''}`;
+      const description=`${a.block}: ${label||'inget tågnummer'} · ${e?.source==='follow'?'nummerföljning':'manuellt'}${a.duplicate?' · dubblerad blockreferens i originalet':''}${e?.needsReview?' · placeringen behöver kontrolleras':''}`;
       group.setAttribute('aria-label',description);hint.textContent=description;
     }
     if(!dirty&&!busy)loadEditor();else paintEditor();
     const describeKey=key=>fields.has(key)?title(fields.get(key)):key;
-    $('train-history').textContent=info.history.map(e=>`${stamp(e.at)} · ${e.kind==='move'?`${e.before}: ${describeKey(e.from)} → ${describeKey(e.to)}`:`${describeKey(e.key)}: ${e.before||'—'} → ${e.after||'—'}${e.kind==='confirm'?' · kontrollerat':''}`}`).join('\n')||'Inga ändringar ännu.';
+    $('train-history').textContent=info.history.map(e=>`${stamp(e.at)} · ${['move','follow-move'].includes(e.kind)?`${e.before}: ${describeKey(e.from)} → ${describeKey(e.to)}`:`${describeKey(e.key)}: ${e.before||'—'} → ${e.after||'—'}${e.kind==='confirm'?' · kontrollerat':e.kind.startsWith('follow-')?' · '+({'follow-start':'följning startad','follow-stop':'följning avslutad','follow-pause':'följning pausad','follow-complete':'passage färdig'})[e.kind]:''}`}`).join('\n')||'Inga ändringar ännu.';
   }
   async function send(command,data) {
-    if(!base||busy||!online)return;busy=true;$('train-message').textContent='Sparar…';paintEditor();
-    const keys=command==='move'?[data.from,data.to]:[data.key];
+    if(!base||busy||!online)return;const preserveDraft=command==='unfollow'&&dirty;busy=true;$('train-message').textContent='Sparar…';paintEditor();
+    const keys=command==='move'?[data.from,data.to]:command==='unfollow'?[]:[data.key];
     try {
       const response=await fetch('/api/train-information/'+command,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,revision:base.revision,sessionId:base.sessionId,epochs:Object.fromEntries(keys.map(key=>[key,base.epochs[key]||0]))})});
       const result=await response.json();if(!response.ok)throw Error(result.error);
       // Ignore an older HTTP reply after a newer event or a server restart.
       if(info.sessionId===result.sessionId&&result.revision>=info.revision)info=result;
-      dirty=false;$('train-message').textContent=command==='move'?'Tågnumret har flyttats.':'Uppgiften har sparats.';
+      dirty=preserveDraft;$('train-message').textContent=({move:'Tågnumret har flyttats.',follow:'Tågnumret är kopplat till tågvägen.',unfollow:'Följningen är avslutad. Kontrollera placeringen.',save:'Uppgiften har sparats.'})[command];
     } catch(e) {dirty=true;$('train-message').textContent=e.message;}
     finally {busy=false;paint();}
   }
@@ -100,6 +112,9 @@ export function createTrainInformation({catalog,plan,displayName,openSource}) {
   $('train-save').onclick=()=>send('save',{key:$('train-field').value,value:$('train-value').value});
   $('train-clear').onclick=()=>send('save',{key:$('train-field').value,value:''});
   $('train-move').onclick=()=>send('move',{from:$('train-field').value,to:$('train-target').value});
+  $('train-follow-route').onchange=paintEditor;
+  $('train-follow').onclick=()=>send('follow',{key:$('train-field').value,routeId:$('train-follow-route').value});
+  $('train-follow-list').onclick=e=>{const id=e.target.closest('button')?.dataset.unfollow;if(id){capture();send('unfollow',{id});}else{const key=e.target.closest('button')?.dataset.showTrain;if(key)open(key);}};
   $('train-source').onclick=()=>{const f=fields.get($('train-field').value);openSource(f.kind==='incoming'?'memories':'blocks',f.name);};
   paintEditor();
   return {update(next,connected){state=next;online=connected;const value=next?.trainInformation;if(value&&(!info||value.sessionId!==info.sessionId||value.revision>=info.revision))info=value;paint();},

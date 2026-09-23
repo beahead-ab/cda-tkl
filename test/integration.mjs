@@ -62,11 +62,19 @@ test('network profile runs parallel trains across separate processes and release
     await post(httpPort, 'route', { from:'htvAn', to:'htvSpIA' }, 400);
     const ready = await get(httpPort);
     assert.equal(ready.panelIndications.V1.value,true);assert.equal(ready.panelIndications.V1.derived,true);
+    const followRequest=(info,keys)=>({sessionId:info.sessionId,revision:info.revision,epochs:Object.fromEntries(keys.map(k=>[k,info.epochs[k]||0]))});
+    for(const r of ready.routes){const key=r.from==='htvCu'?'incoming:CuppIn':'incoming:AnedIn',value=r.from==='htvCu'?'P101':'P102';let info=(await get(httpPort)).trainInformation;
+      info=await post(httpPort,'train-information/save',{...followRequest(info,[key]),key,value});
+      await post(httpPort,'train-information/follow',{...followRequest(info,[key]),key,routeId:r.id});
+    }
     for (const r of ready.routes) await post(simPort, 'train', { id:r.definitionId });
     await until(async () => (await get(simPort)).trains.length === 2);
     await until(async () => (await get(httpPort)).routes.every(r => r.state === 'traversing'));
     await until(async () => { const s = await get(httpPort); return !s.routes.length; }, 22000);
     assert.equal((await get(simPort)).trains.length, 0);
+    const followed=(await get(httpPort)).trainInformation;assert.equal(followed.follows.length,2);assert.ok(followed.follows.every(f=>f.status==='complete'),JSON.stringify(followed.follows));
+    for(const f of followed.follows){assert.equal(followed.entries[f.key].value,f.value);assert.equal(followed.entries[f.key].needsReview,true);assert.equal(f.index,f.path.length-1);const latest=(await get(httpPort)).trainInformation;await post(httpPort,'train-information/save',{...followRequest(latest,[f.key]),key:f.key,value:''});}
+
     assert.equal((await get(httpPort)).panelIndications.V1.value,false);
     const saved=await post(httpPort,'recordings/stop',{sessionId:recordingSession,id:recording.active.id});
     assert.equal(saved.active,null);assert.equal(saved.history.length,1);

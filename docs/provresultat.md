@@ -2,7 +2,7 @@
 
 ## Automatiska prov
 
-108 av 108 enhetstester och sex helhetstester med riktiga processer, TCP, HTTP och virtuell serieport godkända på servern i version 0.13.0. Version 0.14 har lokalt klarat 114 enhetstester och de fyra utökade kärn-/inloggningsprocessproven; publiceringens kompletta kontroll återstår. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
+114 av 114 enhetstester och sex helhetstester med riktiga processer, TCP, HTTP och virtuell serieport godkända på servern i version 0.14.0. Nummerföljningen i version 0.15 är lokalt provad och inväntar publiceringens kompletta kontroll. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
 
 - Publicerade byteexempel för B0, B1, B2 och den preliminära E4-profilen; kontrollsummor och fragmenterade strömmar.
 - Kommandoeko ändrar inte rapporterade växellägen.
@@ -95,3 +95,10 @@ Linjespärrar, programmeringsspår och modellklocka provas enligt docs/linjer-pr
 Sex konfigurationstester kontrollerar gemensamma detektoralias, adresskonflikter, version/session, lagringsfel och källprofil. Processprovet prövar AIS-krav, beläggning, ny adress utan rapport, avstängd tågväg, profilbyte, okända lägen/AIS efter byte och återgång. Skyddade endpoints ingår i inloggningsprovet.
 
 UI: adresskrock visas i utkast och avvisas för aktivering; direktmanöver för Vx170 stängs av och återställs genom versionshistoriken. Formulärets layout, exportlänk och återinläsning kontrollerade. Växelns informationsval är nu separat från manöverpluppen: visning lämnar växelläget orört. Provets Vx170 återställdes rakt.
+
+
+## Nytillkomna prov i version 0.15
+
+Tio riktade nummerföljningsprov och de tidigare sju informationsproven passerar. Hela befintliga sviten passerade med 122 enhetstester innan de sista två riktade fallen för återtagning/trasig sparad följning lades till och godkändes. Fyra utökade processprov passerar, inklusive två samtidiga nummerföljningar över oberoende TCP-processer, färdig passage och inloggningsskydd. XML/import/syntax är kontrollerade.
+
+UI: P815 kopplat till klar Cu → Spår 1c (källparet htvCu–htvSpIA), startat från simulatorn och följt från CuppIn via SU4B till sista gemensamma detektoravsnittets informationsfält SIA. Numret markerades för kontroll efter full passage. P816 följning pausades vid LocoNet-avbrott, återupptogs inte efter återanslutning, avslutades manuellt och provvägen återtogs. Båda provnummer tömda, noll lås och inga konsolfel. Informationsväljaren öppnar rätt plats från följningslistan.
