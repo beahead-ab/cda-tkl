@@ -116,3 +116,39 @@ test('topology reserves turnout blocks, expands couplings and respects block exc
   assert.equal(t.expand({ Vx121: 'T', Vx120: 'C' }), null);
   assert.equal(t.buttons.htvSpIIA.label, 'Spår 2c');
 });
+
+test('a GO report received before permission cannot clear a route in the same millisecond', () => {
+  let now=100000;
+  const commands=[], engine=new Engine(profile,{now:()=>now,send:bytes=>commands.push(decode(bytes))});
+  const field=new Field(fieldProfile,{now:()=>now});field.on('frame',bytes=>engine.receive(bytes));
+  engine.connection(true);field.allReports();
+  const def=profile.routes.find(r=>r.id==='2b-2c'), route=engine.request(def.from,def.to);
+  for(const [name,position] of Object.entries(def.turnouts)) {
+    const b=profile.turnouts[name], physical=b.inverted?(position==='C'?'T':'C'):position;
+    engine.receive(switchReport(b.address,physical));
+  }
+  assert.equal(route.state,'establishing');now+=1200;
+  const target=profile.signals[def.signals[0]], start=commands.length;
+  engine.receive(signalReport(target.reportAddress,8));
+  now+=profile.signalStepMs+1;engine.tick();engine.tick();
+  assert.equal(route.state,'held','unsolicited GO must hold the route, not act as a new acknowledgement');
+  assert.ok(!commands.slice(start).some(c=>c.address===target.address&&c.position==='C'));
+  assert.equal(engine.routes.length,1,'the protective reservation remains');
+});
+
+test('GO acknowledgement is newer than the latest command even at identical timestamps', () => {
+  let now=100000;
+  const engine=new Engine(profile,{now:()=>now}), field=new Field(fieldProfile,{now:()=>now});
+  field.on('frame',bytes=>engine.receive(bytes));engine.connection(true);field.allReports();
+  const def=profile.routes.find(r=>r.id==='2b-2c'), route=engine.request(def.from,def.to);
+  for(const [name,position] of Object.entries(def.turnouts)) {
+    const b=profile.turnouts[name];engine.receive(switchReport(b.address,b.inverted?(position==='C'?'T':'C'):position));
+  }
+  now+=1200;engine.tick();const name=def.signals[0], signal=profile.signals[name];
+  engine.receive(signalReport(signal.reportAddress,8));
+  // A resend at the same timestamp starts a new acknowledgement interval.
+  engine.permission(name,'GO');
+  now+=profile.signalStepMs+1;engine.tick();engine.tick();
+  assert.equal(route.state,'clearing');assert.equal(route.nextSignal,0);
+  engine.receive(signalReport(signal.reportAddress,8));engine.tick();assert.equal(route.state,'active');
+});

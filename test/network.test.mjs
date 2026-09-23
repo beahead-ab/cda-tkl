@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { Engine } from '../src/engine.mjs';
 import { Field } from '../src/field.mjs';
-import { decode, sensorReport } from '../src/protocol.mjs';
+import { decode, sensorReport, signalReport } from '../src/protocol.mjs';
 import { RoutePolicy } from '../src/route-policy.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url)));
 const profile=read('profiles/charlottendal-network.json'), fieldProfile=read('profiles/simulator-network.json'), source=read('public/data/operations-source.json');
@@ -109,4 +109,39 @@ test('AIS requires new STOP acknowledgements, survives restart and never resumes
   assert.equal(new Engine(profile,{storage}).controls.stopAll,true);
   r.drain();r.advance(1000);r.engine.allStop(false);assert.equal(route.state,'held');assert.equal(r.engine.routes.length,1);
   assert.ok(Object.values(r.engine.signals).every(s=>s.desired==='STOP'));
+});
+
+test('all 20 resolved XML manual rules move exactly the confirmed coupled group',()=>{
+  const ready=profile.manualPolicies.rules.filter(p=>p.status==='ready');assert.equal(ready.length,20);
+  for(const policy of ready) {
+    const r=rig();assert.equal(r.engine.manualStatus(policy.names[0]).allowed,true,policy.rule);
+    const before=r.commands.length;r.engine.manual(policy.names[0],'T');
+    const orders=r.commands.slice(before);assert.deepEqual(orders.map(c=>c.address).sort((a,b)=>a-b),policy.names.map(n=>profile.turnouts[n].address).sort((a,b)=>a-b),policy.rule);
+    r.drain();r.advance(300);for(const n of policy.names)assert.equal(r.engine.turnouts[n].position,'T',policy.rule+' '+n);
+  }
+});
+test('unresolved manual groups and shunting permissions cannot be bypassed through individual turnout names',()=>{
+  const unresolved=profile.manualPolicies.rules.filter(p=>p.status==='unresolved');assert.equal(unresolved.length,15);
+  const r=rig();
+  for(const policy of unresolved) for(const name of policy.names) {
+    const before=r.commands.length;assert.throws(()=>r.engine.manual(name,'T'),/verifierad|saknar|Rangeröverlämningen/);assert.equal(r.commands.length,before,name);
+  }
+});
+test('manual turnout conditions are local but still reject occupied, stale, blocked or reserved resources',()=>{
+  const r=rig();r.field.setBlock('Slokstall1',true);r.drain();
+  r.engine.manual('Vx100','T');r.drain();r.advance(300);assert.equal(r.engine.turnouts.Vx101.position,'T');
+  r.field.setBlock('S100',true);r.drain();assert.throws(()=>r.engine.manual('Vx100','C'),/belagt/);
+  r.field.setBlock('S100',false);r.drain();r.engine.blockTrack('S101',true);assert.throws(()=>r.engine.manual('Vx100','C'),/spärrat/);
+  r.engine.blockTrack('S101',false);r.field.setFault('sensor','S100');r.drain();r.advance(8000);assert.throws(()=>r.engine.manual('Vx100','C'),/återrapport/);
+  const second=rig(),route=second.request('htvCu','htvSpIA');second.advance(4000);
+  second.engine.manual('Vx170','T');second.drain();second.advance(300);assert.equal(route.state,'active','independent route remains active');
+  assert.throws(()=>second.engine.manual('Vx100','T'),/låst/);
+  second.engine.hold(route,'Provad kvarstående reservation');assert.throws(()=>second.engine.manual('Vx100','T'),/låst/);
+});
+test('a protective signal must be stopped before local turnout movement',()=>{
+  const r=rig(),policy=profile.manualPolicies.byTurnout.Vx100;assert.ok(policy.signals.length);
+  const n=policy.signals[0];
+  // Keep the independent plant's GO report pending STOP confirmation.
+  r.engine.receive(signalReport(profile.signals[n].reportAddress,8));
+  assert.throws(()=>r.engine.manual('Vx100','T'),/signal.*stopp/);
 });

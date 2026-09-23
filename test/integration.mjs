@@ -32,6 +32,9 @@ test('network profile runs parallel trains across separate processes and release
     await until(async () => { const s = await get(httpPort); return s.routes.length === 2 && s.routes.every(r => r.state === 'active'); });
     await post(httpPort,'configuration/activate',{revision:1,reason:'Spärrat aktiveringsförsök'},409);
     await post(httpPort, 'turnout', { name:'Vx102', position:'T' }, 400);
+    await post(httpPort, 'turnout', { name:'Vx170', position:'T' });
+    await until(async () => (await get(httpPort)).turnouts.Vx170.position==='T');
+    await post(httpPort, 'turnout', { name:'Vx114', position:'T' }, 400);
     await post(httpPort, 'route', { from:'htvAn', to:'htvSpIA' }, 400);
     const ready = await get(httpPort);
     for (const r of ready.routes) await post(simPort, 'train', { id:r.definitionId });

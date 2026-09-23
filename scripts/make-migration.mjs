@@ -7,7 +7,7 @@ const notes={
   '0004':['pending','Stopplyktornas särskilda beroenden återstår.'],
   '0005':['pending','Vändskivans 11 källfall är importerade; manöver och positionsåterrapport återstår.'],
   '0006':['partial','Panelutseende och val av huvud-/växeltågväg finns. Lokal/fjärr och rangeröverlämning återstår; externa skript saknas.'],
-  '0007':['partial','Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår.'],
+  '0007':['partial','20 knappregler använder lokala fria spårledningar, NX-/resurslås och skyddande signaler. 15 regler spärras av ofullständiga växelkopplingar eller saknad rangeråterrapport. De två automatiska Vx95/Vx96-reglerna återstår.'],
   '0008':['pending','Synkronisering med godsställverk återstår.'],
   '0009':['pending','Särskilda Sh2-regler är importerade; full svensk beskedsmappning återstår.'],
   '0010':['pending','Särskilda Sh3-regler är importerade; full svensk beskedsmappning återstår.'],
@@ -31,6 +31,8 @@ const notes={
 const groups=source.groups.map(group=>{const [status,behavior]=notes[group.id.startsWith('IX:AUTO:')?group.id.slice(-4):'initializer'];return {id:group.id,name:group.name,enabled:group.enabled,status,behavior,rules:group.rules};});
 const byRule={};
 for(const group of groups) for(const id of group.rules) byRule[id]={group:group.id,status:group.status,behavior:group.behavior};
+for(const rule of profile.manualPolicies?.rules||[]) byRule[rule.rule]={...byRule[rule.rule],status:rule.status==='ready'?'tested':'unresolved',behavior:rule.status==='ready'?'Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.':rule.reason,button:rule.button,turnouts:rule.names};
+for(const id of ['IX:AUTO:0007C33','IX:AUTO:0007C34']) byRule[id]={...byRule[id],status:'pending',behavior:'Automatisk följdmanöver mellan Vx95 och Vx96 är ännu inte införd; den behandlas inte som en fast växelkoppling.'};
 for(const rule of [...source.mainRoutePolicies,...source.shuntRoutePolicies]) {
   const routes=profile.routes.filter(r=>r.source.rules.includes(rule.rule));
   const excluded=profile.excluded.find(r=>r.rules?.includes(rule.rule));

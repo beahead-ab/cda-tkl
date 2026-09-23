@@ -136,6 +136,7 @@ function buildPlan() {
         if(!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
         if(!available) return message('Växelgruppen finns i källan men är ännu inte ansluten till driftprofilen.');
         const name=names[0]; inspected={kind:'turnout',name}; paintInspector();
+        if(state.manual?.[name]&&!state.manual[name].allowed) return message(state.manual[name].reason);
         return api('turnout',{name,position:state.turnouts[name]?.position==='C'?'T':'C'});
       }
       openSource('sensors',b.sensor);
@@ -171,7 +172,7 @@ function paintPlan() {
   }
   for(const lamp of indicatorLamps) lamp.node.classList.toggle('occupied',fresh&&state.blocks[lamp.block]?.occupied===true);
   for (const b of buttons) {
-    b.g.classList.toggle('chosen', b.id === chosen); b.g.classList.toggle('unavailable', !b.available);
+    b.g.classList.toggle('chosen', b.id === chosen); b.g.classList.toggle('unavailable', !b.available || (b.names.length && state.manual?.[b.names[0]]?.allowed===false));
     b.g.classList.toggle('in-route', !!state?.routes.some(r => r.from === b.id || r.to === b.id));
     b.g.classList.toggle('locked',!!state?.routes.some(r=>b.names.some(n=>r.turnouts[n])));
   }
@@ -242,8 +243,9 @@ function paintInspector() {
   const s = kind === 'signal' ? state.signals[name] : state.turnouts[name];
   const locked = state.routes.filter(r => kind === 'signal' ? r.signals.includes(name) : r.turnouts[name]);
   const value = !online ? 'Okänt' : kind === 'signal' ? ({ go: 'Kör återrapporterat', stop: 'Stopp återrapporterat', unknown: 'Okänt besked' }[s.aspect]) : ({ C: 'Rakt', T: 'Avvikande', unknown: 'Okänt / omläggning' }[s.position]);
+  const manual=state.manual?.[name], manualNotice=kind==='turnout'&&manual?`<p class="muted">${esc(manual.reason)}</p>`:'';
   const detail = `<dl><dt>${kind === 'signal' ? 'Signal' : 'Växel'}</dt><dd><strong>${esc(name)}</strong></dd><dt>Rapporterat</dt><dd>${esc(value)}</dd><dt>Tågvägslås</dt><dd>${esc(locked.map(r => r.label).join(', ') || 'Inga')}</dd><dt>${kind === 'signal' ? 'Provadress / råkod' : 'Källadress'}</dt><dd>${kind === 'signal' ? b.address + ' / ' + (s.code ?? '—') : esc(b.source) + (b.inverted ? ' · inverterad' : '')}</dd></dl>`;
-  html('inspector', detail + sourceInfo + sourceButton + (kind === 'turnout' ? `<div class="actions"><button data-manual="C" ${locked.length || !usable() ? 'disabled' : ''}>Lägg rakt</button><button data-manual="T" ${locked.length || !usable() ? 'disabled' : ''}>Lägg avvikande</button></div>` : `<p class="muted">Beskedskoderna är en preliminär provmappning. Fullständiga svenska signalbilder kräver verifiering mot din MGP-utrustning.</p>`));
+  html('inspector', detail + sourceInfo + sourceButton + manualNotice + (kind === 'turnout' ? `<div class="actions"><button data-manual="C" ${locked.length || !usable() || manual?.allowed===false ? 'disabled' : ''}>Lägg rakt</button><button data-manual="T" ${locked.length || !usable() || manual?.allowed===false ? 'disabled' : ''}>Lägg avvikande</button></div>` : `<p class="muted">Beskedskoderna är en preliminär provmappning. Fullständiga svenska signalbilder kräver verifiering mot din MGP-utrustning.</p>`));
 }
 async function start() {
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));

@@ -115692,6 +115692,2924 @@
       "Vx96"
     ]
   },
+  "manualPolicies": {
+    "rules": [
+      {
+        "rule": "IX:AUTO:0007C1",
+        "button": "vxv100/101",
+        "names": [
+          "Vx100",
+          "Vx101"
+        ],
+        "freeSensors": [
+          "slS100",
+          "slS101"
+        ],
+        "blocks": [
+          "S100",
+          "S101"
+        ],
+        "inactiveNX": [
+          "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+          "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+          "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+          "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+          "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+          "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+          "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+          "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+          "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+          "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+          "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+          "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+          "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+          "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+          "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+          "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+          "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+          "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+        ],
+        "signals": [
+          "1/10",
+          "1/5",
+          "2/10",
+          "2/5",
+          "3/10",
+          "4/10",
+          "5/10"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C2",
+        "button": "vxv102/112",
+        "names": [
+          "Vx102",
+          "Vx112"
+        ],
+        "freeSensors": [
+          "slS102",
+          "slS112"
+        ],
+        "blocks": [
+          "S102",
+          "S112",
+          "S112a"
+        ],
+        "inactiveNX": [
+          "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+          "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+          "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+          "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+          "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+          "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+          "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+          "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+          "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+          "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+          "IN:4114a7e3-f4c1-43cd-a92e-a4844d979ad6",
+          "IN:57ba1105-5758-43de-9110-7f48a66b528b",
+          "IN:7d4463d7-4c9f-4296-9f98-b8ee8433e7fa",
+          "IN:8be10a2c-1459-4b9d-9437-49d4a1e30a63",
+          "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+          "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+          "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2",
+          "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+          "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+          "IN:c5877801-d9df-4504-a527-52f4ad57ed62",
+          "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+          "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+        ],
+        "signals": [
+          "1/5",
+          "2/10",
+          "2/5",
+          "3/10",
+          "3/3",
+          "4/10",
+          "5/10"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      {
+        "rule": "IX:AUTO:0007C3",
+        "button": "vxv113",
+        "names": [
+          "Vx113"
+        ],
+        "freeSensors": [
+          "slS113"
+        ],
+        "blocks": [
+          "S113",
+          "S113a",
+          "S113b",
+          "S113c"
+        ],
+        "inactiveNX": [
+          "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+          "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+          "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+          "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+          "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+          "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+          "IN:4114a7e3-f4c1-43cd-a92e-a4844d979ad6",
+          "IN:57ba1105-5758-43de-9110-7f48a66b528b",
+          "IN:7d4463d7-4c9f-4296-9f98-b8ee8433e7fa",
+          "IN:8be10a2c-1459-4b9d-9437-49d4a1e30a63",
+          "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+          "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+          "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2",
+          "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+          "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+          "IN:c5877801-d9df-4504-a527-52f4ad57ed62",
+          "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+          "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+        ],
+        "signals": [
+          "1/5",
+          "2/5",
+          "3/10",
+          "3/3",
+          "4/10",
+          "5/10"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C4",
+        "button": "vxv116",
+        "names": [
+          "Vx116"
+        ],
+        "freeSensors": [
+          "slS116"
+        ],
+        "blocks": [
+          "S116",
+          "S116a",
+          "S116c"
+        ],
+        "inactiveNX": [
+          "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+          "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+          "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+          "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+          "IN:57ba1105-5758-43de-9110-7f48a66b528b",
+          "IN:7d4463d7-4c9f-4296-9f98-b8ee8433e7fa",
+          "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2",
+          "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+          "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+          "IN:c5877801-d9df-4504-a527-52f4ad57ed62",
+          "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+          "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+        ],
+        "signals": [
+          "1/5",
+          "2/5",
+          "3/3",
+          "4/10",
+          "5/10"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C5",
+        "button": "vxv110/117",
+        "names": [
+          "Vx110",
+          "Vx117"
+        ],
+        "freeSensors": [
+          "slS110",
+          "slS117"
+        ],
+        "blocks": [
+          "S110",
+          "S117"
+        ],
+        "inactiveNX": [
+          "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+          "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+          "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+          "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+          "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348"
+        ],
+        "signals": [
+          "1/10",
+          "1/5",
+          "2/10",
+          "2/5"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C6",
+        "button": "vxv122",
+        "names": [
+          "Vx122"
+        ],
+        "freeSensors": [
+          "slS122"
+        ],
+        "blocks": [
+          "S122"
+        ],
+        "inactiveNX": [
+          "IN:a7396c65-4eea-46f6-b197-ff6119abe71a",
+          "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+          "IN:a4607e61-cc12-4f46-9c30-fb534204d98a",
+          "IN:52be6d9f-956b-4e6c-a476-1f8803639586",
+          "IN:c664f521-df47-4557-89d7-f65fb3644fd3",
+          "IN:941b374c-f243-4308-8829-b77dad2253dd",
+          "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8",
+          "IN:02071f89-8e14-4603-8b23-4f86301200ed"
+        ],
+        "signals": [
+          "1/8",
+          "2/7",
+          "2/8",
+          "3/8",
+          "4/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C7",
+        "button": "vxv123",
+        "names": [
+          "Vx123"
+        ],
+        "freeSensors": [
+          "slS123"
+        ],
+        "blocks": [
+          "S123",
+          "S123b",
+          "S123c"
+        ],
+        "inactiveNX": [
+          "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97",
+          "IN:30bca77d-457b-4e67-a418-1c1190064ebf",
+          "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654",
+          "IN:9af8d60e-52c9-4694-b1d6-1cb7d1a25b2b",
+          "IN:8b500613-a031-465d-a3b7-de0b654f22a0",
+          "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+          "IN:6af610f4-2e48-4b05-b33b-c327971b047d",
+          "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450"
+        ],
+        "signals": [
+          "3/5",
+          "4/5",
+          "5/8",
+          "6/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C8",
+        "button": "vxv126",
+        "names": [
+          "Vx126"
+        ],
+        "freeSensors": [
+          "slS126"
+        ],
+        "blocks": [
+          "S123a",
+          "S126",
+          "S126c"
+        ],
+        "inactiveNX": [
+          "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97",
+          "IN:30bca77d-457b-4e67-a418-1c1190064ebf",
+          "IN:a7c38e71-3385-46d7-825d-ad64f78e9fbf",
+          "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654",
+          "IN:9af8d60e-52c9-4694-b1d6-1cb7d1a25b2b",
+          "IN:68af5f58-3f09-460e-95fc-d88791f18a73",
+          "IN:8b500613-a031-465d-a3b7-de0b654f22a0",
+          "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+          "IN:6af610f4-2e48-4b05-b33b-c327971b047d",
+          "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450",
+          "IN:1a77e99e-db90-453b-aa4e-85b71071b2db",
+          "IN:d3a73449-9685-4aac-ae15-3d7b7e6cbee5"
+        ],
+        "signals": [
+          "3/5",
+          "4/5",
+          "5/5",
+          "5/8",
+          "6/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C9",
+        "button": "vxv120/121",
+        "names": [
+          "Vx120",
+          "Vx121"
+        ],
+        "freeSensors": [
+          "slS120",
+          "slS121"
+        ],
+        "blocks": [
+          "S120",
+          "S121",
+          "S121b"
+        ],
+        "inactiveNX": [
+          "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+          "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+          "IN:c664f521-df47-4557-89d7-f65fb3644fd3",
+          "IN:a7396c65-4eea-46f6-b197-ff6119abe71a",
+          "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+          "IN:941b374c-f243-4308-8829-b77dad2253dd"
+        ],
+        "signals": [
+          "1/7",
+          "1/8",
+          "2/7",
+          "2/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C10",
+        "button": "vxv125",
+        "names": [
+          "Vx125"
+        ],
+        "freeSensors": [
+          "slS125"
+        ],
+        "blocks": [
+          "S125"
+        ],
+        "inactiveNX": [
+          "IN:a4607e61-cc12-4f46-9c30-fb534204d98a",
+          "IN:52be6d9f-956b-4e6c-a476-1f8803639586",
+          "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8",
+          "IN:02071f89-8e14-4603-8b23-4f86301200ed"
+        ],
+        "signals": [
+          "2/7",
+          "3/8",
+          "4/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C11",
+        "button": "vxv131/132",
+        "names": [
+          "Vx131",
+          "Vx132"
+        ],
+        "freeSensors": [
+          "slS131",
+          "slS132"
+        ],
+        "blocks": [
+          "S126a",
+          "S131",
+          "S131a",
+          "S131c",
+          "S132",
+          "S132a",
+          "S132b"
+        ],
+        "inactiveNX": [
+          "IN:8b500613-a031-465d-a3b7-de0b654f22a0",
+          "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+          "IN:6af610f4-2e48-4b05-b33b-c327971b047d",
+          "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450",
+          "IN:1a77e99e-db90-453b-aa4e-85b71071b2db",
+          "IN:d3a73449-9685-4aac-ae15-3d7b7e6cbee5",
+          "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973",
+          "IN:b40d2819-0552-4586-ab45-2a7aa2087544",
+          "IN:d29a79dc-dc0b-48ff-8553-ba218dac09fe",
+          "IN:9637bfe4-0334-4ee1-8b2a-6f54d18b80d7",
+          "IN:60c05de6-7b87-4156-8000-a73c8a4c9c45",
+          "IN:28fd5177-1f83-4b70-ab20-8dfa7d9d5bca",
+          "IN:3d360610-3f48-455c-9476-5d3d877014b2",
+          "IN:82fca6a8-90ed-41b7-8780-4c6afe4b8ac5",
+          "IN:6ab85d5e-781c-4fc5-82c1-35ee572f6b28"
+        ],
+        "signals": [
+          "3/5",
+          "4/5",
+          "5/5",
+          "5/8",
+          "6/6",
+          "6/8"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      {
+        "rule": "IX:AUTO:0007C12",
+        "button": "vxv140/141/142/143",
+        "names": [
+          "Vx140",
+          "Vx141",
+          "Vx142",
+          "Vx143"
+        ],
+        "freeSensors": [
+          "slS140",
+          "slS141",
+          "slS142",
+          "slS143"
+        ],
+        "blocks": [
+          "S140",
+          "S140a",
+          "S140b",
+          "S140c",
+          "S141",
+          "S141a",
+          "S141b",
+          "S141c",
+          "S142",
+          "S142a",
+          "S142c",
+          "S143",
+          "S143a",
+          "S143c"
+        ],
+        "inactiveNX": [
+          "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+          "IN:e9518f14-ef23-4c67-9935-abec0d8732da",
+          "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+          "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+          "IN:671e0660-36cb-4d49-b155-e0307c177596",
+          "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+          "IN:a98d6d8d-ff9c-4125-8689-291682944520",
+          "IN:5b52eaa8-1395-441d-be3e-15657f40349e"
+        ],
+        "signals": [
+          "1/6",
+          "1/9",
+          "2/6",
+          "2/9"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      {
+        "rule": "IX:AUTO:0007C13",
+        "button": "vxv144/154",
+        "names": [
+          "Vx144",
+          "Vx154"
+        ],
+        "freeSensors": [
+          "slS144",
+          "slS154"
+        ],
+        "blocks": [
+          "S144",
+          "S144a",
+          "S144b",
+          "S151b",
+          "S154",
+          "S154b",
+          "S154c"
+        ],
+        "inactiveNX": [
+          "IN:aca159e6-947d-4248-a417-12249bbd9d20",
+          "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d",
+          "IN:bff6c4b1-e623-4ebb-b4a4-71d03691011b",
+          "IN:27d9d2ff-a551-440c-8095-4f8a6713efac",
+          "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+          "IN:ae76e106-8150-4ea1-a430-678127a4c5e0",
+          "IN:bbfb9823-1ff0-4ca5-96ca-7f6498bd93fc",
+          "IN:4e5ca277-55c7-409c-9b8c-ca2531f711be",
+          "IN:8b3b3a92-0ebc-4099-838c-a3baa13e53f4",
+          "IN:721d8239-bf96-4733-a4c4-277eed3c5003",
+          "IN:0632870a-0526-43c4-a82f-0a371537bf8e",
+          "IN:8f1f7f38-cb7c-4349-81a3-f6a0e5dc78be",
+          "IN:b0c82045-3dfe-49f5-92ae-2c1b8f0a00fa",
+          "IN:03942f9b-cfc0-4779-85dd-a52c310e8a63",
+          "IN:fc05bf08-09e9-493b-b9db-2f3aa6446c34"
+        ],
+        "signals": [
+          "3/6",
+          "5/9",
+          "6/7",
+          "6/9"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      {
+        "rule": "IX:AUTO:0007C14",
+        "button": "vxv151",
+        "names": [
+          "Vx151"
+        ],
+        "freeSensors": [
+          "slS151"
+        ],
+        "blocks": [
+          "S151",
+          "S151c",
+          "S152b"
+        ],
+        "inactiveNX": [
+          "IN:28420481-c3c3-4304-9a12-f02b5295b7aa",
+          "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+          "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b",
+          "IN:899f9f4c-f813-44f7-9797-11130faad22c",
+          "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+          "IN:ae76e106-8150-4ea1-a430-678127a4c5e0"
+        ],
+        "signals": [
+          "3/6",
+          "4/9",
+          "5/9",
+          "6/9"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C15",
+        "button": "vxv152",
+        "names": [
+          "Vx152"
+        ],
+        "freeSensors": [
+          "slS152"
+        ],
+        "blocks": [
+          "S152",
+          "S152c",
+          "S153b"
+        ],
+        "inactiveNX": [
+          "IN:c8e0a325-eec5-4ce7-803b-90d7514b12bf",
+          "IN:28420481-c3c3-4304-9a12-f02b5295b7aa",
+          "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+          "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b",
+          "IN:c86e61af-d30f-4034-8c84-234f9d601f62",
+          "IN:899f9f4c-f813-44f7-9797-11130faad22c",
+          "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+          "IN:ae76e106-8150-4ea1-a430-678127a4c5e0"
+        ],
+        "signals": [
+          "1/4",
+          "2/4",
+          "3/2",
+          "3/6",
+          "3/9",
+          "4/9",
+          "5/9",
+          "6/9"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C16",
+        "button": "vxv153/161",
+        "names": [
+          "Vx153",
+          "Vx161"
+        ],
+        "freeSensors": [
+          "slS153",
+          "slS161"
+        ],
+        "blocks": [
+          "S153",
+          "S153c",
+          "S161",
+          "S161a",
+          "S161b",
+          "S161c"
+        ],
+        "inactiveNX": [
+          "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+          "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+          "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+          "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0",
+          "IN:b7da8647-7366-4a3a-b2e1-5e60acc04527",
+          "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167",
+          "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+        ],
+        "signals": [
+          "1/4",
+          "2/11",
+          "2/4",
+          "3/11",
+          "3/2"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C17",
+        "button": "vxv160",
+        "names": [
+          "Vx160"
+        ],
+        "freeSensors": [
+          "slS160"
+        ],
+        "blocks": [
+          "S160",
+          "S160a",
+          "S160b",
+          "S160c"
+        ],
+        "inactiveNX": [
+          "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+          "IN:75288d04-f50b-4816-9879-11c6a45eff47",
+          "IN:7270481f-f9e5-43f2-9ee7-b78863087ebf",
+          "IN:38153432-a6c0-4029-92b1-875f06fde7c6",
+          "IN:7d509c52-6580-4349-9a19-fa78faecef2d",
+          "IN:9925d20b-5e18-4f47-a8d5-6fdcf0664a0c",
+          "IN:915d1120-9a5f-4302-8ca8-acdb62708add",
+          "IN:711c1b7f-8d0f-4f98-bec6-205260b2ef25"
+        ],
+        "signals": [
+          "1/11",
+          "1/4",
+          "10/11",
+          "2/4"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C18",
+        "button": "vxv162/163/165/166",
+        "names": [
+          "Vx162",
+          "Vx163",
+          "Vx165",
+          "Vx166"
+        ],
+        "freeSensors": [
+          "slS162",
+          "slS163",
+          "slS165",
+          "slS166"
+        ],
+        "blocks": [
+          "S162",
+          "S162c",
+          "S163",
+          "S163c",
+          "S165",
+          "S165b",
+          "S165c",
+          "S166",
+          "S166b",
+          "S166c"
+        ],
+        "inactiveNX": [],
+        "signals": [
+          "1/11",
+          "1/4",
+          "10/11",
+          "2/11",
+          "2/4",
+          "3/11"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      {
+        "rule": "IX:AUTO:0007C19",
+        "button": "vxv103",
+        "names": [
+          "Vx103"
+        ],
+        "freeSensors": [
+          "slS103"
+        ],
+        "blocks": [
+          "S103",
+          "S103a",
+          "S103b"
+        ],
+        "inactiveNX": [
+          "IN:8be10a2c-1459-4b9d-9437-49d4a1e30a63",
+          "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2",
+          "IN:c5877801-d9df-4504-a527-52f4ad57ed62",
+          "IN:191dce9e-3a56-411e-bac3-92df25fb9c02",
+          "IN:9982aa3c-ff40-41e0-bff3-78cc97fa910d",
+          "IN:dd499956-c2e9-474b-bf11-f0dffae62507",
+          "IN:84c62fd8-2843-452d-825e-5487a68a6d8d",
+          "IN:b03a6776-1851-46bc-839c-878145f6b949",
+          "IN:cf714c10-830f-49ba-8b6d-886d2c755876",
+          "IN:6b9dd993-29d8-4964-a975-9c180c3868b7",
+          "IN:4d96cbd2-21ef-484a-8949-a156abde3825"
+        ],
+        "signals": [
+          "3/1",
+          "3/10",
+          "4/10",
+          "5/10"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C20",
+        "button": "vxv114",
+        "names": [
+          "Vx114"
+        ],
+        "freeSensors": [
+          "slS114",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S103c",
+          "S114"
+        ],
+        "inactiveNX": [
+          "IN:191dce9e-3a56-411e-bac3-92df25fb9c02",
+          "IN:9982aa3c-ff40-41e0-bff3-78cc97fa910d",
+          "IN:dd499956-c2e9-474b-bf11-f0dffae62507",
+          "IN:84c62fd8-2843-452d-825e-5487a68a6d8d",
+          "IN:b03a6776-1851-46bc-839c-878145f6b949",
+          "IN:cf714c10-830f-49ba-8b6d-886d2c755876",
+          "IN:6b9dd993-29d8-4964-a975-9c180c3868b7",
+          "IN:4d96cbd2-21ef-484a-8949-a156abde3825"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      {
+        "rule": "IX:AUTO:0007C21",
+        "button": "vxv119",
+        "names": [
+          "Vx119"
+        ],
+        "freeSensors": [
+          "slS119",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S119",
+          "S119b"
+        ],
+        "inactiveNX": [
+          "IN:38a2817f-928f-46b9-8467-90cee94ffa5f",
+          "IN:98f1e18d-6c98-402a-a654-9d3c807a1f0a",
+          "IN:879b4f03-de61-4f8b-bcfb-132c85e4785d",
+          "IN:afc2b3dd-02e4-4a07-8fea-3d3b9ab65cc0"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      {
+        "rule": "IX:AUTO:0007C22",
+        "button": "vxv115",
+        "names": [
+          "Vx115"
+        ],
+        "freeSensors": [
+          "slS115",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S114a",
+          "S115",
+          "S115a",
+          "S115b"
+        ],
+        "inactiveNX": [
+          "IN:191dce9e-3a56-411e-bac3-92df25fb9c02",
+          "IN:9982aa3c-ff40-41e0-bff3-78cc97fa910d",
+          "IN:b03a6776-1851-46bc-839c-878145f6b949",
+          "IN:cf714c10-830f-49ba-8b6d-886d2c755876"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      {
+        "rule": "IX:AUTO:0007C23",
+        "button": "vxv111/118",
+        "names": [
+          "Vx111",
+          "Vx118"
+        ],
+        "freeSensors": [
+          "slS111",
+          "slS118",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S111",
+          "S114b",
+          "S118",
+          "S119a"
+        ],
+        "inactiveNX": [
+          "IN:dd499956-c2e9-474b-bf11-f0dffae62507",
+          "IN:84c62fd8-2843-452d-825e-5487a68a6d8d",
+          "IN:6b9dd993-29d8-4964-a975-9c180c3868b7",
+          "IN:4d96cbd2-21ef-484a-8949-a156abde3825",
+          "IN:879b4f03-de61-4f8b-bcfb-132c85e4785d",
+          "IN:afc2b3dd-02e4-4a07-8fea-3d3b9ab65cc0"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      {
+        "rule": "IX:AUTO:0007C24",
+        "button": "vxv127",
+        "names": [
+          "Vx127"
+        ],
+        "freeSensors": [
+          "slS127",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S127",
+          "S127a",
+          "S127b",
+          "S127c"
+        ],
+        "inactiveNX": [
+          "IN:b40d2819-0552-4586-ab45-2a7aa2087544",
+          "IN:d29a79dc-dc0b-48ff-8553-ba218dac09fe",
+          "IN:28fd5177-1f83-4b70-ab20-8dfa7d9d5bca",
+          "IN:3d360610-3f48-455c-9476-5d3d877014b2"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      {
+        "rule": "IX:AUTO:0007C25",
+        "button": "vxv128",
+        "names": [
+          "Vx128"
+        ],
+        "freeSensors": [
+          "slS128",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S128",
+          "S128b",
+          "S128c"
+        ],
+        "inactiveNX": [
+          "IN:9637bfe4-0334-4ee1-8b2a-6f54d18b80d7",
+          "IN:60c05de6-7b87-4156-8000-a73c8a4c9c45",
+          "IN:82fca6a8-90ed-41b7-8780-4c6afe4b8ac5",
+          "IN:6ab85d5e-781c-4fc5-82c1-35ee572f6b28"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      {
+        "rule": "IX:AUTO:0007C26",
+        "button": "vxv130",
+        "names": [
+          "Vx130"
+        ],
+        "freeSensors": [
+          "slS130",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S130",
+          "S130a"
+        ],
+        "inactiveNX": [
+          "IN:b40d2819-0552-4586-ab45-2a7aa2087544",
+          "IN:d29a79dc-dc0b-48ff-8553-ba218dac09fe",
+          "IN:9637bfe4-0334-4ee1-8b2a-6f54d18b80d7",
+          "IN:60c05de6-7b87-4156-8000-a73c8a4c9c45",
+          "IN:28fd5177-1f83-4b70-ab20-8dfa7d9d5bca",
+          "IN:3d360610-3f48-455c-9476-5d3d877014b2",
+          "IN:82fca6a8-90ed-41b7-8780-4c6afe4b8ac5",
+          "IN:6ab85d5e-781c-4fc5-82c1-35ee572f6b28"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      {
+        "rule": "IX:AUTO:0007C27",
+        "button": "vxv133",
+        "names": [
+          "Vx133"
+        ],
+        "freeSensors": [
+          "slS133",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S133"
+        ],
+        "inactiveNX": [
+          "IN:bff6c4b1-e623-4ebb-b4a4-71d03691011b",
+          "IN:27d9d2ff-a551-440c-8095-4f8a6713efac",
+          "IN:721d8239-bf96-4733-a4c4-277eed3c5003",
+          "IN:0632870a-0526-43c4-a82f-0a371537bf8e",
+          "IN:b0c82045-3dfe-49f5-92ae-2c1b8f0a00fa",
+          "IN:8f1f7f38-cb7c-4349-81a3-f6a0e5dc78be",
+          "IN:fc05bf08-09e9-493b-b9db-2f3aa6446c34",
+          "IN:03942f9b-cfc0-4779-85dd-a52c310e8a63"
+        ],
+        "signals": [
+          "3/6",
+          "6/7"
+        ],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      {
+        "rule": "IX:AUTO:0007C28",
+        "button": "vxv150",
+        "names": [
+          "Vx150"
+        ],
+        "freeSensors": [
+          "slS150",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S150",
+          "S150a"
+        ],
+        "inactiveNX": [
+          "IN:bff6c4b1-e623-4ebb-b4a4-71d03691011b",
+          "IN:27d9d2ff-a551-440c-8095-4f8a6713efac",
+          "IN:721d8239-bf96-4733-a4c4-277eed3c5003",
+          "IN:0632870a-0526-43c4-a82f-0a371537bf8e",
+          "IN:b0c82045-3dfe-49f5-92ae-2c1b8f0a00fa",
+          "IN:8f1f7f38-cb7c-4349-81a3-f6a0e5dc78be",
+          "IN:fc05bf08-09e9-493b-b9db-2f3aa6446c34",
+          "IN:03942f9b-cfc0-4779-85dd-a52c310e8a63",
+          "IN:aca159e6-947d-4248-a417-12249bbd9d20",
+          "IN:bbfb9823-1ff0-4ca5-96ca-7f6498bd93fc",
+          "IN:4e5ca277-55c7-409c-9b8c-ca2531f711be"
+        ],
+        "signals": [
+          "6/7"
+        ],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      {
+        "rule": "IX:AUTO:0007C29",
+        "button": "vxv155",
+        "names": [
+          "Vx155"
+        ],
+        "freeSensors": [
+          "slS155",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S155"
+        ],
+        "inactiveNX": [
+          "IN:bbfb9823-1ff0-4ca5-96ca-7f6498bd93fc",
+          "IN:4e5ca277-55c7-409c-9b8c-ca2531f711be",
+          "IN:aca159e6-947d-4248-a417-12249bbd9d20",
+          "IN:bff6c4b1-e623-4ebb-b4a4-71d03691011b",
+          "IN:8b3b3a92-0ebc-4099-838c-a3baa13e53f4",
+          "IN:721d8239-bf96-4733-a4c4-277eed3c5003"
+        ],
+        "signals": [
+          "6/7"
+        ],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      {
+        "rule": "IX:AUTO:0007C30",
+        "button": "vxv164",
+        "names": [
+          "Vx164"
+        ],
+        "freeSensors": [
+          "slS164"
+        ],
+        "blocks": [
+          "S164"
+        ],
+        "inactiveNX": [
+          "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0",
+          "IN:bbfb9823-1ff0-4ca5-96ca-7f6498bd93fc",
+          "IN:4e5ca277-55c7-409c-9b8c-ca2531f711be",
+          "IN:b7da8647-7366-4a3a-b2e1-5e60acc04527",
+          "IN:8c8af86b-6435-43c2-aa35-9a8b58768e5e"
+        ],
+        "signals": [
+          "3/11",
+          "3/2",
+          "6/11"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C31",
+        "button": "vxv95",
+        "names": [
+          "Vx95"
+        ],
+        "freeSensors": [
+          "slS95"
+        ],
+        "blocks": [
+          "S95"
+        ],
+        "inactiveNX": [
+          "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+          "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+          "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452",
+          "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+        ],
+        "signals": [
+          "1/1",
+          "1/12",
+          "1/3"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C32",
+        "button": "vxv96",
+        "names": [
+          "Vx96"
+        ],
+        "freeSensors": [
+          "slS96"
+        ],
+        "blocks": [
+          "S96"
+        ],
+        "inactiveNX": [
+          "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+          "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+          "IN:4eabd950-d9ce-414a-a5bd-cb8177149880",
+          "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+        ],
+        "signals": [
+          "2/1",
+          "2/12",
+          "2/3"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C35",
+        "button": "vxv170",
+        "names": [
+          "Vx170"
+        ],
+        "freeSensors": [
+          "slS170"
+        ],
+        "blocks": [
+          "S170"
+        ],
+        "inactiveNX": [
+          "IN:df91a6da-781b-434b-ac6a-88aa95244141",
+          "IN:8dd72135-1f25-4e76-93f4-5ac0e677f598",
+          "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+          "IN:4eadefa7-37c8-42f0-9a14-8bda9962c8e6"
+        ],
+        "signals": [
+          "1/11",
+          "10/11",
+          "2/11",
+          "2/2",
+          "3/11"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C36",
+        "button": "vxv171",
+        "names": [
+          "Vx171"
+        ],
+        "freeSensors": [],
+        "blocks": [
+          "S171"
+        ],
+        "inactiveNX": [
+          "IN:8dd72135-1f25-4e76-93f4-5ac0e677f598",
+          "IN:df91a6da-781b-434b-ac6a-88aa95244141",
+          "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+          "IN:4eadefa7-37c8-42f0-9a14-8bda9962c8e6"
+        ],
+        "signals": [
+          "1/11",
+          "10/11",
+          "2/11",
+          "2/2",
+          "3/11"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      {
+        "rule": "IX:AUTO:0007C37",
+        "button": "vxv172",
+        "names": [
+          "Vx172"
+        ],
+        "freeSensors": [],
+        "blocks": [
+          "S172"
+        ],
+        "inactiveNX": [],
+        "signals": [],
+        "status": "ready",
+        "reason": ""
+      }
+    ],
+    "byTurnout": {
+      "Vx100": {
+        "rule": "IX:AUTO:0007C1",
+        "button": "vxv100/101",
+        "names": [
+          "Vx100",
+          "Vx101"
+        ],
+        "freeSensors": [
+          "slS100",
+          "slS101"
+        ],
+        "blocks": [
+          "S100",
+          "S101"
+        ],
+        "inactiveNX": [
+          "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+          "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+          "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+          "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+          "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+          "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+          "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+          "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+          "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+          "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+          "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+          "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+          "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+          "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+          "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+          "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+          "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+          "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+        ],
+        "signals": [
+          "1/10",
+          "1/5",
+          "2/10",
+          "2/5",
+          "3/10",
+          "4/10",
+          "5/10"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx101": {
+        "rule": "IX:AUTO:0007C1",
+        "button": "vxv100/101",
+        "names": [
+          "Vx100",
+          "Vx101"
+        ],
+        "freeSensors": [
+          "slS100",
+          "slS101"
+        ],
+        "blocks": [
+          "S100",
+          "S101"
+        ],
+        "inactiveNX": [
+          "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+          "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+          "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+          "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+          "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+          "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+          "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+          "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+          "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+          "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+          "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+          "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+          "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+          "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+          "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+          "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+          "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+          "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+        ],
+        "signals": [
+          "1/10",
+          "1/5",
+          "2/10",
+          "2/5",
+          "3/10",
+          "4/10",
+          "5/10"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx102": {
+        "rule": "IX:AUTO:0007C2",
+        "button": "vxv102/112",
+        "names": [
+          "Vx102",
+          "Vx112"
+        ],
+        "freeSensors": [
+          "slS102",
+          "slS112"
+        ],
+        "blocks": [
+          "S102",
+          "S112",
+          "S112a"
+        ],
+        "inactiveNX": [
+          "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+          "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+          "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+          "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+          "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+          "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+          "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+          "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+          "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+          "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+          "IN:4114a7e3-f4c1-43cd-a92e-a4844d979ad6",
+          "IN:57ba1105-5758-43de-9110-7f48a66b528b",
+          "IN:7d4463d7-4c9f-4296-9f98-b8ee8433e7fa",
+          "IN:8be10a2c-1459-4b9d-9437-49d4a1e30a63",
+          "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+          "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+          "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2",
+          "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+          "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+          "IN:c5877801-d9df-4504-a527-52f4ad57ed62",
+          "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+          "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+        ],
+        "signals": [
+          "1/5",
+          "2/10",
+          "2/5",
+          "3/10",
+          "3/3",
+          "4/10",
+          "5/10"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx112": {
+        "rule": "IX:AUTO:0007C2",
+        "button": "vxv102/112",
+        "names": [
+          "Vx102",
+          "Vx112"
+        ],
+        "freeSensors": [
+          "slS102",
+          "slS112"
+        ],
+        "blocks": [
+          "S102",
+          "S112",
+          "S112a"
+        ],
+        "inactiveNX": [
+          "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+          "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+          "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+          "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+          "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf",
+          "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+          "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+          "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+          "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+          "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348",
+          "IN:4114a7e3-f4c1-43cd-a92e-a4844d979ad6",
+          "IN:57ba1105-5758-43de-9110-7f48a66b528b",
+          "IN:7d4463d7-4c9f-4296-9f98-b8ee8433e7fa",
+          "IN:8be10a2c-1459-4b9d-9437-49d4a1e30a63",
+          "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+          "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+          "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2",
+          "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+          "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+          "IN:c5877801-d9df-4504-a527-52f4ad57ed62",
+          "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+          "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+        ],
+        "signals": [
+          "1/5",
+          "2/10",
+          "2/5",
+          "3/10",
+          "3/3",
+          "4/10",
+          "5/10"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx113": {
+        "rule": "IX:AUTO:0007C3",
+        "button": "vxv113",
+        "names": [
+          "Vx113"
+        ],
+        "freeSensors": [
+          "slS113"
+        ],
+        "blocks": [
+          "S113",
+          "S113a",
+          "S113b",
+          "S113c"
+        ],
+        "inactiveNX": [
+          "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+          "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+          "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+          "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+          "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+          "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+          "IN:4114a7e3-f4c1-43cd-a92e-a4844d979ad6",
+          "IN:57ba1105-5758-43de-9110-7f48a66b528b",
+          "IN:7d4463d7-4c9f-4296-9f98-b8ee8433e7fa",
+          "IN:8be10a2c-1459-4b9d-9437-49d4a1e30a63",
+          "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+          "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+          "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2",
+          "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+          "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+          "IN:c5877801-d9df-4504-a527-52f4ad57ed62",
+          "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+          "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+        ],
+        "signals": [
+          "1/5",
+          "2/5",
+          "3/10",
+          "3/3",
+          "4/10",
+          "5/10"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx116": {
+        "rule": "IX:AUTO:0007C4",
+        "button": "vxv116",
+        "names": [
+          "Vx116"
+        ],
+        "freeSensors": [
+          "slS116"
+        ],
+        "blocks": [
+          "S116",
+          "S116a",
+          "S116c"
+        ],
+        "inactiveNX": [
+          "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+          "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd",
+          "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+          "IN:871a7269-712d-4f47-9cb9-c5b316eb2967",
+          "IN:57ba1105-5758-43de-9110-7f48a66b528b",
+          "IN:7d4463d7-4c9f-4296-9f98-b8ee8433e7fa",
+          "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2",
+          "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f",
+          "IN:fa61129e-5542-488b-88d4-600c63c448e3",
+          "IN:c5877801-d9df-4504-a527-52f4ad57ed62",
+          "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2",
+          "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+        ],
+        "signals": [
+          "1/5",
+          "2/5",
+          "3/3",
+          "4/10",
+          "5/10"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx110": {
+        "rule": "IX:AUTO:0007C5",
+        "button": "vxv110/117",
+        "names": [
+          "Vx110",
+          "Vx117"
+        ],
+        "freeSensors": [
+          "slS110",
+          "slS117"
+        ],
+        "blocks": [
+          "S110",
+          "S117"
+        ],
+        "inactiveNX": [
+          "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+          "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+          "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+          "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+          "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348"
+        ],
+        "signals": [
+          "1/10",
+          "1/5",
+          "2/10",
+          "2/5"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx117": {
+        "rule": "IX:AUTO:0007C5",
+        "button": "vxv110/117",
+        "names": [
+          "Vx110",
+          "Vx117"
+        ],
+        "freeSensors": [
+          "slS110",
+          "slS117"
+        ],
+        "blocks": [
+          "S110",
+          "S117"
+        ],
+        "inactiveNX": [
+          "IN:ae2e9664-5541-4c5e-8412-451de18c57ea",
+          "IN:429040bc-67f8-49a6-8934-ae57c3462b1e",
+          "IN:42714135-f6d9-42b6-baa6-ef93873dfb83",
+          "IN:d12211a5-28ae-4add-bb48-7fb55e571843",
+          "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348"
+        ],
+        "signals": [
+          "1/10",
+          "1/5",
+          "2/10",
+          "2/5"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx122": {
+        "rule": "IX:AUTO:0007C6",
+        "button": "vxv122",
+        "names": [
+          "Vx122"
+        ],
+        "freeSensors": [
+          "slS122"
+        ],
+        "blocks": [
+          "S122"
+        ],
+        "inactiveNX": [
+          "IN:a7396c65-4eea-46f6-b197-ff6119abe71a",
+          "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+          "IN:a4607e61-cc12-4f46-9c30-fb534204d98a",
+          "IN:52be6d9f-956b-4e6c-a476-1f8803639586",
+          "IN:c664f521-df47-4557-89d7-f65fb3644fd3",
+          "IN:941b374c-f243-4308-8829-b77dad2253dd",
+          "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8",
+          "IN:02071f89-8e14-4603-8b23-4f86301200ed"
+        ],
+        "signals": [
+          "1/8",
+          "2/7",
+          "2/8",
+          "3/8",
+          "4/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx123": {
+        "rule": "IX:AUTO:0007C7",
+        "button": "vxv123",
+        "names": [
+          "Vx123"
+        ],
+        "freeSensors": [
+          "slS123"
+        ],
+        "blocks": [
+          "S123",
+          "S123b",
+          "S123c"
+        ],
+        "inactiveNX": [
+          "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97",
+          "IN:30bca77d-457b-4e67-a418-1c1190064ebf",
+          "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654",
+          "IN:9af8d60e-52c9-4694-b1d6-1cb7d1a25b2b",
+          "IN:8b500613-a031-465d-a3b7-de0b654f22a0",
+          "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+          "IN:6af610f4-2e48-4b05-b33b-c327971b047d",
+          "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450"
+        ],
+        "signals": [
+          "3/5",
+          "4/5",
+          "5/8",
+          "6/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx126": {
+        "rule": "IX:AUTO:0007C8",
+        "button": "vxv126",
+        "names": [
+          "Vx126"
+        ],
+        "freeSensors": [
+          "slS126"
+        ],
+        "blocks": [
+          "S123a",
+          "S126",
+          "S126c"
+        ],
+        "inactiveNX": [
+          "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97",
+          "IN:30bca77d-457b-4e67-a418-1c1190064ebf",
+          "IN:a7c38e71-3385-46d7-825d-ad64f78e9fbf",
+          "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654",
+          "IN:9af8d60e-52c9-4694-b1d6-1cb7d1a25b2b",
+          "IN:68af5f58-3f09-460e-95fc-d88791f18a73",
+          "IN:8b500613-a031-465d-a3b7-de0b654f22a0",
+          "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+          "IN:6af610f4-2e48-4b05-b33b-c327971b047d",
+          "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450",
+          "IN:1a77e99e-db90-453b-aa4e-85b71071b2db",
+          "IN:d3a73449-9685-4aac-ae15-3d7b7e6cbee5"
+        ],
+        "signals": [
+          "3/5",
+          "4/5",
+          "5/5",
+          "5/8",
+          "6/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx120": {
+        "rule": "IX:AUTO:0007C9",
+        "button": "vxv120/121",
+        "names": [
+          "Vx120",
+          "Vx121"
+        ],
+        "freeSensors": [
+          "slS120",
+          "slS121"
+        ],
+        "blocks": [
+          "S120",
+          "S121",
+          "S121b"
+        ],
+        "inactiveNX": [
+          "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+          "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+          "IN:c664f521-df47-4557-89d7-f65fb3644fd3",
+          "IN:a7396c65-4eea-46f6-b197-ff6119abe71a",
+          "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+          "IN:941b374c-f243-4308-8829-b77dad2253dd"
+        ],
+        "signals": [
+          "1/7",
+          "1/8",
+          "2/7",
+          "2/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx121": {
+        "rule": "IX:AUTO:0007C9",
+        "button": "vxv120/121",
+        "names": [
+          "Vx120",
+          "Vx121"
+        ],
+        "freeSensors": [
+          "slS120",
+          "slS121"
+        ],
+        "blocks": [
+          "S120",
+          "S121",
+          "S121b"
+        ],
+        "inactiveNX": [
+          "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478",
+          "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f",
+          "IN:c664f521-df47-4557-89d7-f65fb3644fd3",
+          "IN:a7396c65-4eea-46f6-b197-ff6119abe71a",
+          "IN:0938c621-8dcb-4add-9783-28d6824b0f8d",
+          "IN:941b374c-f243-4308-8829-b77dad2253dd"
+        ],
+        "signals": [
+          "1/7",
+          "1/8",
+          "2/7",
+          "2/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx125": {
+        "rule": "IX:AUTO:0007C10",
+        "button": "vxv125",
+        "names": [
+          "Vx125"
+        ],
+        "freeSensors": [
+          "slS125"
+        ],
+        "blocks": [
+          "S125"
+        ],
+        "inactiveNX": [
+          "IN:a4607e61-cc12-4f46-9c30-fb534204d98a",
+          "IN:52be6d9f-956b-4e6c-a476-1f8803639586",
+          "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8",
+          "IN:02071f89-8e14-4603-8b23-4f86301200ed"
+        ],
+        "signals": [
+          "2/7",
+          "3/8",
+          "4/8"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx131": {
+        "rule": "IX:AUTO:0007C11",
+        "button": "vxv131/132",
+        "names": [
+          "Vx131",
+          "Vx132"
+        ],
+        "freeSensors": [
+          "slS131",
+          "slS132"
+        ],
+        "blocks": [
+          "S126a",
+          "S131",
+          "S131a",
+          "S131c",
+          "S132",
+          "S132a",
+          "S132b"
+        ],
+        "inactiveNX": [
+          "IN:8b500613-a031-465d-a3b7-de0b654f22a0",
+          "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+          "IN:6af610f4-2e48-4b05-b33b-c327971b047d",
+          "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450",
+          "IN:1a77e99e-db90-453b-aa4e-85b71071b2db",
+          "IN:d3a73449-9685-4aac-ae15-3d7b7e6cbee5",
+          "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973",
+          "IN:b40d2819-0552-4586-ab45-2a7aa2087544",
+          "IN:d29a79dc-dc0b-48ff-8553-ba218dac09fe",
+          "IN:9637bfe4-0334-4ee1-8b2a-6f54d18b80d7",
+          "IN:60c05de6-7b87-4156-8000-a73c8a4c9c45",
+          "IN:28fd5177-1f83-4b70-ab20-8dfa7d9d5bca",
+          "IN:3d360610-3f48-455c-9476-5d3d877014b2",
+          "IN:82fca6a8-90ed-41b7-8780-4c6afe4b8ac5",
+          "IN:6ab85d5e-781c-4fc5-82c1-35ee572f6b28"
+        ],
+        "signals": [
+          "3/5",
+          "4/5",
+          "5/5",
+          "5/8",
+          "6/6",
+          "6/8"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx132": {
+        "rule": "IX:AUTO:0007C11",
+        "button": "vxv131/132",
+        "names": [
+          "Vx131",
+          "Vx132"
+        ],
+        "freeSensors": [
+          "slS131",
+          "slS132"
+        ],
+        "blocks": [
+          "S126a",
+          "S131",
+          "S131a",
+          "S131c",
+          "S132",
+          "S132a",
+          "S132b"
+        ],
+        "inactiveNX": [
+          "IN:8b500613-a031-465d-a3b7-de0b654f22a0",
+          "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+          "IN:6af610f4-2e48-4b05-b33b-c327971b047d",
+          "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450",
+          "IN:1a77e99e-db90-453b-aa4e-85b71071b2db",
+          "IN:d3a73449-9685-4aac-ae15-3d7b7e6cbee5",
+          "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973",
+          "IN:b40d2819-0552-4586-ab45-2a7aa2087544",
+          "IN:d29a79dc-dc0b-48ff-8553-ba218dac09fe",
+          "IN:9637bfe4-0334-4ee1-8b2a-6f54d18b80d7",
+          "IN:60c05de6-7b87-4156-8000-a73c8a4c9c45",
+          "IN:28fd5177-1f83-4b70-ab20-8dfa7d9d5bca",
+          "IN:3d360610-3f48-455c-9476-5d3d877014b2",
+          "IN:82fca6a8-90ed-41b7-8780-4c6afe4b8ac5",
+          "IN:6ab85d5e-781c-4fc5-82c1-35ee572f6b28"
+        ],
+        "signals": [
+          "3/5",
+          "4/5",
+          "5/5",
+          "5/8",
+          "6/6",
+          "6/8"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx140": {
+        "rule": "IX:AUTO:0007C12",
+        "button": "vxv140/141/142/143",
+        "names": [
+          "Vx140",
+          "Vx141",
+          "Vx142",
+          "Vx143"
+        ],
+        "freeSensors": [
+          "slS140",
+          "slS141",
+          "slS142",
+          "slS143"
+        ],
+        "blocks": [
+          "S140",
+          "S140a",
+          "S140b",
+          "S140c",
+          "S141",
+          "S141a",
+          "S141b",
+          "S141c",
+          "S142",
+          "S142a",
+          "S142c",
+          "S143",
+          "S143a",
+          "S143c"
+        ],
+        "inactiveNX": [
+          "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+          "IN:e9518f14-ef23-4c67-9935-abec0d8732da",
+          "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+          "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+          "IN:671e0660-36cb-4d49-b155-e0307c177596",
+          "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+          "IN:a98d6d8d-ff9c-4125-8689-291682944520",
+          "IN:5b52eaa8-1395-441d-be3e-15657f40349e"
+        ],
+        "signals": [
+          "1/6",
+          "1/9",
+          "2/6",
+          "2/9"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx141": {
+        "rule": "IX:AUTO:0007C12",
+        "button": "vxv140/141/142/143",
+        "names": [
+          "Vx140",
+          "Vx141",
+          "Vx142",
+          "Vx143"
+        ],
+        "freeSensors": [
+          "slS140",
+          "slS141",
+          "slS142",
+          "slS143"
+        ],
+        "blocks": [
+          "S140",
+          "S140a",
+          "S140b",
+          "S140c",
+          "S141",
+          "S141a",
+          "S141b",
+          "S141c",
+          "S142",
+          "S142a",
+          "S142c",
+          "S143",
+          "S143a",
+          "S143c"
+        ],
+        "inactiveNX": [
+          "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+          "IN:e9518f14-ef23-4c67-9935-abec0d8732da",
+          "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+          "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+          "IN:671e0660-36cb-4d49-b155-e0307c177596",
+          "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+          "IN:a98d6d8d-ff9c-4125-8689-291682944520",
+          "IN:5b52eaa8-1395-441d-be3e-15657f40349e"
+        ],
+        "signals": [
+          "1/6",
+          "1/9",
+          "2/6",
+          "2/9"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx142": {
+        "rule": "IX:AUTO:0007C12",
+        "button": "vxv140/141/142/143",
+        "names": [
+          "Vx140",
+          "Vx141",
+          "Vx142",
+          "Vx143"
+        ],
+        "freeSensors": [
+          "slS140",
+          "slS141",
+          "slS142",
+          "slS143"
+        ],
+        "blocks": [
+          "S140",
+          "S140a",
+          "S140b",
+          "S140c",
+          "S141",
+          "S141a",
+          "S141b",
+          "S141c",
+          "S142",
+          "S142a",
+          "S142c",
+          "S143",
+          "S143a",
+          "S143c"
+        ],
+        "inactiveNX": [
+          "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+          "IN:e9518f14-ef23-4c67-9935-abec0d8732da",
+          "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+          "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+          "IN:671e0660-36cb-4d49-b155-e0307c177596",
+          "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+          "IN:a98d6d8d-ff9c-4125-8689-291682944520",
+          "IN:5b52eaa8-1395-441d-be3e-15657f40349e"
+        ],
+        "signals": [
+          "1/6",
+          "1/9",
+          "2/6",
+          "2/9"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx143": {
+        "rule": "IX:AUTO:0007C12",
+        "button": "vxv140/141/142/143",
+        "names": [
+          "Vx140",
+          "Vx141",
+          "Vx142",
+          "Vx143"
+        ],
+        "freeSensors": [
+          "slS140",
+          "slS141",
+          "slS142",
+          "slS143"
+        ],
+        "blocks": [
+          "S140",
+          "S140a",
+          "S140b",
+          "S140c",
+          "S141",
+          "S141a",
+          "S141b",
+          "S141c",
+          "S142",
+          "S142a",
+          "S142c",
+          "S143",
+          "S143a",
+          "S143c"
+        ],
+        "inactiveNX": [
+          "IN:3781af48-05c1-45d1-8822-1dfd3dfb660a",
+          "IN:e9518f14-ef23-4c67-9935-abec0d8732da",
+          "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76",
+          "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db",
+          "IN:671e0660-36cb-4d49-b155-e0307c177596",
+          "IN:478af43f-3bfc-4c77-9380-bdb8586d815f",
+          "IN:a98d6d8d-ff9c-4125-8689-291682944520",
+          "IN:5b52eaa8-1395-441d-be3e-15657f40349e"
+        ],
+        "signals": [
+          "1/6",
+          "1/9",
+          "2/6",
+          "2/9"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx144": {
+        "rule": "IX:AUTO:0007C13",
+        "button": "vxv144/154",
+        "names": [
+          "Vx144",
+          "Vx154"
+        ],
+        "freeSensors": [
+          "slS144",
+          "slS154"
+        ],
+        "blocks": [
+          "S144",
+          "S144a",
+          "S144b",
+          "S151b",
+          "S154",
+          "S154b",
+          "S154c"
+        ],
+        "inactiveNX": [
+          "IN:aca159e6-947d-4248-a417-12249bbd9d20",
+          "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d",
+          "IN:bff6c4b1-e623-4ebb-b4a4-71d03691011b",
+          "IN:27d9d2ff-a551-440c-8095-4f8a6713efac",
+          "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+          "IN:ae76e106-8150-4ea1-a430-678127a4c5e0",
+          "IN:bbfb9823-1ff0-4ca5-96ca-7f6498bd93fc",
+          "IN:4e5ca277-55c7-409c-9b8c-ca2531f711be",
+          "IN:8b3b3a92-0ebc-4099-838c-a3baa13e53f4",
+          "IN:721d8239-bf96-4733-a4c4-277eed3c5003",
+          "IN:0632870a-0526-43c4-a82f-0a371537bf8e",
+          "IN:8f1f7f38-cb7c-4349-81a3-f6a0e5dc78be",
+          "IN:b0c82045-3dfe-49f5-92ae-2c1b8f0a00fa",
+          "IN:03942f9b-cfc0-4779-85dd-a52c310e8a63",
+          "IN:fc05bf08-09e9-493b-b9db-2f3aa6446c34"
+        ],
+        "signals": [
+          "3/6",
+          "5/9",
+          "6/7",
+          "6/9"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx154": {
+        "rule": "IX:AUTO:0007C13",
+        "button": "vxv144/154",
+        "names": [
+          "Vx144",
+          "Vx154"
+        ],
+        "freeSensors": [
+          "slS144",
+          "slS154"
+        ],
+        "blocks": [
+          "S144",
+          "S144a",
+          "S144b",
+          "S151b",
+          "S154",
+          "S154b",
+          "S154c"
+        ],
+        "inactiveNX": [
+          "IN:aca159e6-947d-4248-a417-12249bbd9d20",
+          "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d",
+          "IN:bff6c4b1-e623-4ebb-b4a4-71d03691011b",
+          "IN:27d9d2ff-a551-440c-8095-4f8a6713efac",
+          "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+          "IN:ae76e106-8150-4ea1-a430-678127a4c5e0",
+          "IN:bbfb9823-1ff0-4ca5-96ca-7f6498bd93fc",
+          "IN:4e5ca277-55c7-409c-9b8c-ca2531f711be",
+          "IN:8b3b3a92-0ebc-4099-838c-a3baa13e53f4",
+          "IN:721d8239-bf96-4733-a4c4-277eed3c5003",
+          "IN:0632870a-0526-43c4-a82f-0a371537bf8e",
+          "IN:8f1f7f38-cb7c-4349-81a3-f6a0e5dc78be",
+          "IN:b0c82045-3dfe-49f5-92ae-2c1b8f0a00fa",
+          "IN:03942f9b-cfc0-4779-85dd-a52c310e8a63",
+          "IN:fc05bf08-09e9-493b-b9db-2f3aa6446c34"
+        ],
+        "signals": [
+          "3/6",
+          "5/9",
+          "6/7",
+          "6/9"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx151": {
+        "rule": "IX:AUTO:0007C14",
+        "button": "vxv151",
+        "names": [
+          "Vx151"
+        ],
+        "freeSensors": [
+          "slS151"
+        ],
+        "blocks": [
+          "S151",
+          "S151c",
+          "S152b"
+        ],
+        "inactiveNX": [
+          "IN:28420481-c3c3-4304-9a12-f02b5295b7aa",
+          "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+          "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b",
+          "IN:899f9f4c-f813-44f7-9797-11130faad22c",
+          "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+          "IN:ae76e106-8150-4ea1-a430-678127a4c5e0"
+        ],
+        "signals": [
+          "3/6",
+          "4/9",
+          "5/9",
+          "6/9"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx152": {
+        "rule": "IX:AUTO:0007C15",
+        "button": "vxv152",
+        "names": [
+          "Vx152"
+        ],
+        "freeSensors": [
+          "slS152"
+        ],
+        "blocks": [
+          "S152",
+          "S152c",
+          "S153b"
+        ],
+        "inactiveNX": [
+          "IN:c8e0a325-eec5-4ce7-803b-90d7514b12bf",
+          "IN:28420481-c3c3-4304-9a12-f02b5295b7aa",
+          "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf",
+          "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b",
+          "IN:c86e61af-d30f-4034-8c84-234f9d601f62",
+          "IN:899f9f4c-f813-44f7-9797-11130faad22c",
+          "IN:c718d9b8-d667-40bf-9279-26a6110d33be",
+          "IN:ae76e106-8150-4ea1-a430-678127a4c5e0"
+        ],
+        "signals": [
+          "1/4",
+          "2/4",
+          "3/2",
+          "3/6",
+          "3/9",
+          "4/9",
+          "5/9",
+          "6/9"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx153": {
+        "rule": "IX:AUTO:0007C16",
+        "button": "vxv153/161",
+        "names": [
+          "Vx153",
+          "Vx161"
+        ],
+        "freeSensors": [
+          "slS153",
+          "slS161"
+        ],
+        "blocks": [
+          "S153",
+          "S153c",
+          "S161",
+          "S161a",
+          "S161b",
+          "S161c"
+        ],
+        "inactiveNX": [
+          "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+          "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+          "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+          "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0",
+          "IN:b7da8647-7366-4a3a-b2e1-5e60acc04527",
+          "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167",
+          "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+        ],
+        "signals": [
+          "1/4",
+          "2/11",
+          "2/4",
+          "3/11",
+          "3/2"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx161": {
+        "rule": "IX:AUTO:0007C16",
+        "button": "vxv153/161",
+        "names": [
+          "Vx153",
+          "Vx161"
+        ],
+        "freeSensors": [
+          "slS153",
+          "slS161"
+        ],
+        "blocks": [
+          "S153",
+          "S153c",
+          "S161",
+          "S161a",
+          "S161b",
+          "S161c"
+        ],
+        "inactiveNX": [
+          "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+          "IN:ffa579d7-ecec-4eba-9c94-9018e30153b8",
+          "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+          "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0",
+          "IN:b7da8647-7366-4a3a-b2e1-5e60acc04527",
+          "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167",
+          "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+        ],
+        "signals": [
+          "1/4",
+          "2/11",
+          "2/4",
+          "3/11",
+          "3/2"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx160": {
+        "rule": "IX:AUTO:0007C17",
+        "button": "vxv160",
+        "names": [
+          "Vx160"
+        ],
+        "freeSensors": [
+          "slS160"
+        ],
+        "blocks": [
+          "S160",
+          "S160a",
+          "S160b",
+          "S160c"
+        ],
+        "inactiveNX": [
+          "IN:02bf8516-c5ce-4638-b51b-5ba11b02bd92",
+          "IN:75288d04-f50b-4816-9879-11c6a45eff47",
+          "IN:7270481f-f9e5-43f2-9ee7-b78863087ebf",
+          "IN:38153432-a6c0-4029-92b1-875f06fde7c6",
+          "IN:7d509c52-6580-4349-9a19-fa78faecef2d",
+          "IN:9925d20b-5e18-4f47-a8d5-6fdcf0664a0c",
+          "IN:915d1120-9a5f-4302-8ca8-acdb62708add",
+          "IN:711c1b7f-8d0f-4f98-bec6-205260b2ef25"
+        ],
+        "signals": [
+          "1/11",
+          "1/4",
+          "10/11",
+          "2/4"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx162": {
+        "rule": "IX:AUTO:0007C18",
+        "button": "vxv162/163/165/166",
+        "names": [
+          "Vx162",
+          "Vx163",
+          "Vx165",
+          "Vx166"
+        ],
+        "freeSensors": [
+          "slS162",
+          "slS163",
+          "slS165",
+          "slS166"
+        ],
+        "blocks": [
+          "S162",
+          "S162c",
+          "S163",
+          "S163c",
+          "S165",
+          "S165b",
+          "S165c",
+          "S166",
+          "S166b",
+          "S166c"
+        ],
+        "inactiveNX": [],
+        "signals": [
+          "1/11",
+          "1/4",
+          "10/11",
+          "2/11",
+          "2/4",
+          "3/11"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx163": {
+        "rule": "IX:AUTO:0007C18",
+        "button": "vxv162/163/165/166",
+        "names": [
+          "Vx162",
+          "Vx163",
+          "Vx165",
+          "Vx166"
+        ],
+        "freeSensors": [
+          "slS162",
+          "slS163",
+          "slS165",
+          "slS166"
+        ],
+        "blocks": [
+          "S162",
+          "S162c",
+          "S163",
+          "S163c",
+          "S165",
+          "S165b",
+          "S165c",
+          "S166",
+          "S166b",
+          "S166c"
+        ],
+        "inactiveNX": [],
+        "signals": [
+          "1/11",
+          "1/4",
+          "10/11",
+          "2/11",
+          "2/4",
+          "3/11"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx165": {
+        "rule": "IX:AUTO:0007C18",
+        "button": "vxv162/163/165/166",
+        "names": [
+          "Vx162",
+          "Vx163",
+          "Vx165",
+          "Vx166"
+        ],
+        "freeSensors": [
+          "slS162",
+          "slS163",
+          "slS165",
+          "slS166"
+        ],
+        "blocks": [
+          "S162",
+          "S162c",
+          "S163",
+          "S163c",
+          "S165",
+          "S165b",
+          "S165c",
+          "S166",
+          "S166b",
+          "S166c"
+        ],
+        "inactiveNX": [],
+        "signals": [
+          "1/11",
+          "1/4",
+          "10/11",
+          "2/11",
+          "2/4",
+          "3/11"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx166": {
+        "rule": "IX:AUTO:0007C18",
+        "button": "vxv162/163/165/166",
+        "names": [
+          "Vx162",
+          "Vx163",
+          "Vx165",
+          "Vx166"
+        ],
+        "freeSensors": [
+          "slS162",
+          "slS163",
+          "slS165",
+          "slS166"
+        ],
+        "blocks": [
+          "S162",
+          "S162c",
+          "S163",
+          "S163c",
+          "S165",
+          "S165b",
+          "S165c",
+          "S166",
+          "S166b",
+          "S166c"
+        ],
+        "inactiveNX": [],
+        "signals": [
+          "1/11",
+          "1/4",
+          "10/11",
+          "2/11",
+          "2/4",
+          "3/11"
+        ],
+        "status": "unresolved",
+        "reason": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten."
+      },
+      "Vx103": {
+        "rule": "IX:AUTO:0007C19",
+        "button": "vxv103",
+        "names": [
+          "Vx103"
+        ],
+        "freeSensors": [
+          "slS103"
+        ],
+        "blocks": [
+          "S103",
+          "S103a",
+          "S103b"
+        ],
+        "inactiveNX": [
+          "IN:8be10a2c-1459-4b9d-9437-49d4a1e30a63",
+          "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2",
+          "IN:c5877801-d9df-4504-a527-52f4ad57ed62",
+          "IN:191dce9e-3a56-411e-bac3-92df25fb9c02",
+          "IN:9982aa3c-ff40-41e0-bff3-78cc97fa910d",
+          "IN:dd499956-c2e9-474b-bf11-f0dffae62507",
+          "IN:84c62fd8-2843-452d-825e-5487a68a6d8d",
+          "IN:b03a6776-1851-46bc-839c-878145f6b949",
+          "IN:cf714c10-830f-49ba-8b6d-886d2c755876",
+          "IN:6b9dd993-29d8-4964-a975-9c180c3868b7",
+          "IN:4d96cbd2-21ef-484a-8949-a156abde3825"
+        ],
+        "signals": [
+          "3/1",
+          "3/10",
+          "4/10",
+          "5/10"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx114": {
+        "rule": "IX:AUTO:0007C20",
+        "button": "vxv114",
+        "names": [
+          "Vx114"
+        ],
+        "freeSensors": [
+          "slS114",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S103c",
+          "S114"
+        ],
+        "inactiveNX": [
+          "IN:191dce9e-3a56-411e-bac3-92df25fb9c02",
+          "IN:9982aa3c-ff40-41e0-bff3-78cc97fa910d",
+          "IN:dd499956-c2e9-474b-bf11-f0dffae62507",
+          "IN:84c62fd8-2843-452d-825e-5487a68a6d8d",
+          "IN:b03a6776-1851-46bc-839c-878145f6b949",
+          "IN:cf714c10-830f-49ba-8b6d-886d2c755876",
+          "IN:6b9dd993-29d8-4964-a975-9c180c3868b7",
+          "IN:4d96cbd2-21ef-484a-8949-a156abde3825"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx119": {
+        "rule": "IX:AUTO:0007C21",
+        "button": "vxv119",
+        "names": [
+          "Vx119"
+        ],
+        "freeSensors": [
+          "slS119",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S119",
+          "S119b"
+        ],
+        "inactiveNX": [
+          "IN:38a2817f-928f-46b9-8467-90cee94ffa5f",
+          "IN:98f1e18d-6c98-402a-a654-9d3c807a1f0a",
+          "IN:879b4f03-de61-4f8b-bcfb-132c85e4785d",
+          "IN:afc2b3dd-02e4-4a07-8fea-3d3b9ab65cc0"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx115": {
+        "rule": "IX:AUTO:0007C22",
+        "button": "vxv115",
+        "names": [
+          "Vx115"
+        ],
+        "freeSensors": [
+          "slS115",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S114a",
+          "S115",
+          "S115a",
+          "S115b"
+        ],
+        "inactiveNX": [
+          "IN:191dce9e-3a56-411e-bac3-92df25fb9c02",
+          "IN:9982aa3c-ff40-41e0-bff3-78cc97fa910d",
+          "IN:b03a6776-1851-46bc-839c-878145f6b949",
+          "IN:cf714c10-830f-49ba-8b6d-886d2c755876"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx111": {
+        "rule": "IX:AUTO:0007C23",
+        "button": "vxv111/118",
+        "names": [
+          "Vx111",
+          "Vx118"
+        ],
+        "freeSensors": [
+          "slS111",
+          "slS118",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S111",
+          "S114b",
+          "S118",
+          "S119a"
+        ],
+        "inactiveNX": [
+          "IN:dd499956-c2e9-474b-bf11-f0dffae62507",
+          "IN:84c62fd8-2843-452d-825e-5487a68a6d8d",
+          "IN:6b9dd993-29d8-4964-a975-9c180c3868b7",
+          "IN:4d96cbd2-21ef-484a-8949-a156abde3825",
+          "IN:879b4f03-de61-4f8b-bcfb-132c85e4785d",
+          "IN:afc2b3dd-02e4-4a07-8fea-3d3b9ab65cc0"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx118": {
+        "rule": "IX:AUTO:0007C23",
+        "button": "vxv111/118",
+        "names": [
+          "Vx111",
+          "Vx118"
+        ],
+        "freeSensors": [
+          "slS111",
+          "slS118",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S111",
+          "S114b",
+          "S118",
+          "S119a"
+        ],
+        "inactiveNX": [
+          "IN:dd499956-c2e9-474b-bf11-f0dffae62507",
+          "IN:84c62fd8-2843-452d-825e-5487a68a6d8d",
+          "IN:6b9dd993-29d8-4964-a975-9c180c3868b7",
+          "IN:4d96cbd2-21ef-484a-8949-a156abde3825",
+          "IN:879b4f03-de61-4f8b-bcfb-132c85e4785d",
+          "IN:afc2b3dd-02e4-4a07-8fea-3d3b9ab65cc0"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx127": {
+        "rule": "IX:AUTO:0007C24",
+        "button": "vxv127",
+        "names": [
+          "Vx127"
+        ],
+        "freeSensors": [
+          "slS127",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S127",
+          "S127a",
+          "S127b",
+          "S127c"
+        ],
+        "inactiveNX": [
+          "IN:b40d2819-0552-4586-ab45-2a7aa2087544",
+          "IN:d29a79dc-dc0b-48ff-8553-ba218dac09fe",
+          "IN:28fd5177-1f83-4b70-ab20-8dfa7d9d5bca",
+          "IN:3d360610-3f48-455c-9476-5d3d877014b2"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx128": {
+        "rule": "IX:AUTO:0007C25",
+        "button": "vxv128",
+        "names": [
+          "Vx128"
+        ],
+        "freeSensors": [
+          "slS128",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S128",
+          "S128b",
+          "S128c"
+        ],
+        "inactiveNX": [
+          "IN:9637bfe4-0334-4ee1-8b2a-6f54d18b80d7",
+          "IN:60c05de6-7b87-4156-8000-a73c8a4c9c45",
+          "IN:82fca6a8-90ed-41b7-8780-4c6afe4b8ac5",
+          "IN:6ab85d5e-781c-4fc5-82c1-35ee572f6b28"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx130": {
+        "rule": "IX:AUTO:0007C26",
+        "button": "vxv130",
+        "names": [
+          "Vx130"
+        ],
+        "freeSensors": [
+          "slS130",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S130",
+          "S130a"
+        ],
+        "inactiveNX": [
+          "IN:b40d2819-0552-4586-ab45-2a7aa2087544",
+          "IN:d29a79dc-dc0b-48ff-8553-ba218dac09fe",
+          "IN:9637bfe4-0334-4ee1-8b2a-6f54d18b80d7",
+          "IN:60c05de6-7b87-4156-8000-a73c8a4c9c45",
+          "IN:28fd5177-1f83-4b70-ab20-8dfa7d9d5bca",
+          "IN:3d360610-3f48-455c-9476-5d3d877014b2",
+          "IN:82fca6a8-90ed-41b7-8780-4c6afe4b8ac5",
+          "IN:6ab85d5e-781c-4fc5-82c1-35ee572f6b28"
+        ],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx133": {
+        "rule": "IX:AUTO:0007C27",
+        "button": "vxv133",
+        "names": [
+          "Vx133"
+        ],
+        "freeSensors": [
+          "slS133",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S133"
+        ],
+        "inactiveNX": [
+          "IN:bff6c4b1-e623-4ebb-b4a4-71d03691011b",
+          "IN:27d9d2ff-a551-440c-8095-4f8a6713efac",
+          "IN:721d8239-bf96-4733-a4c4-277eed3c5003",
+          "IN:0632870a-0526-43c4-a82f-0a371537bf8e",
+          "IN:b0c82045-3dfe-49f5-92ae-2c1b8f0a00fa",
+          "IN:8f1f7f38-cb7c-4349-81a3-f6a0e5dc78be",
+          "IN:fc05bf08-09e9-493b-b9db-2f3aa6446c34",
+          "IN:03942f9b-cfc0-4779-85dd-a52c310e8a63"
+        ],
+        "signals": [
+          "3/6",
+          "6/7"
+        ],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx150": {
+        "rule": "IX:AUTO:0007C28",
+        "button": "vxv150",
+        "names": [
+          "Vx150"
+        ],
+        "freeSensors": [
+          "slS150",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S150",
+          "S150a"
+        ],
+        "inactiveNX": [
+          "IN:bff6c4b1-e623-4ebb-b4a4-71d03691011b",
+          "IN:27d9d2ff-a551-440c-8095-4f8a6713efac",
+          "IN:721d8239-bf96-4733-a4c4-277eed3c5003",
+          "IN:0632870a-0526-43c4-a82f-0a371537bf8e",
+          "IN:b0c82045-3dfe-49f5-92ae-2c1b8f0a00fa",
+          "IN:8f1f7f38-cb7c-4349-81a3-f6a0e5dc78be",
+          "IN:fc05bf08-09e9-493b-b9db-2f3aa6446c34",
+          "IN:03942f9b-cfc0-4779-85dd-a52c310e8a63",
+          "IN:aca159e6-947d-4248-a417-12249bbd9d20",
+          "IN:bbfb9823-1ff0-4ca5-96ca-7f6498bd93fc",
+          "IN:4e5ca277-55c7-409c-9b8c-ca2531f711be"
+        ],
+        "signals": [
+          "6/7"
+        ],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx155": {
+        "rule": "IX:AUTO:0007C29",
+        "button": "vxv155",
+        "names": [
+          "Vx155"
+        ],
+        "freeSensors": [
+          "slS155",
+          "rsAckRangeFri"
+        ],
+        "blocks": [
+          "S155"
+        ],
+        "inactiveNX": [
+          "IN:bbfb9823-1ff0-4ca5-96ca-7f6498bd93fc",
+          "IN:4e5ca277-55c7-409c-9b8c-ca2531f711be",
+          "IN:aca159e6-947d-4248-a417-12249bbd9d20",
+          "IN:bff6c4b1-e623-4ebb-b4a4-71d03691011b",
+          "IN:8b3b3a92-0ebc-4099-838c-a3baa13e53f4",
+          "IN:721d8239-bf96-4733-a4c4-277eed3c5003"
+        ],
+        "signals": [
+          "6/7"
+        ],
+        "status": "unresolved",
+        "reason": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad."
+      },
+      "Vx164": {
+        "rule": "IX:AUTO:0007C30",
+        "button": "vxv164",
+        "names": [
+          "Vx164"
+        ],
+        "freeSensors": [
+          "slS164"
+        ],
+        "blocks": [
+          "S164"
+        ],
+        "inactiveNX": [
+          "IN:4edf0950-9c34-4bd8-8a68-4ec191243de0",
+          "IN:bbfb9823-1ff0-4ca5-96ca-7f6498bd93fc",
+          "IN:4e5ca277-55c7-409c-9b8c-ca2531f711be",
+          "IN:b7da8647-7366-4a3a-b2e1-5e60acc04527",
+          "IN:8c8af86b-6435-43c2-aa35-9a8b58768e5e"
+        ],
+        "signals": [
+          "3/11",
+          "3/2",
+          "6/11"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx95": {
+        "rule": "IX:AUTO:0007C31",
+        "button": "vxv95",
+        "names": [
+          "Vx95"
+        ],
+        "freeSensors": [
+          "slS95"
+        ],
+        "blocks": [
+          "S95"
+        ],
+        "inactiveNX": [
+          "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+          "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+          "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452",
+          "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+        ],
+        "signals": [
+          "1/1",
+          "1/12",
+          "1/3"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx96": {
+        "rule": "IX:AUTO:0007C32",
+        "button": "vxv96",
+        "names": [
+          "Vx96"
+        ],
+        "freeSensors": [
+          "slS96"
+        ],
+        "blocks": [
+          "S96"
+        ],
+        "inactiveNX": [
+          "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+          "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+          "IN:4eabd950-d9ce-414a-a5bd-cb8177149880",
+          "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+        ],
+        "signals": [
+          "2/1",
+          "2/12",
+          "2/3"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx170": {
+        "rule": "IX:AUTO:0007C35",
+        "button": "vxv170",
+        "names": [
+          "Vx170"
+        ],
+        "freeSensors": [
+          "slS170"
+        ],
+        "blocks": [
+          "S170"
+        ],
+        "inactiveNX": [
+          "IN:df91a6da-781b-434b-ac6a-88aa95244141",
+          "IN:8dd72135-1f25-4e76-93f4-5ac0e677f598",
+          "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+          "IN:4eadefa7-37c8-42f0-9a14-8bda9962c8e6"
+        ],
+        "signals": [
+          "1/11",
+          "10/11",
+          "2/11",
+          "2/2",
+          "3/11"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx171": {
+        "rule": "IX:AUTO:0007C36",
+        "button": "vxv171",
+        "names": [
+          "Vx171"
+        ],
+        "freeSensors": [],
+        "blocks": [
+          "S171"
+        ],
+        "inactiveNX": [
+          "IN:8dd72135-1f25-4e76-93f4-5ac0e677f598",
+          "IN:df91a6da-781b-434b-ac6a-88aa95244141",
+          "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+          "IN:4eadefa7-37c8-42f0-9a14-8bda9962c8e6"
+        ],
+        "signals": [
+          "1/11",
+          "10/11",
+          "2/11",
+          "2/2",
+          "3/11"
+        ],
+        "status": "ready",
+        "reason": ""
+      },
+      "Vx172": {
+        "rule": "IX:AUTO:0007C37",
+        "button": "vxv172",
+        "names": [
+          "Vx172"
+        ],
+        "freeSensors": [],
+        "blocks": [
+          "S172"
+        ],
+        "inactiveNX": [],
+        "signals": [],
+        "status": "ready",
+        "reason": ""
+      }
+    }
+  },
   "buttons": {
     "htvAn": {
       "label": "An",

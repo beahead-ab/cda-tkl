@@ -198,7 +198,7 @@
       "name": "Lägga växlar",
       "enabled": true,
       "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår.",
+      "behavior": "20 knappregler använder lokala fria spårledningar, NX-/resurslås och skyddande signaler. 15 regler spärras av ofullständiga växelkopplingar eller saknad rangeråterrapport. De två automatiska Vx95/Vx96-reglerna återstår.",
       "rules": [
         "IX:AUTO:0007C1",
         "IX:AUTO:0007C2",
@@ -2342,188 +2342,342 @@
     },
     "IX:AUTO:0007C1": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv100/101",
+      "turnouts": [
+        "Vx100",
+        "Vx101"
+      ]
     },
     "IX:AUTO:0007C2": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten.",
+      "button": "vxv102/112",
+      "turnouts": [
+        "Vx102",
+        "Vx112"
+      ]
     },
     "IX:AUTO:0007C3": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv113",
+      "turnouts": [
+        "Vx113"
+      ]
     },
     "IX:AUTO:0007C4": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv116",
+      "turnouts": [
+        "Vx116"
+      ]
     },
     "IX:AUTO:0007C5": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv110/117",
+      "turnouts": [
+        "Vx110",
+        "Vx117"
+      ]
     },
     "IX:AUTO:0007C6": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv122",
+      "turnouts": [
+        "Vx122"
+      ]
     },
     "IX:AUTO:0007C7": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv123",
+      "turnouts": [
+        "Vx123"
+      ]
     },
     "IX:AUTO:0007C8": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv126",
+      "turnouts": [
+        "Vx126"
+      ]
     },
     "IX:AUTO:0007C9": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv120/121",
+      "turnouts": [
+        "Vx120",
+        "Vx121"
+      ]
     },
     "IX:AUTO:0007C10": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv125",
+      "turnouts": [
+        "Vx125"
+      ]
     },
     "IX:AUTO:0007C11": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten.",
+      "button": "vxv131/132",
+      "turnouts": [
+        "Vx131",
+        "Vx132"
+      ]
     },
     "IX:AUTO:0007C12": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten.",
+      "button": "vxv140/141/142/143",
+      "turnouts": [
+        "Vx140",
+        "Vx141",
+        "Vx142",
+        "Vx143"
+      ]
     },
     "IX:AUTO:0007C13": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten.",
+      "button": "vxv144/154",
+      "turnouts": [
+        "Vx144",
+        "Vx154"
+      ]
     },
     "IX:AUTO:0007C14": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv151",
+      "turnouts": [
+        "Vx151"
+      ]
     },
     "IX:AUTO:0007C15": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv152",
+      "turnouts": [
+        "Vx152"
+      ]
     },
     "IX:AUTO:0007C16": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv153/161",
+      "turnouts": [
+        "Vx153",
+        "Vx161"
+      ]
     },
     "IX:AUTO:0007C17": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv160",
+      "turnouts": [
+        "Vx160"
+      ]
     },
     "IX:AUTO:0007C18": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten.",
+      "button": "vxv162/163/165/166",
+      "turnouts": [
+        "Vx162",
+        "Vx163",
+        "Vx165",
+        "Vx166"
+      ]
     },
     "IX:AUTO:0007C19": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv103",
+      "turnouts": [
+        "Vx103"
+      ]
     },
     "IX:AUTO:0007C20": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "button": "vxv114",
+      "turnouts": [
+        "Vx114"
+      ]
     },
     "IX:AUTO:0007C21": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "button": "vxv119",
+      "turnouts": [
+        "Vx119"
+      ]
     },
     "IX:AUTO:0007C22": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "button": "vxv115",
+      "turnouts": [
+        "Vx115"
+      ]
     },
     "IX:AUTO:0007C23": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "button": "vxv111/118",
+      "turnouts": [
+        "Vx111",
+        "Vx118"
+      ]
     },
     "IX:AUTO:0007C24": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "button": "vxv127",
+      "turnouts": [
+        "Vx127"
+      ]
     },
     "IX:AUTO:0007C25": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "button": "vxv128",
+      "turnouts": [
+        "Vx128"
+      ]
     },
     "IX:AUTO:0007C26": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "button": "vxv130",
+      "turnouts": [
+        "Vx130"
+      ]
     },
     "IX:AUTO:0007C27": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "button": "vxv133",
+      "turnouts": [
+        "Vx133"
+      ]
     },
     "IX:AUTO:0007C28": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "button": "vxv150",
+      "turnouts": [
+        "Vx150"
+      ]
     },
     "IX:AUTO:0007C29": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "unresolved",
+      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "button": "vxv155",
+      "turnouts": [
+        "Vx155"
+      ]
     },
     "IX:AUTO:0007C30": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv164",
+      "turnouts": [
+        "Vx164"
+      ]
     },
     "IX:AUTO:0007C31": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv95",
+      "turnouts": [
+        "Vx95"
+      ]
     },
     "IX:AUTO:0007C32": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv96",
+      "turnouts": [
+        "Vx96"
+      ]
     },
     "IX:AUTO:0007C33": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "pending",
+      "behavior": "Automatisk följdmanöver mellan Vx95 och Vx96 är ännu inte införd; den behandlas inte som en fast växelkoppling."
     },
     "IX:AUTO:0007C34": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "pending",
+      "behavior": "Automatisk följdmanöver mellan Vx95 och Vx96 är ännu inte införd; den behandlas inte som en fast växelkoppling."
     },
     "IX:AUTO:0007C35": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv170",
+      "turnouts": [
+        "Vx170"
+      ]
     },
     "IX:AUTO:0007C36": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv171",
+      "turnouts": [
+        "Vx171"
+      ]
     },
     "IX:AUTO:0007C37": {
       "group": "IX:AUTO:0007",
-      "status": "partial",
-      "behavior": "Direktmanöver och XML:s explicita kopplingar finns. Konservativt krävs hela området fritt och stopp. Lokala knappvillkor återstår."
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
+      "button": "vxv172",
+      "turnouts": [
+        "Vx172"
+      ]
     },
     "IX:AUTO:0008C1": {
       "group": "IX:AUTO:0008",

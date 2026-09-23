@@ -70,6 +70,11 @@ export class Engine extends EventEmitter {
       const state = this.signals[name]; changed ||= state.aspect !== aspect || state.code !== d.code;
       const unexpected = aspect === 'go' && state.desired === 'STOP';
       state.aspect = aspect; state.updatedAt = now; state.code = d.code; state.reportSequence=sequence;
+      if (unexpected) for (const route of this.routes) {
+        // A GO received before this route's permission must never be consumed
+        // as its acknowledgement, even when both occur in one clock tick.
+        if (route.signals.includes(name) && ['setting','establishing','clearing'].includes(route.state)) this.hold(route, `Signal ${name} rapporterade kör innan medgivande. Kontrollera och återta vägen.`);
+      }
       if (unexpected && now - state.commandAt > 200) {
         this.log('unexpected-go', `Signal ${name} rapporterar kör utan medgivande. Begär stopp.`);
         this.permission(name, 'STOP');
@@ -133,13 +138,32 @@ export class Engine extends EventEmitter {
   }
   manual(name, position) {
     if (!this.profile.turnouts[name] || !['C', 'T'].includes(position)) throw Error('Okänd växel eller manöver.');
-    if (!this.connected || this.storageFault || this.controls.stopAll) throw Error('Manövrering spärrad.');
-    const names = this.profile.coupled?.[name] || [name];
-    if (this.routes.some(r => names.some(n => r.turnouts[n]))) throw Error(`${name} är låst av tågväg — manöver vägras.`);
-    if (names.some(n => this.trackBlocked(this.profile.turnouts[n].block))) throw Error('Växelns spårledning är administrativt spärrad.');
-    // Conservative commissioning rule: manual turnout control requires the whole configured area free and stopped.
-    if (Object.values(this.blocks).some(s => !this.fresh(s) || s.occupied !== false) || Object.values(this.signals).some(s => !this.fresh(s) || s.aspect !== 'stop')) throw Error('Provområdet måste vara fritt med bekräftat stopp före manuell omläggning.');
-    for (const n of names) this.turnoutOrder(n, position);
+    const condition=this.manualStatus(name); if(!condition.allowed) throw Error(condition.reason);
+    for (const n of condition.names) this.turnoutOrder(n, position);
+  }
+  manualStatus(name) {
+    const refuse=reason=>({allowed:false,reason});
+    if(!this.profile.turnouts[name]) return refuse('Okänd växel.');
+    const names=this.profile.coupled?.[name]||[name];
+    if(!this.connected||this.storageFault||this.controls.stopAll) return refuse('Manövrering spärrad: anslutning, lagring eller AIS.');
+    if(this.routes.some(r=>names.some(n=>r.turnouts[n]))) return refuse(`${name} är låst av tågväg — manöver vägras.`);
+    const policy=this.profile.manualPolicies?.byTurnout[name];
+    if(this.profile.manualPolicies) {
+      if(policy?.status!=='ready') return refuse(policy?.reason||'Ingen manöverregel är ansluten.');
+      const addresses=new Set(policy.blocks.map(n=>this.profile.blocks[n].address));
+      if(this.routes.some(r=>r.blocks.some(n=>addresses.has(this.profile.blocks[n].address)) || r.nxIds?.some(id=>policy.inactiveNX.includes(id)))) return refuse('En skyddande tågväg eller ett berört spåravsnitt är fortfarande låst.');
+      for(const n of policy.blocks) {
+        if(this.trackBlocked(n)) return refuse(`${n} är administrativt spärrat.`);
+        if(!this.fresh(this.blocks[n])||this.blocks[n].occupied!==false) return refuse(`${n} är belagt eller saknar aktuell återrapport.`);
+      }
+      for(const n of policy.signals) if(!this.fresh(this.signals[n])||this.signals[n].aspect!=='stop'||this.signals[n].desired!=='STOP') return refuse(`Skyddande signal ${n} är inte bekräftat i stopp.`);
+      for(const n of names) if(!this.fresh(this.turnouts[n])||this.turnouts[n].position==='unknown') return refuse(`${n} saknar aktuellt växelläge eller håller på att läggas om.`);
+      return {allowed:true,names,rule:policy.rule,reason:'Lokala spårledningar fria, skyddande signaler i stopp och inga berörda tågvägslås.'};
+    }
+    // The small legacy test profile retains its conservative commissioning rule.
+    if(names.some(n=>this.trackBlocked(this.profile.turnouts[n].block))) return refuse('Växelns spårledning är administrativt spärrad.');
+    if(Object.values(this.blocks).some(s=>!this.fresh(s)||s.occupied!==false)||Object.values(this.signals).some(s=>!this.fresh(s)||s.aspect!=='stop')) return refuse('Provområdet måste vara fritt med bekräftat stopp före manuell omläggning.');
+    return {allowed:true,names,reason:'Provområdet fritt och stopp.'};
   }
   trackBlocked(name) {
     const address = this.profile.blocks[name]?.address;
@@ -254,7 +278,7 @@ export class Engine extends EventEmitter {
         if (r.nextSignal < 0) { r.state = 'active'; r.reason = 'Tågväg klar. Körbesked återrapporterat.'; this.persist(); this.log('route-active', `${r.label}: körbesked återrapporterat.`); continue; }
         const name = r.signals[r.nextSignal], s = this.signals[name];
         if (!r.signalSentAt) { this.permission(name, 'GO'); r.signalSentAt = now; this.persist(); }
-        else if (this.fresh(s) && s.aspect === 'go' && s.updatedAt >= r.signalSentAt && now - r.signalSentAt >= this.profile.signalStepMs) {
+        else if (this.fresh(s) && s.desired === 'GO' && s.aspect === 'go' && s.reportSequence > s.commandSequence && s.updatedAt >= r.signalSentAt && now - r.signalSentAt >= this.profile.signalStepMs) {
           r.nextSignal--; r.signalSentAt = 0;
         } else if (now - r.signalSentAt > this.profile.commandTimeoutMs) this.hold(r, `Signal ${name} har inte rapporterat kör.`);
       }
@@ -266,6 +290,7 @@ export class Engine extends EventEmitter {
     return { serverTime: this.now(), revision: this.revision, connection: this.connected ? 'connected' : 'disconnected', storageFault: this.storageFault,
       profile: { id: this.profile.id, title: this.profile.title, commissioned: this.profile.commissioned, description: this.profile.description },
       turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, routes: this.routes, controls:this.controls, events: this.events,
+      manual:Object.fromEntries(Object.keys(this.turnouts).map(n=>[n,this.manualStatus(n)])),
       catalog: this.profile.routes.map(r => ({ id: r.id, from: r.from, to: r.to, label: r.label })) };
   }
 }
