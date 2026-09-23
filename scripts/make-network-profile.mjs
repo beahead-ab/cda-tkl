@@ -22,11 +22,18 @@ const routeButtons={...topology.buttons};
 const trackSix=source.sensors.find(s=>s.name==='htvSpVI');
 if(trackSix?.system!=='IS266'||panel.sicons.some(b=>b.sensor==='htvSpVI')) throw Error('Spår6-källknappen har ändrats; granska katalogersättningen.');
 routeButtons.htvSpVI={label:'Spår 6',sourceSensor:trackSix.system,presentation:'catalog'};
+// Explicitly reviewed pairs only. Hidden/missing source icons are represented
+// in the catalog; neither source visibility nor map geometry is rewritten.
+const catalogReview=read('profiles/shunt-catalog-review.json');
+if(catalogReview.sourceHash!==source.sourceHash) throw Error('Växeltågvägarnas källunderlag har ändrats; ny granskning krävs.');
+for(const [id,system] of Object.entries(catalogReview.controls)) {
+  if(routeButtons[id] || source.sensors.find(s=>s.name===id)?.system!==system) throw Error('Ändrad källkontroll: '+id);
+  routeButtons[id]={label:id.slice(3),sourceSensor:system,presentation:'catalog'};
+}
 for (const pair of policy.allowed()) {
   const kind = pair.from.startsWith('tvv') ? 'shunt' : 'main';
   const decision = policy.inspect(pair.from, pair.to);
   const provenance = { rules: decision.rules.map(r => r.rule), nxButtons: decision.nxButtons };
-  if(!routeButtons[pair.from] || !routeButtons[pair.to]) { excluded.push({...pair,...provenance,reason:'Knappen är dold eller saknas i operatörspanelen.'}); continue; }
   const path = searchSourceRoute(topology,...decision.nxButtons);
   if (!path) { excluded.push({ ...pair, ...provenance, reason: 'Ingen sammanhängande väg mellan synliga knappar i den importerade grafen.' }); continue; }
   const plan = signalPlan(topology, source, path);
@@ -36,8 +43,17 @@ for (const pair of policy.allowed()) {
   const target = decision.nxButtons[1];
   const targetMast = source.anchors.flatMap(a => ['eastbound','westbound'].map(d => a[d+'sensor'] === target ? a[d+'signalmast'] : null)).find(Boolean)
     || source.turnoutEnds.find(e => e.sensor === target)?.mast;
+  if(kind==='shunt' && !targetMast) {
+    excluded.push({...pair,...provenance,reason:'Målet saknar identifierad signalgräns; särskilda växlingsvillkor krävs.'}); continue;
+  }
   if (targetMast && !plan.guardSignals.includes(targetMast)) {
     excluded.push({ ...pair, ...provenance, signals: plan.signals, reason: 'Målets signalgräns kan inte bekräftas från vald grafväg.' }); continue;
+  }
+  if(!routeButtons[pair.from] || !routeButtons[pair.to]) { excluded.push({...pair,...provenance,reason:'Knappen saknar granskad representation i operatörspanelen.'}); continue; }
+  if(kind==='shunt' && [pair.from,pair.to].some(id=>routeButtons[id].presentation==='catalog')) {
+    const reviewed=catalogReview.routes.find(r=>r.from===pair.from && r.to===pair.to);
+    if(!reviewed) { excluded.push({...pair,...provenance,reason:'Listvalet saknar granskad källregel.'}); continue; }
+    if(JSON.stringify(reviewed.rules)!==JSON.stringify(provenance.rules) || JSON.stringify(reviewed.nxButtons)!==JSON.stringify(decision.nxButtons) || JSON.stringify(reviewed.signals)!==JSON.stringify(plan.signals) || reviewed.target!==targetMast) throw Error('Ändrad granskad växeltågväg: '+pair.from+' → '+pair.to);
   }
   const sensors = [...plan.boundaries.map(b => b.sensor), target];
   const nxIds = sensors.slice(0,-1).flatMap((s,i) => source.nxPairs.filter(p => p.fromSensor===s && p.toSensor===sensors[i+1]).map(p=>p.id));
@@ -47,6 +63,7 @@ for (const pair of policy.allowed()) {
     flow: path.flow, signals: plan.signals, guardSignals: plan.guardSignals, boundaries: plan.boundaries,
     path: path.path, autoRelease: true });
 }
+for(const reviewed of catalogReview.routes) if(!routes.some(r=>r.from===reviewed.from && r.to===reviewed.to)) throw Error('Granskad växeltågväg kunde inte anslutas: '+reviewed.from+' → '+reviewed.to);
 const names = Object.keys(topology.turnouts).sort();
 const turnouts = Object.fromEntries(names.map(name => {
   const item = admin.turnouts.find(t => t.id===name && /^LT\d+$/.test(t.sys));

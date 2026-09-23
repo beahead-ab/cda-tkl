@@ -56,6 +56,13 @@ test('network profile runs parallel trains across separate processes and release
     assert.equal((await get(httpPort)).signals['3/10'].desired,'STOP');
     await post(httpPort,'route',{from:'htvSpVI',to:'htvSpIIIA'});
     await until(async ()=>!(await get(httpPort)).routes.length);
+    await post(httpPort,'route',{from:'tvv7/10',to:'tvvIIIev'});
+    await until(async ()=>(await get(httpPort)).routes[0]?.state==='active');
+    assert.equal((await get(httpPort)).signals.IIIev.desired,'STOP');
+    await post(httpPort,'route',{from:'tvv7/10',to:'tvvIIIev'});
+    await until(async ()=>!(await get(httpPort)).routes.length);
+    await post(httpPort,'route',{from:'tvv2/2',to:'tvv2/4'},400);
+    await post(httpPort,'route',{from:'tvv9/10',to:'tvvLastSp1in'},400);
     const trainView=await (await fetch(`http://127.0.0.1:${httpPort}/api/train-information`)).json();
     assert.equal(trainView.fields.length,204);assert.equal(trainView.anchors.length,44);
     const bookRequest=(view,keys)=>({revision:view.revision,sessionId:view.sessionId,epochs:Object.fromEntries(keys.map(key=>[key,view.epochs[key]||0]))});

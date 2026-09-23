@@ -2,7 +2,7 @@
 
 ## Automatiska prov
 
-62 av 62 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända i version 0.7. Alla 270 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
+64 av 64 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända i version 0.8. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
 
 - Publicerade byteexempel för B0, B1, B2 och den preliminära E4-profilen; kontrollsummor och fragmenterade strömmar.
 - Kommandoeko ändrar inte rapporterade växellägen.
@@ -45,3 +45,12 @@ UI-prov på9030: P421 registrerat på C upp och flyttat till SIA; ändring i en 
 Alla 210 huvudtågvägar, inklusive de 18 med Spår 6, har genomgått etablering, ordnad passage och frigivning genom den oberoende fältmodellen. De 60 befintliga växeltågvägarna passerar samma prov som tidigare. Varje Spår 6-väg avvisas med belagd skyddsresurs. Motriktad infart avvisas innan nya order skickas; oväntad beläggning på SVI håller låsen och samma start-/målval återtar först när spåret är fritt.
 
 Källans skilda gränser 6/8 och 6/9 samt skyddande målsignal kontrolleras uttryckligt. Processprovet lägger Spår 6 → Spår 11 och kontrollerar målsignal 3/10 i stopp före återtagning. Panelprovet visade Spår 6 i listan, etablerad KLAR-väg och frigivning med samma val. Noll provlås kvar. Ingen ny knappkoordinat har lagts till i spårplanen.
+
+
+## Nytillkomna prov i version 0.8
+
+Alla 130 granskade växeltågvägar, inklusive de 70 nya listvalen, passerar etablering och ordnad passage. De 210 huvudtågvägarna har provats igen med den utökade profilens signalberoenden. Var och en av de 70 nya vägarna avvisas vid beläggning och administrativ spärr; källans start, mål och signalordning kontrolleras mot en explicit granskningslista. Alla 15 kvarvarande undantag avvisas utan order eller nya lås.
+
+Extra prov kontrollerar konflikt med huvudtågväg, återtagning med belagt spår, anslutningsavbrott och signal som vägrar kör. En redan begärd återtagning kvarstår vid avbrott och fullföljs först efter nya fria/stoppåterrapporter; inga körorder skickas vid återanslutningen. Detta skiljer sig från processomstart, då operatören måste begära återtagning på nytt.
+
+Processprovet lägger och återtar 7/10 → IIIev, kontrollerar målsignalen i stopp och avvisar både 2/2 → 2/4 och 9/10 → LastSp1in. I UI visades 7/10 → IIIev som KLAR; samma listval återtog till noll lås. Start-/målslistor i växeltågvägsläge sorteras i naturlig nummerordning. Originalets dolda ikoner och kartkoordinater är oförändrade.

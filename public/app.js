@@ -288,9 +288,10 @@ async function start() {
   $('profile-summary').textContent=`${config.routes.filter(r=>r.kind!=='shunt').length} huvudtågvägar och ${config.routes.filter(r=>r.kind==='shunt').length} växeltågvägar · ${Object.keys(config.turnouts).length} växlar · ${Object.keys(config.signals).length} signaler i provanläggningen.`;
   $('route-catalog').innerHTML=`<label>Från<select id="catalog-from"></select></label><label>Till<select id="catalog-to"></select></label><button id="catalog-request" class="primary" disabled>Lägg / återta tågväg</button><p id="catalog-hint" class="muted" hidden></p>`;
   function catalogHint(){const ids=[$('catalog-from').value,$('catalog-to').value].filter(id=>config.buttons[id]?.presentation==='catalog');$('catalog-hint').hidden=!ids.length;$('catalog-hint').textContent=ids.map(label).join(', ')+' väljs i listan. Använd Lägg / återta tågväg även för återtagning.';}
-  function targets(){const from=$('catalog-from').value;$('catalog-to').innerHTML=config.routes.filter(r=>r.from===from).map(r=>`<option value="${esc(r.to)}">${esc(label(r.to))}</option>`).join('');catalogHint();}
+  function catalogOrder(ids){return $('route-mode').value==='shunt'?ids.sort((a,b)=>label(a).localeCompare(label(b),'sv',{numeric:true})):ids;}
+  function targets(){const from=$('catalog-from').value;$('catalog-to').innerHTML=catalogOrder(config.routes.filter(r=>r.from===from).map(r=>r.to)).map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('');catalogHint();}
   $('catalog-to').onchange=catalogHint;
-  function routeMode(){ const mode=$('route-mode').value; document.body.dataset.routeMode=mode; clearChoice(); const starts=[...new Set(config.routes.filter(r=>(r.kind||'main')===mode).map(r=>r.from))]; $('catalog-from').innerHTML=starts.map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('');targets(); }
+  function routeMode(){ const mode=$('route-mode').value; document.body.dataset.routeMode=mode; clearChoice(); const starts=catalogOrder([...new Set(config.routes.filter(r=>(r.kind||'main')===mode).map(r=>r.from))]); $('catalog-from').innerHTML=starts.map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('');targets(); }
   $('route-mode').onchange=routeMode; $('catalog-from').onchange=targets;routeMode();
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };

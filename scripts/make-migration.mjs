@@ -19,7 +19,7 @@ const notes={
   '0016':['partial','Nödåtertagning begär stopp och återtagning av alla befintliga vägar. AIS kvarstår till manuell återställning. Källans minne Tågmöte saknar ännu driftfunktion.'],
   '0017':['replaced','AIS begär stopp i alla 66 signaler, sparas beständigt och behåller lås. Nya stoppåterrapporter krävs före återställning. Fysiska beskedskoder ej verifierade.'],
   '0018':['partial','För anslutna vägar ersätts NX-växlingen av uttrycklig återtagning: fria och kända resurser samt nya stoppbesked krävs före frigivning. Belagda, okända och återställda lås tvångsraderas aldrig. Oanslutna NX-fall kvarstår som källunderlag.'],
-  '0019':['partial','60 växeltågvägar med synliga knappar har etablerings- och passagetest. Dolda och motsägande källfall redovisas separat.'],
+  '0019':['partial','130 växeltågvägar har etablerings- och passagetest. 70 nås genom granskade listval för dolda/saknade källikoner. 15 par med oklara gränser och en motsägande regel är fortfarande spärrade.'],
   '0020':['partial','Återtagning och ordnad passage ersätter frigivningen för anslutna vägar; lås släpps först efter stoppåterrapport.'],
   '0021':['disabled','Avstängd i original-XML. Har inte aktiverats.'],
   '0022':['external','MQTT-orderobjekt bevarade. Ingen brokeranslutning är aktiverad.'],

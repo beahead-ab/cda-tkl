@@ -5459,6 +5459,182 @@
       ]
     },
     {
+      "id": "tvv1/2--tvv1/4",
+      "kind": "shunt",
+      "from": "tvv1/2",
+      "to": "tvv1/4",
+      "label": "1/2 → 1/4",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C9"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs1/4"
+        ]
+      },
+      "signals": [
+        "1/2"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79"
+      ]
+    },
+    {
+      "id": "tvv9/10--tvvIIIev",
+      "kind": "shunt",
+      "from": "tvv9/10",
+      "to": "tvvIIIev",
+      "label": "9/10 → IIIev",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C10"
+        ],
+        "nxButtons": [
+          "tvs9/10",
+          "tvsIIIev"
+        ]
+      },
+      "signals": [
+        "9/10"
+      ],
+      "nxIds": [
+        "IN:84c62fd8-2843-452d-825e-5487a68a6d8d"
+      ]
+    },
+    {
+      "id": "tvv2/5--tvv2/7",
+      "kind": "shunt",
+      "from": "tvv2/5",
+      "to": "tvv2/7",
+      "label": "2/5 → 2/7",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C13"
+        ],
+        "nxButtons": [
+          "tvs2/5",
+          "tvs2/7"
+        ]
+      },
+      "signals": [
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:a802cc6d-3f3a-490b-900e-14619fcdf4cf"
+      ]
+    },
+    {
+      "id": "tvv2/5--tvv5/5",
+      "kind": "shunt",
+      "from": "tvv2/5",
+      "to": "tvv5/5",
+      "label": "2/5 → 5/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C14"
+        ],
+        "nxButtons": [
+          "tvs2/5",
+          "tvs5/5"
+        ]
+      },
+      "signals": [
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:871a7269-712d-4f47-9cb9-c5b316eb2967"
+      ]
+    },
+    {
+      "id": "tvv2/5--tvv3/5",
+      "kind": "shunt",
+      "from": "tvv2/5",
+      "to": "tvv3/5",
+      "label": "2/5 → 3/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C15"
+        ],
+        "nxButtons": [
+          "tvs2/5",
+          "tvs3/5"
+        ]
+      },
+      "signals": [
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533"
+      ]
+    },
+    {
+      "id": "tvv2/5--tvv4/5",
+      "kind": "shunt",
+      "from": "tvv2/5",
+      "to": "tvv4/5",
+      "label": "2/5 → 4/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C16"
+        ],
+        "nxButtons": [
+          "tvs2/5",
+          "tvs4/5"
+        ]
+      },
+      "signals": [
+        "2/5"
+      ],
+      "nxIds": [
+        "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c"
+      ]
+    },
+    {
+      "id": "tvv7/10--tvvIIIev",
+      "kind": "shunt",
+      "from": "tvv7/10",
+      "to": "tvvIIIev",
+      "label": "7/10 → IIIev",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C17"
+        ],
+        "nxButtons": [
+          "tvs7/10",
+          "tvsIIIev"
+        ]
+      },
+      "signals": [
+        "7/10"
+      ],
+      "nxIds": [
+        "IN:9982aa3c-ff40-41e0-bff3-78cc97fa910d"
+      ]
+    },
+    {
+      "id": "tvv9/5--tvv6/7",
+      "kind": "shunt",
+      "from": "tvv9/5",
+      "to": "tvv6/7",
+      "label": "9/5 → 6/7",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C18"
+        ],
+        "nxButtons": [
+          "tvs9/5",
+          "tvs6/7"
+        ]
+      },
+      "signals": [
+        "9/5"
+      ],
+      "nxIds": [
+        "IN:6ab85d5e-781c-4fc5-82c1-35ee572f6b28"
+      ]
+    },
+    {
       "id": "tvv3/11--tvvN1",
       "kind": "shunt",
       "from": "tvv3/11",
@@ -5525,6 +5701,28 @@
       ]
     },
     {
+      "id": "tvv2/8--tvv2/10",
+      "kind": "shunt",
+      "from": "tvv2/8",
+      "to": "tvv2/10",
+      "label": "2/8 → 2/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C22"
+        ],
+        "nxButtons": [
+          "tvs2/8",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "2/8"
+      ],
+      "nxIds": [
+        "IN:941b374c-f243-4308-8829-b77dad2253dd"
+      ]
+    },
+    {
       "id": "tvv3/10--tvvIIIev",
       "kind": "shunt",
       "from": "tvv3/10",
@@ -5569,6 +5767,50 @@
       ]
     },
     {
+      "id": "tvv2/3--tvv2/5",
+      "kind": "shunt",
+      "from": "tvv2/3",
+      "to": "tvv2/5",
+      "label": "2/3 → 2/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C29"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs2/5"
+        ]
+      },
+      "signals": [
+        "2/3"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26"
+      ]
+    },
+    {
+      "id": "tvv3/8--tvv2/10",
+      "kind": "shunt",
+      "from": "tvv3/8",
+      "to": "tvv2/10",
+      "label": "3/8 → 2/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C30"
+        ],
+        "nxButtons": [
+          "tvs3/8",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "3/8"
+      ],
+      "nxIds": [
+        "IN:1c8b77e7-e6a7-465f-a580-c95cbb8a88e8"
+      ]
+    },
+    {
       "id": "tvv3/5--tvv6/7",
       "kind": "shunt",
       "from": "tvv3/5",
@@ -5610,6 +5852,140 @@
       ],
       "nxIds": [
         "IN:8b500613-a031-465d-a3b7-de0b654f22a0"
+      ]
+    },
+    {
+      "id": "tvv3/5--tvv6/9",
+      "kind": "shunt",
+      "from": "tvv3/5",
+      "to": "tvv6/9",
+      "label": "3/5 → 6/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C33"
+        ],
+        "nxButtons": [
+          "tvs3/5",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "3/5",
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
+      ]
+    },
+    {
+      "id": "tvv6/10--tvvIIIev",
+      "kind": "shunt",
+      "from": "tvv6/10",
+      "to": "tvvIIIev",
+      "label": "6/10 → IIIev",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C34"
+        ],
+        "nxButtons": [
+          "tvs6/10",
+          "tvsIIIev"
+        ]
+      },
+      "signals": [
+        "6/10"
+      ],
+      "nxIds": [
+        "IN:191dce9e-3a56-411e-bac3-92df25fb9c02"
+      ]
+    },
+    {
+      "id": "tvv6/6--tvv6/10",
+      "kind": "shunt",
+      "from": "tvv6/6",
+      "to": "tvv6/10",
+      "label": "6/6 → 6/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C35"
+        ],
+        "nxButtons": [
+          "tvs6/6",
+          "tvs6/10"
+        ]
+      },
+      "signals": [
+        "6/6"
+      ],
+      "nxIds": [
+        "IN:b40d2819-0552-4586-ab45-2a7aa2087544"
+      ]
+    },
+    {
+      "id": "tvv6/6--tvv8/10",
+      "kind": "shunt",
+      "from": "tvv6/6",
+      "to": "tvv8/10",
+      "label": "6/6 → 8/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C36"
+        ],
+        "nxButtons": [
+          "tvs6/6",
+          "tvs8/10"
+        ]
+      },
+      "signals": [
+        "6/6"
+      ],
+      "nxIds": [
+        "IN:9637bfe4-0334-4ee1-8b2a-6f54d18b80d7"
+      ]
+    },
+    {
+      "id": "tvv6/6--tvv9/10",
+      "kind": "shunt",
+      "from": "tvv6/6",
+      "to": "tvv9/10",
+      "label": "6/6 → 9/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C37"
+        ],
+        "nxButtons": [
+          "tvs6/6",
+          "tvs9/10"
+        ]
+      },
+      "signals": [
+        "6/6"
+      ],
+      "nxIds": [
+        "IN:60c05de6-7b87-4156-8000-a73c8a4c9c45"
+      ]
+    },
+    {
+      "id": "tvv6/6--tvv7/10",
+      "kind": "shunt",
+      "from": "tvv6/6",
+      "to": "tvv7/10",
+      "label": "6/6 → 7/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C38"
+        ],
+        "nxButtons": [
+          "tvs6/6",
+          "tvs7/10"
+        ]
+      },
+      "signals": [
+        "6/6"
+      ],
+      "nxIds": [
+        "IN:d29a79dc-dc0b-48ff-8553-ba218dac09fe"
       ]
     },
     {
@@ -5707,6 +6083,120 @@
       ]
     },
     {
+      "id": "tvv1/4--tvv6/8",
+      "kind": "shunt",
+      "from": "tvv1/4",
+      "to": "tvv6/8",
+      "label": "1/4 → 6/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C43"
+        ],
+        "nxButtons": [
+          "tvs1/4",
+          "tvs6/8"
+        ]
+      },
+      "signals": [
+        "1/4",
+        "3/6",
+        "6/6"
+      ],
+      "nxIds": [
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b",
+        "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973"
+      ]
+    },
+    {
+      "id": "tvv8/5--tvv6/7",
+      "kind": "shunt",
+      "from": "tvv8/5",
+      "to": "tvv6/7",
+      "label": "8/5 → 6/7",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C44"
+        ],
+        "nxButtons": [
+          "tvs8/5",
+          "tvs6/7"
+        ]
+      },
+      "signals": [
+        "8/5"
+      ],
+      "nxIds": [
+        "IN:82fca6a8-90ed-41b7-8780-4c6afe4b8ac5"
+      ]
+    },
+    {
+      "id": "tvv1/10--tvv1/12",
+      "kind": "shunt",
+      "from": "tvv1/10",
+      "to": "tvv1/12",
+      "label": "1/10 → 1/12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C45"
+        ],
+        "nxButtons": [
+          "tvs1/10",
+          "tvs1/12"
+        ]
+      },
+      "signals": [
+        "1/10"
+      ],
+      "nxIds": [
+        "IN:42714135-f6d9-42b6-baa6-ef93873dfb83"
+      ]
+    },
+    {
+      "id": "tvv1/12--tvvU4",
+      "kind": "shunt",
+      "from": "tvv1/12",
+      "to": "tvvU4",
+      "label": "1/12 → U4",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C46"
+        ],
+        "nxButtons": [
+          "tvs1/12",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "tvv1/12--tvvU2",
+      "kind": "shunt",
+      "from": "tvv1/12",
+      "to": "tvvU2",
+      "label": "1/12 → U2",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C48"
+        ],
+        "nxButtons": [
+          "tvs1/12",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
       "id": "tvv4/10--tvvIIIev",
       "kind": "shunt",
       "from": "tvv4/10",
@@ -5726,6 +6216,248 @@
       ],
       "nxIds": [
         "IN:4ff1b10a-8b50-4ca3-bd1e-d5e1c3379ec2"
+      ]
+    },
+    {
+      "id": "tvv2/12--tvvN2",
+      "kind": "shunt",
+      "from": "tvv2/12",
+      "to": "tvvN2",
+      "label": "2/12 → N2",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C50"
+        ],
+        "nxButtons": [
+          "tvs2/12",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "tvv4/10--tvv1/12",
+      "kind": "shunt",
+      "from": "tvv4/10",
+      "to": "tvv1/12",
+      "label": "4/10 → 1/12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C51"
+        ],
+        "nxButtons": [
+          "tvs4/10",
+          "tvs1/12"
+        ]
+      },
+      "signals": [
+        "4/10"
+      ],
+      "nxIds": [
+        "IN:6f3c8c04-94ac-47da-8d6c-846982cafd5f"
+      ]
+    },
+    {
+      "id": "tvv4/10--tvv2/12",
+      "kind": "shunt",
+      "from": "tvv4/10",
+      "to": "tvv2/12",
+      "label": "4/10 → 2/12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C52"
+        ],
+        "nxButtons": [
+          "tvs4/10",
+          "tvs2/12"
+        ]
+      },
+      "signals": [
+        "4/10"
+      ],
+      "nxIds": [
+        "IN:fa61129e-5542-488b-88d4-600c63c448e3"
+      ]
+    },
+    {
+      "id": "tvv2/7--tvv4/9",
+      "kind": "shunt",
+      "from": "tvv2/7",
+      "to": "tvv4/9",
+      "label": "2/7 → 4/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C53"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvs4/9"
+        ]
+      },
+      "signals": [
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:52be6d9f-956b-4e6c-a476-1f8803639586"
+      ]
+    },
+    {
+      "id": "tvv2/7--tvv2/9",
+      "kind": "shunt",
+      "from": "tvv2/7",
+      "to": "tvv2/9",
+      "label": "2/7 → 2/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C54"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvs2/9"
+        ]
+      },
+      "signals": [
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:0938c621-8dcb-4add-9783-28d6824b0f8d"
+      ]
+    },
+    {
+      "id": "tvv2/7--tvv3/9",
+      "kind": "shunt",
+      "from": "tvv2/7",
+      "to": "tvv3/9",
+      "label": "2/7 → 3/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C55"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvs3/9"
+        ]
+      },
+      "signals": [
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:a4607e61-cc12-4f46-9c30-fb534204d98a"
+      ]
+    },
+    {
+      "id": "tvv2/7--tvv1/9",
+      "kind": "shunt",
+      "from": "tvv2/7",
+      "to": "tvv1/9",
+      "label": "2/7 → 1/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C56"
+        ],
+        "nxButtons": [
+          "tvs2/7",
+          "tvs1/9"
+        ]
+      },
+      "signals": [
+        "2/7"
+      ],
+      "nxIds": [
+        "IN:a7396c65-4eea-46f6-b197-ff6119abe71a"
+      ]
+    },
+    {
+      "id": "tvv1/7--tvv1/9",
+      "kind": "shunt",
+      "from": "tvv1/7",
+      "to": "tvv1/9",
+      "label": "1/7 → 1/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C57"
+        ],
+        "nxButtons": [
+          "tvs1/7",
+          "tvs1/9"
+        ]
+      },
+      "signals": [
+        "1/7"
+      ],
+      "nxIds": [
+        "IN:b137bbde-b5bc-4b51-90d2-56c1ec28a478"
+      ]
+    },
+    {
+      "id": "tvv2/10--tvv1/12",
+      "kind": "shunt",
+      "from": "tvv2/10",
+      "to": "tvv1/12",
+      "label": "2/10 → 1/12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C58"
+        ],
+        "nxButtons": [
+          "tvs2/10",
+          "tvs1/12"
+        ]
+      },
+      "signals": [
+        "2/10"
+      ],
+      "nxIds": [
+        "IN:d12211a5-28ae-4add-bb48-7fb55e571843"
+      ]
+    },
+    {
+      "id": "tvv2/10--tvv2/12",
+      "kind": "shunt",
+      "from": "tvv2/10",
+      "to": "tvv2/12",
+      "label": "2/10 → 2/12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C59"
+        ],
+        "nxButtons": [
+          "tvs2/10",
+          "tvs2/12"
+        ]
+      },
+      "signals": [
+        "2/10"
+      ],
+      "nxIds": [
+        "IN:17dd1cdb-033d-4257-9e5f-8d96cc80c348"
+      ]
+    },
+    {
+      "id": "tvv2/12--tvvN4",
+      "kind": "shunt",
+      "from": "tvv2/12",
+      "to": "tvvN4",
+      "label": "2/12 → N4",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C60"
+        ],
+        "nxButtons": [
+          "tvs2/12",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
       ]
     },
     {
@@ -5889,6 +6621,32 @@
       ]
     },
     {
+      "id": "tvv2/4--tvv6/8",
+      "kind": "shunt",
+      "from": "tvv2/4",
+      "to": "tvv6/8",
+      "label": "2/4 → 6/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C69"
+        ],
+        "nxButtons": [
+          "tvs2/4",
+          "tvs6/8"
+        ]
+      },
+      "signals": [
+        "2/4",
+        "3/6",
+        "6/6"
+      ],
+      "nxIds": [
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b",
+        "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973"
+      ]
+    },
+    {
       "id": "tvv10/11--tvvN1",
       "kind": "shunt",
       "from": "tvv10/11",
@@ -5933,6 +6691,50 @@
       ]
     },
     {
+      "id": "tvv8/10--tvvIIIev",
+      "kind": "shunt",
+      "from": "tvv8/10",
+      "to": "tvvIIIev",
+      "label": "8/10 → IIIev",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C72"
+        ],
+        "nxButtons": [
+          "tvs8/10",
+          "tvsIIIev"
+        ]
+      },
+      "signals": [
+        "8/10"
+      ],
+      "nxIds": [
+        "IN:dd499956-c2e9-474b-bf11-f0dffae62507"
+      ]
+    },
+    {
+      "id": "tvv1/3--tvv1/5",
+      "kind": "shunt",
+      "from": "tvv1/3",
+      "to": "tvv1/5",
+      "label": "1/3 → 1/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C73"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs1/5"
+        ]
+      },
+      "signals": [
+        "1/3"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9"
+      ]
+    },
+    {
       "id": "tvv5/10--tvvIIIev",
       "kind": "shunt",
       "from": "tvv5/10",
@@ -5952,6 +6754,72 @@
       ],
       "nxIds": [
         "IN:c5877801-d9df-4504-a527-52f4ad57ed62"
+      ]
+    },
+    {
+      "id": "tvv5/10--tvv1/12",
+      "kind": "shunt",
+      "from": "tvv5/10",
+      "to": "tvv1/12",
+      "label": "5/10 → 1/12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C77"
+        ],
+        "nxButtons": [
+          "tvs5/10",
+          "tvs1/12"
+        ]
+      },
+      "signals": [
+        "5/10"
+      ],
+      "nxIds": [
+        "IN:f634a24b-7043-4c2d-9ee0-8378dea7cfe2"
+      ]
+    },
+    {
+      "id": "tvv5/10--tvv2/12",
+      "kind": "shunt",
+      "from": "tvv5/10",
+      "to": "tvv2/12",
+      "label": "5/10 → 2/12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C78"
+        ],
+        "nxButtons": [
+          "tvs5/10",
+          "tvs2/12"
+        ]
+      },
+      "signals": [
+        "5/10"
+      ],
+      "nxIds": [
+        "IN:a1600f94-e4a0-4013-8607-455702f83e44"
+      ]
+    },
+    {
+      "id": "tvv6/7--tvv6/9",
+      "kind": "shunt",
+      "from": "tvv6/7",
+      "to": "tvv6/9",
+      "label": "6/7 → 6/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C81"
+        ],
+        "nxButtons": [
+          "tvs6/7",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
       ]
     },
     {
@@ -6018,6 +6886,72 @@
       ],
       "nxIds": [
         "IN:7270481f-f9e5-43f2-9ee7-b78863087ebf"
+      ]
+    },
+    {
+      "id": "tvv7/5--tvv6/7",
+      "kind": "shunt",
+      "from": "tvv7/5",
+      "to": "tvv6/7",
+      "label": "7/5 → 6/7",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C87"
+        ],
+        "nxButtons": [
+          "tvs7/5",
+          "tvs6/7"
+        ]
+      },
+      "signals": [
+        "7/5"
+      ],
+      "nxIds": [
+        "IN:3d360610-3f48-455c-9476-5d3d877014b2"
+      ]
+    },
+    {
+      "id": "tvv1/6--tvv1/8",
+      "kind": "shunt",
+      "from": "tvv1/6",
+      "to": "tvv1/8",
+      "label": "1/6 → 1/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C88"
+        ],
+        "nxButtons": [
+          "tvs1/6",
+          "tvs1/8"
+        ]
+      },
+      "signals": [
+        "1/6"
+      ],
+      "nxIds": [
+        "IN:5e81014d-615b-4aed-adbf-e4f677ef8b76"
+      ]
+    },
+    {
+      "id": "tvv1/6--tvv2/8",
+      "kind": "shunt",
+      "from": "tvv1/6",
+      "to": "tvv2/8",
+      "label": "1/6 → 2/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C89"
+        ],
+        "nxButtons": [
+          "tvs1/6",
+          "tvs2/8"
+        ]
+      },
+      "signals": [
+        "1/6"
+      ],
+      "nxIds": [
+        "IN:d79e35da-7afa-48f9-a234-16e20dd1f8db"
       ]
     },
     {
@@ -6133,6 +7067,94 @@
       ]
     },
     {
+      "id": "tvv4/8--tvv2/10",
+      "kind": "shunt",
+      "from": "tvv4/8",
+      "to": "tvv2/10",
+      "label": "4/8 → 2/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C96"
+        ],
+        "nxButtons": [
+          "tvs4/8",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "4/8"
+      ],
+      "nxIds": [
+        "IN:02071f89-8e14-4603-8b23-4f86301200ed"
+      ]
+    },
+    {
+      "id": "tvv6/8--tvv5/10",
+      "kind": "shunt",
+      "from": "tvv6/8",
+      "to": "tvv5/10",
+      "label": "6/8 → 5/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C97"
+        ],
+        "nxButtons": [
+          "tvs6/8",
+          "tvs5/10"
+        ]
+      },
+      "signals": [
+        "6/8"
+      ],
+      "nxIds": [
+        "IN:68af5f58-3f09-460e-95fc-d88791f18a73"
+      ]
+    },
+    {
+      "id": "tvv6/8--tvv3/10",
+      "kind": "shunt",
+      "from": "tvv6/8",
+      "to": "tvv3/10",
+      "label": "6/8 → 3/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C98"
+        ],
+        "nxButtons": [
+          "tvs6/8",
+          "tvs3/10"
+        ]
+      },
+      "signals": [
+        "6/8"
+      ],
+      "nxIds": [
+        "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654"
+      ]
+    },
+    {
+      "id": "tvv6/8--tvv4/10",
+      "kind": "shunt",
+      "from": "tvv6/8",
+      "to": "tvv4/10",
+      "label": "6/8 → 4/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C99"
+        ],
+        "nxButtons": [
+          "tvs6/8",
+          "tvs4/10"
+        ]
+      },
+      "signals": [
+        "6/8"
+      ],
+      "nxIds": [
+        "IN:9af8d60e-52c9-4694-b1d6-1cb7d1a25b2b"
+      ]
+    },
+    {
       "id": "tvv4/5--tvv6/7",
       "kind": "shunt",
       "from": "tvv4/5",
@@ -6174,6 +7196,404 @@
       ],
       "nxIds": [
         "IN:6af610f4-2e48-4b05-b33b-c327971b047d"
+      ]
+    },
+    {
+      "id": "tvv4/5--tvv6/9",
+      "kind": "shunt",
+      "from": "tvv4/5",
+      "to": "tvv6/9",
+      "label": "4/5 → 6/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C102"
+        ],
+        "nxButtons": [
+          "tvs4/5",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "4/5",
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450",
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
+      ]
+    },
+    {
+      "id": "tvv6/5--tvv6/7",
+      "kind": "shunt",
+      "from": "tvv6/5",
+      "to": "tvv6/7",
+      "label": "6/5 → 6/7",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C103"
+        ],
+        "nxButtons": [
+          "tvs6/5",
+          "tvs6/7"
+        ]
+      },
+      "signals": [
+        "6/5"
+      ],
+      "nxIds": [
+        "IN:28fd5177-1f83-4b70-ab20-8dfa7d9d5bca"
+      ]
+    },
+    {
+      "id": "tvv3/3--tvv5/5",
+      "kind": "shunt",
+      "from": "tvv3/3",
+      "to": "tvv5/5",
+      "label": "3/3 → 5/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C104"
+        ],
+        "nxButtons": [
+          "tvs3/3",
+          "tvs5/5"
+        ]
+      },
+      "signals": [
+        "3/3"
+      ],
+      "nxIds": [
+        "IN:7d4463d7-4c9f-4296-9f98-b8ee8433e7fa"
+      ]
+    },
+    {
+      "id": "tvv3/3--tvv3/5",
+      "kind": "shunt",
+      "from": "tvv3/3",
+      "to": "tvv3/5",
+      "label": "3/3 → 3/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C105"
+        ],
+        "nxButtons": [
+          "tvs3/3",
+          "tvs3/5"
+        ]
+      },
+      "signals": [
+        "3/3"
+      ],
+      "nxIds": [
+        "IN:4114a7e3-f4c1-43cd-a92e-a4844d979ad6"
+      ]
+    },
+    {
+      "id": "tvv3/3--tvv4/5",
+      "kind": "shunt",
+      "from": "tvv3/3",
+      "to": "tvv4/5",
+      "label": "3/3 → 4/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C106"
+        ],
+        "nxButtons": [
+          "tvs3/3",
+          "tvs4/5"
+        ]
+      },
+      "signals": [
+        "3/3"
+      ],
+      "nxIds": [
+        "IN:57ba1105-5758-43de-9110-7f48a66b528b"
+      ]
+    },
+    {
+      "id": "tvv6/9--tvv3/11",
+      "kind": "shunt",
+      "from": "tvv6/9",
+      "to": "tvv3/11",
+      "label": "6/9 → 3/11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C107"
+        ],
+        "nxButtons": [
+          "tvs6/9",
+          "tvs3/11"
+        ]
+      },
+      "signals": [
+        "6/9"
+      ],
+      "nxIds": [
+        "IN:ae76e106-8150-4ea1-a430-678127a4c5e0"
+      ]
+    },
+    {
+      "id": "tvv1/5--tvv1/7",
+      "kind": "shunt",
+      "from": "tvv1/5",
+      "to": "tvv1/7",
+      "label": "1/5 → 1/7",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C111"
+        ],
+        "nxButtons": [
+          "tvs1/5",
+          "tvs1/7"
+        ]
+      },
+      "signals": [
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:ae2e9664-5541-4c5e-8412-451de18c57ea"
+      ]
+    },
+    {
+      "id": "tvv1/5--tvv2/7",
+      "kind": "shunt",
+      "from": "tvv1/5",
+      "to": "tvv2/7",
+      "label": "1/5 → 2/7",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C112"
+        ],
+        "nxButtons": [
+          "tvs1/5",
+          "tvs2/7"
+        ]
+      },
+      "signals": [
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:429040bc-67f8-49a6-8934-ae57c3462b1e"
+      ]
+    },
+    {
+      "id": "tvv1/5--tvv5/5",
+      "kind": "shunt",
+      "from": "tvv1/5",
+      "to": "tvv5/5",
+      "label": "1/5 → 5/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C113"
+        ],
+        "nxButtons": [
+          "tvs1/5",
+          "tvs5/5"
+        ]
+      },
+      "signals": [
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:6bd97aec-4fd3-41f9-9b8a-12d73cc8dfbd"
+      ]
+    },
+    {
+      "id": "tvv1/5--tvv3/5",
+      "kind": "shunt",
+      "from": "tvv1/5",
+      "to": "tvv3/5",
+      "label": "1/5 → 3/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C114"
+        ],
+        "nxButtons": [
+          "tvs1/5",
+          "tvs3/5"
+        ]
+      },
+      "signals": [
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add"
+      ]
+    },
+    {
+      "id": "tvv1/5--tvv4/5",
+      "kind": "shunt",
+      "from": "tvv1/5",
+      "to": "tvv4/5",
+      "label": "1/5 → 4/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C115"
+        ],
+        "nxButtons": [
+          "tvs1/5",
+          "tvs4/5"
+        ]
+      },
+      "signals": [
+        "1/5"
+      ],
+      "nxIds": [
+        "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe"
+      ]
+    },
+    {
+      "id": "tvv3/1--tvv8/5",
+      "kind": "shunt",
+      "from": "tvv3/1",
+      "to": "tvv8/5",
+      "label": "3/1 → 8/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C116"
+        ],
+        "nxButtons": [
+          "tvs3/1",
+          "tvs8/5"
+        ]
+      },
+      "signals": [
+        "3/1"
+      ],
+      "nxIds": [
+        "IN:6b9dd993-29d8-4964-a975-9c180c3868b7"
+      ]
+    },
+    {
+      "id": "tvv3/1--tvv6/5",
+      "kind": "shunt",
+      "from": "tvv3/1",
+      "to": "tvv6/5",
+      "label": "3/1 → 6/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C117"
+        ],
+        "nxButtons": [
+          "tvs3/1",
+          "tvs6/5"
+        ]
+      },
+      "signals": [
+        "3/1"
+      ],
+      "nxIds": [
+        "IN:b03a6776-1851-46bc-839c-878145f6b949"
+      ]
+    },
+    {
+      "id": "tvv3/1--tvv3/3",
+      "kind": "shunt",
+      "from": "tvv3/1",
+      "to": "tvv3/3",
+      "label": "3/1 → 3/3",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C118"
+        ],
+        "nxButtons": [
+          "tvs3/1",
+          "tvs3/3"
+        ]
+      },
+      "signals": [
+        "3/1"
+      ],
+      "nxIds": [
+        "IN:175be8fb-84e8-47dd-b696-3fc1a5ccd8d0"
+      ]
+    },
+    {
+      "id": "tvv3/1--tvv7/5",
+      "kind": "shunt",
+      "from": "tvv3/1",
+      "to": "tvv7/5",
+      "label": "3/1 → 7/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C119"
+        ],
+        "nxButtons": [
+          "tvs3/1",
+          "tvs7/5"
+        ]
+      },
+      "signals": [
+        "3/1"
+      ],
+      "nxIds": [
+        "IN:cf714c10-830f-49ba-8b6d-886d2c755876"
+      ]
+    },
+    {
+      "id": "tvv3/1--tvv9/5",
+      "kind": "shunt",
+      "from": "tvv3/1",
+      "to": "tvv9/5",
+      "label": "3/1 → 9/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C120"
+        ],
+        "nxButtons": [
+          "tvs3/1",
+          "tvs9/5"
+        ]
+      },
+      "signals": [
+        "3/1"
+      ],
+      "nxIds": [
+        "IN:4d96cbd2-21ef-484a-8949-a156abde3825"
+      ]
+    },
+    {
+      "id": "tvv1/8--tvv1/10",
+      "kind": "shunt",
+      "from": "tvv1/8",
+      "to": "tvv1/10",
+      "label": "1/8 → 1/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C121"
+        ],
+        "nxButtons": [
+          "tvs1/8",
+          "tvs1/10"
+        ]
+      },
+      "signals": [
+        "1/8"
+      ],
+      "nxIds": [
+        "IN:ccb213d2-edb8-48d1-bfef-01fc35ccc32f"
+      ]
+    },
+    {
+      "id": "tvv1/8--tvv2/10",
+      "kind": "shunt",
+      "from": "tvv1/8",
+      "to": "tvv2/10",
+      "label": "1/8 → 2/10",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C122"
+        ],
+        "nxButtons": [
+          "tvs1/8",
+          "tvs2/10"
+        ]
+      },
+      "signals": [
+        "1/8"
+      ],
+      "nxIds": [
+        "IN:c664f521-df47-4557-89d7-f65fb3644fd3"
       ]
     },
     {
@@ -6221,6 +7641,50 @@
       ]
     },
     {
+      "id": "tvv2/6--tvv1/8",
+      "kind": "shunt",
+      "from": "tvv2/6",
+      "to": "tvv1/8",
+      "label": "2/6 → 1/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C125"
+        ],
+        "nxButtons": [
+          "tvs2/6",
+          "tvs1/8"
+        ]
+      },
+      "signals": [
+        "2/6"
+      ],
+      "nxIds": [
+        "IN:671e0660-36cb-4d49-b155-e0307c177596"
+      ]
+    },
+    {
+      "id": "tvv2/6--tvv2/8",
+      "kind": "shunt",
+      "from": "tvv2/6",
+      "to": "tvv2/8",
+      "label": "2/6 → 2/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C126"
+        ],
+        "nxButtons": [
+          "tvs2/6",
+          "tvs2/8"
+        ]
+      },
+      "signals": [
+        "2/6"
+      ],
+      "nxIds": [
+        "IN:478af43f-3bfc-4c77-9380-bdb8586d815f"
+      ]
+    },
+    {
       "id": "tvv2/9--tvv2/11",
       "kind": "shunt",
       "from": "tvv2/9",
@@ -6265,6 +7729,28 @@
       ]
     },
     {
+      "id": "tvv1/1--tvv1/5",
+      "kind": "shunt",
+      "from": "tvv1/1",
+      "to": "tvv1/5",
+      "label": "1/1 → 1/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C130"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs1/5"
+        ]
+      },
+      "signals": [
+        "1/1"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2"
+      ]
+    },
+    {
       "id": "tvv5/5--tvv6/7",
       "kind": "shunt",
       "from": "tvv5/5",
@@ -6306,6 +7792,52 @@
       ],
       "nxIds": [
         "IN:1a77e99e-db90-453b-aa4e-85b71071b2db"
+      ]
+    },
+    {
+      "id": "tvv5/5--tvv6/9",
+      "kind": "shunt",
+      "from": "tvv5/5",
+      "to": "tvv6/9",
+      "label": "5/5 → 6/9",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C133"
+        ],
+        "nxButtons": [
+          "tvs5/5",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "5/5",
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:d3a73449-9685-4aac-ae15-3d7b7e6cbee5",
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
+      ]
+    },
+    {
+      "id": "tvv2/1--tvv2/5",
+      "kind": "shunt",
+      "from": "tvv2/1",
+      "to": "tvv2/5",
+      "label": "2/1 → 2/5",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C134"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs2/5"
+        ]
+      },
+      "signals": [
+        "2/1"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430"
       ]
     },
     {
@@ -6394,6 +7926,28 @@
       ],
       "nxIds": [
         "IN:899f9f4c-f813-44f7-9797-11130faad22c"
+      ]
+    },
+    {
+      "id": "tvv6/6--tvv6/8",
+      "kind": "shunt",
+      "from": "tvv6/6",
+      "to": "tvv6/8",
+      "label": "6/6 → 6/8",
+      "source": {
+        "rules": [
+          "IX:AUTO:0019C139"
+        ],
+        "nxButtons": [
+          "tvs6/6",
+          "tvs6/8"
+        ]
+      },
+      "signals": [
+        "6/6"
+      ],
+      "nxIds": [
+        "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973"
       ]
     },
     {
@@ -6716,7 +8270,8 @@
         "tvskolgardut",
         "tvsLastSp3in"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "signals": [],
+      "reason": "Signalriktning/start stämmer inte entydigt med XML-regelns NX-start."
     },
     {
       "from": "tvvkolgardut",
@@ -6728,7 +8283,8 @@
         "tvskolgardut",
         "tvs6/6"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "signals": [],
+      "reason": "Signalriktning/start stämmer inte entydigt med XML-regelns NX-start."
     },
     {
       "from": "tvvLastSp1ut",
@@ -6740,31 +8296,8 @@
         "tvsLastSp1ut",
         "tvs9/5"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/2",
-      "to": "tvv1/4",
-      "rules": [
-        "IX:AUTO:0019C9"
-      ],
-      "nxButtons": [
-        "tvs1/2",
-        "tvs1/4"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv9/10",
-      "to": "tvvIIIev",
-      "rules": [
-        "IX:AUTO:0019C10"
-      ],
-      "nxButtons": [
-        "tvs9/10",
-        "tvsIIIev"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "signals": [],
+      "reason": "Signalriktning/start stämmer inte entydigt med XML-regelns NX-start."
     },
     {
       "from": "tvv9/10",
@@ -6776,7 +8309,7 @@
         "tvs9/10",
         "tvsLastSp1in"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "reason": "Målet saknar identifierad signalgräns; särskilda växlingsvillkor krävs."
     },
     {
       "from": "tvv9/10",
@@ -6788,235 +8321,7 @@
         "tvs9/10",
         "tvsLastSp2in"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/5",
-      "to": "tvv2/7",
-      "rules": [
-        "IX:AUTO:0019C13"
-      ],
-      "nxButtons": [
-        "tvs2/5",
-        "tvs2/7"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/5",
-      "to": "tvv5/5",
-      "rules": [
-        "IX:AUTO:0019C14"
-      ],
-      "nxButtons": [
-        "tvs2/5",
-        "tvs5/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/5",
-      "to": "tvv3/5",
-      "rules": [
-        "IX:AUTO:0019C15"
-      ],
-      "nxButtons": [
-        "tvs2/5",
-        "tvs3/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/5",
-      "to": "tvv4/5",
-      "rules": [
-        "IX:AUTO:0019C16"
-      ],
-      "nxButtons": [
-        "tvs2/5",
-        "tvs4/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv7/10",
-      "to": "tvvIIIev",
-      "rules": [
-        "IX:AUTO:0019C17"
-      ],
-      "nxButtons": [
-        "tvs7/10",
-        "tvsIIIev"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv9/5",
-      "to": "tvv6/7",
-      "rules": [
-        "IX:AUTO:0019C18"
-      ],
-      "nxButtons": [
-        "tvs9/5",
-        "tvs6/7"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/8",
-      "to": "tvv2/10",
-      "rules": [
-        "IX:AUTO:0019C22"
-      ],
-      "nxButtons": [
-        "tvs2/8",
-        "tvs2/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/3",
-      "to": "tvv2/5",
-      "rules": [
-        "IX:AUTO:0019C29"
-      ],
-      "nxButtons": [
-        "tvs2/3",
-        "tvs2/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv3/8",
-      "to": "tvv2/10",
-      "rules": [
-        "IX:AUTO:0019C30"
-      ],
-      "nxButtons": [
-        "tvs3/8",
-        "tvs2/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv3/5",
-      "to": "tvv6/9",
-      "rules": [
-        "IX:AUTO:0019C33"
-      ],
-      "nxButtons": [
-        "tvs3/5",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/10",
-      "to": "tvvIIIev",
-      "rules": [
-        "IX:AUTO:0019C34"
-      ],
-      "nxButtons": [
-        "tvs6/10",
-        "tvsIIIev"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/6",
-      "to": "tvv6/10",
-      "rules": [
-        "IX:AUTO:0019C35"
-      ],
-      "nxButtons": [
-        "tvs6/6",
-        "tvs6/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/6",
-      "to": "tvv8/10",
-      "rules": [
-        "IX:AUTO:0019C36"
-      ],
-      "nxButtons": [
-        "tvs6/6",
-        "tvs8/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/6",
-      "to": "tvv9/10",
-      "rules": [
-        "IX:AUTO:0019C37"
-      ],
-      "nxButtons": [
-        "tvs6/6",
-        "tvs9/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/6",
-      "to": "tvv7/10",
-      "rules": [
-        "IX:AUTO:0019C38"
-      ],
-      "nxButtons": [
-        "tvs6/6",
-        "tvs7/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/4",
-      "to": "tvv6/8",
-      "rules": [
-        "IX:AUTO:0019C43"
-      ],
-      "nxButtons": [
-        "tvs1/4",
-        "tvs6/8"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv8/5",
-      "to": "tvv6/7",
-      "rules": [
-        "IX:AUTO:0019C44"
-      ],
-      "nxButtons": [
-        "tvs8/5",
-        "tvs6/7"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/10",
-      "to": "tvv1/12",
-      "rules": [
-        "IX:AUTO:0019C45"
-      ],
-      "nxButtons": [
-        "tvs1/10",
-        "tvs1/12"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/12",
-      "to": "tvvU4",
-      "rules": [
-        "IX:AUTO:0019C46"
-      ],
-      "nxButtons": [
-        "tvs1/12",
-        "tvsU4"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "reason": "Målet saknar identifierad signalgräns; särskilda växlingsvillkor krävs."
     },
     {
       "from": "tvvLastSp2ut",
@@ -7028,211 +8333,8 @@
         "tvsLastSp2ut",
         "tvs9/5"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/12",
-      "to": "tvvU2",
-      "rules": [
-        "IX:AUTO:0019C48"
-      ],
-      "nxButtons": [
-        "tvs1/12",
-        "tvsU2"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/12",
-      "to": "tvvN2",
-      "rules": [
-        "IX:AUTO:0019C50"
-      ],
-      "nxButtons": [
-        "tvs2/12",
-        "tvsN2"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv4/10",
-      "to": "tvv1/12",
-      "rules": [
-        "IX:AUTO:0019C51"
-      ],
-      "nxButtons": [
-        "tvs4/10",
-        "tvs1/12"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv4/10",
-      "to": "tvv2/12",
-      "rules": [
-        "IX:AUTO:0019C52"
-      ],
-      "nxButtons": [
-        "tvs4/10",
-        "tvs2/12"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/7",
-      "to": "tvv4/9",
-      "rules": [
-        "IX:AUTO:0019C53"
-      ],
-      "nxButtons": [
-        "tvs2/7",
-        "tvs4/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/7",
-      "to": "tvv2/9",
-      "rules": [
-        "IX:AUTO:0019C54"
-      ],
-      "nxButtons": [
-        "tvs2/7",
-        "tvs2/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/7",
-      "to": "tvv3/9",
-      "rules": [
-        "IX:AUTO:0019C55"
-      ],
-      "nxButtons": [
-        "tvs2/7",
-        "tvs3/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/7",
-      "to": "tvv1/9",
-      "rules": [
-        "IX:AUTO:0019C56"
-      ],
-      "nxButtons": [
-        "tvs2/7",
-        "tvs1/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/7",
-      "to": "tvv1/9",
-      "rules": [
-        "IX:AUTO:0019C57"
-      ],
-      "nxButtons": [
-        "tvs1/7",
-        "tvs1/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/10",
-      "to": "tvv1/12",
-      "rules": [
-        "IX:AUTO:0019C58"
-      ],
-      "nxButtons": [
-        "tvs2/10",
-        "tvs1/12"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/10",
-      "to": "tvv2/12",
-      "rules": [
-        "IX:AUTO:0019C59"
-      ],
-      "nxButtons": [
-        "tvs2/10",
-        "tvs2/12"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/12",
-      "to": "tvvN4",
-      "rules": [
-        "IX:AUTO:0019C60"
-      ],
-      "nxButtons": [
-        "tvs2/12",
-        "tvsN4"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/4",
-      "to": "tvv6/8",
-      "rules": [
-        "IX:AUTO:0019C69"
-      ],
-      "nxButtons": [
-        "tvs2/4",
-        "tvs6/8"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv8/10",
-      "to": "tvvIIIev",
-      "rules": [
-        "IX:AUTO:0019C72"
-      ],
-      "nxButtons": [
-        "tvs8/10",
-        "tvsIIIev"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/3",
-      "to": "tvv1/5",
-      "rules": [
-        "IX:AUTO:0019C73"
-      ],
-      "nxButtons": [
-        "tvs1/3",
-        "tvs1/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv5/10",
-      "to": "tvv1/12",
-      "rules": [
-        "IX:AUTO:0019C77"
-      ],
-      "nxButtons": [
-        "tvs5/10",
-        "tvs1/12"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv5/10",
-      "to": "tvv2/12",
-      "rules": [
-        "IX:AUTO:0019C78"
-      ],
-      "nxButtons": [
-        "tvs5/10",
-        "tvs2/12"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "signals": [],
+      "reason": "Signalriktning/start stämmer inte entydigt med XML-regelns NX-start."
     },
     {
       "from": "tvv6/7",
@@ -7244,7 +8346,7 @@
         "tvs6/7",
         "tvskolgardin"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "reason": "Målet saknar identifierad signalgräns; särskilda växlingsvillkor krävs."
     },
     {
       "from": "tvv6/7",
@@ -7256,19 +8358,7 @@
         "tvs6/7",
         "tvslokstallin"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/7",
-      "to": "tvv6/9",
-      "rules": [
-        "IX:AUTO:0019C81"
-      ],
-      "nxButtons": [
-        "tvs6/7",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "reason": "Målet saknar identifierad signalgräns; särskilda växlingsvillkor krävs."
     },
     {
       "from": "tvvlokstallut",
@@ -7280,7 +8370,8 @@
         "tvslokstallut",
         "tvsLastSp3in"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "signals": [],
+      "reason": "Signalriktning/start stämmer inte entydigt med XML-regelns NX-start."
     },
     {
       "from": "tvvlokstallut",
@@ -7292,43 +8383,8 @@
         "tvslokstallut",
         "tvs6/6"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv7/5",
-      "to": "tvv6/7",
-      "rules": [
-        "IX:AUTO:0019C87"
-      ],
-      "nxButtons": [
-        "tvs7/5",
-        "tvs6/7"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/6",
-      "to": "tvv1/8",
-      "rules": [
-        "IX:AUTO:0019C88"
-      ],
-      "nxButtons": [
-        "tvs1/6",
-        "tvs1/8"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/6",
-      "to": "tvv2/8",
-      "rules": [
-        "IX:AUTO:0019C89"
-      ],
-      "nxButtons": [
-        "tvs1/6",
-        "tvs2/8"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "signals": [],
+      "reason": "Signalriktning/start stämmer inte entydigt med XML-regelns NX-start."
     },
     {
       "from": "tvv3/2",
@@ -7340,127 +8396,7 @@
         "tvs3/2",
         "tvsLastSp3in"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv4/8",
-      "to": "tvv2/10",
-      "rules": [
-        "IX:AUTO:0019C96"
-      ],
-      "nxButtons": [
-        "tvs4/8",
-        "tvs2/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/8",
-      "to": "tvv5/10",
-      "rules": [
-        "IX:AUTO:0019C97"
-      ],
-      "nxButtons": [
-        "tvs6/8",
-        "tvs5/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/8",
-      "to": "tvv3/10",
-      "rules": [
-        "IX:AUTO:0019C98"
-      ],
-      "nxButtons": [
-        "tvs6/8",
-        "tvs3/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/8",
-      "to": "tvv4/10",
-      "rules": [
-        "IX:AUTO:0019C99"
-      ],
-      "nxButtons": [
-        "tvs6/8",
-        "tvs4/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv4/5",
-      "to": "tvv6/9",
-      "rules": [
-        "IX:AUTO:0019C102"
-      ],
-      "nxButtons": [
-        "tvs4/5",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/5",
-      "to": "tvv6/7",
-      "rules": [
-        "IX:AUTO:0019C103"
-      ],
-      "nxButtons": [
-        "tvs6/5",
-        "tvs6/7"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv3/3",
-      "to": "tvv5/5",
-      "rules": [
-        "IX:AUTO:0019C104"
-      ],
-      "nxButtons": [
-        "tvs3/3",
-        "tvs5/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv3/3",
-      "to": "tvv3/5",
-      "rules": [
-        "IX:AUTO:0019C105"
-      ],
-      "nxButtons": [
-        "tvs3/3",
-        "tvs3/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv3/3",
-      "to": "tvv4/5",
-      "rules": [
-        "IX:AUTO:0019C106"
-      ],
-      "nxButtons": [
-        "tvs3/3",
-        "tvs4/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/9",
-      "to": "tvv3/11",
-      "rules": [
-        "IX:AUTO:0019C107"
-      ],
-      "nxButtons": [
-        "tvs6/9",
-        "tvs3/11"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "reason": "Målet saknar identifierad signalgräns; särskilda växlingsvillkor krävs."
     },
     {
       "from": "tvvLastSp3ut",
@@ -7472,7 +8408,8 @@
         "tvsLastSp3ut",
         "tvskolgardin"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "signals": [],
+      "reason": "Signalriktning/start stämmer inte entydigt med XML-regelns NX-start."
     },
     {
       "from": "tvvLastSp3ut",
@@ -7484,7 +8421,8 @@
         "tvsLastSp3ut",
         "tvslokstallin"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "signals": [],
+      "reason": "Signalriktning/start stämmer inte entydigt med XML-regelns NX-start."
     },
     {
       "from": "tvvLastSp3ut",
@@ -7496,175 +8434,8 @@
         "tvsLastSp3ut",
         "tvs6/11"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/5",
-      "to": "tvv1/7",
-      "rules": [
-        "IX:AUTO:0019C111"
-      ],
-      "nxButtons": [
-        "tvs1/5",
-        "tvs1/7"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/5",
-      "to": "tvv2/7",
-      "rules": [
-        "IX:AUTO:0019C112"
-      ],
-      "nxButtons": [
-        "tvs1/5",
-        "tvs2/7"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/5",
-      "to": "tvv5/5",
-      "rules": [
-        "IX:AUTO:0019C113"
-      ],
-      "nxButtons": [
-        "tvs1/5",
-        "tvs5/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/5",
-      "to": "tvv3/5",
-      "rules": [
-        "IX:AUTO:0019C114"
-      ],
-      "nxButtons": [
-        "tvs1/5",
-        "tvs3/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/5",
-      "to": "tvv4/5",
-      "rules": [
-        "IX:AUTO:0019C115"
-      ],
-      "nxButtons": [
-        "tvs1/5",
-        "tvs4/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv3/1",
-      "to": "tvv8/5",
-      "rules": [
-        "IX:AUTO:0019C116"
-      ],
-      "nxButtons": [
-        "tvs3/1",
-        "tvs8/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv3/1",
-      "to": "tvv6/5",
-      "rules": [
-        "IX:AUTO:0019C117"
-      ],
-      "nxButtons": [
-        "tvs3/1",
-        "tvs6/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv3/1",
-      "to": "tvv3/3",
-      "rules": [
-        "IX:AUTO:0019C118"
-      ],
-      "nxButtons": [
-        "tvs3/1",
-        "tvs3/3"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv3/1",
-      "to": "tvv7/5",
-      "rules": [
-        "IX:AUTO:0019C119"
-      ],
-      "nxButtons": [
-        "tvs3/1",
-        "tvs7/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv3/1",
-      "to": "tvv9/5",
-      "rules": [
-        "IX:AUTO:0019C120"
-      ],
-      "nxButtons": [
-        "tvs3/1",
-        "tvs9/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/8",
-      "to": "tvv1/10",
-      "rules": [
-        "IX:AUTO:0019C121"
-      ],
-      "nxButtons": [
-        "tvs1/8",
-        "tvs1/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/8",
-      "to": "tvv2/10",
-      "rules": [
-        "IX:AUTO:0019C122"
-      ],
-      "nxButtons": [
-        "tvs1/8",
-        "tvs2/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/6",
-      "to": "tvv1/8",
-      "rules": [
-        "IX:AUTO:0019C125"
-      ],
-      "nxButtons": [
-        "tvs2/6",
-        "tvs1/8"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/6",
-      "to": "tvv2/8",
-      "rules": [
-        "IX:AUTO:0019C126"
-      ],
-      "nxButtons": [
-        "tvs2/6",
-        "tvs2/8"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "signals": [],
+      "reason": "Signalriktning/start stämmer inte entydigt med XML-regelns NX-start."
     },
     {
       "from": "tvv2/2",
@@ -7676,55 +8447,10 @@
         "tvs2/2",
         "tvs2/4"
       ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv1/1",
-      "to": "tvv1/5",
-      "rules": [
-        "IX:AUTO:0019C130"
+      "signals": [
+        "2/2"
       ],
-      "nxButtons": [
-        "tvs1/1",
-        "tvs1/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv5/5",
-      "to": "tvv6/9",
-      "rules": [
-        "IX:AUTO:0019C133"
-      ],
-      "nxButtons": [
-        "tvs5/5",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv2/1",
-      "to": "tvv2/5",
-      "rules": [
-        "IX:AUTO:0019C134"
-      ],
-      "nxButtons": [
-        "tvs2/1",
-        "tvs2/5"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "tvv6/6",
-      "to": "tvv6/8",
-      "rules": [
-        "IX:AUTO:0019C139"
-      ],
-      "nxButtons": [
-        "tvs6/6",
-        "tvs6/8"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
+      "reason": "Målets signalgräns kan inte bekräftas från vald grafväg."
     }
   ],
   "nx": [
@@ -7748,7 +8474,8 @@
         "htvAu--htvSpIC",
         "htvAu--htvSpIIC",
         "htvAu--htvBu",
-        "htvAu--htvBn"
+        "htvAu--htvBn",
+        "tvv1/1--tvv1/5"
       ],
       "sourceRules": [
         "IX:AUTO:0019C130"
@@ -7774,7 +8501,8 @@
         "htvSpIA--htvSpIC",
         "htvSpIA--htvSpIIC",
         "htvSpIA--htvBn",
-        "htvSpIA--htvBu"
+        "htvSpIA--htvBu",
+        "tvv1/7--tvv1/9"
       ],
       "sourceRules": [
         "IX:AUTO:0019C57"
@@ -7843,7 +8571,8 @@
         "htvBu--htvAu",
         "htvBu--htvAn",
         "htvBu--htvCu",
-        "htvBu--htvCn"
+        "htvBu--htvCn",
+        "tvv1/2--tvv1/4"
       ],
       "sourceRules": [
         "IX:AUTO:0019C9"
@@ -7861,7 +8590,8 @@
         "htvBu--htvCu",
         "htvSpIC--htvSpIA",
         "htvSpIC--htvSpIB",
-        "htvSpIC--htvAu"
+        "htvSpIC--htvAu",
+        "tvv1/6--tvv1/8"
       ],
       "sourceRules": [
         "IX:AUTO:0019C88"
@@ -7880,7 +8610,8 @@
         "htvSpIC--htvSpIIA",
         "htvSpIC--htvSpIIB",
         "htvSpIC--htvAn",
-        "htvSpIC--htvCn"
+        "htvSpIC--htvCn",
+        "tvv1/6--tvv2/8"
       ],
       "sourceRules": [
         "IX:AUTO:0019C89"
@@ -7906,7 +8637,8 @@
         "htvSpIC--htvCu",
         "htvSpIIC--htvSpIA",
         "htvSpIIC--htvAu",
-        "htvSpIIC--htvCu"
+        "htvSpIIC--htvCu",
+        "tvv1/8--tvv1/10"
       ],
       "sourceRules": [
         "IX:AUTO:0019C121"
@@ -7920,7 +8652,8 @@
       "routes": [
         "htvSpIB--htvSpIIA",
         "htvSpIB--htvAn",
-        "htvSpIB--htvCn"
+        "htvSpIB--htvCn",
+        "tvv1/8--tvv2/10"
       ],
       "sourceRules": [
         "IX:AUTO:0019C122"
@@ -7943,7 +8676,8 @@
         "htvSpIC--htvAu",
         "htvSpIC--htvCu",
         "htvSpIIC--htvAu",
-        "htvSpIIC--htvCu"
+        "htvSpIIC--htvCu",
+        "tvv1/10--tvv1/12"
       ],
       "sourceRules": [
         "IX:AUTO:0019C45"
@@ -8004,7 +8738,8 @@
         "htvAn--htvSpIC",
         "htvAn--htvSpIIC",
         "htvAn--htvBu",
-        "htvAn--htvBn"
+        "htvAn--htvBn",
+        "tvv2/1--tvv2/5"
       ],
       "sourceRules": [
         "IX:AUTO:0019C134"
@@ -8018,7 +8753,8 @@
       "routes": [
         "htvAn--htvSpIB",
         "htvCn--htvSpIB",
-        "htvSpIIA--htvSpIB"
+        "htvSpIIA--htvSpIB",
+        "tvv2/7--tvv1/9"
       ],
       "sourceRules": [
         "IX:AUTO:0019C56"
@@ -8046,7 +8782,8 @@
         "htvSpIIA--htvSpIC",
         "htvSpIIA--htvSpIIC",
         "htvSpIIA--htvBn",
-        "htvSpIIA--htvBu"
+        "htvSpIIA--htvBu",
+        "tvv2/7--tvv2/9"
       ],
       "sourceRules": [
         "IX:AUTO:0019C54"
@@ -8062,7 +8799,8 @@
         "htvAn--htvSpIIIB",
         "htvCu--htvSpIIIB",
         "htvCn--htvSpIIIB",
-        "htvSpIIA--htvSpIIIB"
+        "htvSpIIA--htvSpIIIB",
+        "tvv2/7--tvv3/9"
       ],
       "sourceRules": [
         "IX:AUTO:0019C55"
@@ -8078,7 +8816,8 @@
         "htvAn--htvSpIVB",
         "htvCu--htvSpIVB",
         "htvCn--htvSpIVB",
-        "htvSpIIA--htvSpIVB"
+        "htvSpIIA--htvSpIVB",
+        "tvv2/7--tvv4/9"
       ],
       "sourceRules": [
         "IX:AUTO:0019C53"
@@ -8130,6 +8869,7 @@
       "toSensor": "tvs3/5",
       "type": "fullinterlocking",
       "routes": [
+        "tvv3/3--tvv3/5",
         "tvv3/1--tvv3/5"
       ],
       "sourceRules": [
@@ -8142,6 +8882,7 @@
       "toSensor": "tvs4/5",
       "type": "fullinterlocking",
       "routes": [
+        "tvv3/3--tvv4/5",
         "tvv3/1--tvv4/5"
       ],
       "sourceRules": [
@@ -8154,6 +8895,7 @@
       "toSensor": "tvs5/5",
       "type": "fullinterlocking",
       "routes": [
+        "tvv3/3--tvv5/5",
         "tvv3/1--tvv5/5"
       ],
       "sourceRules": [
@@ -8174,7 +8916,8 @@
         "htvSpIIC--htvSpIA",
         "htvSpIIC--htvSpIB",
         "htvSpIIC--htvAu",
-        "htvSpIIC--htvCu"
+        "htvSpIIC--htvCu",
+        "tvv2/6--tvv1/8"
       ],
       "sourceRules": [
         "IX:AUTO:0019C125"
@@ -8193,7 +8936,8 @@
         "htvSpIIC--htvSpIIA",
         "htvSpIIC--htvSpIIB",
         "htvSpIIC--htvAn",
-        "htvSpIIC--htvCn"
+        "htvSpIIC--htvCn",
+        "tvv2/6--tvv2/8"
       ],
       "sourceRules": [
         "IX:AUTO:0019C126"
@@ -8221,7 +8965,8 @@
         "htvSpIC--htvCn",
         "htvSpIIC--htvSpIIA",
         "htvSpIIC--htvAn",
-        "htvSpIIC--htvCn"
+        "htvSpIIC--htvCn",
+        "tvv2/8--tvv2/10"
       ],
       "sourceRules": [
         "IX:AUTO:0019C22"
@@ -8240,7 +8985,8 @@
         "htvSpIIIB--htvAu",
         "htvSpIIIB--htvCu",
         "htvSpIVB--htvAu",
-        "htvSpIVB--htvCu"
+        "htvSpIVB--htvCu",
+        "tvv2/10--tvv1/12"
       ],
       "sourceRules": [
         "IX:AUTO:0019C58"
@@ -8269,7 +9015,8 @@
         "htvSpIC--htvAn",
         "htvSpIC--htvCn",
         "htvSpIIC--htvAn",
-        "htvSpIIC--htvCn"
+        "htvSpIIC--htvCn",
+        "tvv2/10--tvv2/12"
       ],
       "sourceRules": [
         "IX:AUTO:0019C59"
@@ -8383,7 +9130,8 @@
         "htvAu--htvSpVI",
         "htvAn--htvSpVI",
         "htvSpIIIA--htvSpVI",
-        "tvv3/5--tvv6/7"
+        "tvv3/5--tvv6/7",
+        "tvv3/5--tvv6/9"
       ],
       "sourceRules": [
         "IX:AUTO:0019C31"
@@ -8474,7 +9222,8 @@
       "type": "fullinterlocking",
       "routes": [
         "htvSpIVA--htvAu",
-        "htvSpIVA--htvCu"
+        "htvSpIVA--htvCu",
+        "tvv4/10--tvv1/12"
       ],
       "sourceRules": [
         "IX:AUTO:0019C51"
@@ -8487,7 +9236,8 @@
       "type": "fullinterlocking",
       "routes": [
         "htvSpIVA--htvAn",
-        "htvSpIVA--htvCn"
+        "htvSpIVA--htvCn",
+        "tvv4/10--tvv2/12"
       ],
       "sourceRules": [
         "IX:AUTO:0019C52"
@@ -8529,7 +9279,8 @@
         "htvCu--htvSpVI",
         "htvCn--htvSpVI",
         "htvSpIVA--htvSpVI",
-        "tvv4/5--tvv6/7"
+        "tvv4/5--tvv6/7",
+        "tvv4/5--tvv6/9"
       ],
       "sourceRules": [
         "IX:AUTO:0019C100"
@@ -8545,7 +9296,8 @@
         "htvSpIIIB--htvAn",
         "htvSpIIIB--htvAu",
         "htvSpIIIB--htvCn",
-        "htvSpIIIB--htvCu"
+        "htvSpIIIB--htvCu",
+        "tvv3/8--tvv2/10"
       ],
       "sourceRules": [
         "IX:AUTO:0019C30"
@@ -8584,7 +9336,8 @@
       "type": "fullinterlocking",
       "routes": [
         "htvSpVA--htvAu",
-        "htvSpVA--htvCu"
+        "htvSpVA--htvCu",
+        "tvv5/10--tvv1/12"
       ],
       "sourceRules": [
         "IX:AUTO:0019C77"
@@ -8597,7 +9350,8 @@
       "type": "fullinterlocking",
       "routes": [
         "htvSpVA--htvAn",
-        "htvSpVA--htvCn"
+        "htvSpVA--htvCn",
+        "tvv5/10--tvv2/12"
       ],
       "sourceRules": [
         "IX:AUTO:0019C78"
@@ -8635,7 +9389,8 @@
       "type": "fullinterlocking",
       "routes": [
         "htvSpVA--htvSpVI",
-        "tvv5/5--tvv6/7"
+        "tvv5/5--tvv6/7",
+        "tvv5/5--tvv6/9"
       ],
       "sourceRules": [
         "IX:AUTO:0019C131"
@@ -8651,7 +9406,8 @@
         "htvSpIVB--htvAn",
         "htvSpIVB--htvAu",
         "htvSpIVB--htvCn",
-        "htvSpIVB--htvCu"
+        "htvSpIVB--htvCu",
+        "tvv4/8--tvv2/10"
       ],
       "sourceRules": [
         "IX:AUTO:0019C96"
@@ -8839,6 +9595,7 @@
         "htvSpVI--htvAu",
         "htvSpVI--htvCn",
         "htvSpVI--htvCu",
+        "tvv6/8--tvv3/10",
         "tvv6/6--tvv3/10"
       ],
       "sourceRules": [
@@ -8852,6 +9609,7 @@
       "type": "fullinterlocking",
       "routes": [
         "htvSpVI--htvSpIVA",
+        "tvv6/8--tvv4/10",
         "tvv6/6--tvv4/10"
       ],
       "sourceRules": [
@@ -8865,6 +9623,7 @@
       "type": "fullinterlocking",
       "routes": [
         "htvSpVI--htvSpVA",
+        "tvv6/8--tvv5/10",
         "tvv6/6--tvv5/10"
       ],
       "sourceRules": [
@@ -8879,6 +9638,7 @@
       "routes": [
         "htvSpVI--htvBn",
         "htvSpVI--htvBu",
+        "tvv6/9--tvv3/11",
         "tvv6/7--tvvN1"
       ],
       "sourceRules": [
@@ -8902,7 +9662,8 @@
         "htvCu--htvSpIC",
         "htvCu--htvSpIIC",
         "htvCu--htvBu",
-        "htvCu--htvBn"
+        "htvCu--htvBn",
+        "tvv1/5--tvv1/7"
       ],
       "sourceRules": [
         "IX:AUTO:0019C111"
@@ -8921,7 +9682,8 @@
         "htvCu--htvSpIIA",
         "htvCu--htvSpIIB",
         "htvCu--htvSpIIIB",
-        "htvCu--htvSpIVB"
+        "htvCu--htvSpIVB",
+        "tvv1/5--tvv2/7"
       ],
       "sourceRules": [
         "IX:AUTO:0019C112"
@@ -8936,7 +9698,8 @@
         "htvAu--htvSpIIIA",
         "htvAu--htvSpVB",
         "htvAu--htvSpVI",
-        "htvCu--htvSpIIIA"
+        "htvCu--htvSpIIIA",
+        "tvv1/5--tvv3/5"
       ],
       "sourceRules": [
         "IX:AUTO:0019C114"
@@ -8951,7 +9714,8 @@
         "htvAu--htvSpIVA",
         "htvCu--htvSpIVA",
         "htvCu--htvSpVB",
-        "htvCu--htvSpVI"
+        "htvCu--htvSpVI",
+        "tvv1/5--tvv4/5"
       ],
       "sourceRules": [
         "IX:AUTO:0019C115"
@@ -8964,7 +9728,8 @@
       "type": "fullinterlocking",
       "routes": [
         "htvAu--htvSpVA",
-        "htvCu--htvSpVA"
+        "htvCu--htvSpVA",
+        "tvv1/5--tvv5/5"
       ],
       "sourceRules": [
         "IX:AUTO:0019C113"
@@ -8993,7 +9758,8 @@
         "htvCn--htvSpIC",
         "htvCn--htvSpIIC",
         "htvCn--htvBu",
-        "htvCn--htvBn"
+        "htvCn--htvBn",
+        "tvv2/5--tvv2/7"
       ],
       "sourceRules": [
         "IX:AUTO:0019C13"
@@ -9008,7 +9774,8 @@
         "htvAn--htvSpIIIA",
         "htvAn--htvSpVB",
         "htvAn--htvSpVI",
-        "htvCn--htvSpIIIA"
+        "htvCn--htvSpIIIA",
+        "tvv2/5--tvv3/5"
       ],
       "sourceRules": [
         "IX:AUTO:0019C15"
@@ -9023,7 +9790,8 @@
         "htvAn--htvSpIVA",
         "htvCn--htvSpIVA",
         "htvCn--htvSpVB",
-        "htvCn--htvSpVI"
+        "htvCn--htvSpVI",
+        "tvv2/5--tvv4/5"
       ],
       "sourceRules": [
         "IX:AUTO:0019C16"
@@ -9036,7 +9804,8 @@
       "type": "fullinterlocking",
       "routes": [
         "htvAn--htvSpVA",
-        "htvCn--htvSpVA"
+        "htvCn--htvSpVA",
+        "tvv2/5--tvv5/5"
       ],
       "sourceRules": [
         "IX:AUTO:0019C14"
@@ -9145,6 +9914,7 @@
         "tvv1/4--tvv3/8",
         "tvv1/4--tvv4/8",
         "tvv1/4--tvv5/8",
+        "tvv1/4--tvv6/8",
         "tvv1/4--tvv3/6"
       ],
       "sourceRules": [
@@ -9255,7 +10025,8 @@
         "tvv2/4--tvv3/6",
         "tvv2/4--tvv3/8",
         "tvv2/4--tvv4/8",
-        "tvv2/4--tvv5/8"
+        "tvv2/4--tvv5/8",
+        "tvv2/4--tvv6/8"
       ],
       "sourceRules": [
         "IX:AUTO:0019C62"
@@ -9306,7 +10077,9 @@
       "fromSensor": "tvs6/10",
       "toSensor": "tvsIIIev",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv6/10--tvvIIIev"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C34"
       ]
@@ -9316,7 +10089,9 @@
       "fromSensor": "tvs7/10",
       "toSensor": "tvsIIIev",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv7/10--tvvIIIev"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C17"
       ]
@@ -9326,7 +10101,9 @@
       "fromSensor": "tvs8/10",
       "toSensor": "tvsIIIev",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv8/10--tvvIIIev"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C72"
       ]
@@ -9336,7 +10113,9 @@
       "fromSensor": "tvs9/10",
       "toSensor": "tvsIIIev",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv9/10--tvvIIIev"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C10"
       ]
@@ -9367,6 +10146,7 @@
       "toSensor": "tvs3/3",
       "type": "fullinterlocking",
       "routes": [
+        "tvv3/1--tvv3/3",
         "tvv3/1--tvv3/5",
         "tvv3/1--tvv4/5",
         "tvv3/1--tvv5/5"
@@ -9410,7 +10190,9 @@
       "fromSensor": "tvs3/1",
       "toSensor": "tvs6/5",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv3/1--tvv6/5"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C117"
       ]
@@ -9420,7 +10202,9 @@
       "fromSensor": "tvs3/1",
       "toSensor": "tvs7/5",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv3/1--tvv7/5"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C119"
       ]
@@ -9430,7 +10214,9 @@
       "fromSensor": "tvs3/1",
       "toSensor": "tvs8/5",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv3/1--tvv8/5"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C116"
       ]
@@ -9440,7 +10226,9 @@
       "fromSensor": "tvs3/1",
       "toSensor": "tvs9/5",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv3/1--tvv9/5"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C120"
       ]
@@ -9500,7 +10288,9 @@
       "fromSensor": "tvs6/5",
       "toSensor": "tvs6/7",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv6/5--tvv6/7"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C103"
       ]
@@ -9510,7 +10300,9 @@
       "fromSensor": "tvs7/5",
       "toSensor": "tvs6/7",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv7/5--tvv6/7"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C87"
       ]
@@ -9520,7 +10312,9 @@
       "fromSensor": "tvs8/5",
       "toSensor": "tvs6/7",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv8/5--tvv6/7"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C44"
       ]
@@ -9530,7 +10324,9 @@
       "fromSensor": "tvs9/5",
       "toSensor": "tvs6/7",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv9/5--tvv6/7"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C18"
       ]
@@ -9573,6 +10369,9 @@
       "routes": [
         "htvBu--htvSpVI",
         "htvBn--htvSpVI",
+        "tvv1/4--tvv6/8",
+        "tvv2/4--tvv6/8",
+        "tvv6/6--tvv6/8",
         "tvv6/6--tvv3/10",
         "tvv6/6--tvv4/10",
         "tvv6/6--tvv5/10"
@@ -9586,7 +10385,9 @@
       "fromSensor": "tvs6/6",
       "toSensor": "tvs6/10",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv6/6--tvv6/10"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C35"
       ]
@@ -9596,7 +10397,9 @@
       "fromSensor": "tvs6/6",
       "toSensor": "tvs7/10",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv6/6--tvv7/10"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C38"
       ]
@@ -9606,7 +10409,9 @@
       "fromSensor": "tvs6/6",
       "toSensor": "tvs8/10",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv6/6--tvv8/10"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C36"
       ]
@@ -9616,7 +10421,9 @@
       "fromSensor": "tvs6/6",
       "toSensor": "tvs9/10",
       "type": "fullinterlocking",
-      "routes": [],
+      "routes": [
+        "tvv6/6--tvv9/10"
+      ],
       "sourceRules": [
         "IX:AUTO:0019C37"
       ]
@@ -9654,6 +10461,10 @@
         "htvSpIIIA--htvSpVI",
         "htvSpIVA--htvSpVI",
         "htvSpVA--htvSpVI",
+        "tvv3/5--tvv6/9",
+        "tvv6/7--tvv6/9",
+        "tvv4/5--tvv6/9",
+        "tvv5/5--tvv6/9",
         "tvv6/7--tvvN1"
       ],
       "sourceRules": [
@@ -9770,6 +10581,8 @@
         "htvBu--htvSpVI",
         "htvBn--htvSpVI",
         "tvv3/6--tvv6/6",
+        "tvv1/4--tvv6/8",
+        "tvv2/4--tvv6/8",
         "tvv3/2--tvv6/6"
       ],
       "sourceRules": [
@@ -9857,7 +10670,8 @@
         "htvCu--htvSpIC",
         "htvCu--htvSpIIC",
         "htvCu--htvBu",
-        "htvCu--htvBn"
+        "htvCu--htvBn",
+        "tvv1/3--tvv1/5"
       ],
       "sourceRules": [
         "IX:AUTO:0019C73"
@@ -9882,7 +10696,8 @@
         "htvCn--htvSpIC",
         "htvCn--htvSpIIC",
         "htvCn--htvBu",
-        "htvCn--htvBn"
+        "htvCn--htvBn",
+        "tvv2/3--tvv2/5"
       ],
       "sourceRules": [
         "IX:AUTO:0019C29"
@@ -9916,7 +10731,8 @@
         "htvSpVB--htvAu",
         "htvSpVI--htvAu",
         "htvSpIC--htvAu",
-        "htvSpIIC--htvAu"
+        "htvSpIIC--htvAu",
+        "tvv1/12--tvvU2"
       ],
       "sourceRules": [
         "IX:AUTO:0019C48"
@@ -9942,7 +10758,8 @@
         "htvSpVB--htvCu",
         "htvSpVI--htvCu",
         "htvSpIC--htvCu",
-        "htvSpIIC--htvCu"
+        "htvSpIIC--htvCu",
+        "tvv1/12--tvvU4"
       ],
       "sourceRules": [
         "IX:AUTO:0019C46"
@@ -9967,7 +10784,8 @@
         "htvSpVB--htvAn",
         "htvSpVI--htvAn",
         "htvSpIC--htvAn",
-        "htvSpIIC--htvAn"
+        "htvSpIIC--htvAn",
+        "tvv2/12--tvvN2"
       ],
       "sourceRules": [
         "IX:AUTO:0019C50"
@@ -9992,7 +10810,8 @@
         "htvSpVB--htvCn",
         "htvSpVI--htvCn",
         "htvSpIC--htvCn",
-        "htvSpIIC--htvCn"
+        "htvSpIIC--htvCn",
+        "tvv2/12--tvvN4"
       ],
       "sourceRules": [
         "IX:AUTO:0019C60"

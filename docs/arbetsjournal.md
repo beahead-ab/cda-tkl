@@ -2,7 +2,7 @@
 
 ## Aktuellt 23 september 2026, natt
 
-**03:51: version 0.7, release cbf1327, är publicerad och efterkontrollerad. 210 huvudtågvägar + 60 växeltågvägar, 62 + 4 tester godkända på servern. Nästa arbete gäller 70 granskade växeltågvägskandidater.**
+**03:57: aktiv serverrelease är cbf1327 (0.7). Version 0.8 är klar lokalt: 340 vägar, 64 + 4 tester passerade. Publicering med backup och efterkontroll återstår.**
 
 Casper: ”jag godkänner allt! Kör på inatt hela vägen.” Hela planen i `../../granskning-2026-09-23/plan.md` (relativt denna dokumentmapp) är godkänd. Arbeta självständigt genom implementation, tester och kontrollerad publicering inom befintlig kostnadsram. Verklig MGP/TrainMeet-verifiering får inte påstås utan underlag. Inga subagenter är beställda.
 
@@ -164,3 +164,12 @@ Nästa steg är kontrollerad publicering med test på server, backup och efterko
 Release `cbf1327`, backup `/root/charlottendal-backups/network-cbf1327-20260923T014936Z`, tidigare `d2f8fb6`. Alla 62 + 4 tester passerade på servern; fullständigt källunderlag verifierat. Tjänsterna anslutna, noll lås vid bytet; externa HTTPS-kontroller godkända. Ingen ändring av autentisering eller förlust av sparade uppgifter.
 
 Nästa steg: 70 undantagna växeltågvägar med entydiga riktade start-/målgränser har granskats statiskt. Samtliga har två tvv-knappvillkor och exakt ett matchande NX-par. De kräver 30 ytterligare listkontroller (källsensorer IS finns), utan nya kartkoordinater. Explicit lista i work/usecase-review/shunt-catalog-review.json i arbetsytan. Återstående 15 växelpar har saknad start-/målgräns eller skyddsfel och ska förbli undantagna; motsägande regeln 0019C162 förblir spärrad. Ny funktion ska provas innan publicering och inte påstå identiskt beteende från saknade HandleRangering.py eller aktivera rangeröverlämning.
+
+
+### Kontrollpunkt 03:57 – ytterligare 70 växeltågvägar klara lokalt
+
+Version 0.8: 210 huvud + 130 växeltågvägar. Explicit sourceHash-bunden granskningslista i profiles/shunt-catalog-review.json; 30 källsensorer får en listrepresentation. Importen kontrollerar varje nytt pars regler, NX-gränser, signalordning och skyddande mål. Ingen ändring av källikoner eller gissad koordinat. De 15 kvarvarande paren avvisas med specifik gränsorsak, den motsägande 0019C162 förblir avvisad. Läs docs/vaxeltagvagar.md.
+
+64 enhetstester och fyra processhelhetstester passerar. Alla 340 vägar har full passage; samtliga 70 nya avvisas med beläggning och spärr. Extra felprov och UI 7/10 → IIIev KLAR/återtagen, listval i naturlig nummerordning. Ett första nytt avbrottsprov förväntade held trots redan begärd återtagning; den korrekta cancelling-statusen och fortsatt återtagning efter nya rapporter verifierades. Ingen förreglingsändring gjordes för att möta felaktig testförväntning. Ursprunglig XML och övriga driftvillkor bevarade.
+
+Ny previewsession 74078 på 9030/9031/9032, noll lås efter UI-prov; lokal manövrering, AIS av. Visningsversion 4 och tomt aktuellt tågnummerregister bevarade. Nästa steg kontrollerad publicering; nattarbete enligt befintlig automation till 08:00. Nästa sakliga utredning kan gälla signalernas särskilda villkor och aspekter, återstående manöverfall eller TrainMeet-kontraktet. Aktivera inte fysisk mappning eller saknade skript genom antaganden.

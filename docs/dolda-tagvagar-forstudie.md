@@ -1,6 +1,6 @@
 # Undantagna tågvägar · statisk förkontroll 23 september
 
-Vid denna förkontroll hade profilen 252 anslutna vägar och 103 undantagna tillåtna par. Förkontrollen i sig aktiverade inga vägar. De 18 huvudtågvägarna för Spår 6 är därefter genomförda och provade i version 0.7; se [handhavande och verifiering](spar6.md). Därmed återstår 85 undantagna växeltågvägar.
+Vid denna förkontroll hade profilen 252 anslutna vägar och 103 undantagna tillåtna par. Förkontrollen i sig aktiverade inga vägar. De 18 huvudtågvägarna för Spår 6 är därefter genomförda och provade i version 0.7; se [handhavande och verifiering](spar6.md). I version 0.8 har även 70 granskade växeltågvägar anslutits genom listval. Därmed återstår 15 undantagna växeltågvägar; se [aktuell status](vaxeltagvagar.md).
 
 Samtliga103 undantagna par har en geometrisk väg mellan de NX-ändpunkter som källreglerna anger.94 har start som matchar första signalgränsen.93 har en identifierad målsignal som också finns bland skyddssignalerna. Gemensamt uppfyller18 huvudtågvägar och70 växeltågvägar båda dessa villkor och har minst en riktad signal. Det gör dem kandidater för fortsatt granskning, inte verifierade driftvägar.
 

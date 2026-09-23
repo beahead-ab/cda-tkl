@@ -98,8 +98,8 @@ test('unexpected occupation order holds locks and shared detectors remain cohere
   r.engine.receive(sensorReport(address,false));assert.equal(r.engine.routes.length,1);
 });
 
-test('all visible source shunt routes establish and release through independent field reports', {timeout:60000},()=>{
-  assert.equal(source.shuntRoutePolicies.length,146);assert.equal(shuntRoutes.length,60);
+test('all 130 reviewed source shunt routes establish and release through independent field reports', {timeout:120000},()=>{
+  assert.equal(source.shuntRoutePolicies.length,146);assert.equal(shuntRoutes.length,130);
   const policy=new RoutePolicy(source);
   const bad=source.shuntRoutePolicies.find(r=>r.status==='unresolved');
   assert.equal(policy.inspect(bad.fromButton,bad.toButton).allowed,false);
@@ -108,6 +108,43 @@ test('all visible source shunt routes establish and release through independent 
     r.field.startTrain(def.id);r.advance((route.passage.length+3)*850);
     assert.equal(r.field.trains.length,0,def.label+': train stopped');assert.equal(r.engine.routes.length,0,def.label+': '+route.reason);
   }
+});
+
+test('catalog shunt routes retain reviewed source boundaries and refuse occupied, blocked and unresolved cases',()=>{
+  const review=read('profiles/shunt-catalog-review.json');
+  assert.equal(review.routes.length,70);assert.equal(Object.keys(review.controls).length,30);
+  for(const [id,sourceSensor] of Object.entries(review.controls)) assert.deepEqual(profile.buttons[id],{label:id.slice(3),sourceSensor,presentation:'catalog'});
+  for(const item of review.routes) {
+    const def=shuntRoutes.find(r=>r.from===item.from&&r.to===item.to);
+    assert.deepEqual(def.source.nxButtons,item.nxButtons);assert.deepEqual(def.signals,item.signals);
+    assert.ok(def.guardSignals.includes(item.target));assert.equal(def.boundaries[0].sensor,item.nxButtons[0]);
+    const r=rig();r.field.setBlock(def.blocks[0],true);r.drain();const before=r.commands.length;
+    assert.throws(()=>r.request(def.from,def.to),/belagt|okänt/,def.id);assert.equal(r.commands.length,before);assert.equal(r.engine.routes.length,0);
+    r.field.setBlock(def.blocks[0],false);r.drain();r.engine.blockTrack(def.blocks[0],true);
+    assert.throws(()=>r.request(def.from,def.to),/spärrat/,def.id);assert.equal(r.engine.routes.length,0);
+  }
+  assert.equal(profile.excluded.length,15);
+  const r=rig(),before=r.commands.length;
+  for(const excluded of profile.excluded) assert.throws(()=>r.request(excluded.from,excluded.to));
+  assert.equal(r.commands.length,before);assert.equal(r.engine.routes.length,0);
+});
+
+test('catalog shunt lock and STOP conditions survive conflicts, cancellation and lost connection',()=>{
+  const r=rig(),route=r.request('tvv6/8','tvv3/10');r.advance(6500);assert.equal(route.state,'active');
+  assert.equal(r.engine.signals['3/10'].desired,'STOP');
+  const before=r.commands.length;assert.throws(()=>r.request('htvCu','htvSpVI'),/stopp|låst|konflikt|reserver/);assert.equal(r.commands.length,before);
+  const block=route.blocks.at(-1);r.field.setBlock(block,true);r.drain();
+  r.request('tvv6/8','tvv3/10');r.drain();r.advance(100);assert.equal(r.engine.routes.length,1);
+  r.engine.connection(false);assert.equal(route.state,'cancelling');assert.equal(r.engine.routes.length,1);
+  r.field.setBlock(block,false); // new reports are processed only after reconnect below
+  const reconnected=r.commands.length;r.engine.connection(true);assert.equal(r.engine.routes.length,1);
+  r.field.allReports();r.drain();r.advance(300);assert.equal(r.engine.routes.length,0);
+  const signalAddresses=new Set(Object.values(profile.signals).map(s=>s.address));
+  assert.ok(r.commands.length>reconnected);
+  assert.ok(r.commands.slice(reconnected).every(c=>c.kind==='order'&&signalAddresses.has(c.address)&&c.position==='T'));
+  const refused=rig();refused.field.setFault('signal','6/8');refused.drain();
+  const denied=refused.request('tvv6/8','tvv3/10');refused.advance(10000);
+  assert.equal(denied.state,'held');assert.equal(refused.engine.routes.length,1);assert.equal(refused.engine.signals['6/8'].desired,'STOP');
 });
 
 test('administrative blocks persist independently of FREE reports and stop existing routes without releasing locks',()=>{
