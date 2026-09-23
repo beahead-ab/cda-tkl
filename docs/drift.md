@@ -121,3 +121,9 @@ Aktiv release `e0b10a5`.20 källregler styr24 växlar med lokala villkor;15 knap
 Aktiv release `f1e7eb1`. Nödåtertagning begär stopp och individuell frigivning först efter fria/kända resurser och nya stoppbesked; AIS återställs separat. Lokal-/fjärrläge lagras på servern. Fjärrsystem är ännu inte anslutet. Se [handhavande, källspårning och formatversion 2](manoverlage-och-nodatertagning.md).
 
 54 enhetstester och fyra helhetstester godkända på servern. XML/operations/syntax godkända; tjänster anslutna och noll lås vid bytet. Backup `/root/charlottendal-backups/network-f1e7eb1-20260923T011118Z`, tidigare release `e0b10a5`. Uppstart skriver inte om gamla kontroller, men första sparade manövern skriver formatversion 2. Efter det kan äldre kod inte läsa filen: återgång kräver kompatibel kod eller granskad migrering av aktuella kontroller. Radera eller återläs aldrig bort nya driftlås/manöverspärrar för att tvinga fram en start.
+
+### Version 0.6 – tågnummer och inkommande tåg
+
+Aktiv release `d2f8fb6`. Sju inkommande fält, manuell nummerregistrering för197 block,44 källankare och atomisk flytt mellan informationsfält. Tågnummer är separat information och påverkar inte signal-/beläggnings-/låsvillkor. Läs [handhavande](taginformation.md).
+
+61 enhetstester och fyra helhetstester godkända på servern. Full XML-, operations-, källankars- och syntaxkontroll passerar. Efterkontroll: tjänster anslutna, noll lås vid bytet, nya informations-API:t kräver inloggning. Backup `/root/charlottendal-backups/network-d2f8fb6-20260923T013515Z`, tidigare release `f1e7eb1`. Den nya filen train-information.json ingår i framtida katalogbackup och ska bevaras även om kod rullas tillbaka.

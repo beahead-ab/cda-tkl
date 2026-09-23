@@ -1,6 +1,6 @@
 # Charlottendal som fristående MGP-simulator
 
-Undersökt 2026-09-20. Detta är ett arkitektur- och protokollunderlag. Ingen simulator har byggts och inga kommandon har skickats till fysisk utrustning.
+Förstudie från 2026-09-20. Simulatorn och TKL-kärnan är sedan dess byggda och testade som separata processer över LocoNet-over-TCP. Aktuell status finns i [arbetsjournalen](arbetsjournal.md). Förstudien nedan beskriver protokollunderlaget; inga kommandon har skickats till fysisk utrustning.
 
 Målet är en egen Charlottendal-applikation som efterliknar anläggningen och MGP-dekodrarna. TKL ska köra samma program och behandla samma LocoNet-meddelanden som i fysisk drift. Valet av anslutning ligger i installationen; tågvägslogiken ska inte ha någon demogren.
 
