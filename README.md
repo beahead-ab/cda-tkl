@@ -1,4 +1,4 @@
-# Charlottendal TKL · version 0.8.1
+# Charlottendal TKL · version 0.10.0
 
 En första körbar lokal applikation med egen TKL-kärna och en separat anläggningssimulator. Den använder Charlottendals exporterade geometri och JMRI mod59-signalbilder. Claude Design behövs inte för att köra den.
 
@@ -35,6 +35,8 @@ Om appen redan är igång öppnar du länkarna direkt. Avsluta med Ctrl+C i dess
 - Serverlagrade visningsinställningar med utkast, jämförelse och versionshistorik. Manuell tåginformation för alla 197 block samt sju inkommande fält; ändrad beläggning och omstart kräver kontroll.
 - Beständiga lås och händelsejournal. Omstart eller återanslutning återupptar aldrig körmedgivanden automatiskt.
 - Komplett sökbart XML-register med 25 kategorier, bland annat 66 signaler, 727 växelobjekt, 604 sensorer, 404 block, 174 minnen, 1 377 conditionals, signalmastlogik och 153 start-/målpar. Samtliga fält och referenser kan granskas, med paginering och nedladdning av oförändrad originalfil. Anteckningar sparas separat och kan exporteras.
+- Signalöversikt med alla 329 källbindningar, 117 relationer och exakt verifierade referensbilder. Fysiskt rapporterat läge visas separat från källans bild.
+- Beräknade panelindikeringar V1–V4 med klickbart underlag. Saknade villkor visas som okända; ingen fysisk bomstyrning eller bomkvittens.
 - Oberoende simulator som skickar bytekorrekta meddelanden genom LocoNet-over-TCP och tar emot order samma väg.
 
 Spårbeteckningarna i gränssnittet följer **den tryckta spårplanen**. Exempelvis heter knappen vid tryckt **2c** internt `htvSpIIA`. Dessa två beteckningar får inte blandas ihop.
@@ -83,3 +85,5 @@ Geometri och register kommer från den exporterade Charlottendal-designen och de
 [Spår 6](docs/spar6.md) · [Manövrer](docs/manoverlage-och-nodatertagning.md) · [Tåginformation](docs/taginformation.md)
 
 [Utökade växeltågvägar och återstående gränsfall](docs/vaxeltagvagar.md)
+
+[Signalbesked och källbilder](docs/signalregister.md) · [Beräknade V1–V4-indikeringar](docs/vagindikeringar.md)

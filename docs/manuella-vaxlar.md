@@ -26,3 +26,8 @@ Växelns eget block kontrolleras även när källregeln inte uttryckligen nämne
 Ett regressionstest visade att ett körbesked som kom före körordern kunde accepteras när både rapport och order hade samma millisekundvärde. Nu krävs en rapportsekvens efter den senaste körordern. Ett oväntat körbesked under växelläggning, etablering eller klarsättning håller vägen i stopp med reservationerna kvar. Ett prov med omsänd order vid identisk tidpunkt visar att föregående rapport inte återanvänds.
 
 Sekvensen anger mottagningsordning i TKL. LocoNet-telegrammen innehåller inte något nytt korrelations-ID till en specifik order; därför är detta inte en verifiering av fysisk utrustnings interna tidpunkt eller av transportfördröjda besked. Inspelad fysisk trafik behövs fortfarande för driftsättningen.
+
+
+## Förtydligande av C33/C34 inför fortsatt arbete
+
+Källkontroll 23 september: båda reglerna använder variabeltyp4, som i JMRI Conditional.java betyder TURNOUT_CLOSED (typ3 är THROWN). C33 läser Vx95 och skickar en SET_TURNOUT-åtgärd till Vx96 med data2 vid sant. C34 gör motsvarande från Vx96 till Vx95. C33:s enda variabel har triggersCalc=no; C34 har triggersCalc=yes. Båda reglerna har triggerOnChange=yes. Den asymmetrin måste utredas innan automatiken översätts. En ständig dubbelriktad koppling eller automatisk omläggning på varje rapport skulle inte återge källans utlösningsvillkor. Ingen sådan automatik är aktiverad i version0.10.

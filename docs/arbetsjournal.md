@@ -225,3 +225,14 @@ Version0.10 tillför en läsande PanelIndications-modell samt källkatalog för 
 Sex nya riktade tester och alla fyra processhelhetstester passerar. UI-provat V1 etablering→aktiv→återtagning, omladdning/skins, V4 okänt→SLIbelagt→aktivt med2/6kända→avbrottokänt→återansluten/frittokänt. Efteråt0lås,fria provblock,lokal/AISav. Källregel och kompaktöppning godkända. Migrationstatus uppdaterad till ersättning/partial med begränsningar. Läs docs/vagindikeringar.md. Publicering med fulla serverprov och backup återstår.
 
 Ny lokal preview session90879,9030/9031/9032, oförändrad state/private/tmp/charlottendal-network-preview. Tab16/18 behålls. Nattfönster till08Europe/Stockholm. Inga subagenter eller nya kostnader.
+
+
+### Kontrollpunkt 05:31 – version 0.10 publicerad
+
+Release `5104907` är aktiv på cda-tkl.trainmeet.app och sparad på privat GitHub. Backup `/root/charlottendal-backups/network-5104907-20260923T033106Z`, tidigare ba25be2. Alla 75 enhetstester och fyra processhelhetstester passerar på servern. Alla 340 vägar har passageprov; XML, operationsimport, signalregister och nya V-indikeringarnas källkatalog är verifierade. Tjänster anslutna, noll lås vid bytet. Externa HTTPS-kontroller godkända med normal TLS-verifiering: login200, API401, indications.json303 till inloggning. Inga driftdata eller autentiseringsinställningar ändrade. README och provresultat uppdaterade.
+
+Nattarbetets nästa ofärdiga etapp kan förbereda verklig MGP-verifiering genom tydligare telegraminsamling och export, eftersom nuvarande trafikvy bara behåller de senaste100 ramarna. En eventuell inspelare ska vara läsande, begränsad i tid/storlek, skilja råtelegram från tolkning samt transporteko från återrapport, vara skyddad av samma inloggning och inte ändra förregling eller simulatorseparation. Proveniens ska ange aktuell profil och att fysisk utrustning ännu inte är verifierad. Aktivera inte påhittade svenska E4-besked eller fysisk USB-port utan underlag. Alternativt fortsätt andra verifierbara delar av ursprungsplanen.
+
+En ny källkontroll av Vx95/Vx96 i docs/manuella-vaxlar.md visar att C33 och C34 har olika triggersCalc (no/yes) trots likartade åtgärder. Variabeltyp4 betyder CLOSED, inte THROWN. En ständig koppling eller omläggning på varje rapport är därför inte en säker översättning. Den automatiken förblir oaktiverad. Rangeröverlämning, vändskiva, programmeringsspår, fulla svenska signalbesked, TrainMeet och fysisk MGP återstår.
+
+Preview session90879,9030/9031/wire9032, bevarad state i /private/tmp/charlottendal-network-preview. Noll provlås, SLI fri, anslutning på, lokal manövrering och AIS av. Tab16/18 markerade för fortsatt arbete, inga browserfel. Automationen fortsätter var20min till08:00Europe/Stockholm; pausa då och sammanfatta ärligt. Gör inte om detta färdiga versionsbyte utan ny ändring.

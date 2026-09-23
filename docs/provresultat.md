@@ -2,7 +2,7 @@
 
 ## Automatiska prov
 
-69 av 69 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända på servern i version 0.9.0. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
+75 av 75 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända på servern i version 0.10.0. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
 
 - Publicerade byteexempel för B0, B1, B2 och den preliminära E4-profilen; kontrollsummor och fragmenterade strömmar.
 - Kommandoeko ändrar inte rapporterade växellägen.
@@ -74,4 +74,4 @@ UI: 1/5 med LT210, 6/8 med fem tomma utgångar, virtuell 6/7 och 3/5 med saknad 
 
 Sex riktade prov och utökat processprov för V1–V4 passerar lokalt. Alla 80 NX- och 13 sensorvillkor är källbundna. Var och en av de 76 anslutna NX prövas i sju faser, varje sensor kan ensam avgöra OR och alla fyra oanslutna V4-NX förblir okända. Alias, polaritet, gamla och motstridiga rapporter, anslutningsavbrott och lagringsfel kontrolleras. Läsande indikering skickar inga order och frigör inga lås. De fyra processhelhetstesterna passerar.
 
-UI: etablering/aktiv/återtagning för V1, V4:s delvis kända underlag och SLI-beläggning, avbruten/återupprättad LocoNet, skinbyte, omladdning, källregel och öppning från kompaktläge. Se docs/vagindikeringar.md. Full serverkörning och publicering dokumenteras separat.
+UI: etablering/aktiv/återtagning för V1, V4:s delvis kända underlag och SLI-beläggning, avbruten/återupprättad LocoNet, skinbyte, omladdning, källregel och öppning från kompaktläge. Se docs/vagindikeringar.md. Alla 75 enhetstester och fyra helhetstester godkända på servern före publicering av 5104907; backup och efterkontroll godkända.
