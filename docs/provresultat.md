@@ -68,3 +68,10 @@ Täckningsregistret identifierar nu 133 av 153 NX-definitioner med minst en kör
 Fyra riktade signalregisterprov passerar: 66 master, 329 källbindningar, 310 lösta och 19 tomma utgångar, 117 relationer, exakt bildmatchning utan antagna typalias samt käll-/bildkontrollsummor och reproducerbar generering. Aktuell rapport skiljs från begärt medgivande; gamla, bortkopplade och okända besked döljer giltig råkod. Inloggningsprovet har utökats för den nya katalogen. Full serverkörning godkänd: 69 enhetstester och fyra helhetstester.
 
 UI: 1/5 med LT210, 6/8 med fem tomma utgångar, virtuell 6/7 och 3/5 med saknad bilddefinition kontrollerade. Länk till 3/5 → 6/7 öppnade rätt källvillkor. Förladdade GIF visades med originalmått, tabellen var läsbar på smal skärm. Lagd Cu → Spår 1a visade kör; återtagning i en andra panel uppdaterade den redan öppna signalvyn till stopp. Inga provlås kvar. Se docs/signalregister.md.
+
+
+## Nytillkomna prov i version 0.10
+
+Sex riktade prov och utökat processprov för V1–V4 passerar lokalt. Alla 80 NX- och 13 sensorvillkor är källbundna. Var och en av de 76 anslutna NX prövas i sju faser, varje sensor kan ensam avgöra OR och alla fyra oanslutna V4-NX förblir okända. Alias, polaritet, gamla och motstridiga rapporter, anslutningsavbrott och lagringsfel kontrolleras. Läsande indikering skickar inga order och frigör inga lås. De fyra processhelhetstesterna passerar.
+
+UI: etablering/aktiv/återtagning för V1, V4:s delvis kända underlag och SLI-beläggning, avbruten/återupprättad LocoNet, skinbyte, omladdning, källregel och öppning från kompaktläge. Se docs/vagindikeringar.md. Full serverkörning och publicering dokumenteras separat.

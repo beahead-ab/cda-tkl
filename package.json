@@ -1,6 +1,6 @@
 {
   "name": "charlottendal-tkl",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "type": "module",
   "description": "Charlottendal TKL och en separat LocoNet-anl\u00e4ggningssimulator",
@@ -16,8 +16,8 @@
     "test:integration": "node --test test/integration.mjs test/password-integration.mjs",
     "import:xml": "python3 scripts/import-source.py",
     "verify:xml": "python3 scripts/verify-source.py",
-    "import:operations": "python3 scripts/import-operations.py && node scripts/make-network-profile.mjs && node scripts/make-migration.mjs && node scripts/make-train-fields.mjs && python3 scripts/make-signal-catalog.py",
-    "verify:operations": "python3 scripts/import-operations.py --check && node scripts/make-network-profile.mjs --check && node scripts/make-migration.mjs --check && node scripts/make-train-fields.mjs --check && python3 scripts/make-signal-catalog.py --check"
+    "import:operations": "python3 scripts/import-operations.py && node scripts/make-network-profile.mjs && node scripts/make-migration.mjs && node scripts/make-train-fields.mjs && python3 scripts/make-signal-catalog.py && node scripts/make-indications.mjs",
+    "verify:operations": "python3 scripts/import-operations.py --check && node scripts/make-network-profile.mjs --check && node scripts/make-migration.mjs --check && node scripts/make-train-fields.mjs --check && python3 scripts/make-signal-catalog.py --check && node scripts/make-indications.mjs --check"
   },
   "dependencies": {
     "jose": "6.2.12"

@@ -13,7 +13,7 @@ function setPage(page) {
   if(page==='admin') return sourceRegister.open().catch(e=>message(e.message));
 }
 async function openSource(kind,name) { await setPage('admin'); await sourceRegister.open(kind,name); }
-const rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], routeNodes = new Map();
+const rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], sourceLamps=[],routeNodes = new Map();
 const iconTypes = {
   hsi_2: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_4: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_5: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32],
   'hsi_3+dvsi': ['Hsi0+Sh0', 'Hsi1+Sh1', 'Hsi-dark+Sh-dark', 12, 32], hdvsi_8: ['Hdvsi0+Sh0', 'Hdvsi1+Sh1', 'Hdvsi-dark', 18, 31],
@@ -134,9 +134,18 @@ function buildPlan() {
     if(isButton) {
       if(isShunt) svg('path',{d:b.act.includes('arrowleft')?'M6,-5 L-3,-5 L-8,0 L-3,5 L6,5 Z':'M-6,-5 L3,-5 L8,0 L3,5 L-6,5 Z',class:'dot shunt-arrow'},g);
       else { svg('circle',{r:(b.act.includes('-s.')?15:21)/2,class:'dot'},g); svg('rect',{x:-3.5,y:-3.5,width:7,height:7,class:'traffic-dot'},g); }
-    } else svg('circle',{r:b.act.includes('free')?4.5:6.5,class:'indicator-off'},g);
+    } else {
+      const lens=svg('circle',{r:b.act.includes('free')?4.5:6.5,class:'indicator-off'},g);
+      const indication=config.panelIndications?.indicators.find(i=>Object.values(i.lamps).some(l=>l.name===b.sensor));
+      if(indication) {
+        const unknown=svg('text',{x:10,y:4,class:'derived-unknown','pointer-events':'none'},g,'?');
+        sourceLamps.push({g,lens,unknown,name:indication.name,color:indication.lamps.g.name===b.sensor?'g':'r'});
+      }
+    }
     accessible(g,isRoute?`${label(b.sensor)} · ${isShunt?'växeltågväg':'tågvägsknapp'}`:b.sensor,()=>{
       if(isRoute) return choose(b.sensor);
+      const indication=sourceLamps.find(l=>l.g===g);
+      if(indication)return inspectIndication(indication.name);
       if(names.length){
         if(!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
         if(!available) return message('Växelgruppen finns i källan men är ännu inte ansluten till driftprofilen.');
@@ -152,7 +161,10 @@ function buildPlan() {
     const scale=root.getBoundingClientRect().width/layout.crop.width;
     for(const b of buttons) b.hit.setAttribute('r',Math.min(b.hitCap,32*Math.min(1.6,1/Math.max(.1,scale)))/2);
   }).observe(root);
+  $('derived-indications').innerHTML='<span>Beräknat:</span>'+(config.panelIndications?.indicators||[]).map(i=>`<button type="button" data-indication="${esc(i.name)}"><i></i>${esc(i.name)} <span>?</span></button>`).join('');
+  $('derived-indications').onclick=e=>{const name=e.target.closest('button')?.dataset.indication;if(name)inspectIndication(name);};
 }
+function inspectIndication(name){if(document.body.classList.contains('panel-compact'))$('compact-toggle').click();inspected={kind:'indication',name};paintInspector();$('inspector').scrollIntoView({behavior:'smooth',block:'nearest'});}
 function isBlocked(name) { const address=config.blocks[name]?.address;return address!=null && (state?.controls?.blocked || []).some(n=>config.blocks[n]?.address===address); }
 function usable() { return online && state?.connection === 'connected' && !state.storageFault; }
 function paintPlan() {
@@ -176,6 +188,20 @@ function paintPlan() {
     s.g.classList.toggle('unconfigured', !config.signals[s.mast]);
   }
   for(const lamp of indicatorLamps) lamp.node.classList.toggle('occupied',fresh&&state.blocks[lamp.block]?.occupied===true);
+  for(const lamp of sourceLamps) {
+    const value=fresh?state.panelIndications?.[lamp.name]?.value:null;
+    lamp.lens.setAttribute('class','indicator-off '+(value===null||value===undefined?'derived-missing':(value===(lamp.color==='g')?'derived-on-'+lamp.color:'')));
+    lamp.unknown.style.display=value==null&&lamp.color==='g'?'':'none';
+    const text=lamp.name+' · beräknad panelindikering · '+(value===true?'aktivt underlag':value===false?'inaktivt underlag':'okänt underlag');
+    lamp.g.setAttribute('aria-label',text+' · '+lamp.color);lamp.g.querySelector('title').textContent=text;
+  }
+  for(const button of $('derived-indications').querySelectorAll('button')) {
+    const value=fresh?state.panelIndications?.[button.dataset.indication]?.value:null;
+    button.dataset.value=value===true?'active':value===false?'inactive':'unknown';
+    button.querySelector('span').textContent=value==null?'?':'';
+    button.title=button.dataset.indication+' · Beräknad panelindikering, ingen bomkvittens';
+    button.setAttribute('aria-label',button.dataset.indication+' · '+(value===true?'aktivt':value===false?'inaktivt':'okänt')+' underlag · detaljer');
+  }
   for (const b of buttons) {
     b.g.classList.toggle('chosen', b.id === chosen); b.g.classList.toggle('unavailable', !b.available || (b.names.length && state.manual?.[b.names[0]]?.allowed===false));
     b.g.classList.toggle('in-route', !!state?.routes.some(r => r.from === b.id || r.to === b.id));
@@ -250,6 +276,7 @@ function paint() {
 }
 function paintInspector() {
   if (!inspected || !state) return;
+  if(inspected.kind==='indication')return paintIndication(inspected.name);
   const { kind, name } = inspected, b = kind === 'signal' ? config.signals[name] : config.turnouts[name];
   const sourceKind = kind === 'signal' ? 'signals' : 'layoutTurnouts';
   const sourceButton = `<button class="source-inspect" data-source-kind="${sourceKind}" data-source-name="${esc(name)}">${kind === 'signal' ? 'Signalbesked och källuppgifter' : 'Visa alla källuppgifter'} →</button>`;
@@ -263,6 +290,12 @@ function paintInspector() {
   const manual=state.manual?.[name], manualNotice=kind==='turnout'&&manual?`<p class="muted">${esc(manual.reason)}</p>`:'';
   const detail = `<dl><dt>${kind === 'signal' ? 'Signal' : 'Växel'}</dt><dd><strong>${esc(name)}</strong></dd><dt>Rapporterat</dt><dd>${esc(value)}</dd><dt>Tågvägslås</dt><dd>${esc(locked.map(r => r.label).join(', ') || 'Inga')}</dd><dt>${kind === 'signal' ? 'Provadress / råkod' : 'Källadress'}</dt><dd>${kind === 'signal' ? b.address + ' / ' + (s.code ?? '—') : esc(b.source) + (b.inverted ? ' · inverterad' : '')}</dd></dl>`;
   html('inspector', detail + sourceInfo + sourceButton + manualNotice + (kind === 'turnout' ? `<div class="actions"><button data-manual="C" ${locked.length || !usable() || manual?.allowed===false ? 'disabled' : ''}>Lägg rakt</button><button data-manual="T" ${locked.length || !usable() || manual?.allowed===false ? 'disabled' : ''}>Lägg avvikande</button></div>` : `<p class="muted">Beskedskoderna är en preliminär provmappning. Fullständiga svenska signalbilder kräver verifiering mot din MGP-utrustning.</p>`));
+}
+function paintIndication(name) {
+  const def=config.panelIndications.indicators.find(i=>i.name===name),s=state.panelIndications?.[name];
+  const fresh=online&&state.connection==='connected'&&!state.storageFault,value=fresh?s?.value:null;
+  const important=fresh?(s?.conditions||[]).filter(c=>c.value!==false):[];
+  html('inspector',`<h2>${esc(name)} · panelindikering</h2><dl><dt>Beräknat läge</dt><dd>${value===true?'Aktivt underlag · grön lampa':value===false?'Inaktivt underlag · röd lampa':'Okänt underlag · inget fastställt läge'}</dd><dt>Kända villkor</dt><dd>${fresh?s?.known||0:0} av ${s?.total||def.conditions.length}</dd></dl><p class="muted">Indikering från tågvägar och sensorrapporter. Ingen fysisk bomkvittens eller bommanöver.</p><p class="muted">Ett aktivt villkor räcker för grön indikering. Röd kräver att alla villkor är kända och inaktiva. Tågväg som läggs, återtas eller hålls kvar ger okänt NX-villkor.</p>${important.length?`<ul class="indication-causes">${important.map(c=>`<li><strong>${esc(c.label)}</strong> · ${esc(c.reason)}</li>`).join('')}</ul>`:''}<button class="source-inspect" data-source-kind="conditionals" data-source-name="${esc(def.name)}">Visa källregeln och alla villkor →</button>`);
 }
 async function start() {
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));

@@ -379,8 +379,8 @@
       "id": "IX:AUTO:0012",
       "name": "Järnvägsövergångar",
       "enabled": true,
-      "status": "pending",
-      "behavior": "V1–V4:s indikeringar återstår; fysiska bomkommandon är inte fastställda.",
+      "status": "partial",
+      "behavior": "V1–V4 beräknas läsande från källans OR-villkor. V1–V3 har anslutet underlag; V4 har fyra oanslutna NX och kan förbli okänd. Ingen fysisk bomstyrning eller bomkvittens.",
       "rules": [
         "IX:AUTO:0012C1",
         "IX:AUTO:0012C2",
@@ -3181,23 +3181,23 @@
     },
     "IX:AUTO:0012C1": {
       "group": "IX:AUTO:0012",
-      "status": "pending",
-      "behavior": "V1–V4:s indikeringar återstår; fysiska bomkommandon är inte fastställda."
+      "status": "replaced",
+      "behavior": "Läsande panelindikering: klar tågväg/tågpassage eller aktiv sensor ger grönt enligt OR-regeln. Etablering, återtagning, kvarvarande lås och saknade rapporter ger okända villkor. Ingen fysisk bomkvittens eller manöver."
     },
     "IX:AUTO:0012C2": {
       "group": "IX:AUTO:0012",
-      "status": "pending",
-      "behavior": "V1–V4:s indikeringar återstår; fysiska bomkommandon är inte fastställda."
+      "status": "replaced",
+      "behavior": "Läsande panelindikering: klar tågväg/tågpassage eller aktiv sensor ger grönt enligt OR-regeln. Etablering, återtagning, kvarvarande lås och saknade rapporter ger okända villkor. Ingen fysisk bomkvittens eller manöver."
     },
     "IX:AUTO:0012C3": {
       "group": "IX:AUTO:0012",
-      "status": "pending",
-      "behavior": "V1–V4:s indikeringar återstår; fysiska bomkommandon är inte fastställda."
+      "status": "replaced",
+      "behavior": "Läsande panelindikering: klar tågväg/tågpassage eller aktiv sensor ger grönt enligt OR-regeln. Etablering, återtagning, kvarvarande lås och saknade rapporter ger okända villkor. Ingen fysisk bomkvittens eller manöver."
     },
     "IX:AUTO:0012C4": {
       "group": "IX:AUTO:0012",
-      "status": "pending",
-      "behavior": "V1–V4:s indikeringar återstår; fysiska bomkommandon är inte fastställda."
+      "status": "partial",
+      "behavior": "V4 beräknas med trevärd OR-logik. Fyra NX saknar körbar koppling och förblir okända; en aktiv känd sensor kan ändå avgöra OR-resultatet. Ingen fysisk bomkvittens eller manöver."
     },
     "IX:AUTO:0013C1": {
       "group": "IX:AUTO:0013",

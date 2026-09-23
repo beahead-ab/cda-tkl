@@ -12,7 +12,7 @@ const notes={
   '0009':['pending','Särskilda Sh2-regler är importerade; full svensk beskedsmappning återstår.'],
   '0010':['pending','Särskilda Sh3-regler är importerade; full svensk beskedsmappning återstår.'],
   '0011':['pending','Utfartssignalernas särskilda villkor återstår.'],
-  '0012':['pending','V1–V4:s indikeringar återstår; fysiska bomkommandon är inte fastställda.'],
+  '0012':['partial','V1–V4 beräknas läsande från källans OR-villkor. V1–V3 har anslutet underlag; V4 har fyra oanslutna NX och kan förbli okänd. Ingen fysisk bomstyrning eller bomkvittens.'],
   '0013':['partial','210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval.'],
   '0014':['partial','Manöverfel visas med orsak och journal. Den äldre Fel-sensorn körs inte.'],
   '0015':['external','MQTT-proxyobjekt bevarade. Broker, ämnen och anslutningsuppgifter saknas.'],
@@ -33,6 +33,8 @@ const byRule={};
 for(const group of groups) for(const id of group.rules) byRule[id]={group:group.id,status:group.status,behavior:group.behavior};
 for(const rule of profile.manualPolicies?.rules||[]) byRule[rule.rule]={...byRule[rule.rule],status:rule.status==='ready'?'tested':'unresolved',behavior:rule.status==='ready'?'Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.':rule.reason,button:rule.button,turnouts:rule.names};
 for(const id of ['IX:AUTO:0007C33','IX:AUTO:0007C34']) byRule[id]={...byRule[id],status:'pending',behavior:'Automatisk följdmanöver mellan Vx95 och Vx96 är ännu inte införd; den behandlas inte som en fast växelkoppling.'};
+for(const id of ['IX:AUTO:0012C1','IX:AUTO:0012C2','IX:AUTO:0012C3']) byRule[id]={...byRule[id],status:'replaced',behavior:'Läsande panelindikering: klar tågväg/tågpassage eller aktiv sensor ger grönt enligt OR-regeln. Etablering, återtagning, kvarvarande lås och saknade rapporter ger okända villkor. Ingen fysisk bomkvittens eller manöver.'};
+byRule['IX:AUTO:0012C4']={...byRule['IX:AUTO:0012C4'],status:'partial',behavior:'V4 beräknas med trevärd OR-logik. Fyra NX saknar körbar koppling och förblir okända; en aktiv känd sensor kan ändå avgöra OR-resultatet. Ingen fysisk bomkvittens eller manöver.'};
 for(const id of ['IX:AUTO:0006C15','IX:AUTO:0006C16']) byRule[id]={...byRule[id],status:'replaced',behavior:'Serverlagrat lokal-/fjärrläge spärrar nya lokala manövrer. Lägesbyte kräver inga kvarvarande lås, bekräftat stopp och kända växellägen. Fjärrsystem är inte anslutet.'};
 byRule['IX:AUTO:0016C1']={...byRule['IX:AUTO:0016C1'],status:'replaced',behavior:'Beständig nödåtertagning med antal kvarvarande lås ersätter den korta indikeringspulsen. AIS kvarstår tills operatören återställer.'};
 for(const rule of source.rules.filter(r=>r.id.startsWith('IX:AUTO:0018'))) {

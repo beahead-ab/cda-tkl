@@ -24,7 +24,9 @@ test('network profile runs parallel trains across separate processes and release
   };
   try {
     launch('src/simulator.mjs'); launch('src/server.mjs');
-    await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && s.blocks.S100.occupied === false; });
+    await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && s.blocks.S100.occupied === false && s.panelIndications.V1.complete; });
+    const initialIndications=(await get(httpPort)).panelIndications;
+    assert.equal(initialIndications.V1.value,false);assert.equal(initialIndications.V4.value,null);
     const staged=await post(httpPort,'configuration/save',{revision:0,key:'signals:1/1',name:'Infart Cu',description:'Provad visningsändring'});
     assert.equal(staged.changes.length,2);
     await post(httpPort,'configuration/save',{revision:0,key:'signals:1/1',name:'Föråldrad',description:''},409);
@@ -37,11 +39,13 @@ test('network profile runs parallel trains across separate processes and release
     await post(httpPort, 'turnout', { name:'Vx114', position:'T' }, 400);
     await post(httpPort, 'route', { from:'htvAn', to:'htvSpIA' }, 400);
     const ready = await get(httpPort);
+    assert.equal(ready.panelIndications.V1.value,true);assert.equal(ready.panelIndications.V1.derived,true);
     for (const r of ready.routes) await post(simPort, 'train', { id:r.definitionId });
     await until(async () => (await get(simPort)).trains.length === 2);
     await until(async () => (await get(httpPort)).routes.every(r => r.state === 'traversing'));
     await until(async () => { const s = await get(httpPort); return !s.routes.length; }, 22000);
     assert.equal((await get(simPort)).trains.length, 0);
+    assert.equal((await get(httpPort)).panelIndications.V1.value,false);
     const activated=await post(httpPort,'configuration/activate',{revision:1,reason:'Namn på infart'});
     assert.equal(activated.active.activeVersion,1);
     const presentation=await (await fetch(`http://127.0.0.1:${httpPort}/api/presentation`)).json();

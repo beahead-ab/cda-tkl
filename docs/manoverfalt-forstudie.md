@@ -42,3 +42,6 @@ Läsande kontroll 23 september 04:52 mot oförändrad XML och profil 0.9. Grupp 
 Alla 13 sensorvillkor går att följa till befintliga provdetektorer via sourceSensor. Alias delar adress och ska inte behandlas som fristående fysiska rapporter. Källans slS3d motsvarar SIIID, slSL1/2 motsvarar SLI/SLII. Utgångarna V1g/r–V4g/r är interna IS251–IS258, alltså panelindikeringar. Sant sätter g ACTIVE och r INACTIVE; falskt tvärtom. Namn/färg bevisar inte fysiskt bomläge.
 
 En möjlig nästa implementation är en läsande, källanknuten beräkning av dessa panelindikeringar. Den måste redovisa härlett läge, aldrig fysisk bomkvittens, och behålla okänt när underlag saknas. V4:s fyra ej anslutna NX får inte behandlas som säkert inaktiva för att ge ett falskt komplett resultat. Körbara tågvägars nxIds omfattar både fullt originalpar och delpar sedan 0.8.1; klargör vilken kärnfas som motsvarar källans NX_ACTIVE och prova etablering, aktiv, hållen, återtagning och anslutningsavbrott. Inga V-indikeringar eller bomkommandon har aktiverats av denna förstudie.
+
+
+Version 0.10 inför den läsande panelindikeringen med uttryckligt okända tillstånd och källanknutna lampor. Se [regel, ersättningsbeteende och prov](vagindikeringar.md). Ingen fysisk bomstyrning är aktiverad.
