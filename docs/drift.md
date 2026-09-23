@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `3b3b90e` · version 0.14.0 (23 september 2026, 07:40) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/3b3b90e` |
+| Driftsatt kodversion | `e7542c7` · version 0.15.0 (23 september 2026, 07:54) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/e7542c7` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -150,7 +150,7 @@ Aktiv release `470ff88`. Sammansatta tågvägar bevarar hela källans NX-par til
 65 enhetstester och fyra helhetstester godkända på servern. XML, deterministisk import och syntax kontrollerade. Tjänster anslutna och noll lås vid bytet. Extern HTTPS-efterkontroll: inloggning 200, skyddade API 401 utan session. Backup `/root/charlottendal-backups/network-470ff88-20260923T021002Z`, tidigare release `b3f6a78`. Driftdata, administrativa versioner och autentisering bevarade.
 
 
-### Aktuell version 0.11 – telegraminspelning
+### Version 0.11 – telegraminspelning
 
 Release540f2e3 publicerad23september06:21. 82 enhetstester och fyra processhelhetstester godkända på servern. XML och samtliga importer är verifierade. Noll lås vid byte, båda tjänster anslutna efter omstart. Backup `/root/charlottendal-backups/network-540f2e3-20260923T042118Z`, föregående kod5104907. Driftdata och autentisering bevarade.
 
@@ -174,3 +174,12 @@ Release2798f31 publicerad07:14. 108 enhetstester och sex processhelhetstester pa
 ### Version 0.14 – driftbindningar
 
 Release 3b3b90e publicerad 07:40. 114 enhetstester och sex processhelhetstester passerade på servern. Backup `/root/charlottendal-backups/network-3b3b90e-20260923T054032Z`, tidigare 2798f31. Efterkontroll: anslutna tjänster, inga lås, HTTPS-login 200 och bindings-API 401 utan session. bindings.json ingår i katalogbackup; äldre kod som ignorerar aktiva bindningar får inte återställas automatiskt. Se [driftbindningar](driftbindningar.md).
+
+
+### Version 0.15 – nummerföljning
+
+Release e7542c7 publicerad 07:54. 124 enhetstester och sex processhelhetstester godkända på servern före byte. XML, import och syntax verifierade. Backup `/root/charlottendal-backups/network-e7542c7-20260923T055457Z`, tidigare kod 3b3b90e. Anslutna tjänster och noll lås vid byte; externa HTTPS-prov visar login 200 och nya följnings-API 401 utan session.
+
+Backupens faktiska driftkatalog har dessutom kopierats till en tillfällig isolerad katalog på servern och lästs av release e7542c7. Driftprofil, manöverspärrar, lås, visningsinställningar, tåginformation och modellklocka gick att återläsa. Noll fältorder skickades, klockan var pausad. Backupen innehöll noll lås och noll tågnummer; provet påstår därför inte att just den kopian testat återläsning av aktiva lås. Sådana scenarier ingår separat i de automatiska testerna. Provet ändrade inte live-data och den tillfälliga kopian togs bort. Detta är ett applikationsbackup-prov, inte återställning av hela DigitalOcean-maskinen.
+
+Tåginformationens format 2 kräver programversion 0.15 eller senare när det sparats. Publiceringen spärrar automatisk återgång till kod som inte kan läsa aktuellt format; data raderas aldrig som återställningsåtgärd. Se [nummerföljning](taginformation.md).

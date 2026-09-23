@@ -2,7 +2,7 @@
 
 ## Automatiska prov
 
-114 av 114 enhetstester och sex helhetstester med riktiga processer, TCP, HTTP och virtuell serieport godkända på servern i version 0.14.0. Nummerföljningen i version 0.15 är lokalt provad och inväntar publiceringens kompletta kontroll. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
+124 av 124 enhetstester och sex helhetstester med riktiga processer, TCP, HTTP och virtuell serieport godkända på servern i version 0.15.0. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
 
 - Publicerade byteexempel för B0, B1, B2 och den preliminära E4-profilen; kontrollsummor och fragmenterade strömmar.
 - Kommandoeko ändrar inte rapporterade växellägen.
@@ -102,3 +102,5 @@ UI: adresskrock visas i utkast och avvisas för aktivering; direktmanöver för 
 Tio riktade nummerföljningsprov och de tidigare sju informationsproven passerar. Hela befintliga sviten passerade med 122 enhetstester innan de sista två riktade fallen för återtagning/trasig sparad följning lades till och godkändes. Fyra utökade processprov passerar, inklusive två samtidiga nummerföljningar över oberoende TCP-processer, färdig passage och inloggningsskydd. XML/import/syntax är kontrollerade.
 
 UI: P815 kopplat till klar Cu → Spår 1c (källparet htvCu–htvSpIA), startat från simulatorn och följt från CuppIn via SU4B till sista gemensamma detektoravsnittets informationsfält SIA. Numret markerades för kontroll efter full passage. P816 följning pausades vid LocoNet-avbrott, återupptogs inte efter återanslutning, avslutades manuellt och provvägen återtogs. Båda provnummer tömda, noll lås och inga konsolfel. Informationsväljaren öppnar rätt plats från följningslistan.
+
+Slutpublicering 0.15: samtliga 124 enhetstester och sex processprov passerade även på servern. Efterkontroll av tjänster, nya autentiserade endpoints och extern HTTPS passerade. Den verkliga driftbackupen kunde därefter läsas av applikationens modeller i en separat tillfällig katalog utan fältorder; originalbackup och live-data bevarades.

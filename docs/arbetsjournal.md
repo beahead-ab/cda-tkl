@@ -298,3 +298,11 @@ Release 3b3b90e: 114 enhetstester och sex processhelhetstester passerade på bef
 ### 23 september 07:51 – nummerföljning färdig lokalt
 
 Version 0.15 tillför uttryckligen tilldelad nummerföljning längs kärnans accepterade passage. Tio nya riktade prov, befintliga informationsprov och utökat helhetstest med två samtidiga tåg passerar. UI-prov visar full passage och säkert pausläge efter avbrott; återanslutning återupptar inte följningen. Inga provnummer/lås kvar. Format 2 sparar nummer och följningssteg atomiskt och läser äldre format 1; återgång måste använda kompatibel kod. Ingen automatisk lokidentifiering eller TrainMeet-skrivning införs.
+
+### 23 september 07:56 – slutpublicering och återläsningsprov
+
+Version 0.15.0, release e7542c7, publicerad 07:54. Samtliga 124 enhetstester och sex processhelhetstester passerade på servern före byte. Backup /root/charlottendal-backups/network-e7542c7-20260923T055457Z. Efterkontroll: anslutna tjänster, noll lås, HTTPS-login 200, följnings-API 401 utan session. GitHub uppdaterat.
+
+Backupens verkliga driftkatalog återläst i isolerad serverkopia. Profil, spärrar, visning, tåginformation och modellklocka läsbara; noll fältorder, klocka pausad. Aktuella backupen hade noll lås/nummer; omstart med aktiva sådana prövas separat i testsystemet. Originalbackup och live-data orörda.
+
+Samtliga U01–U54 och N01–N10 är avstämda i docs/acceptans-2026-09-23.md. Full fysisk ersättning återstår: råsensorernas sammansatta kedja/filtrering, full svenska signalbesked, ranger-/godsöverlämning, vändskivans L2-anslutning, källoklara tågvägar och riktig TrainMeet-parning/skrivning behöver verifierat underlag. Ingen sådan funktion har smugit in via gissade adresser eller gamla skriptanrop. Friställa spår och extra växelplupp förblir vilande. Lokala provnummer är tömda, anslutning återställd och noll provlås kvar.

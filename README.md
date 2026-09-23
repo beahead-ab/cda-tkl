@@ -96,3 +96,5 @@ Geometri och register kommer från den exporterade Charlottendal-designen och de
 [Seriell LocoBuffer-gateway](docs/locobuffer-gateway.md) · [Läsande TrainMeet-anslutning](docs/trainmeet-adapter.md)
 
 [Driftbindningar, manöverbegränsningar och granskade profilbyten](docs/driftbindningar.md)
+
+Senaste leveransavstämning: [samtliga användningsfall](docs/acceptans-2026-09-23.md), [aktuell status](docs/status.md) och [testresultat](docs/provresultat.md).
