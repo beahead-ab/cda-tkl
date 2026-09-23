@@ -6,7 +6,7 @@ const notes={
   '0003':['pending','Medgivandedvärgarnas särskilda beroenden återstår.'],
   '0004':['pending','Stopplyktornas särskilda beroenden återstår.'],
   '0005':['pending','Vändskivans 11 källfall är importerade; manöver och positionsåterrapport återstår.'],
-  '0006':['partial','Panelutseende och val av huvud-/växeltågväg finns. Lokal/fjärr och rangeröverlämning återstår; externa skript saknas.'],
+  '0006':['partial','Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår.'],
   '0007':['partial','20 knappregler använder lokala fria spårledningar, NX-/resurslås och skyddande signaler. 15 regler spärras av ofullständiga växelkopplingar eller saknad rangeråterrapport. De två automatiska Vx95/Vx96-reglerna återstår.'],
   '0008':['pending','Synkronisering med godsställverk återstår.'],
   '0009':['pending','Särskilda Sh2-regler är importerade; full svensk beskedsmappning återstår.'],
@@ -16,9 +16,9 @@ const notes={
   '0013':['partial','192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval.'],
   '0014':['partial','Manöverfel visas med orsak och journal. Den äldre Fel-sensorn körs inte.'],
   '0015':['external','MQTT-proxyobjekt bevarade. Broker, ämnen och anslutningsuppgifter saknas.'],
-  '0016':['pending','Nödåtertagningens särskilda källbeteende återstår; vanlig återtagning kan aldrig tvångsradera lås.'],
+  '0016':['partial','Nödåtertagning begär stopp och återtagning av alla befintliga vägar. AIS kvarstår till manuell återställning. Källans minne Tågmöte saknar ännu driftfunktion.'],
   '0017':['replaced','AIS begär stopp i alla 66 signaler, sparas beständigt och behåller lås. Nya stoppåterrapporter krävs före återställning. Fysiska beskedskoder ej verifierade.'],
-  '0018':['pending','137 nödutlösningsregler bevarade. Ingen ospecificerad tvångsfrigivning aktiveras.'],
+  '0018':['partial','För anslutna vägar ersätts NX-växlingen av uttrycklig återtagning: fria och kända resurser samt nya stoppbesked krävs före frigivning. Belagda, okända och återställda lås tvångsraderas aldrig. Oanslutna NX-fall kvarstår som källunderlag.'],
   '0019':['partial','60 växeltågvägar med synliga knappar har etablerings- och passagetest. Dolda och motsägande källfall redovisas separat.'],
   '0020':['partial','Återtagning och ordnad passage ersätter frigivningen för anslutna vägar; lås släpps först efter stoppåterrapport.'],
   '0021':['disabled','Avstängd i original-XML. Har inte aktiverats.'],
@@ -33,6 +33,12 @@ const byRule={};
 for(const group of groups) for(const id of group.rules) byRule[id]={group:group.id,status:group.status,behavior:group.behavior};
 for(const rule of profile.manualPolicies?.rules||[]) byRule[rule.rule]={...byRule[rule.rule],status:rule.status==='ready'?'tested':'unresolved',behavior:rule.status==='ready'?'Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.':rule.reason,button:rule.button,turnouts:rule.names};
 for(const id of ['IX:AUTO:0007C33','IX:AUTO:0007C34']) byRule[id]={...byRule[id],status:'pending',behavior:'Automatisk följdmanöver mellan Vx95 och Vx96 är ännu inte införd; den behandlas inte som en fast växelkoppling.'};
+for(const id of ['IX:AUTO:0006C15','IX:AUTO:0006C16']) byRule[id]={...byRule[id],status:'replaced',behavior:'Serverlagrat lokal-/fjärrläge spärrar nya lokala manövrer. Lägesbyte kräver inga kvarvarande lås, bekräftat stopp och kända växellägen. Fjärrsystem är inte anslutet.'};
+byRule['IX:AUTO:0016C1']={...byRule['IX:AUTO:0016C1'],status:'replaced',behavior:'Beständig nödåtertagning med antal kvarvarande lås ersätter den korta indikeringspulsen. AIS kvarstår tills operatören återställer.'};
+for(const rule of source.rules.filter(r=>r.id.startsWith('IX:AUTO:0018'))) {
+  const ids=rule.variables.filter(v=>v.type==='35').map(v=>v.systemName),routes=profile.routes.filter(r=>r.nxIds.some(id=>ids.includes(id)));
+  byRule[rule.id]={...byRule[rule.id],status:routes.length?'replaced':'excluded',behavior:routes.length?'Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.':'NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.',routes:routes.map(r=>r.id)};
+}
 for(const rule of [...source.mainRoutePolicies,...source.shuntRoutePolicies]) {
   const routes=profile.routes.filter(r=>r.source.rules.includes(rule.rule));
   const excluded=profile.excluded.find(r=>r.rules?.includes(rule.rule));

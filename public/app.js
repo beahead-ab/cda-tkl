@@ -3,7 +3,7 @@ import { panelLayout } from './panel-layout.js';
 const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
-let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = false;
+let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let sourceRegister, layout, serverOffset = 0;
 function setPage(page) {
   history.replaceState(null,'',page==='admin'?'#register':'#panel');
@@ -35,16 +35,19 @@ function accessible(g, name, action) {
 }
 function message(text) { $('message').textContent = text; $('message').hidden = !text; }
 async function api(path, data) {
-  if (pending) return; pending = true;
+  const urgent=path==='emergency-cancel'||(path==='all-stop'&&data.enabled===true);
+  if (pending&&!urgent) return; pending++;
   try {
     const response = await fetch('/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     const answer = await response.json(); if (!response.ok) throw Error(answer.error);
-    if (answer.state) state = answer.state; message(''); return answer;
-  } catch (e) { message(e.message); } finally { pending = false; paint(); }
+    // The ordered event stream owns the display; a late HTTP reply cannot roll it back.
+    message(''); return answer;
+  } catch (e) { message(e.message); } finally { pending--; paint(); }
 }
 function clearChoice() { chosen = null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('clear-selection').hidden = true; paint(); }
 function choose(id) {
   if (!online) return message('Panelen saknar kontakt med den lokala kärnan.');
+  if(state.controls?.mode==='remote') return message('Fjärrläge: lokal tågvägsläggning är spärrad.');
   if (!chosen) {
     chosen = id; $('selection-hint').textContent = label(id) + ' → välj slutpunkt'; $('clear-selection').hidden = false; paint();
   } else if (chosen === id) clearChoice();
@@ -218,14 +221,25 @@ function paint() {
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
   paintPlan(); paintInspector();
   $('ais-status').hidden = !state.controls?.stopAll;
-  $('all-stop').disabled = !online || pending;
-  $('reset-ais').disabled = !usable() || pending;
+  $('all-stop').disabled = !online;
+  $('emergency-cancel').disabled = !online;
+  const remote=state.controls?.mode==='remote', emergency=state.controls?.emergency, remaining=state.emergencyRemaining?.length||0;
+  $('control-mode').textContent=remote?'Fjärrläge · lokal manövrering spärrad':'Lokal manövrering';
+  $('remote-notice').hidden=!remote;
+  $('toggle-authority').textContent=remote?'Återgå till lokal manövrering':'Växla till fjärrläge';
+  $('toggle-authority').disabled=!online||pending||!state.modeChange?.allowed;
+  $('mode-reason').textContent=state.modeChange?.allowed?'':state.modeChange?.reason||'';
+  $('emergency-status').hidden=!emergency||(!state.controls.stopAll&&!remaining);
+  $('emergency-status').textContent=remaining?`Nödåtertagning pågår · ${remaining} av ${emergency.routeIds.length} tågvägslås kvar. Fria spår, kända växellägen och nya stoppbesked krävs. Efter omstart: begär återtagning igen.`:emergency?'Nödåtertagning färdig · alla berörda lås är frigivna. Återställ AIS när anläggningen har kontrollerats.':'';
+  $('ais-text').textContent=remaining?'AIS aktiv · nödåtertagning pågår, låsen skyddar kvarvarande vägar':'AIS aktiv · alla körmedgivanden återkallade';
+  $('reset-ais').disabled = !usable() || pending || !state.allStopReset?.allowed;
+  $('reset-ais').title=state.allStopReset?.reason||'';
   const blocks=state.controls?.blocked || [];
   $('blocked-count').textContent=blocks.length ? `· ${blocks.length} spärrade` : '';
   html('blocked-list',blocks.map(n=>`<span class="field-chip blocked-chip">${esc(displayName('blocks',n))} · spärrat</span>`).join(''));
   $('toggle-block').textContent = isBlocked($('block-choice').value)?'Ta bort spärr':'Spärra spår';
-  $('toggle-block').disabled = !online || pending || !!state.storageFault;
-  for (const b of $('route-catalog').querySelectorAll('button')) b.disabled = !usable() || pending;
+  $('toggle-block').disabled = !online || pending || !!state.storageFault || (remote&&isBlocked($('block-choice').value));
+  for (const b of $('route-catalog').querySelectorAll('button')) b.disabled = !usable() || pending || remote;
   html('active-routes', state.routes.map(r => `<div class="route-item"><strong>${esc(displayName('routes',r.definitionId,r.label))}<span class="route-state ${esc(r.state)}">${esc(statuses[r.state])}</span></strong><small>${esc(r.reason)}${r.passage&&r.enteredAt?' · '+r.passage.filter(p=>p.state==='clear').length+'/'+r.passage.length+' avsnitt passerade':''}</small><button data-cancel="${esc(r.id)}" ${!online || r.cancelRequested ? 'disabled' : ''}>${r.cancelRequested ? 'Inväntar frigivning' : 'Återta'}</button></div>`).join(''));
   $('event-status').textContent = state.routes.length + ' tågvägslås · ' + Object.keys(config.turnouts).length + ' anslutna växlar';
   html('events', state.events.filter(e => !['report', 'transport'].includes(e.kind)).slice(0, 7).map(e => `<div class="event-row"><time>${time(e.at)}</time><span>${esc(e.message)}</span></div>`).join(''));
@@ -262,6 +276,8 @@ async function start() {
   $('block-choice').onchange=paint;
   $('toggle-block').onclick=()=>api('track-block',{name:$('block-choice').value,blocked:!isBlocked($('block-choice').value)});
   $('all-stop').onclick=()=>api('all-stop',{enabled:true});
+  $('emergency-cancel').onclick=()=>api('emergency-cancel',{});
+  $('toggle-authority').onclick=async()=>{if(await api('control-mode',{mode:state.controls.mode==='remote'?'local':'remote'}))clearChoice();};
   $('reset-ais').onclick=()=>api('all-stop',{enabled:false});
   $('account-link').hidden = !config.accountUrl;
   $('field-link').href = config.fieldUrl || 'http://127.0.0.1:8911/'; $('field-link').hidden = false;

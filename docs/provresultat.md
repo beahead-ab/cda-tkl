@@ -1,8 +1,8 @@
-# Provresultat · 22 september 2026
+# Provresultat · uppdaterat 23 september 2026
 
 ## Automatiska prov
 
-23 av 23 protokoll-, kärn- och inloggningstester godkända. Två separata helhetstest med riktiga Node-processer, TCP och HTTP godkända.
+54 av 54 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända i version 0.5. Alla 252 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
 
 - Publicerade byteexempel för B0, B1, B2 och den preliminära E4-profilen; kontrollsummor och fragmenterade strömmar.
 - Kommandoeko ändrar inte rapporterade växellägen.
@@ -22,3 +22,13 @@
 Original-, relä- och trafikutseende granskade. Tågväg lagd med SVG-plupparna; körbesked och låsta manuella växelknappar kontrollerade. Tåg startat i den separata simulatorn; beläggning och stopp syntes i TKL. Samma pluppar återtog vägen och frigav låsen efter fri rapport. Registersökning och sparad anteckning provade.
 
 Dessa prov gäller den uttryckliga utvecklingsprofilen. Ingen fysisk LocoBuffer eller MGP-modul ingick, och ingen TrainMeet-server anropades.
+
+## Nytillkomna prov i version 0.5
+
+- Nödåtertagning under fri och belagd väg, avbrott, omstart och misslyckad lagring; inga skyddande lås tvångsraderas.
+- AIS återställs först när nödåtertagningens lås är borta och alla signaler har nya stoppbesked.
+- Beständigt lokal-/fjärrläge kontrolleras både i kärnan och genom HTTP; lägesbyte nekas med hållna lås.
+- Äldre manöverformat migreras utan att AIS eller spårspärrar tappas.
+- UI: fjärrläge spärrar lokal tågväg, nödmanöver förblir tillgänglig, byte nekas under tågväg, nödåtertagning behåller AIS efter frigivning.
+
+Ett tidigt helhetstest försökte återställa AIS direkt efter frigiven väg, före stoppkvittens från övriga signaler. Kärnan nekade detta korrekt. Testet väntar nu på det fullständiga villkoret och knappen använder samma serverberäknade villkor.

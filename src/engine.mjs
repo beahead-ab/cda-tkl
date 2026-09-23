@@ -15,8 +15,11 @@ export class Engine extends EventEmitter {
     const saved = storage?.load('routes.json', { fingerprint: this.fingerprint, routes: [] });
     if (saved?.routes.length && saved.fingerprint !== this.fingerprint) throw Error('Profilen har ändrats medan lås finns kvar. Återställ profilen före start.');
     this.routes = (saved?.routes || []).map(r => ({ ...r, state: 'held', cancelRequested: false, reason: 'Återställd efter omstart. Kontrollera återrapporter och återta vägen.', nextSignal: -1 }));
-    this.controls = storage?.load('controls.json', { version:1, stopAll:false, blocked:[] }) || { version:1, stopAll:false, blocked:[] };
-    if (this.controls.version !== 1 || typeof this.controls.stopAll !== 'boolean' || !Array.isArray(this.controls.blocked) || this.controls.blocked.some(n => !profile.blocks[n])) throw Error('Sparade manöverspärrar stämmer inte med profilen. Kontrollera före start.');
+    const controls=storage?.load('controls.json', {version:2,stopAll:false,blocked:[],mode:'local',emergency:null}) || {version:2,stopAll:false,blocked:[],mode:'local',emergency:null};
+    if (![1,2].includes(controls.version) || typeof controls.stopAll !== 'boolean' || !Array.isArray(controls.blocked) || controls.blocked.some(n => !profile.blocks[n])) throw Error('Sparade manöverspärrar stämmer inte med profilen. Kontrollera före start.');
+    this.controls=controls.version===1?{...controls,version:2,mode:'local',emergency:null}:controls;
+    const emergency=this.controls.emergency;
+    if(!['local','remote'].includes(this.controls.mode) || (emergency!==null && (!emergency || !Number.isFinite(emergency.requestedAt) || !Array.isArray(emergency.routeIds) || emergency.routeIds.some(id=>typeof id!=='string') || (emergency.completedAt!==null&&!Number.isFinite(emergency.completedAt))))) throw Error('Sparat manöverläge eller nödåtertagning är ogiltig. Kontrollera före start.');
     this.log('startup', this.routes.length ? `${this.routes.length} tågvägslås återställda; inget körmedgivande återupptas.` : 'TKL startad. Väntar på återrapporter.');
   }
   log(kind, message, details) {
@@ -85,7 +88,7 @@ export class Engine extends EventEmitter {
     this.tick(); this.emit('change');
   }
   permission(name, desired) {
-    if (desired === 'GO' && (!this.connected || this.storageFault || this.controls.stopAll)) throw Error('Körmedgivande spärrat.');
+    if (desired === 'GO' && (!this.connected || this.storageFault || this.controls.stopAll || this.controls.mode!=='local')) throw Error('Körmedgivande spärrat.');
     const s = this.signals[name]; s.desired = desired; s.commandAt = this.now(); s.commandSequence=this.reportSequence;
     if (this.connected) this.send(switchOrder(this.profile.signals[name].address, desired === 'GO' ? 'C' : 'T'));
     this.log('permission', `Signal ${name}: begär ${desired === 'GO' ? 'körmedgivande' : 'stopp'}.`);
@@ -101,6 +104,7 @@ export class Engine extends EventEmitter {
     const existing = this.routes.find(r => r.from === from && r.to === to);
     if (existing) return this.cancel(existing.id);
     if (!this.connected || this.storageFault) throw Error(this.storageFault ? 'Lagringsfel; manövrering spärrad.' : 'Ingen LocoNet-anslutning.');
+    if(this.controls.mode!=='local') throw Error('Fjärrläge: lokal tågvägsläggning är spärrad. Inget fjärrsystem är anslutet ännu.');
     if (this.controls.stopAll) throw Error('Alla signaler i stopp är aktiverat. Återställ AIS före ny tågväg.');
     if(this.policy) {const decision=this.policy.inspect(from,to); if(!decision.allowed) throw Error(decision.reason);}
     const def = this.profile.routes.find(r => r.from === from && r.to === to);
@@ -146,6 +150,7 @@ export class Engine extends EventEmitter {
     if(!this.profile.turnouts[name]) return refuse('Okänd växel.');
     const names=this.profile.coupled?.[name]||[name];
     if(!this.connected||this.storageFault||this.controls.stopAll) return refuse('Manövrering spärrad: anslutning, lagring eller AIS.');
+    if(this.controls.mode!=='local') return refuse('Fjärrläge: lokal växelmanöver är spärrad.');
     if(this.routes.some(r=>names.some(n=>r.turnouts[n]))) return refuse(`${name} är låst av tågväg — manöver vägras.`);
     const policy=this.profile.manualPolicies?.byTurnout[name];
     if(this.profile.manualPolicies) {
@@ -176,6 +181,7 @@ export class Engine extends EventEmitter {
   blockTrack(name, blocked) {
     if (!this.profile.blocks[name] || typeof blocked !== 'boolean') throw Error('Okänd spårledning eller spärrmanöver.');
     if (this.storageFault) throw Error('Lagringsfel; manövrering spärrad.');
+    if(!blocked && this.controls.mode!=='local') throw Error('Återgå till lokal manövrering innan en spårspärr tas bort.');
     const address = this.profile.blocks[name].address;
     this.controls.blocked = this.controls.blocked.filter(n => this.profile.blocks[n].address !== address);
     if (blocked) this.controls.blocked.push(name);
@@ -186,7 +192,7 @@ export class Engine extends EventEmitter {
   allStop(enabled) {
     if (typeof enabled !== 'boolean') throw Error('Ogiltig AIS-manöver.');
     if (!enabled) {
-      if (this.storageFault || !this.connected || Object.values(this.signals).some(s => !this.fresh(s) || s.aspect !== 'stop' || s.reportSequence <= (s.commandSequence ?? -1))) throw Error('Alla signaler måste återrapportera stopp innan AIS kan återställas.');
+      const condition=this.allStopResetStatus();if(!condition.allowed) throw Error(condition.reason);
       this.controls.stopAll = false; this.persistControls();
       this.log('all-stop', 'AIS återställd. Tidigare tågvägar behåller sina lås och återupptas inte.'); return;
     }
@@ -196,6 +202,46 @@ export class Engine extends EventEmitter {
       for (const route of this.routes) this.hold(route, 'Alla signaler i stopp begärt av operatören.');
     } finally { for (const name of Object.keys(this.signals)) this.permission(name, 'STOP'); }
     this.log('all-stop', 'Alla signaler i stopp begärt. Tågvägslås behålls.');
+  }
+  allStopResetStatus() {
+    if(this.emergencyRemaining().length) return {allowed:false,reason:'Nödåtertagning pågår. Kvarvarande tågvägslås måste frigivas innan AIS återställs.'};
+    if(this.storageFault||!this.connected||Object.values(this.signals).some(s=>!this.fresh(s)||s.aspect!=='stop'||s.desired!=='STOP'||s.reportSequence<=(s.commandSequence??-1))) return {allowed:false,reason:'Alla signaler måste återrapportera stopp innan AIS kan återställas.'};
+    return {allowed:true,reason:'Alla signaler har aktuella stoppbesked. Återställning återupptar inga tågvägar.'};
+  }
+  emergencyRemaining() {
+    return this.controls.emergency ? this.routes.filter(r=>this.controls.emergency.routeIds.includes(r.id)) : [];
+  }
+  emergencyCancelAll() {
+    const now=this.now(), routeIds=this.routes.map(r=>r.id);
+    this.controls.stopAll=true;
+    this.controls.emergency={requestedAt:now,routeIds,completedAt:routeIds.length?null:now};
+    try {
+      this.persistControls();
+      // Reserve the complete cancellation intent durably before STOP orders.
+      for(const route of this.routes) {
+        route.cancelRequested=true;route.cancelAt=now;route.cancelSequence=this.reportSequence;
+        route.state='cancelling';route.nextSignal=-1;
+        route.reason='Nödåtertagning begärd. Lås kvar tills spåren är fria och stopp har återrapporterats.';
+      }
+      this.persist();
+    } finally { for(const name of Object.keys(this.signals)) this.permission(name,'STOP'); }
+    this.log('emergency',`Nödåtertagning begärd för ${routeIds.length} tågvägar. AIS kvarstår; inga lås tvångsfrigivs.`);
+    this.tick();
+  }
+  modeStatus() {
+    if(this.storageFault||!this.connected) return {allowed:false,reason:'Lägesbyte kräver fungerande anslutning och lagring.'};
+    if(this.routes.length) return {allowed:false,reason:'Återta alla tågvägslås före byte mellan lokal- och fjärrläge.'};
+    if(Object.values(this.signals).some(s=>!this.fresh(s)||s.aspect!=='stop'||s.desired!=='STOP'||s.reportSequence<=(s.commandSequence??-1))) return {allowed:false,reason:'Alla signaler måste ha aktuella stoppbesked före lägesbyte.'};
+    if(Object.values(this.turnouts).some(s=>!this.fresh(s)||s.position==='unknown'||(s.desired&&s.position!==s.desired))) return {allowed:false,reason:'Invänta aktuella växellägen och pågående omläggningar före lägesbyte.'};
+    return {allowed:true,reason:'Inga tågvägslås finns och anläggningen har aktuella stopp- och växelbesked.'};
+  }
+  setMode(mode) {
+    if(!['local','remote'].includes(mode)) throw Error('Okänt manöverläge.');
+    if(mode===this.controls.mode) return;
+    const condition=this.modeStatus();if(!condition.allowed) throw Error(condition.reason);
+    const previous=this.controls.mode;this.controls.mode=mode;
+    try {this.persistControls();} catch(e) {this.controls.mode=previous;throw e;}
+    this.log('control-mode',mode==='local'?'Lokal manövrering vald. Inga tidigare medgivanden återupptas.':'Fjärrläge valt. Lokal tågvägsläggning och växelmanöver spärrade. Fjärrsystem är ännu inte anslutet.');
   }
   hold(r, reason, state = 'held') {
     r.state = state; r.reason = reason; r.nextSignal = -1;
@@ -284,6 +330,10 @@ export class Engine extends EventEmitter {
       }
       if (r.state === 'active' && r.signals.some(n => !this.fresh(this.signals[n]) || this.signals[n].aspect !== 'go')) this.hold(r, 'Körbesked saknas eller har återkallats av fältutrustningen.');
     }
+    if(this.controls.emergency && this.controls.emergency.completedAt===null && !this.emergencyRemaining().length && !this.storageFault) {
+      this.controls.emergency.completedAt=now;this.persistControls();
+      this.log('emergency-complete','Nödåtertagningen är färdig. Alla berörda lås har frigivits efter återrapport. AIS kvarstår tills operatören återställer.');
+    }
     this.emit('change');
   }
   snapshot() {
@@ -291,6 +341,7 @@ export class Engine extends EventEmitter {
       profile: { id: this.profile.id, title: this.profile.title, commissioned: this.profile.commissioned, description: this.profile.description },
       turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, routes: this.routes, controls:this.controls, events: this.events,
       manual:Object.fromEntries(Object.keys(this.turnouts).map(n=>[n,this.manualStatus(n)])),
+      modeChange:this.modeStatus(),allStopReset:this.allStopResetStatus(),emergencyRemaining:this.emergencyRemaining().map(r=>r.id),
       catalog: this.profile.routes.map(r => ({ id: r.id, from: r.from, to: r.to, label: r.label })) };
   }
 }

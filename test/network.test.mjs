@@ -145,3 +145,55 @@ test('a protective signal must be stopped before local turnout movement',()=>{
   r.engine.receive(signalReport(profile.signals[n].reportAddress,8));
   assert.throws(()=>r.engine.manual('Vx100','T'),/signal.*stopp/);
 });
+
+test('emergency cancellation stops all routes but only releases individually free and acknowledged reservations',()=>{
+  const r=rig(),a=r.request('htvCu','htvSpIA'),b=r.request('htvAn','htvSpIIA');r.advance(4000);
+  r.field.setBlock('SIA',true);r.drain();
+  r.engine.emergencyCancelAll();
+  assert.equal(r.engine.controls.stopAll,true);assert.equal(r.engine.routes.length,2,'old STOP reports cannot release after the emergency request');
+  assert.ok(r.engine.routes.every(route=>route.cancelRequested));assert.throws(()=>r.engine.allStop(false),/Nödåtertagning/);
+  r.drain();r.advance(200);assert.deepEqual(r.engine.routes.map(route=>route.id),[a.id]);assert.ok(!r.engine.routes.includes(b));
+  assert.equal(r.engine.emergencyRemaining().length,1);
+  r.field.setBlock('SIA',false);r.drain();r.advance(100);
+  assert.equal(r.engine.routes.length,0);assert.ok(r.engine.controls.emergency.completedAt);assert.equal(r.engine.controls.stopAll,true);
+  r.engine.allStop(false);assert.equal(r.engine.controls.stopAll,false);
+});
+test('emergency requests survive restart without resuming or automatically releasing restored locks',()=>{
+  const saved=new Map(),storage={load:(n,f)=>saved.has(n)?structuredClone(saved.get(n)):f,save:(n,v)=>saved.set(n,structuredClone(v)),event(){}};
+  const r=rig(storage),route=r.request('htvCu','htvSpIA');r.advance(4000);
+  r.engine.emergencyCancelAll();
+  const restarted=new Engine(profile,{storage});assert.equal(restarted.controls.stopAll,true);assert.equal(restarted.controls.version,2);
+  assert.deepEqual(restarted.emergencyRemaining().map(x=>x.id),[route.id]);assert.equal(restarted.routes[0].state,'held');assert.equal(restarted.routes[0].cancelRequested,false);
+  assert.throws(()=>restarted.allStop(false),/Nödåtertagning/);
+});
+test('emergency request while disconnected retains reservations until fresh reports arrive',()=>{
+  const r=rig(),route=r.request('htvCu','htvSpIA');r.advance(4000);r.engine.connection(false);
+  r.engine.emergencyCancelAll();r.advance(1000);assert.equal(r.engine.routes.length,1);assert.equal(route.cancelRequested,true);
+  r.engine.connection(true);r.field.allReports();r.drain();r.advance(100);assert.equal(r.engine.routes.length,0);assert.equal(r.engine.controls.stopAll,true);
+});
+test('local/remote authority persists, blocks local commands and cannot change with held reservations',()=>{
+  const saved=new Map(),storage={load:(n,f)=>saved.has(n)?structuredClone(saved.get(n)):f,save:(n,v)=>saved.set(n,structuredClone(v)),event(){}};
+  const r=rig(storage),route=r.request('htvCu','htvSpIA');r.advance(4000);assert.throws(()=>r.engine.setMode('remote'),/tågvägslås/);
+  r.engine.hold(route,'Test');assert.throws(()=>r.engine.setMode('remote'),/tågvägslås/);
+  r.engine.cancel(route.id);r.drain();r.advance(100);r.engine.setMode('remote');
+  assert.equal(new Engine(profile,{storage}).controls.mode,'remote');
+  assert.throws(()=>r.request('htvAn','htvSpIIA'),/Fjärrläge/);assert.throws(()=>r.engine.manual('Vx170','T'),/Fjärrläge/);
+  r.engine.blockTrack('SIA',true);assert.throws(()=>r.engine.blockTrack('SIA',false),/lokal/);
+  r.engine.emergencyCancelAll();r.drain();r.advance(100);r.engine.allStop(false);assert.equal(r.engine.controls.mode,'remote');
+  r.engine.setMode('local');r.engine.blockTrack('SIA',false);r.request('htvAn','htvSpIIA');r.advance(4000);assert.equal(r.engine.routes[0].state,'active');
+});
+test('legacy controls migrate without dropping AIS or blocks; invalid authority fails closed',()=>{
+  const values={'controls.json':{version:1,stopAll:true,blocked:['SIA']}},storage={load:(n,f)=>structuredClone(values[n]||f),event(){}};
+  const e=new Engine(profile,{storage});assert.deepEqual(e.controls,{version:2,stopAll:true,blocked:['SIA'],mode:'local',emergency:null});
+  assert.equal(values['controls.json'].version,1,'read-only migration does not overwrite stored controls during startup');
+  values['controls.json']={...e.controls,mode:'anything'};assert.throws(()=>new Engine(profile,{storage}),/ogiltig/);
+});
+test('failed emergency persistence still sends STOP and never removes a reservation',()=>{
+  const r=rig(),route=r.request('htvCu','htvSpIA');r.advance(4000);
+  r.engine.storage={save(){throw Error('Disk full');},event(){}};
+  const before=r.commands.length;assert.throws(()=>r.engine.emergencyCancelAll(),/spara/);
+  assert.equal(r.engine.routes[0].id,route.id);assert.ok(r.engine.storageFault);assert.equal(r.engine.controls.stopAll,true);
+  assert.ok(r.commands.slice(before).length>=Object.keys(profile.signals).length);
+  assert.ok(r.commands.slice(before).every(c=>c.position==='T'),'failure sends only stop requests');
+  assert.throws(()=>r.engine.setMode('remote'),/lagring/);
+});

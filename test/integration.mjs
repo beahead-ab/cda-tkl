@@ -64,6 +64,26 @@ test('network profile runs parallel trains across separate processes and release
     await until(async () => (await get(httpPort)).routes[0]?.state === 'active');
     await post(httpPort, 'route', { from:'tvv3/6', to:'tvv3/8' });
     await until(async () => !(await get(httpPort)).routes.length);
+    await post(httpPort,'control-mode',{mode:'remote'});
+    assert.equal((await get(httpPort)).controls.mode,'remote');
+    await post(httpPort,'route',{from:'htvCu',to:'htvSpIA'},400);
+    await post(httpPort,'turnout',{name:'Vx170',position:'C'},400);
+    await post(httpPort,'emergency-cancel',{});
+    await until(async () => Object.values((await get(httpPort)).signals).every(s=>s.aspect==='stop'&&s.reportSequence>s.commandSequence));
+    await post(httpPort,'all-stop',{enabled:false});
+    await post(httpPort,'control-mode',{mode:'local'});
+    await post(httpPort,'route',{from:'htvCu',to:'htvSpIA'});
+    await until(async () => (await get(httpPort)).routes[0]?.state==='active');
+    await post(simPort,'block',{name:'SIA',occupied:true});
+    await until(async () => (await get(httpPort)).blocks.SIA.occupied===true);
+    await post(httpPort,'emergency-cancel',{});
+    assert.equal((await get(httpPort)).emergencyRemaining.length,1);
+    await post(httpPort,'all-stop',{enabled:false},400);
+    await post(simPort,'block',{name:'SIA',occupied:false});
+    await until(async () => !(await get(httpPort)).routes.length);
+    assert.equal((await get(httpPort)).controls.stopAll,true);
+    await until(async () => (await get(httpPort)).allStopReset.allowed);
+    await post(httpPort,'all-stop',{enabled:false});
   } catch (e) { e.message += '\nChild output: ' + output; throw e; }
   finally { await Promise.all(children.filter(c => c.exitCode === null).map(c => new Promise(resolve => { c.once('exit', resolve); c.kill('SIGTERM'); }))); fs.rmSync(dir, { recursive:true, force:true }); }
 });
