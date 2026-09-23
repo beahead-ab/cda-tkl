@@ -127,3 +127,10 @@ Aktiv release `f1e7eb1`. Nödåtertagning begär stopp och individuell frigivnin
 Aktiv release `d2f8fb6`. Sju inkommande fält, manuell nummerregistrering för197 block,44 källankare och atomisk flytt mellan informationsfält. Tågnummer är separat information och påverkar inte signal-/beläggnings-/låsvillkor. Läs [handhavande](taginformation.md).
 
 61 enhetstester och fyra helhetstester godkända på servern. Full XML-, operations-, källankars- och syntaxkontroll passerar. Efterkontroll: tjänster anslutna, noll lås vid bytet, nya informations-API:t kräver inloggning. Backup `/root/charlottendal-backups/network-d2f8fb6-20260923T013515Z`, tidigare release `f1e7eb1`. Den nya filen train-information.json ingår i framtida katalogbackup och ska bevaras även om kod rullas tillbaka.
+
+
+### Version 0.7 – Spår 6
+
+Aktiv release `cbf1327`. De 18 huvudtågvägarna till/från Spår 6 nås genom panelens lista med källsensor IS266. Totalt 210 huvudtågvägar och 60 växeltågvägar. Läs [Spår 6](spar6.md).
+
+62 enhetstester och fyra helhetstester passerade även på servern. Fullständig XML-, operations- och syntaxkontroll godkänd. Tjänsterna är anslutna, inga lås fanns vid profilbytet. Externa efterkontroller med normal TLS-verifiering: inloggning 200; panelens, adminens, tåginformationens och simulatorns API 401 utan session. Backup `/root/charlottendal-backups/network-cbf1327-20260923T014936Z`, tidigare release `d2f8fb6`. Samtliga driftdata och autentiseringsinställningar bevarade.

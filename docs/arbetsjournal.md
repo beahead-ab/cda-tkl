@@ -2,7 +2,7 @@
 
 ## Aktuellt 23 september 2026, natt
 
-**03:47: aktiv serverrelease är d2f8fb6 (0.6). Version 0.7 med Spår 6 är färdig och provad lokalt; kontrollerad publicering återstår. Se senaste kontrollpunkt längst ned.**
+**03:51: version 0.7, release cbf1327, är publicerad och efterkontrollerad. 210 huvudtågvägar + 60 växeltågvägar, 62 + 4 tester godkända på servern. Nästa arbete gäller 70 granskade växeltågvägskandidater.**
 
 Casper: ”jag godkänner allt! Kör på inatt hela vägen.” Hela planen i `../../granskning-2026-09-23/plan.md` (relativt denna dokumentmapp) är godkänd. Arbeta självständigt genom implementation, tester och kontrollerad publicering inom befintlig kostnadsram. Verklig MGP/TrainMeet-verifiering får inte påstås utan underlag. Inga subagenter är beställda.
 
@@ -157,3 +157,10 @@ Version 0.7 tillför de 18 källtillåtna huvudtågvägarna via htvSpVI/IS266. R
 62 enhetstester och fyra processhelhetstester godkända, inklusive passage för alla 270 vägar. Nytt Spår 6-prov kontrollerar beläggning för alla 18, konflikt utan nya order, SVI-beläggning och återtagning med lås kvar. Ett första test förväntade fel med låsord men fick korrekt tidigare avvisning på motriktat körbesked; förväntningen rättades, förreglingen ändrades inte. UI: Spår 6 → Spår 11 KLAR och återtagen med samma listval; noll provlås. Reproducerbar import och syntax godkända. README uppdaterad från den äldre fyrvägsprofilen till aktuell funktion.
 
 Nästa steg är kontrollerad publicering med test på server, backup och efterkontroll. Läs docs/spar6.md och docs/dolda-tagvagar-forstudie.md. Fysisk MGP, svenska signalbesked och TrainMeet återstår. Ingen rangeröverlämning eller gissad växlingsgräns aktiverad.
+
+
+### Kontrollpunkt 03:51 – version 0.7 publicerad
+
+Release `cbf1327`, backup `/root/charlottendal-backups/network-cbf1327-20260923T014936Z`, tidigare `d2f8fb6`. Alla 62 + 4 tester passerade på servern; fullständigt källunderlag verifierat. Tjänsterna anslutna, noll lås vid bytet; externa HTTPS-kontroller godkända. Ingen ändring av autentisering eller förlust av sparade uppgifter.
+
+Nästa steg: 70 undantagna växeltågvägar med entydiga riktade start-/målgränser har granskats statiskt. Samtliga har två tvv-knappvillkor och exakt ett matchande NX-par. De kräver 30 ytterligare listkontroller (källsensorer IS finns), utan nya kartkoordinater. Explicit lista i work/usecase-review/shunt-catalog-review.json i arbetsytan. Återstående 15 växelpar har saknad start-/målgräns eller skyddsfel och ska förbli undantagna; motsägande regeln 0019C162 förblir spärrad. Ny funktion ska provas innan publicering och inte påstå identiskt beteende från saknade HandleRangering.py eller aktivera rangeröverlämning.
