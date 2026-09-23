@@ -253,6 +253,34 @@
       ]
     },
     {
+      "id": "htvAu--htvSpVI",
+      "kind": "main",
+      "from": "htvAu",
+      "to": "htvSpVI",
+      "label": "Au → Spår 6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C31"
+        ],
+        "nxButtons": [
+          "tvs1/1",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "1/1",
+        "1/5",
+        "3/5",
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:a70398d9-449e-40d0-aad2-fed824eae1f2",
+        "IN:8ebd3482-4061-423c-8b43-ad01fd3b1add",
+        "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
+      ]
+    },
+    {
       "id": "htvAu--htvSpIC",
       "kind": "main",
       "from": "htvAu",
@@ -592,6 +620,34 @@
         "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
         "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
         "IN:8b500613-a031-465d-a3b7-de0b654f22a0"
+      ]
+    },
+    {
+      "id": "htvAn--htvSpVI",
+      "kind": "main",
+      "from": "htvAn",
+      "to": "htvSpVI",
+      "label": "An → Spår 6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C49"
+        ],
+        "nxButtons": [
+          "tvs2/1",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "2/1",
+        "2/5",
+        "3/5",
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:acc972f4-0307-4563-a7fe-8f89ba1b3430",
+        "IN:533504cb-b0e9-45ec-a8b8-3bbc68953533",
+        "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
       ]
     },
     {
@@ -961,6 +1017,34 @@
       ]
     },
     {
+      "id": "htvCu--htvSpVI",
+      "kind": "main",
+      "from": "htvCu",
+      "to": "htvSpVI",
+      "label": "Cu → Spår 6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C67"
+        ],
+        "nxButtons": [
+          "tvs1/3",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "1/3",
+        "1/5",
+        "4/5",
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:fb4ade76-3447-49f6-b101-3c7a639adfb9",
+        "IN:c94fa9cb-863d-473f-a699-13c9e44cf9fe",
+        "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450",
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
+      ]
+    },
+    {
       "id": "htvCu--htvSpIC",
       "kind": "main",
       "from": "htvCu",
@@ -1300,6 +1384,34 @@
         "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
         "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
         "IN:6af610f4-2e48-4b05-b33b-c327971b047d"
+      ]
+    },
+    {
+      "id": "htvCn--htvSpVI",
+      "kind": "main",
+      "from": "htvCn",
+      "to": "htvSpVI",
+      "label": "Cn → Spår 6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C85"
+        ],
+        "nxButtons": [
+          "tvs2/3",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "2/3",
+        "2/5",
+        "4/5",
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:2c8db810-5b61-45bf-9170-da390e70bf26",
+        "IN:0ed73b3e-35e5-43f7-8c19-f9eb86e71e3c",
+        "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450",
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
       ]
     },
     {
@@ -1686,6 +1798,34 @@
         "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
         "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
         "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf"
+      ]
+    },
+    {
+      "id": "htvBu--htvSpVI",
+      "kind": "main",
+      "from": "htvBu",
+      "to": "htvSpVI",
+      "label": "Bu → Spår 6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C103"
+        ],
+        "nxButtons": [
+          "tvs1/2",
+          "tvs6/8"
+        ]
+      },
+      "signals": [
+        "1/2",
+        "1/4",
+        "3/6",
+        "6/6"
+      ],
+      "nxIds": [
+        "IN:f05f2b56-4c03-42ff-bc1b-9e7e29608e79",
+        "IN:6e4f8eaf-ae36-47fd-93c2-f26b6df1dcf7",
+        "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b",
+        "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973"
       ]
     },
     {
@@ -2156,6 +2296,34 @@
         "IN:7c752f05-9cf3-4234-a372-b59b46328820",
         "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
         "IN:97115fc4-90e0-4bb1-8571-e5e9b5a927cf"
+      ]
+    },
+    {
+      "id": "htvBn--htvSpVI",
+      "kind": "main",
+      "from": "htvBn",
+      "to": "htvSpVI",
+      "label": "Bn → Spår 6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C121"
+        ],
+        "nxButtons": [
+          "tvs2/2",
+          "tvs6/8"
+        ]
+      },
+      "signals": [
+        "2/2",
+        "2/4",
+        "3/6",
+        "6/6"
+      ],
+      "nxIds": [
+        "IN:7c752f05-9cf3-4234-a372-b59b46328820",
+        "IN:ea56af37-dad8-4c2d-9891-23783b74f325",
+        "IN:ac505f13-77bf-4ad4-b7d8-3510d036701b",
+        "IN:ae4dcfd1-31eb-4a2b-ae55-c156aa18c973"
       ]
     },
     {
@@ -2835,6 +3003,30 @@
       ]
     },
     {
+      "id": "htvSpIIIA--htvSpVI",
+      "kind": "main",
+      "from": "htvSpIIIA",
+      "to": "htvSpVI",
+      "label": "Spår 11 → Spår 6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C176"
+        ],
+        "nxButtons": [
+          "tvs3/5",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "3/5",
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:ef097bcf-7770-4019-a1d7-60731f8b254a",
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
+      ]
+    },
+    {
       "id": "htvSpIIIA--htvAn",
       "kind": "main",
       "from": "htvSpIIIA",
@@ -3005,6 +3197,30 @@
       ]
     },
     {
+      "id": "htvSpIVA--htvSpVI",
+      "kind": "main",
+      "from": "htvSpIVA",
+      "to": "htvSpVI",
+      "label": "Spår 12 → Spår 6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C195"
+        ],
+        "nxButtons": [
+          "tvs4/5",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "4/5",
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:c789a119-83a8-49f6-99e0-ddf1b8a0c450",
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
+      ]
+    },
+    {
       "id": "htvSpIVA--htvAn",
       "kind": "main",
       "from": "htvSpIVA",
@@ -3172,6 +3388,30 @@
       ],
       "nxIds": [
         "IN:1a77e99e-db90-453b-aa4e-85b71071b2db"
+      ]
+    },
+    {
+      "id": "htvSpVA--htvSpVI",
+      "kind": "main",
+      "from": "htvSpVA",
+      "to": "htvSpVI",
+      "label": "Spår 13 → Spår 6",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C214"
+        ],
+        "nxButtons": [
+          "tvs5/5",
+          "tvs6/9"
+        ]
+      },
+      "signals": [
+        "5/5",
+        "6/7"
+      ],
+      "nxIds": [
+        "IN:d3a73449-9685-4aac-ae15-3d7b7e6cbee5",
+        "IN:447e1f19-0c48-4f93-9702-46f8b1b59c3d"
       ]
     },
     {
@@ -4342,6 +4582,224 @@
       ],
       "nxIds": [
         "IN:0793ab5d-0ae4-44e1-9d20-d8cd3b66af97",
+        "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+        "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
+      ]
+    },
+    {
+      "id": "htvSpVI--htvSpIIIA",
+      "kind": "main",
+      "from": "htvSpVI",
+      "to": "htvSpIIIA",
+      "label": "Spår 6 → Spår 11",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C321"
+        ],
+        "nxButtons": [
+          "tvs6/8",
+          "tvs3/10"
+        ]
+      },
+      "signals": [
+        "6/8"
+      ],
+      "nxIds": [
+        "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654"
+      ]
+    },
+    {
+      "id": "htvSpVI--htvSpIVA",
+      "kind": "main",
+      "from": "htvSpVI",
+      "to": "htvSpIVA",
+      "label": "Spår 6 → Spår 12",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C322"
+        ],
+        "nxButtons": [
+          "tvs6/8",
+          "tvs4/10"
+        ]
+      },
+      "signals": [
+        "6/8"
+      ],
+      "nxIds": [
+        "IN:9af8d60e-52c9-4694-b1d6-1cb7d1a25b2b"
+      ]
+    },
+    {
+      "id": "htvSpVI--htvSpVA",
+      "kind": "main",
+      "from": "htvSpVI",
+      "to": "htvSpVA",
+      "label": "Spår 6 → Spår 13",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C323"
+        ],
+        "nxButtons": [
+          "tvs6/8",
+          "tvs5/10"
+        ]
+      },
+      "signals": [
+        "6/8"
+      ],
+      "nxIds": [
+        "IN:68af5f58-3f09-460e-95fc-d88791f18a73"
+      ]
+    },
+    {
+      "id": "htvSpVI--htvAn",
+      "kind": "main",
+      "from": "htvSpVI",
+      "to": "htvAn",
+      "label": "Spår 6 → An",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C332"
+        ],
+        "nxButtons": [
+          "tvs6/8",
+          "tvsN2"
+        ]
+      },
+      "signals": [
+        "6/8",
+        "3/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654",
+        "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+        "IN:4eabd950-d9ce-414a-a5bd-cb8177149880"
+      ]
+    },
+    {
+      "id": "htvSpVI--htvAu",
+      "kind": "main",
+      "from": "htvSpVI",
+      "to": "htvAu",
+      "label": "Spår 6 → Au",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C333"
+        ],
+        "nxButtons": [
+          "tvs6/8",
+          "tvsU2"
+        ]
+      },
+      "signals": [
+        "6/8",
+        "3/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654",
+        "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
+        "IN:d3d2bf5f-932b-4656-bdb1-3a7e0dc6d452"
+      ]
+    },
+    {
+      "id": "htvSpVI--htvBn",
+      "kind": "main",
+      "from": "htvSpVI",
+      "to": "htvBn",
+      "label": "Spår 6 → Bn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C334"
+        ],
+        "nxButtons": [
+          "tvs6/9",
+          "tvsN1"
+        ]
+      },
+      "signals": [
+        "6/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:ae76e106-8150-4ea1-a430-678127a4c5e0",
+        "IN:04e4337d-e4ec-4c7a-957e-d5fec082d167"
+      ]
+    },
+    {
+      "id": "htvSpVI--htvBu",
+      "kind": "main",
+      "from": "htvSpVI",
+      "to": "htvBu",
+      "label": "Spår 6 → Bu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C335"
+        ],
+        "nxButtons": [
+          "tvs6/9",
+          "tvsU1"
+        ]
+      },
+      "signals": [
+        "6/9",
+        "3/11"
+      ],
+      "nxIds": [
+        "IN:ae76e106-8150-4ea1-a430-678127a4c5e0",
+        "IN:b4d7b7fd-bda4-4650-82ec-c55ea564a455"
+      ]
+    },
+    {
+      "id": "htvSpVI--htvCn",
+      "kind": "main",
+      "from": "htvSpVI",
+      "to": "htvCn",
+      "label": "Spår 6 → Cn",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C336"
+        ],
+        "nxButtons": [
+          "tvs6/8",
+          "tvsN4"
+        ]
+      },
+      "signals": [
+        "6/8",
+        "3/10",
+        "2/12"
+      ],
+      "nxIds": [
+        "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654",
+        "IN:72191ed1-b72d-4ae0-b9d8-f75c36539b10",
+        "IN:9e4f1c1c-e4a3-49ea-b9f5-0f183be2556f"
+      ]
+    },
+    {
+      "id": "htvSpVI--htvCu",
+      "kind": "main",
+      "from": "htvSpVI",
+      "to": "htvCu",
+      "label": "Spår 6 → Cu",
+      "source": {
+        "rules": [
+          "IX:AUTO:0013C337"
+        ],
+        "nxButtons": [
+          "tvs6/8",
+          "tvsU4"
+        ]
+      },
+      "signals": [
+        "6/8",
+        "3/10",
+        "1/12"
+      ],
+      "nxIds": [
+        "IN:8abf0b18-94ad-47b3-9c58-f48f68da4654",
         "IN:77561b23-7836-48d7-b3e8-54d33c423de2",
         "IN:01272e56-6bd4-494e-8cf1-2aaacc5337d1"
       ]
@@ -6249,222 +6707,6 @@
   ],
   "excluded": [
     {
-      "from": "htvAu",
-      "to": "htvSpVI",
-      "rules": [
-        "IX:AUTO:0013C31"
-      ],
-      "nxButtons": [
-        "tvs1/1",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvAn",
-      "to": "htvSpVI",
-      "rules": [
-        "IX:AUTO:0013C49"
-      ],
-      "nxButtons": [
-        "tvs2/1",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvCu",
-      "to": "htvSpVI",
-      "rules": [
-        "IX:AUTO:0013C67"
-      ],
-      "nxButtons": [
-        "tvs1/3",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvCn",
-      "to": "htvSpVI",
-      "rules": [
-        "IX:AUTO:0013C85"
-      ],
-      "nxButtons": [
-        "tvs2/3",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvBu",
-      "to": "htvSpVI",
-      "rules": [
-        "IX:AUTO:0013C103"
-      ],
-      "nxButtons": [
-        "tvs1/2",
-        "tvs6/8"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvBn",
-      "to": "htvSpVI",
-      "rules": [
-        "IX:AUTO:0013C121"
-      ],
-      "nxButtons": [
-        "tvs2/2",
-        "tvs6/8"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpIIIA",
-      "to": "htvSpVI",
-      "rules": [
-        "IX:AUTO:0013C176"
-      ],
-      "nxButtons": [
-        "tvs3/5",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpIVA",
-      "to": "htvSpVI",
-      "rules": [
-        "IX:AUTO:0013C195"
-      ],
-      "nxButtons": [
-        "tvs4/5",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpVA",
-      "to": "htvSpVI",
-      "rules": [
-        "IX:AUTO:0013C214"
-      ],
-      "nxButtons": [
-        "tvs5/5",
-        "tvs6/9"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpVI",
-      "to": "htvSpIIIA",
-      "rules": [
-        "IX:AUTO:0013C321"
-      ],
-      "nxButtons": [
-        "tvs6/8",
-        "tvs3/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpVI",
-      "to": "htvSpIVA",
-      "rules": [
-        "IX:AUTO:0013C322"
-      ],
-      "nxButtons": [
-        "tvs6/8",
-        "tvs4/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpVI",
-      "to": "htvSpVA",
-      "rules": [
-        "IX:AUTO:0013C323"
-      ],
-      "nxButtons": [
-        "tvs6/8",
-        "tvs5/10"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpVI",
-      "to": "htvAn",
-      "rules": [
-        "IX:AUTO:0013C332"
-      ],
-      "nxButtons": [
-        "tvs6/8",
-        "tvsN2"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpVI",
-      "to": "htvAu",
-      "rules": [
-        "IX:AUTO:0013C333"
-      ],
-      "nxButtons": [
-        "tvs6/8",
-        "tvsU2"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpVI",
-      "to": "htvBn",
-      "rules": [
-        "IX:AUTO:0013C334"
-      ],
-      "nxButtons": [
-        "tvs6/9",
-        "tvsN1"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpVI",
-      "to": "htvBu",
-      "rules": [
-        "IX:AUTO:0013C335"
-      ],
-      "nxButtons": [
-        "tvs6/9",
-        "tvsU1"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpVI",
-      "to": "htvCn",
-      "rules": [
-        "IX:AUTO:0013C336"
-      ],
-      "nxButtons": [
-        "tvs6/8",
-        "tvsN4"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
-      "from": "htvSpVI",
-      "to": "htvCu",
-      "rules": [
-        "IX:AUTO:0013C337"
-      ],
-      "nxButtons": [
-        "tvs6/8",
-        "tvsU4"
-      ],
-      "reason": "Knappen är dold eller saknas i operatörspanelen."
-    },
-    {
       "from": "tvvkolgardut",
       "to": "tvvLastSp3in",
       "rules": [
@@ -7502,6 +7744,7 @@
         "htvAu--htvSpIIIB",
         "htvAu--htvSpIVB",
         "htvAu--htvSpVB",
+        "htvAu--htvSpVI",
         "htvAu--htvSpIC",
         "htvAu--htvSpIIC",
         "htvAu--htvBu",
@@ -7593,6 +7836,7 @@
         "htvBu--htvSpIIIB",
         "htvBu--htvSpIVB",
         "htvBu--htvSpVB",
+        "htvBu--htvSpVI",
         "htvBu--htvSpIC",
         "htvBu--htvSpIIC",
         "htvBu--htvSpX",
@@ -7756,6 +8000,7 @@
         "htvAn--htvSpIIIB",
         "htvAn--htvSpIVB",
         "htvAn--htvSpVB",
+        "htvAn--htvSpVI",
         "htvAn--htvSpIC",
         "htvAn--htvSpIIC",
         "htvAn--htvBu",
@@ -8046,6 +8291,7 @@
         "htvBn--htvSpIIIB",
         "htvBn--htvSpIVB",
         "htvBn--htvSpVB",
+        "htvBn--htvSpVI",
         "htvBn--htvSpIC",
         "htvBn--htvSpIIC",
         "htvBn--htvSpX",
@@ -8080,7 +8326,9 @@
         "htvSpIIIA--htvAu",
         "htvSpIIIA--htvCu",
         "htvSpVB--htvAu",
-        "htvSpVB--htvCu"
+        "htvSpVB--htvCu",
+        "htvSpVI--htvAu",
+        "htvSpVI--htvCu"
       ],
       "sourceRules": []
     },
@@ -8093,7 +8341,9 @@
         "htvSpIIIA--htvAn",
         "htvSpIIIA--htvCn",
         "htvSpVB--htvAn",
-        "htvSpVB--htvCn"
+        "htvSpVB--htvCn",
+        "htvSpVI--htvAn",
+        "htvSpVI--htvCn"
       ],
       "sourceRules": []
     },
@@ -8130,6 +8380,9 @@
       "toSensor": "tvs6/7",
       "type": "fullinterlocking",
       "routes": [
+        "htvAu--htvSpVI",
+        "htvAn--htvSpVI",
+        "htvSpIIIA--htvSpVI",
         "tvv3/5--tvv6/7"
       ],
       "sourceRules": [
@@ -8273,6 +8526,9 @@
       "toSensor": "tvs6/7",
       "type": "fullinterlocking",
       "routes": [
+        "htvCu--htvSpVI",
+        "htvCn--htvSpVI",
+        "htvSpIVA--htvSpVI",
         "tvv4/5--tvv6/7"
       ],
       "sourceRules": [
@@ -8378,6 +8634,7 @@
       "toSensor": "tvs6/7",
       "type": "fullinterlocking",
       "routes": [
+        "htvSpVA--htvSpVI",
         "tvv5/5--tvv6/7"
       ],
       "sourceRules": [
@@ -8577,6 +8834,11 @@
       "toSensor": "tvs3/10",
       "type": "fullinterlocking",
       "routes": [
+        "htvSpVI--htvSpIIIA",
+        "htvSpVI--htvAn",
+        "htvSpVI--htvAu",
+        "htvSpVI--htvCn",
+        "htvSpVI--htvCu",
         "tvv6/6--tvv3/10"
       ],
       "sourceRules": [
@@ -8589,6 +8851,7 @@
       "toSensor": "tvs4/10",
       "type": "fullinterlocking",
       "routes": [
+        "htvSpVI--htvSpIVA",
         "tvv6/6--tvv4/10"
       ],
       "sourceRules": [
@@ -8601,6 +8864,7 @@
       "toSensor": "tvs5/10",
       "type": "fullinterlocking",
       "routes": [
+        "htvSpVI--htvSpVA",
         "tvv6/6--tvv5/10"
       ],
       "sourceRules": [
@@ -8613,6 +8877,8 @@
       "toSensor": "tvs3/11",
       "type": "fullinterlocking",
       "routes": [
+        "htvSpVI--htvBn",
+        "htvSpVI--htvBu",
         "tvv6/7--tvvN1"
       ],
       "sourceRules": [
@@ -8669,6 +8935,7 @@
       "routes": [
         "htvAu--htvSpIIIA",
         "htvAu--htvSpVB",
+        "htvAu--htvSpVI",
         "htvCu--htvSpIIIA"
       ],
       "sourceRules": [
@@ -8683,7 +8950,8 @@
       "routes": [
         "htvAu--htvSpIVA",
         "htvCu--htvSpIVA",
-        "htvCu--htvSpVB"
+        "htvCu--htvSpVB",
+        "htvCu--htvSpVI"
       ],
       "sourceRules": [
         "IX:AUTO:0019C115"
@@ -8739,6 +9007,7 @@
       "routes": [
         "htvAn--htvSpIIIA",
         "htvAn--htvSpVB",
+        "htvAn--htvSpVI",
         "htvCn--htvSpIIIA"
       ],
       "sourceRules": [
@@ -8753,7 +9022,8 @@
       "routes": [
         "htvAn--htvSpIVA",
         "htvCn--htvSpIVA",
-        "htvCn--htvSpVB"
+        "htvCn--htvSpVB",
+        "htvCn--htvSpVI"
       ],
       "sourceRules": [
         "IX:AUTO:0019C16"
@@ -8871,6 +9141,7 @@
         "htvBu--htvSpIIIB",
         "htvBu--htvSpIVB",
         "htvBu--htvSpVB",
+        "htvBu--htvSpVI",
         "tvv1/4--tvv3/8",
         "tvv1/4--tvv4/8",
         "tvv1/4--tvv5/8",
@@ -8980,6 +9251,7 @@
         "htvBn--htvSpIIIB",
         "htvBn--htvSpIVB",
         "htvBn--htvSpVB",
+        "htvBn--htvSpVI",
         "tvv2/4--tvv3/6",
         "tvv2/4--tvv3/8",
         "tvv2/4--tvv4/8",
@@ -9299,6 +9571,8 @@
       "toSensor": "tvs6/8",
       "type": "fullinterlocking",
       "routes": [
+        "htvBu--htvSpVI",
+        "htvBn--htvSpVI",
         "tvv6/6--tvv3/10",
         "tvv6/6--tvv4/10",
         "tvv6/6--tvv5/10"
@@ -9373,6 +9647,13 @@
       "toSensor": "tvs6/9",
       "type": "fullinterlocking",
       "routes": [
+        "htvAu--htvSpVI",
+        "htvAn--htvSpVI",
+        "htvCu--htvSpVI",
+        "htvCn--htvSpVI",
+        "htvSpIIIA--htvSpVI",
+        "htvSpIVA--htvSpVI",
+        "htvSpVA--htvSpVI",
         "tvv6/7--tvvN1"
       ],
       "sourceRules": [
@@ -9486,6 +9767,8 @@
       "toSensor": "tvs6/6",
       "type": "fullinterlocking",
       "routes": [
+        "htvBu--htvSpVI",
+        "htvBn--htvSpVI",
         "tvv3/6--tvv6/6",
         "tvv3/2--tvv6/6"
       ],
@@ -9505,6 +9788,7 @@
         "htvSpIIIB--htvBu",
         "htvSpIVB--htvBu",
         "htvSpVB--htvBu",
+        "htvSpVI--htvBu",
         "tvv3/11--tvvU1"
       ],
       "sourceRules": [
@@ -9535,6 +9819,7 @@
         "htvSpIIIB--htvBn",
         "htvSpIVB--htvBn",
         "htvSpVB--htvBn",
+        "htvSpVI--htvBn",
         "tvv3/11--tvvN1",
         "tvv6/7--tvvN1"
       ],
@@ -9568,6 +9853,7 @@
         "htvCu--htvSpIIIB",
         "htvCu--htvSpIVB",
         "htvCu--htvSpVB",
+        "htvCu--htvSpVI",
         "htvCu--htvSpIC",
         "htvCu--htvSpIIC",
         "htvCu--htvBu",
@@ -9592,6 +9878,7 @@
         "htvCn--htvSpIIIB",
         "htvCn--htvSpIVB",
         "htvCn--htvSpVB",
+        "htvCn--htvSpVI",
         "htvCn--htvSpIC",
         "htvCn--htvSpIIC",
         "htvCn--htvBu",
@@ -9627,6 +9914,7 @@
         "htvSpIIIB--htvAu",
         "htvSpIVB--htvAu",
         "htvSpVB--htvAu",
+        "htvSpVI--htvAu",
         "htvSpIC--htvAu",
         "htvSpIIC--htvAu"
       ],
@@ -9652,6 +9940,7 @@
         "htvSpIIIB--htvCu",
         "htvSpIVB--htvCu",
         "htvSpVB--htvCu",
+        "htvSpVI--htvCu",
         "htvSpIC--htvCu",
         "htvSpIIC--htvCu"
       ],
@@ -9676,6 +9965,7 @@
         "htvSpIIIB--htvAn",
         "htvSpIVB--htvAn",
         "htvSpVB--htvAn",
+        "htvSpVI--htvAn",
         "htvSpIC--htvAn",
         "htvSpIIC--htvAn"
       ],
@@ -9700,6 +9990,7 @@
         "htvSpIIIB--htvCn",
         "htvSpIVB--htvCn",
         "htvSpVB--htvCn",
+        "htvSpVI--htvCn",
         "htvSpIC--htvCn",
         "htvSpIIC--htvCn"
       ],

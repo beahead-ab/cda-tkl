@@ -13,7 +13,7 @@ const notes={
   '0010':['pending','Särskilda Sh3-regler är importerade; full svensk beskedsmappning återstår.'],
   '0011':['pending','Utfartssignalernas särskilda villkor återstår.'],
   '0012':['pending','V1–V4:s indikeringar återstår; fysiska bomkommandon är inte fastställda.'],
-  '0013':['partial','192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval.'],
+  '0013':['partial','210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval.'],
   '0014':['partial','Manöverfel visas med orsak och journal. Den äldre Fel-sensorn körs inte.'],
   '0015':['external','MQTT-proxyobjekt bevarade. Broker, ämnen och anslutningsuppgifter saknas.'],
   '0016':['partial','Nödåtertagning begär stopp och återtagning av alla befintliga vägar. AIS kvarstår till manuell återställning. Källans minne Tågmöte saknar ännu driftfunktion.'],

@@ -2,7 +2,7 @@
 
 ## Aktuellt 23 september 2026, natt
 
-**01:19: aktiv serverversion är `a88c3a8` (version 0.3), publicerad och efterkontrollerad. 192 huvudtågvägar  + 60 växeltågvägar, AIS, spårspärrar, adminstatus. 37 + 4 tester passerade på servern. Fortsätt nästa ofärdiga utvecklingsmoment; båda publiceringarna nedan är KLARA.**
+**03:47: aktiv serverrelease är d2f8fb6 (0.6). Version 0.7 med Spår 6 är färdig och provad lokalt; kontrollerad publicering återstår. Se senaste kontrollpunkt längst ned.**
 
 Casper: ”jag godkänner allt! Kör på inatt hela vägen.” Hela planen i `../../granskning-2026-09-23/plan.md` (relativt denna dokumentmapp) är godkänd. Arbeta självständigt genom implementation, tester och kontrollerad publicering inom befintlig kostnadsram. Verklig MGP/TrainMeet-verifiering får inte påstås utan underlag. Inga subagenter är beställda.
 
@@ -148,3 +148,12 @@ Publicering med backup och efterkontroll återstår. Nästa etapp: fortsatt prö
 Release `d2f8fb6` är aktiv på cda-tkl-servern och sparad på privat GitHub. Backup `/root/charlottendal-backups/network-d2f8fb6-20260923T013515Z`, tidigare `f1e7eb1`.61 enhetstester och fyra helhetstester godkända även på servern. XML, reproducerbar import och alla44 källankare kontrollerade. Tjänster anslutna/noll lås vid bytet; externa login200 och skyddade API401, inklusive train-information. Inga befintliga driftdata eller lösenord ändrade.
 
 Ny statisk förstudie docs/dolda-tagvagar-forstudie.md:18 huvudtågvägar saknar en representation för htvSpVI/IS266 men har känt NX-val och start-/målgräns.70 av85 undantagna växelvägar har också identifierad start-/målgräns; resterande15 kräver vidare utredning. Dessa är kandidater, inga nytillkomna driftprov eller aktiverade vägar. Lokal detaljrapport work/usecase-review/excluded-path-audit.json i arbetsytan. Nästa genomförande kan börja med de18 Spår6-vägarna och en källanknuten katalogknapp, utan gissad panelplacering eller sammanblandning med tvv6/8–6/9.
+
+
+### Kontrollpunkt 03:47 – Spår 6 färdig lokalt
+
+Version 0.7 tillför de 18 källtillåtna huvudtågvägarna via htvSpVI/IS266. Representation i listan, inga gissade koordinater eller ändrade originaldata. Varje väg använder uttryckligt käll-NX-val och rätt riktade gränser 6/8–6/9. Nu 270 vägar: 210 huvud och 60 växel. 85 växelpar återstår undantagna.
+
+62 enhetstester och fyra processhelhetstester godkända, inklusive passage för alla 270 vägar. Nytt Spår 6-prov kontrollerar beläggning för alla 18, konflikt utan nya order, SVI-beläggning och återtagning med lås kvar. Ett första test förväntade fel med låsord men fick korrekt tidigare avvisning på motriktat körbesked; förväntningen rättades, förreglingen ändrades inte. UI: Spår 6 → Spår 11 KLAR och återtagen med samma listval; noll provlås. Reproducerbar import och syntax godkända. README uppdaterad från den äldre fyrvägsprofilen till aktuell funktion.
+
+Nästa steg är kontrollerad publicering med test på server, backup och efterkontroll. Läs docs/spar6.md och docs/dolda-tagvagar-forstudie.md. Fysisk MGP, svenska signalbesked och TrainMeet återstår. Ingen rangeröverlämning eller gissad växlingsgräns aktiverad.

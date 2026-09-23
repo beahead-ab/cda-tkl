@@ -393,7 +393,7 @@
       "name": "Ställa huvudtågväg",
       "enabled": true,
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval.",
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval.",
       "rules": [
         "IX:AUTO:0013C1",
         "IX:AUTO:0013C2",
@@ -3202,102 +3202,102 @@
     "IX:AUTO:0013C1": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C2": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C3": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C4": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C5": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C6": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C7": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C8": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C9": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C10": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C11": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C12": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C13": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C14": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C15": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C16": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C17": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C18": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C19": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C20": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C21": {
       "group": "IX:AUTO:0013",
@@ -3381,9 +3381,11 @@
     },
     "IX:AUTO:0013C31": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvAu--htvSpVI"
+      ]
     },
     "IX:AUTO:0013C32": {
       "group": "IX:AUTO:0013",
@@ -3515,9 +3517,11 @@
     },
     "IX:AUTO:0013C49": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvAn--htvSpVI"
+      ]
     },
     "IX:AUTO:0013C50": {
       "group": "IX:AUTO:0013",
@@ -3651,9 +3655,11 @@
     },
     "IX:AUTO:0013C67": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvCu--htvSpVI"
+      ]
     },
     "IX:AUTO:0013C68": {
       "group": "IX:AUTO:0013",
@@ -3785,9 +3791,11 @@
     },
     "IX:AUTO:0013C85": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvCn--htvSpVI"
+      ]
     },
     "IX:AUTO:0013C86": {
       "group": "IX:AUTO:0013",
@@ -3921,9 +3929,11 @@
     },
     "IX:AUTO:0013C103": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvBu--htvSpVI"
+      ]
     },
     "IX:AUTO:0013C104": {
       "group": "IX:AUTO:0013",
@@ -4063,9 +4073,11 @@
     },
     "IX:AUTO:0013C121": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvBn--htvSpVI"
+      ]
     },
     "IX:AUTO:0013C122": {
       "group": "IX:AUTO:0013",
@@ -4447,9 +4459,11 @@
     },
     "IX:AUTO:0013C176": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpIIIA--htvSpVI"
+      ]
     },
     "IX:AUTO:0013C177": {
       "group": "IX:AUTO:0013",
@@ -4575,9 +4589,11 @@
     },
     "IX:AUTO:0013C195": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpIVA--htvSpVI"
+      ]
     },
     "IX:AUTO:0013C196": {
       "group": "IX:AUTO:0013",
@@ -4703,9 +4719,11 @@
     },
     "IX:AUTO:0013C214": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpVA--htvSpVI"
+      ]
     },
     "IX:AUTO:0013C215": {
       "group": "IX:AUTO:0013",
@@ -5441,21 +5459,27 @@
     },
     "IX:AUTO:0013C321": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpVI--htvSpIIIA"
+      ]
     },
     "IX:AUTO:0013C322": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpVI--htvSpIVA"
+      ]
     },
     "IX:AUTO:0013C323": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpVI--htvSpVA"
+      ]
     },
     "IX:AUTO:0013C324": {
       "group": "IX:AUTO:0013",
@@ -5507,39 +5531,51 @@
     },
     "IX:AUTO:0013C332": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpVI--htvAn"
+      ]
     },
     "IX:AUTO:0013C333": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpVI--htvAu"
+      ]
     },
     "IX:AUTO:0013C334": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpVI--htvBn"
+      ]
     },
     "IX:AUTO:0013C335": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpVI--htvBu"
+      ]
     },
     "IX:AUTO:0013C336": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpVI--htvCn"
+      ]
     },
     "IX:AUTO:0013C337": {
       "group": "IX:AUTO:0013",
-      "status": "excluded",
-      "behavior": "Knappen är dold eller saknas i operatörspanelen.",
-      "routes": []
+      "status": "tested",
+      "behavior": "Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.",
+      "routes": [
+        "htvSpVI--htvCu"
+      ]
     },
     "IX:AUTO:0013C338": {
       "group": "IX:AUTO:0013",
@@ -5930,122 +5966,122 @@
     "IX:AUTO:0013C415": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C416": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C417": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C418": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C419": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C420": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C421": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C422": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C423": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C424": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C425": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C426": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C427": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C428": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C429": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C430": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C431": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C432": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C433": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C434": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C435": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C436": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C437": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C438": {
       "group": "IX:AUTO:0013",
       "status": "partial",
-      "behavior": "192 granskade huvudtågvägar och spärrade knappkombinationer. 18 dolda par undantagna; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
+      "behavior": "210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval."
     },
     "IX:AUTO:0013C439": {
       "group": "IX:AUTO:0013",
@@ -7129,6 +7165,8 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvBu--htvSpVI",
+        "htvBn--htvSpVI",
         "tvv3/6--tvv6/6",
         "tvv3/2--tvv6/6"
       ]
@@ -7182,6 +7220,7 @@
         "htvBu--htvSpIIIB",
         "htvBu--htvSpIVB",
         "htvBu--htvSpVB",
+        "htvBu--htvSpVI",
         "htvBu--htvSpIC",
         "htvBu--htvSpIIC",
         "htvBu--htvSpX",
@@ -7250,6 +7289,7 @@
       "routes": [
         "htvAn--htvSpIIIA",
         "htvAn--htvSpVB",
+        "htvAn--htvSpVI",
         "htvCn--htvSpIIIA"
       ]
     },
@@ -7260,7 +7300,8 @@
       "routes": [
         "htvAn--htvSpIVA",
         "htvCn--htvSpIVA",
-        "htvCn--htvSpVB"
+        "htvCn--htvSpVB",
+        "htvCn--htvSpVI"
       ]
     },
     "IX:AUTO:0018C17": {
@@ -7286,6 +7327,7 @@
         "htvSpIIIB--htvBn",
         "htvSpIVB--htvBn",
         "htvSpVB--htvBn",
+        "htvSpVI--htvBn",
         "tvv3/11--tvvN1",
         "tvv6/7--tvvN1"
       ]
@@ -7309,6 +7351,7 @@
         "htvSpIIIB--htvBu",
         "htvSpIVB--htvBu",
         "htvSpVB--htvBu",
+        "htvSpVI--htvBu",
         "tvv3/11--tvvU1"
       ]
     },
@@ -7344,7 +7387,9 @@
         "htvSpIIIA--htvAu",
         "htvSpIIIA--htvCu",
         "htvSpVB--htvAu",
-        "htvSpVB--htvCu"
+        "htvSpVB--htvCu",
+        "htvSpVI--htvAu",
+        "htvSpVI--htvCu"
       ]
     },
     "IX:AUTO:0018C24": {
@@ -7363,7 +7408,9 @@
         "htvSpIIIA--htvAn",
         "htvSpIIIA--htvCn",
         "htvSpVB--htvAn",
-        "htvSpVB--htvCn"
+        "htvSpVB--htvCn",
+        "htvSpVI--htvAn",
+        "htvSpVI--htvCn"
       ]
     },
     "IX:AUTO:0018C28": {
@@ -7390,6 +7437,7 @@
         "htvCn--htvSpIIIB",
         "htvCn--htvSpIVB",
         "htvCn--htvSpVB",
+        "htvCn--htvSpVI",
         "htvCn--htvSpIC",
         "htvCn--htvSpIIC",
         "htvCn--htvBu",
@@ -7413,6 +7461,9 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvAu--htvSpVI",
+        "htvAn--htvSpVI",
+        "htvSpIIIA--htvSpVI",
         "tvv3/5--tvv6/7"
       ]
     },
@@ -7446,6 +7497,8 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvBu--htvSpVI",
+        "htvBn--htvSpVI",
         "tvv6/6--tvv3/10",
         "tvv6/6--tvv4/10",
         "tvv6/6--tvv5/10"
@@ -7462,6 +7515,7 @@
         "htvBu--htvSpIIIB",
         "htvBu--htvSpIVB",
         "htvBu--htvSpVB",
+        "htvBu--htvSpVI",
         "tvv1/4--tvv3/8",
         "tvv1/4--tvv4/8",
         "tvv1/4--tvv5/8",
@@ -7721,6 +7775,7 @@
         "htvSpIIIB--htvAu",
         "htvSpIVB--htvAu",
         "htvSpVB--htvAu",
+        "htvSpVI--htvAu",
         "htvSpIC--htvAu",
         "htvSpIIC--htvAu"
       ]
@@ -7742,6 +7797,7 @@
         "htvSpIIIB--htvCu",
         "htvSpIVB--htvCu",
         "htvSpVB--htvCu",
+        "htvSpVI--htvCu",
         "htvSpIC--htvCu",
         "htvSpIIC--htvCu"
       ]
@@ -7762,6 +7818,7 @@
         "htvSpIIIB--htvAn",
         "htvSpIVB--htvAn",
         "htvSpVB--htvAn",
+        "htvSpVI--htvAn",
         "htvSpIC--htvAn",
         "htvSpIIC--htvAn"
       ]
@@ -7777,6 +7834,7 @@
         "htvBn--htvSpIIIB",
         "htvBn--htvSpIVB",
         "htvBn--htvSpVB",
+        "htvBn--htvSpVI",
         "tvv2/4--tvv3/6",
         "tvv2/4--tvv3/8",
         "tvv2/4--tvv4/8",
@@ -7882,6 +7940,7 @@
         "htvCu--htvSpIIIB",
         "htvCu--htvSpIVB",
         "htvCu--htvSpVB",
+        "htvCu--htvSpVI",
         "htvCu--htvSpIC",
         "htvCu--htvSpIIC",
         "htvCu--htvBu",
@@ -7912,6 +7971,7 @@
         "htvSpIIIB--htvCn",
         "htvSpIVB--htvCn",
         "htvSpVB--htvCn",
+        "htvSpVI--htvCn",
         "htvSpIC--htvCn",
         "htvSpIIC--htvCn"
       ]
@@ -7951,6 +8011,13 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvAu--htvSpVI",
+        "htvAn--htvSpVI",
+        "htvCu--htvSpVI",
+        "htvCn--htvSpVI",
+        "htvSpIIIA--htvSpVI",
+        "htvSpIVA--htvSpVI",
+        "htvSpVA--htvSpVI",
         "tvv6/7--tvvN1"
       ]
     },
@@ -8116,6 +8183,7 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvSpVI--htvSpVA",
         "tvv6/6--tvv5/10"
       ]
     },
@@ -8124,6 +8192,11 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvSpVI--htvSpIIIA",
+        "htvSpVI--htvAn",
+        "htvSpVI--htvAu",
+        "htvSpVI--htvCn",
+        "htvSpVI--htvCu",
         "tvv6/6--tvv3/10"
       ]
     },
@@ -8132,6 +8205,7 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvSpVI--htvSpIVA",
         "tvv6/6--tvv4/10"
       ]
     },
@@ -8140,6 +8214,9 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvCu--htvSpVI",
+        "htvCn--htvSpVI",
+        "htvSpIVA--htvSpVI",
         "tvv4/5--tvv6/7"
       ]
     },
@@ -8197,6 +8274,8 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvSpVI--htvBn",
+        "htvSpVI--htvBu",
         "tvv6/7--tvvN1"
       ]
     },
@@ -8268,6 +8347,7 @@
       "routes": [
         "htvAu--htvSpIIIA",
         "htvAu--htvSpVB",
+        "htvAu--htvSpVI",
         "htvCu--htvSpIIIA"
       ]
     },
@@ -8278,7 +8358,8 @@
       "routes": [
         "htvAu--htvSpIVA",
         "htvCu--htvSpIVA",
-        "htvCu--htvSpVB"
+        "htvCu--htvSpVB",
+        "htvCu--htvSpVI"
       ]
     },
     "IX:AUTO:0018C116": {
@@ -8451,6 +8532,7 @@
         "htvBn--htvSpIIIB",
         "htvBn--htvSpIVB",
         "htvBn--htvSpVB",
+        "htvBn--htvSpVI",
         "htvBn--htvSpIC",
         "htvBn--htvSpIIC",
         "htvBn--htvSpX",
@@ -8476,6 +8558,7 @@
         "htvAu--htvSpIIIB",
         "htvAu--htvSpIVB",
         "htvAu--htvSpVB",
+        "htvAu--htvSpVI",
         "htvAu--htvSpIC",
         "htvAu--htvSpIIC",
         "htvAu--htvBu",
@@ -8487,6 +8570,7 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvSpVA--htvSpVI",
         "tvv5/5--tvv6/7"
       ]
     },
@@ -8521,6 +8605,7 @@
         "htvAn--htvSpIIIB",
         "htvAn--htvSpIVB",
         "htvAn--htvSpVB",
+        "htvAn--htvSpVI",
         "htvAn--htvSpIC",
         "htvAn--htvSpIIC",
         "htvAn--htvBu",
@@ -8579,6 +8664,8 @@
       "status": "replaced",
       "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
       "routes": [
+        "htvBu--htvSpVI",
+        "htvBn--htvSpVI",
         "tvv6/6--tvv3/10",
         "tvv6/6--tvv4/10",
         "tvv6/6--tvv5/10"
@@ -8613,6 +8700,7 @@
         "htvBu--htvSpIIIB",
         "htvBu--htvSpIVB",
         "htvBu--htvSpVB",
+        "htvBu--htvSpVI",
         "tvv1/4--tvv3/8",
         "tvv1/4--tvv4/8",
         "tvv1/4--tvv5/8",

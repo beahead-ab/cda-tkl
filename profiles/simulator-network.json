@@ -4179,6 +4179,28 @@
             "S126",
             "S126a",
             "S131",
+            "S131a",
+            "S132b",
+            "S132",
+            "S132a",
+            "SVI"
+          ],
+          "turnouts": {
+            "Vx123": "C",
+            "Vx126": "C",
+            "Vx131": "T",
+            "Vx132": "T"
+          },
+          "nextSignal": "6/7"
+        },
+        {
+          "blocks": [
+            "S123b",
+            "S123",
+            "S123a",
+            "S126",
+            "S126a",
+            "S131",
             "S131c",
             "SVB"
           ],
@@ -4273,6 +4295,29 @@
             "Vx154": "C"
           },
           "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S152",
+            "S152b",
+            "S151",
+            "S151b",
+            "S154",
+            "S154b",
+            "S144b",
+            "S144",
+            "S133a",
+            "S133",
+            "SVI"
+          ],
+          "turnouts": {
+            "Vx152": "C",
+            "Vx151": "C",
+            "Vx154": "T",
+            "Vx144": "T",
+            "Vx133": "C"
+          },
+          "nextSignal": "6/6"
         },
         {
           "blocks": [
@@ -4450,6 +4495,28 @@
             "Vx131": "C"
           },
           "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S123c",
+            "S123",
+            "S123a",
+            "S126",
+            "S126a",
+            "S131",
+            "S131a",
+            "S132b",
+            "S132",
+            "S132a",
+            "SVI"
+          ],
+          "turnouts": {
+            "Vx123": "T",
+            "Vx126": "C",
+            "Vx131": "T",
+            "Vx132": "T"
+          },
+          "nextSignal": "6/7"
         },
         {
           "blocks": [
@@ -4651,6 +4718,25 @@
             "S126",
             "S126a",
             "S131",
+            "S131a",
+            "S132b",
+            "S132",
+            "S132a",
+            "SVI"
+          ],
+          "turnouts": {
+            "Vx126": "T",
+            "Vx131": "T",
+            "Vx132": "T"
+          },
+          "nextSignal": "6/7"
+        },
+        {
+          "blocks": [
+            "S126c",
+            "S126",
+            "S126a",
+            "S131",
             "S131c",
             "SVB"
           ],
@@ -4824,12 +4910,36 @@
           "turnouts": {
             "Vx132": "T"
           },
+          "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S132a",
+            "S132",
+            "S132b"
+          ],
+          "turnouts": {
+            "Vx132": "T"
+          },
           "nextSignal": "6/8"
         }
       ]
     },
     "6/7": {
       "alternatives": [
+        {
+          "blocks": [
+            "S133",
+            "S133a",
+            "S144",
+            "S144b"
+          ],
+          "turnouts": {
+            "Vx133": "C",
+            "Vx144": "T"
+          },
+          "nextSignal": null
+        },
         {
           "blocks": [
             "S133",
@@ -4917,6 +5027,24 @@
             "Vx126": "T"
           },
           "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S131a",
+            "S131",
+            "S126a",
+            "S126",
+            "S123a",
+            "S123",
+            "S123b",
+            "SIIIA"
+          ],
+          "turnouts": {
+            "Vx131": "T",
+            "Vx126": "C",
+            "Vx123": "C"
+          },
+          "nextSignal": "3/10"
         }
       ]
     },
@@ -5451,6 +5579,79 @@
         "Vx123": "C",
         "Vx126": "C",
         "Vx131": "C"
+      }
+    },
+    {
+      "id": "htvAu--htvSpVI",
+      "label": "Au → Spår 6",
+      "blocks": [
+        "SU2B",
+        "S95b",
+        "S95",
+        "S100",
+        "S100b",
+        "S101",
+        "S102",
+        "S112a",
+        "S112",
+        "S113a",
+        "S113",
+        "S113b",
+        "SIIIA",
+        "S123b",
+        "S123",
+        "S123a",
+        "S126",
+        "S126a",
+        "S131",
+        "S131a",
+        "S132b",
+        "S132",
+        "S132a",
+        "SVI",
+        "S133",
+        "S133a",
+        "S144",
+        "S144b"
+      ],
+      "signal": "1/1",
+      "signals": [
+        "1/1",
+        "1/5",
+        "3/5",
+        "6/7"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/1",
+          "index": 0
+        },
+        {
+          "signal": "1/5",
+          "index": 3
+        },
+        {
+          "signal": "3/5",
+          "index": 10
+        },
+        {
+          "signal": "6/7",
+          "index": 15
+        }
+      ],
+      "turnouts": {
+        "Vx95": "T",
+        "Vx100": "T",
+        "Vx101": "T",
+        "Vx102": "T",
+        "Vx112": "C",
+        "Vx113": "T",
+        "Vx123": "C",
+        "Vx126": "C",
+        "Vx131": "T",
+        "Vx132": "T",
+        "Vx133": "C",
+        "Vx144": "T"
       }
     },
     {
@@ -6141,6 +6342,77 @@
         "Vx123": "C",
         "Vx126": "C",
         "Vx131": "C"
+      }
+    },
+    {
+      "id": "htvAn--htvSpVI",
+      "label": "An → Spår 6",
+      "blocks": [
+        "SN2B",
+        "S96",
+        "S101a",
+        "S101",
+        "S102",
+        "S112a",
+        "S112",
+        "S113a",
+        "S113",
+        "S113b",
+        "SIIIA",
+        "S123b",
+        "S123",
+        "S123a",
+        "S126",
+        "S126a",
+        "S131",
+        "S131a",
+        "S132b",
+        "S132",
+        "S132a",
+        "SVI",
+        "S133",
+        "S133a",
+        "S144",
+        "S144b"
+      ],
+      "signal": "2/1",
+      "signals": [
+        "2/1",
+        "2/5",
+        "3/5",
+        "6/7"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/1",
+          "index": 0
+        },
+        {
+          "signal": "2/5",
+          "index": 2
+        },
+        {
+          "signal": "3/5",
+          "index": 8
+        },
+        {
+          "signal": "6/7",
+          "index": 13
+        }
+      ],
+      "turnouts": {
+        "Vx96": "T",
+        "Vx101": "C",
+        "Vx100": "C",
+        "Vx102": "T",
+        "Vx112": "C",
+        "Vx113": "T",
+        "Vx123": "C",
+        "Vx126": "C",
+        "Vx131": "T",
+        "Vx132": "T",
+        "Vx133": "C",
+        "Vx144": "T"
       }
     },
     {
@@ -6889,6 +7161,81 @@
       }
     },
     {
+      "id": "htvCu--htvSpVI",
+      "label": "Cu → Spår 6",
+      "blocks": [
+        "SU4B",
+        "S95",
+        "S100",
+        "S100b",
+        "S101",
+        "S102",
+        "S112a",
+        "S112",
+        "S113a",
+        "S113",
+        "S113c",
+        "S116",
+        "S116c",
+        "SIVA",
+        "S123c",
+        "S123",
+        "S123a",
+        "S126",
+        "S126a",
+        "S131",
+        "S131a",
+        "S132b",
+        "S132",
+        "S132a",
+        "SVI",
+        "S133",
+        "S133a",
+        "S144",
+        "S144b"
+      ],
+      "signal": "1/3",
+      "signals": [
+        "1/3",
+        "1/5",
+        "4/5",
+        "6/7"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/3",
+          "index": 0
+        },
+        {
+          "signal": "1/5",
+          "index": 2
+        },
+        {
+          "signal": "4/5",
+          "index": 10
+        },
+        {
+          "signal": "6/7",
+          "index": 15
+        }
+      ],
+      "turnouts": {
+        "Vx95": "C",
+        "Vx100": "T",
+        "Vx101": "T",
+        "Vx102": "T",
+        "Vx112": "C",
+        "Vx113": "C",
+        "Vx116": "T",
+        "Vx123": "T",
+        "Vx126": "C",
+        "Vx131": "T",
+        "Vx132": "T",
+        "Vx133": "C",
+        "Vx144": "T"
+      }
+    },
+    {
       "id": "htvCu--htvSpIC",
       "label": "Cu → Spår 1a",
       "blocks": [
@@ -7584,6 +7931,81 @@
         "Vx123": "T",
         "Vx126": "C",
         "Vx131": "C"
+      }
+    },
+    {
+      "id": "htvCn--htvSpVI",
+      "label": "Cn → Spår 6",
+      "blocks": [
+        "SN4B",
+        "S96b",
+        "S96",
+        "S101a",
+        "S101",
+        "S102",
+        "S112a",
+        "S112",
+        "S113a",
+        "S113",
+        "S113c",
+        "S116",
+        "S116c",
+        "SIVA",
+        "S123c",
+        "S123",
+        "S123a",
+        "S126",
+        "S126a",
+        "S131",
+        "S131a",
+        "S132b",
+        "S132",
+        "S132a",
+        "SVI",
+        "S133",
+        "S133a",
+        "S144",
+        "S144b"
+      ],
+      "signal": "2/3",
+      "signals": [
+        "2/3",
+        "2/5",
+        "4/5",
+        "6/7"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/3",
+          "index": 0
+        },
+        {
+          "signal": "2/5",
+          "index": 3
+        },
+        {
+          "signal": "4/5",
+          "index": 10
+        },
+        {
+          "signal": "6/7",
+          "index": 15
+        }
+      ],
+      "turnouts": {
+        "Vx96": "C",
+        "Vx101": "C",
+        "Vx100": "C",
+        "Vx102": "T",
+        "Vx112": "C",
+        "Vx113": "C",
+        "Vx116": "T",
+        "Vx123": "T",
+        "Vx126": "C",
+        "Vx131": "T",
+        "Vx132": "T",
+        "Vx133": "C",
+        "Vx144": "T"
       }
     },
     {
@@ -8456,6 +8878,75 @@
         "Vx152": "C",
         "Vx151": "C",
         "Vx154": "C"
+      }
+    },
+    {
+      "id": "htvBu--htvSpVI",
+      "label": "Bu → Spår 6",
+      "blocks": [
+        "SU1B",
+        "S165a",
+        "S165",
+        "S165c",
+        "S163c",
+        "S163",
+        "S161a",
+        "S161",
+        "S161c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152b",
+        "S151",
+        "S151b",
+        "S154",
+        "S154b",
+        "S144b",
+        "S144",
+        "S133a",
+        "S133",
+        "SVI",
+        "S132a",
+        "S132",
+        "S132b"
+      ],
+      "signal": "1/2",
+      "signals": [
+        "1/2",
+        "1/4",
+        "3/6",
+        "6/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "1/2",
+          "index": 0
+        },
+        {
+          "signal": "1/4",
+          "index": 1
+        },
+        {
+          "signal": "3/6",
+          "index": 6
+        },
+        {
+          "signal": "6/6",
+          "index": 13
+        }
+      ],
+      "turnouts": {
+        "Vx165": "T",
+        "Vx162": "T",
+        "Vx163": "T",
+        "Vx161": "T",
+        "Vx153": "T",
+        "Vx152": "C",
+        "Vx151": "C",
+        "Vx154": "T",
+        "Vx144": "T",
+        "Vx133": "C",
+        "Vx132": "T"
       }
     },
     {
@@ -9503,6 +9994,77 @@
         "Vx152": "C",
         "Vx151": "C",
         "Vx154": "C"
+      }
+    },
+    {
+      "id": "htvBn--htvSpVI",
+      "label": "Bn → Spår 6",
+      "blocks": [
+        "SN1B",
+        "S171",
+        "S170",
+        "S166a",
+        "S166",
+        "S166b",
+        "S163",
+        "S161a",
+        "S161",
+        "S161c",
+        "S153",
+        "S153b",
+        "S152",
+        "S152b",
+        "S151",
+        "S151b",
+        "S154",
+        "S154b",
+        "S144b",
+        "S144",
+        "S133a",
+        "S133",
+        "SVI",
+        "S132a",
+        "S132",
+        "S132b"
+      ],
+      "signal": "2/2",
+      "signals": [
+        "2/2",
+        "2/4",
+        "3/6",
+        "6/6"
+      ],
+      "signalEntries": [
+        {
+          "signal": "2/2",
+          "index": 0
+        },
+        {
+          "signal": "2/4",
+          "index": 3
+        },
+        {
+          "signal": "3/6",
+          "index": 8
+        },
+        {
+          "signal": "6/6",
+          "index": 15
+        }
+      ],
+      "turnouts": {
+        "Vx171": "C",
+        "Vx170": "C",
+        "Vx166": "C",
+        "Vx163": "C",
+        "Vx161": "T",
+        "Vx153": "T",
+        "Vx152": "C",
+        "Vx151": "C",
+        "Vx154": "T",
+        "Vx144": "T",
+        "Vx133": "C",
+        "Vx132": "T"
       }
     },
     {
@@ -10723,6 +11285,50 @@
       }
     },
     {
+      "id": "htvSpIIIA--htvSpVI",
+      "label": "Spår 11 → Spår 6",
+      "blocks": [
+        "S123b",
+        "S123",
+        "S123a",
+        "S126",
+        "S126a",
+        "S131",
+        "S131a",
+        "S132b",
+        "S132",
+        "S132a",
+        "SVI",
+        "S133",
+        "S133a",
+        "S144",
+        "S144b"
+      ],
+      "signal": "3/5",
+      "signals": [
+        "3/5",
+        "6/7"
+      ],
+      "signalEntries": [
+        {
+          "signal": "3/5",
+          "index": 0
+        },
+        {
+          "signal": "6/7",
+          "index": 5
+        }
+      ],
+      "turnouts": {
+        "Vx123": "C",
+        "Vx126": "C",
+        "Vx131": "T",
+        "Vx132": "T",
+        "Vx133": "C",
+        "Vx144": "T"
+      }
+    },
+    {
       "id": "htvSpIIIA--htvAn",
       "label": "Spår 11 → An",
       "blocks": [
@@ -11039,6 +11645,50 @@
         "Vx123": "T",
         "Vx126": "C",
         "Vx131": "C"
+      }
+    },
+    {
+      "id": "htvSpIVA--htvSpVI",
+      "label": "Spår 12 → Spår 6",
+      "blocks": [
+        "S123c",
+        "S123",
+        "S123a",
+        "S126",
+        "S126a",
+        "S131",
+        "S131a",
+        "S132b",
+        "S132",
+        "S132a",
+        "SVI",
+        "S133",
+        "S133a",
+        "S144",
+        "S144b"
+      ],
+      "signal": "4/5",
+      "signals": [
+        "4/5",
+        "6/7"
+      ],
+      "signalEntries": [
+        {
+          "signal": "4/5",
+          "index": 0
+        },
+        {
+          "signal": "6/7",
+          "index": 5
+        }
+      ],
+      "turnouts": {
+        "Vx123": "T",
+        "Vx126": "C",
+        "Vx131": "T",
+        "Vx132": "T",
+        "Vx133": "C",
+        "Vx144": "T"
       }
     },
     {
@@ -11367,6 +12017,47 @@
       "turnouts": {
         "Vx126": "T",
         "Vx131": "C"
+      }
+    },
+    {
+      "id": "htvSpVA--htvSpVI",
+      "label": "Spår 13 → Spår 6",
+      "blocks": [
+        "S126c",
+        "S126",
+        "S126a",
+        "S131",
+        "S131a",
+        "S132b",
+        "S132",
+        "S132a",
+        "SVI",
+        "S133",
+        "S133a",
+        "S144",
+        "S144b"
+      ],
+      "signal": "5/5",
+      "signals": [
+        "5/5",
+        "6/7"
+      ],
+      "signalEntries": [
+        {
+          "signal": "5/5",
+          "index": 0
+        },
+        {
+          "signal": "6/7",
+          "index": 4
+        }
+      ],
+      "turnouts": {
+        "Vx126": "T",
+        "Vx131": "T",
+        "Vx132": "T",
+        "Vx133": "C",
+        "Vx144": "T"
       }
     },
     {
@@ -13407,6 +14098,412 @@
       ],
       "turnouts": {
         "Vx131": "C",
+        "Vx126": "C",
+        "Vx123": "C",
+        "Vx113": "T",
+        "Vx112": "C",
+        "Vx102": "T",
+        "Vx101": "T",
+        "Vx100": "T",
+        "Vx95": "C"
+      }
+    },
+    {
+      "id": "htvSpVI--htvSpIIIA",
+      "label": "Spår 6 → Spår 11",
+      "blocks": [
+        "S131a",
+        "S131",
+        "S126a",
+        "S126",
+        "S123a",
+        "S123",
+        "S123b",
+        "SIIIA"
+      ],
+      "signal": "6/8",
+      "signals": [
+        "6/8"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/8",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx131": "T",
+        "Vx126": "C",
+        "Vx123": "C"
+      }
+    },
+    {
+      "id": "htvSpVI--htvSpIVA",
+      "label": "Spår 6 → Spår 12",
+      "blocks": [
+        "S131a",
+        "S131",
+        "S126a",
+        "S126",
+        "S123a",
+        "S123",
+        "S123c",
+        "SIVA"
+      ],
+      "signal": "6/8",
+      "signals": [
+        "6/8"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/8",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx131": "T",
+        "Vx126": "C",
+        "Vx123": "T"
+      }
+    },
+    {
+      "id": "htvSpVI--htvSpVA",
+      "label": "Spår 6 → Spår 13",
+      "blocks": [
+        "S131a",
+        "S131",
+        "S126a",
+        "S126",
+        "S126c",
+        "SVA"
+      ],
+      "signal": "6/8",
+      "signals": [
+        "6/8"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/8",
+          "index": 0
+        }
+      ],
+      "turnouts": {
+        "Vx131": "T",
+        "Vx126": "T"
+      }
+    },
+    {
+      "id": "htvSpVI--htvAn",
+      "label": "Spår 6 → An",
+      "blocks": [
+        "S131a",
+        "S131",
+        "S126a",
+        "S126",
+        "S123a",
+        "S123",
+        "S123b",
+        "SIIIA",
+        "S113b",
+        "S113",
+        "S113a",
+        "S112",
+        "S112a",
+        "S102",
+        "S101",
+        "S101a",
+        "S96",
+        "SN2B"
+      ],
+      "signal": "6/8",
+      "signals": [
+        "6/8",
+        "3/10",
+        "2/12"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/8",
+          "index": 0
+        },
+        {
+          "signal": "3/10",
+          "index": 4
+        },
+        {
+          "signal": "2/12",
+          "index": 9
+        }
+      ],
+      "turnouts": {
+        "Vx131": "T",
+        "Vx126": "C",
+        "Vx123": "C",
+        "Vx113": "T",
+        "Vx112": "C",
+        "Vx102": "T",
+        "Vx101": "C",
+        "Vx100": "C",
+        "Vx96": "T"
+      }
+    },
+    {
+      "id": "htvSpVI--htvAu",
+      "label": "Spår 6 → Au",
+      "blocks": [
+        "S131a",
+        "S131",
+        "S126a",
+        "S126",
+        "S123a",
+        "S123",
+        "S123b",
+        "SIIIA",
+        "S113b",
+        "S113",
+        "S113a",
+        "S112",
+        "S112a",
+        "S102",
+        "S101",
+        "S100b",
+        "S100",
+        "S95",
+        "S95b",
+        "SU2B"
+      ],
+      "signal": "6/8",
+      "signals": [
+        "6/8",
+        "3/10",
+        "1/12"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/8",
+          "index": 0
+        },
+        {
+          "signal": "3/10",
+          "index": 4
+        },
+        {
+          "signal": "1/12",
+          "index": 10
+        }
+      ],
+      "turnouts": {
+        "Vx131": "T",
+        "Vx126": "C",
+        "Vx123": "C",
+        "Vx113": "T",
+        "Vx112": "C",
+        "Vx102": "T",
+        "Vx101": "T",
+        "Vx100": "T",
+        "Vx95": "T"
+      }
+    },
+    {
+      "id": "htvSpVI--htvBn",
+      "label": "Spår 6 → Bn",
+      "blocks": [
+        "S154b",
+        "S154",
+        "S151b",
+        "S151",
+        "S152b",
+        "S152",
+        "S153b",
+        "S153",
+        "S161c",
+        "S161",
+        "S161a",
+        "S163",
+        "S166b",
+        "S166",
+        "S166a",
+        "S170",
+        "S171",
+        "SN1B"
+      ],
+      "signal": "6/9",
+      "signals": [
+        "6/9",
+        "3/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/9",
+          "index": 0
+        },
+        {
+          "signal": "3/11",
+          "index": 3
+        }
+      ],
+      "turnouts": {
+        "Vx154": "T",
+        "Vx151": "C",
+        "Vx152": "C",
+        "Vx153": "T",
+        "Vx161": "T",
+        "Vx163": "C",
+        "Vx166": "C",
+        "Vx170": "C",
+        "Vx171": "C"
+      }
+    },
+    {
+      "id": "htvSpVI--htvBu",
+      "label": "Spår 6 → Bu",
+      "blocks": [
+        "S154b",
+        "S154",
+        "S151b",
+        "S151",
+        "S152b",
+        "S152",
+        "S153b",
+        "S153",
+        "S161c",
+        "S161",
+        "S161a",
+        "S163",
+        "S163c",
+        "S165c",
+        "S165",
+        "S165a",
+        "SU1B"
+      ],
+      "signal": "6/9",
+      "signals": [
+        "6/9",
+        "3/11"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/9",
+          "index": 0
+        },
+        {
+          "signal": "3/11",
+          "index": 3
+        }
+      ],
+      "turnouts": {
+        "Vx154": "T",
+        "Vx151": "C",
+        "Vx152": "C",
+        "Vx153": "T",
+        "Vx161": "T",
+        "Vx163": "T",
+        "Vx165": "T",
+        "Vx162": "T"
+      }
+    },
+    {
+      "id": "htvSpVI--htvCn",
+      "label": "Spår 6 → Cn",
+      "blocks": [
+        "S131a",
+        "S131",
+        "S126a",
+        "S126",
+        "S123a",
+        "S123",
+        "S123b",
+        "SIIIA",
+        "S113b",
+        "S113",
+        "S113a",
+        "S112",
+        "S112a",
+        "S102",
+        "S101",
+        "S101a",
+        "S96",
+        "S96b",
+        "SN4B"
+      ],
+      "signal": "6/8",
+      "signals": [
+        "6/8",
+        "3/10",
+        "2/12"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/8",
+          "index": 0
+        },
+        {
+          "signal": "3/10",
+          "index": 4
+        },
+        {
+          "signal": "2/12",
+          "index": 9
+        }
+      ],
+      "turnouts": {
+        "Vx131": "T",
+        "Vx126": "C",
+        "Vx123": "C",
+        "Vx113": "T",
+        "Vx112": "C",
+        "Vx102": "T",
+        "Vx101": "C",
+        "Vx100": "C",
+        "Vx96": "C"
+      }
+    },
+    {
+      "id": "htvSpVI--htvCu",
+      "label": "Spår 6 → Cu",
+      "blocks": [
+        "S131a",
+        "S131",
+        "S126a",
+        "S126",
+        "S123a",
+        "S123",
+        "S123b",
+        "SIIIA",
+        "S113b",
+        "S113",
+        "S113a",
+        "S112",
+        "S112a",
+        "S102",
+        "S101",
+        "S100b",
+        "S100",
+        "S95",
+        "SU4B"
+      ],
+      "signal": "6/8",
+      "signals": [
+        "6/8",
+        "3/10",
+        "1/12"
+      ],
+      "signalEntries": [
+        {
+          "signal": "6/8",
+          "index": 0
+        },
+        {
+          "signal": "3/10",
+          "index": 4
+        },
+        {
+          "signal": "1/12",
+          "index": 10
+        }
+      ],
+      "turnouts": {
+        "Vx131": "T",
         "Vx126": "C",
         "Vx123": "C",
         "Vx113": "T",

@@ -15,11 +15,18 @@ for (const button of panel.sicons.filter(b => b.sensor.startsWith('tvv') && !b.h
   const endpoint = topology.buttons[button.sensor.replace('tvv','tvs')];
   if (endpoint) topology.buttons[button.sensor] = {...endpoint,label:button.sensor.slice(3)};
 }
+// IS266 is a source-defined main-route control with 18 allowed pairs but no
+// panel icon. Give it a catalog representation, never a guessed map endpoint.
+// Each route still follows its own explicit source NX endpoints below.
+const routeButtons={...topology.buttons};
+const trackSix=source.sensors.find(s=>s.name==='htvSpVI');
+if(trackSix?.system!=='IS266'||panel.sicons.some(b=>b.sensor==='htvSpVI')) throw Error('Spår6-källknappen har ändrats; granska katalogersättningen.');
+routeButtons.htvSpVI={label:'Spår 6',sourceSensor:trackSix.system,presentation:'catalog'};
 for (const pair of policy.allowed()) {
   const kind = pair.from.startsWith('tvv') ? 'shunt' : 'main';
   const decision = policy.inspect(pair.from, pair.to);
   const provenance = { rules: decision.rules.map(r => r.rule), nxButtons: decision.nxButtons };
-  if(!topology.buttons[pair.from] || !topology.buttons[pair.to]) { excluded.push({...pair,...provenance,reason:'Knappen är dold eller saknas i operatörspanelen.'}); continue; }
+  if(!routeButtons[pair.from] || !routeButtons[pair.to]) { excluded.push({...pair,...provenance,reason:'Knappen är dold eller saknas i operatörspanelen.'}); continue; }
   const path = searchSourceRoute(topology,...decision.nxButtons);
   if (!path) { excluded.push({ ...pair, ...provenance, reason: 'Ingen sammanhängande väg mellan synliga knappar i den importerade grafen.' }); continue; }
   const plan = signalPlan(topology, source, path);
@@ -34,7 +41,7 @@ for (const pair of policy.allowed()) {
   }
   const sensors = [...plan.boundaries.map(b => b.sensor), target];
   const nxIds = sensors.slice(0,-1).flatMap((s,i) => source.nxPairs.filter(p => p.fromSensor===s && p.toSensor===sensors[i+1]).map(p=>p.id));
-  const label = topology.buttons[pair.from].label + ' → ' + topology.buttons[pair.to].label;
+  const label = routeButtons[pair.from].label + ' → ' + routeButtons[pair.to].label;
   routes.push({ id: pair.from+'--'+pair.to, ...pair, label, kind, source: provenance, nxIds,
     blocks: path.blocks, turnouts: path.settings, crossings: path.crossings, segments: path.used,
     flow: path.flow, signals: plan.signals, guardSignals: plan.guardSignals, boundaries: plan.boundaries,
@@ -83,7 +90,7 @@ const manualPolicies=compileManualPolicies(source,{turnouts,blocks,coupled,prote
 const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:false,sourceHash:source.sourceHash,
   description:'Utökad anläggningsmodell med källstyrda tågvägsval och signalriktningar. Fysiska MGP-bindningar återstår att verifiera.',
   transport:{host:'127.0.0.1',port:8912},staleMs:7000,commandTimeoutMs:6000,signalStepMs:300,
-  turnouts,blocks,signals,routes,coupled,manualPolicies,buttons:Object.fromEntries(Object.entries(topology.buttons).map(([id,b])=>[id,{label:b.label,segment:b.segment}])),
+  turnouts,blocks,signals,routes,coupled,manualPolicies,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),
   sourcePolicy:[...source.mainRoutePolicies,...source.shuntRoutePolicies],excluded,releasePolicy:'whole-route-after-ordered-passage-and-stop-feedback'};
 const simulator={id:'charlottendal-independent-network-field',turnouts,blocks,signals,coupled,protection,
   scenarios:routes.map(r=>({id:r.id,label:r.label,blocks:r.blocks,signal:r.signals[0],signals:r.signals,signalEntries:r.signalEntries,turnouts:r.turnouts})),

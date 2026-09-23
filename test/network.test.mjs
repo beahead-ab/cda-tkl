@@ -18,13 +18,14 @@ function rig(storage) {
   engine.connection(true);field.allReports();drain();
   return {engine,field,commands,drain,advance,request:(a,b)=>engine.request(a,b)};
 }
-test('every source main-route pair is explicitly allowed, denied or unresolved; hidden buttons remain excluded',()=>{
+test('every source main-route pair is explicitly allowed, denied or unresolved; Spår6 uses an explicit source catalog control',()=>{
   assert.equal(source.groups.length,25);assert.equal(source.rules.length,1377);
   assert.equal(source.mainRoutePolicies.length,376);
   assert.deepEqual(source.disabledGroups,['IX:AUTO:0021']);
   const policy=new RoutePolicy({mainRoutePolicies:source.mainRoutePolicies});
   assert.equal(policy.allowed().length,210);
-  assert.equal(mainRoutes.length,192);assert.equal(profile.excluded.filter(r=>r.from.startsWith('htv')).length,18);
+  assert.equal(mainRoutes.length,210);assert.equal(profile.excluded.filter(r=>r.from.startsWith('htv')).length,0);
+  assert.deepEqual(profile.buttons.htvSpVI,{label:'Spår 6',sourceSensor:'IS266',presentation:'catalog'});
   for(const pair of source.mainRoutePolicies.filter(r=>r.status!=='allowed')) assert.equal(policy.inspect(pair.fromButton,pair.toButton).allowed,false,pair.rule);
   assert.equal(Object.keys(profile.turnouts).length,49);assert.equal(Object.keys(profile.signals).length,66);
   assert.ok(profile.routes.every(r=>r.signals.length && r.source.rules.length && !r.blocks.includes('frame')));
@@ -38,6 +39,24 @@ test('XML signal direction takes precedence over nearby opposite-facing icons',(
   const through=profile.routes.find(r=>r.from==='htvSpIIA'&&r.to==='htvSpIIB');
   assert.deepEqual(through.signals,['2/7']);
 });
+test('Spår6 catalog routes keep their distinct source NX boundaries and protect both directions',()=>{
+  const six=mainRoutes.filter(r=>r.from==='htvSpVI'||r.to==='htvSpVI');assert.equal(six.length,18);
+  const cu=six.find(r=>r.from==='htvCu'),bu=six.find(r=>r.from==='htvBu'),out=six.find(r=>r.from==='htvSpVI'&&r.to==='htvCu');
+  assert.deepEqual(cu.source.nxButtons,['tvs1/3','tvs6/9']);assert.deepEqual(cu.signals,['1/3','1/5','4/5','6/7']);assert.ok(cu.guardSignals.includes('6/9'));
+  assert.deepEqual(bu.source.nxButtons,['tvs1/2','tvs6/8']);assert.deepEqual(bu.signals,['1/2','1/4','3/6','6/6']);assert.ok(bu.guardSignals.includes('6/8'));
+  assert.deepEqual(out.source.nxButtons,['tvs6/8','tvsU4']);assert.equal(out.signals[0],'6/8');assert.ok(out.guardSignals.includes('U4'));
+  for(const def of six) {
+    const r=rig();r.field.setBlock(def.blocks[0],true);r.drain();
+    assert.throws(()=>r.request(def.from,def.to),/belagt|okänt/);assert.equal(r.engine.routes.length,0);
+  }
+  const r=rig(),route=r.request('htvCu','htvSpVI');r.advance(6500);assert.equal(route.state,'active',route.reason);
+  assert.equal(r.engine.signals['6/9'].desired,'STOP');const before=r.commands.length;
+  assert.throws(()=>r.request('htvBu','htvSpVI'),/stopp|låst|konflikt|reserver/);
+  assert.equal(r.commands.length,before);assert.equal(r.engine.routes.length,1);assert.equal(route.state,'active');
+  r.field.setBlock('SVI',true);r.drain();assert.equal(route.state,'held');
+  r.request('htvCu','htvSpVI');r.drain();r.advance(200);assert.equal(r.engine.routes.length,1);
+  r.field.setBlock('SVI',false);r.drain();r.advance(200);assert.equal(r.engine.routes.length,0);
+});
 test('independent infarts establish together, lock switches and cancel independently through wire reports',()=>{
   const r=rig(),a=r.request('htvCu','htvSpIA');r.advance(4000);
   assert.equal(a.state,'active',a.reason);
@@ -48,7 +67,7 @@ test('independent infarts establish together, lock switches and cancel independe
   assert.deepEqual(r.engine.routes.map(x=>x.id),[a.id]);
   assert.throws(()=>r.request('htvAn','htvSpIA'),/motsägelse|spärrad/);
 });
-test('all 192 main routes establish and release after independent train passage', {timeout:60000},()=>{
+test('all 210 main routes establish and release after independent train passage', {timeout:120000},()=>{
   for(const def of mainRoutes){
     const r=rig(),route=r.request(def.from,def.to);r.advance(6500);assert.equal(route.state,'active',def.label+': '+route.reason);
     r.field.startTrain(def.id);r.advance((route.passage.length+3)*850);

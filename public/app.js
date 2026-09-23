@@ -286,8 +286,10 @@ async function start() {
   $('account-link').hidden = !config.accountUrl;
   $('field-link').href = config.fieldUrl || 'http://127.0.0.1:8911/'; $('field-link').hidden = false;
   $('profile-summary').textContent=`${config.routes.filter(r=>r.kind!=='shunt').length} huvudtågvägar och ${config.routes.filter(r=>r.kind==='shunt').length} växeltågvägar · ${Object.keys(config.turnouts).length} växlar · ${Object.keys(config.signals).length} signaler i provanläggningen.`;
-  $('route-catalog').innerHTML=`<label>Från<select id="catalog-from"></select></label><label>Till<select id="catalog-to"></select></label><button id="catalog-request" class="primary" disabled>Lägg / återta tågväg</button>`;
-  function targets(){const from=$('catalog-from').value;$('catalog-to').innerHTML=config.routes.filter(r=>r.from===from).map(r=>`<option value="${esc(r.to)}">${esc(label(r.to))}</option>`).join('');}
+  $('route-catalog').innerHTML=`<label>Från<select id="catalog-from"></select></label><label>Till<select id="catalog-to"></select></label><button id="catalog-request" class="primary" disabled>Lägg / återta tågväg</button><p id="catalog-hint" class="muted" hidden></p>`;
+  function catalogHint(){const ids=[$('catalog-from').value,$('catalog-to').value].filter(id=>config.buttons[id]?.presentation==='catalog');$('catalog-hint').hidden=!ids.length;$('catalog-hint').textContent=ids.map(label).join(', ')+' väljs i listan. Använd Lägg / återta tågväg även för återtagning.';}
+  function targets(){const from=$('catalog-from').value;$('catalog-to').innerHTML=config.routes.filter(r=>r.from===from).map(r=>`<option value="${esc(r.to)}">${esc(label(r.to))}</option>`).join('');catalogHint();}
+  $('catalog-to').onchange=catalogHint;
   function routeMode(){ const mode=$('route-mode').value; document.body.dataset.routeMode=mode; clearChoice(); const starts=[...new Set(config.routes.filter(r=>(r.kind||'main')===mode).map(r=>r.from))]; $('catalog-from').innerHTML=starts.map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('');targets(); }
   $('route-mode').onchange=routeMode; $('catalog-from').onchange=targets;routeMode();
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
