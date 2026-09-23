@@ -2,7 +2,7 @@
 
 ## Aktuellt 23 september 2026, natt
 
-**03:57: aktiv serverrelease är cbf1327 (0.7). Version 0.8 är klar lokalt: 340 vägar, 64 + 4 tester passerade. Publicering med backup och efterkontroll återstår.**
+**04:04: version 0.8, b3f6a78, är publicerad och efterkontrollerad. 340 tågvägar, 64 + 4 serverprov. Ny kontroll visar att några hela NX-referenser saknas i täckningsregistret trots att deras delgränser finns; detta rättas i nästa version.**
 
 Casper: ”jag godkänner allt! Kör på inatt hela vägen.” Hela planen i `../../granskning-2026-09-23/plan.md` (relativt denna dokumentmapp) är godkänd. Arbeta självständigt genom implementation, tester och kontrollerad publicering inom befintlig kostnadsram. Verklig MGP/TrainMeet-verifiering får inte påstås utan underlag. Inga subagenter är beställda.
 
@@ -173,3 +173,12 @@ Version 0.8: 210 huvud + 130 växeltågvägar. Explicit sourceHash-bunden gransk
 64 enhetstester och fyra processhelhetstester passerar. Alla 340 vägar har full passage; samtliga 70 nya avvisas med beläggning och spärr. Extra felprov och UI 7/10 → IIIev KLAR/återtagen, listval i naturlig nummerordning. Ett första nytt avbrottsprov förväntade held trots redan begärd återtagning; den korrekta cancelling-statusen och fortsatt återtagning efter nya rapporter verifierades. Ingen förreglingsändring gjordes för att möta felaktig testförväntning. Ursprunglig XML och övriga driftvillkor bevarade.
 
 Ny previewsession 74078 på 9030/9031/9032, noll lås efter UI-prov; lokal manövrering, AIS av. Visningsversion 4 och tomt aktuellt tågnummerregister bevarade. Nästa steg kontrollerad publicering; nattarbete enligt befintlig automation till 08:00. Nästa sakliga utredning kan gälla signalernas särskilda villkor och aspekter, återstående manöverfall eller TrainMeet-kontraktet. Aktivera inte fysisk mappning eller saknade skript genom antaganden.
+
+
+### Kontrollpunkt 04:04 – version 0.8 publicerad
+
+Aktiv release b3f6a78, backup `/root/charlottendal-backups/network-b3f6a78-20260923T020134Z`, tidigare cbf1327. Alla 64 + 4 tester, XML/operations/syntax och efterkontroller godkända. 340 anslutna vägar; oförändrad autentisering och bevarade driftdata.
+
+Ny spårbarhetskontroll: 25 körbara vägar (3 huvud, 22 växel) saknar sin fullständiga käll-NX-referens i route.nxIds när vägen har en mellanliggande signal. Registreringen innehåller endast intilliggande signalpar. Nuvarande rapport räknar därför 111/153 anslutna NX; unionen av explicit begärt par och ingående delpar är 133/153. Även manuell NX-spärr använder nxIds, så originalets fulla referens ska finnas kvar tillsammans med delparen. Åtgärda med regressionsprov och kompatibelt profilbyte utan lås. Ändra inte väggeometri, signalordning eller källregler för detta.
+
+Signalutredning: 66 master, 55 turnoutsignalmast + 11 virtualsignalmast. De 55 har 329 aspektrader: 310 hänvisar till befintliga utgångsobjekt (121 unika LT), 19 saknar utgång i källan. Alla angivna namn/systemnamn går att lösa när båda uppslagen används. 1/5 skickar samtliga körvarianter genom samma LT210/closed; det räcker inte för att särskilja fysiskt besked. Detaljer i work/usecase-review/signal-aspect-bindings.json i arbetsytan. Fortsatt signalarbete får inte härleda svenska MGP-koder från CZ-profilen.

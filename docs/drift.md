@@ -134,3 +134,10 @@ Aktiv release `d2f8fb6`. Sju inkommande fält, manuell nummerregistrering för19
 Aktiv release `cbf1327`. De 18 huvudtågvägarna till/från Spår 6 nås genom panelens lista med källsensor IS266. Totalt 210 huvudtågvägar och 60 växeltågvägar. Läs [Spår 6](spar6.md).
 
 62 enhetstester och fyra helhetstester passerade även på servern. Fullständig XML-, operations- och syntaxkontroll godkänd. Tjänsterna är anslutna, inga lås fanns vid profilbytet. Externa efterkontroller med normal TLS-verifiering: inloggning 200; panelens, adminens, tåginformationens och simulatorns API 401 utan session. Backup `/root/charlottendal-backups/network-cbf1327-20260923T014936Z`, tidigare release `d2f8fb6`. Samtliga driftdata och autentiseringsinställningar bevarade.
+
+
+### Version 0.8 – utökade växeltågvägar
+
+Release `b3f6a78`: 210 huvudtågvägar + 130 växeltågvägar. 70 nya granskade listval, 15 geometriskt oklara par kvar undantagna och en motsägande källregel spärrad. [Handhavande och undantag](vaxeltagvagar.md).
+
+64 enhetstester och fyra helhetstester passerade på servern. Full XML-, operations- och syntaxkontroll godkänd; tjänster anslutna och noll lås vid profilbyte. Externa HTTPS-kontroller: login 200, skyddade API 401. Backup `/root/charlottendal-backups/network-b3f6a78-20260923T020134Z`, tidigare `cbf1327`. Inga driftdata eller autentiseringsinställningar raderade.
