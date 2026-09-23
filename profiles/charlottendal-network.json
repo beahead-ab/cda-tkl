@@ -146383,6 +146383,98 @@
       }
     }
   },
+  "operatingControls": {
+    "lines": {
+      "AN": {
+        "id": "AN",
+        "label": "A nedspår",
+        "button": "htvAn",
+        "rule": "IX:AUTO:0023C1",
+        "sourceSensor": "ssAN",
+        "blocks": [
+          "SN2A"
+        ]
+      },
+      "AU": {
+        "id": "AU",
+        "label": "A uppspår",
+        "button": "htvAu",
+        "rule": "IX:AUTO:0023C2",
+        "sourceSensor": "ssAU",
+        "blocks": [
+          "SU2A"
+        ]
+      },
+      "BN": {
+        "id": "BN",
+        "label": "B nedspår",
+        "button": "htvBn",
+        "rule": "IX:AUTO:0023C3",
+        "sourceSensor": "ssBN",
+        "blocks": [
+          "SN1A"
+        ]
+      },
+      "BU": {
+        "id": "BU",
+        "label": "B uppspår",
+        "button": "htvBu",
+        "rule": "IX:AUTO:0023C4",
+        "sourceSensor": "ssBU",
+        "blocks": [
+          "SU1A"
+        ]
+      },
+      "CN": {
+        "id": "CN",
+        "label": "C nedspår",
+        "button": "htvCn",
+        "rule": "IX:AUTO:0023C5",
+        "sourceSensor": "ssCN",
+        "blocks": [
+          "SN4A"
+        ]
+      },
+      "CU": {
+        "id": "CU",
+        "label": "C uppspår",
+        "button": "htvCu",
+        "rule": "IX:AUTO:0023C6",
+        "sourceSensor": "ssCU",
+        "blocks": [
+          "SU4A"
+        ]
+      },
+      "D": {
+        "id": "D",
+        "label": "D",
+        "button": "htvD",
+        "rule": "IX:AUTO:0023C7",
+        "sourceSensor": "ssD",
+        "blocks": [
+          "SL1a"
+        ]
+      }
+    },
+    "programming": {
+      "rule": "IX:AUTO:0025C1",
+      "relayAddress": 134,
+      "reportAddress": 940,
+      "sourceRelay": "LT134",
+      "sourceReport": "LS940",
+      "turnout": "Vx133",
+      "requiredPosition": "C",
+      "blocks": [
+        "S133",
+        "SLIII",
+        "S133c"
+      ],
+      "clearBlocks": [
+        "S133"
+      ],
+      "provenance": "Source LT134 and LS940. Independent B1/B2 feedback is a conservative replacement; physical module behavior not commissioned."
+    }
+  },
   "buttons": {
     "htvAn": {
       "label": "An",

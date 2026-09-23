@@ -10,6 +10,7 @@ import { loadProfile } from './profile.mjs';
 import { Configuration } from './configuration.mjs';
 import { TrainInformation } from './train-information.mjs';
 import { PanelIndications } from './panel-indications.mjs';
+import { ModelClock } from './model-clock.mjs';
 import { TelegramRecorder } from './telegram-recorder.mjs';
 
 const profile = loadProfile();
@@ -18,10 +19,11 @@ const auth = createAuth(root, true);
 const storage = new Storage(process.env.CHARLOTTENDAL_STATE_DIR || fileURLToPath(new URL('../var', import.meta.url)));
 const client = new LocoNetClient({ ...profile.transport, port: Number(process.env.CHARLOTTENDAL_WIRE_PORT || profile.transport.port), silenceMs: profile.staleMs });
 const engine = new Engine(profile, { storage, send: bytes => client.send(bytes) });
-const configuration = new Configuration(profile, {storage,canActivate:()=>!engine.routes.length && !engine.storageFault});
+const configuration = new Configuration(profile, {storage,canActivate:()=>!engine.routes.length && !engine.controls.programming.reserved && !engine.storageFault});
 const trainInformation=new TrainInformation(JSON.parse(fs.readFileSync(new URL('../public/data/train-fields.json',import.meta.url),'utf8')),profile,{storage});
 const panelIndications=new PanelIndications(JSON.parse(fs.readFileSync(new URL('../public/data/indications.json',import.meta.url),'utf8')),profile);
 const recorder=new TelegramRecorder(storage.directory,profile);
+const modelClock=new ModelClock(storage);let clockPublished=0;
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
 auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
 function protect(action) { try { return action(); } catch (e) { engine.log('error', e.message); } }
@@ -31,7 +33,7 @@ client.on('frame', bytes => protect(() => engine.receive(bytes)));
 client.on('fault', message => {recorder.fault(message);engine.log('transport', String(message));});
 client.on('protocol',line=>recorder.protocol(line));recorder.on('change',()=>{dirty=true;});
 client.on('wire', event => { trace.unshift({ ...event, at: Date.now() }); trace.length = Math.min(trace.length, 100); dirty = true; });
-const snapshot = () => {const state=engine.snapshot();return { ...state, recordings:recorder.view(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
+const snapshot = () => {const state=engine.snapshot();return { ...state, recordings:recorder.view(),clock:modelClock.snapshot(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -60,6 +62,7 @@ const server = http.createServer(async (req, res) => {
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
     const data = await body(req);
+    if(url.pathname==='/api/clock'){const result=modelClock.change(data);dirty=true;engine.log('clock','Modellklockan '+(result.running?'går':'är pausad')+' med hastighet '+result.rate+'×.');return json(res,result);}
     if(url.pathname==='/api/recordings/start'){recorder.start(data,engine.connected?'connected':'disconnected');return json(res,recorder.view());}
     if(url.pathname==='/api/recordings/stop'){await recorder.stop(data);return json(res,recorder.view());}
     if (url.pathname.startsWith('/api/configuration/')) {
@@ -80,6 +83,8 @@ const server = http.createServer(async (req, res) => {
     else if (url.pathname === '/api/cancel') engine.cancel(data.id);
     else if (url.pathname === '/api/turnout') engine.manual(data.name, data.position);
     else if (url.pathname === '/api/track-block') engine.blockTrack(data.name, data.blocked);
+    else if (url.pathname === '/api/line-block') {engine.operating.checkCommand(data);engine.operating.blockLine(data.id,data.blocked);}
+    else if (url.pathname === '/api/programming') {engine.operating.checkCommand(data);engine.operating.setProgramming(data.enabled);}
     else if (url.pathname === '/api/all-stop') engine.allStop(data.enabled);
     else if (url.pathname === '/api/emergency-cancel') engine.emergencyCancelAll();
     else if (url.pathname === '/api/control-mode') engine.setMode(data.mode);
@@ -93,7 +98,7 @@ const server = http.createServer(async (req, res) => {
 let tick, publish;
 server.listen(port, '127.0.0.1', () => {
   console.log(`Charlottendal TKL: http://127.0.0.1:${port}`); client.start();
-  tick = setInterval(() => {protect(() => engine.tick());recorder.tick();}, 100);
+  tick = setInterval(() => {protect(() => engine.tick());recorder.tick();modelClock.checkpoint();if(Date.now()-clockPublished>1000){dirty=true;clockPublished=Date.now();}}, 100);
   publish = setInterval(() => {
     if (!dirty) return; dirty = false; const text = `data: ${JSON.stringify(snapshot())}\n\n`;
     for (const res of streams) { if (res.writableLength > 1e6) { res.end(); streams.delete(res); } else res.write(text); }
@@ -105,6 +110,7 @@ async function close() {
   if(closing)return;closing=true;
   clearInterval(tick); clearInterval(publish);
   for (const n of Object.keys(engine.signals)) protect(() => engine.permission(n, 'STOP'));
+  modelClock.checkpoint(true);
   await recorder.finish('server-shutdown');
   setTimeout(() => { client.stop(); for (const s of streams) s.end(); server.close(() => process.exit(0)); }, 250);
 }

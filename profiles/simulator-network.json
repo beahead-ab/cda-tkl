@@ -5650,6 +5650,24 @@
       "alternatives": []
     }
   },
+  "programming": {
+    "rule": "IX:AUTO:0025C1",
+    "relayAddress": 134,
+    "reportAddress": 940,
+    "sourceRelay": "LT134",
+    "sourceReport": "LS940",
+    "turnout": "Vx133",
+    "requiredPosition": "C",
+    "blocks": [
+      "S133",
+      "SLIII",
+      "S133c"
+    ],
+    "clearBlocks": [
+      "S133"
+    ],
+    "provenance": "Source LT134 and LS940. Independent B1/B2 feedback is a conservative replacement; physical module behavior not commissioned."
+  },
   "scenarios": [
     {
       "id": "htvAu--htvSpIA",

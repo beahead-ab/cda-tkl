@@ -49,6 +49,8 @@ async function poll() {
     $('sim-connection').textContent = state.link ? state.clients + ' LocoNet-klient ansluten' : 'LocoNet bruten'; $('sim-connection').className = 'connection ' + (state.clients ? 'online' : 'offline');
     $('link').textContent = state.link ? 'Bryt LocoNet' : 'Återanslut LocoNet';
     paintBlocks(); paintTrains();
+    $('field-programming').hidden=!state.programming;
+    if(state.programming){$('field-programming-state').textContent=state.programming.relay==='unknown'?'Kopplar om':state.programming.active?'Programmeringsmatning':'Normal matning';$('fault-programming').checked=state.programming.fault;}
     $('train-status').textContent = state.trains?.length ? state.trains.map(t => `${t.number} · ${t.label}${t.waiting ? ' · '+t.waiting : ''}`).join(' · ') : 'Inget tåg i rörelse';
     $('signal-count').textContent = `${Object.values(state.signals).filter(s => s.code).length} kör / ${Object.keys(state.signals).length}`;
     $('turnout-count').textContent = Object.keys(state.turnouts).length;
@@ -62,6 +64,7 @@ $('blocks').onclick = e => { const name = e.target.closest('button')?.dataset.bl
 $('start-train').onclick = () => act('train', { id: $('train-choice').value });
 $('train-choice').onchange = paintTrains; $('train-ready-only').onchange = paintTrains;
 $('block-search').oninput = paintBlocks; $('occupied-only').onchange = paintBlocks;
+$('fault-programming').onchange=e=>act('programming-fault',{enabled:e.target.checked});
 $('link').onclick = () => act('link', { connected: !state.link });
 try { const response = await fetch('api/config'); if (!response.ok) throw Error(); const config = await response.json(); $('tkl-link').href = config.tklUrl; $('tkl-link').hidden = false; } catch {}
 await poll(); setInterval(poll, 400);

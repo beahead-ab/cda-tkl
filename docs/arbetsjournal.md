@@ -256,3 +256,12 @@ Samlad lägesbild i docs/status.md besvarar användarens ”vad är kvar?”. RE
 Nästa nattpass kan välja en verifierbar del av manöverfallen/admin/visuell avstämning eller förbättra underlaget för fysisk anslutning. Hitta inte på saknade skriptbeteenden eller MGP-bindningar. Läs docs/status.md, ursprungsplanen och respektive förstudie först; upprepa inte den färdiga inspelningsleveransen eller fulla prov utan ny ändring. Friställa spår och extra växellåsplupp fortsatt vilande. TKL och simulator fortsatt åtskilda.
 
 Preview session26631,9030/9031/wire9032, bevarad state/private/tmp/charlottendal-network-preview. Ingen pågående inspelning; två sparade UI-prov finns, noll lås, anslutning på, fria block, AIS av/lokalt. Tab3/4 markerade för fortsatt arbete. Inga browserfel. Automationen är ACTIVE var20min till08Europe/Stockholm; pausa vid tidsgränsen och lämna samlad rapport. Inga subagenter eller nya kostnader.
+
+
+### Kontrollpunkt 06:54 – fortsatt direktarbete, version0.12 lokalt
+
+Casper har uttryckligen bett att alla steg som går att kontrollera här ska byggas klart. Version0.12 inför sju beständiga linjespärrar, programmeringsspår med separat fältåterrapport och återstartslås, gemensam monoton modellklocka samt valbar felsignal. Handhavande och källgränser finns i docs/linjer-programmering-klocka.md. 95 enhetstester och fyra processhelhetstester passerade före två efterföljande gränsfallsrättelser: för gammal normalprogrammeringsrapport stoppar berörd aktiv väg; normalåterställning i fjärrläge undviker behörighetslåsning. Två ytterligare riktade tester införda; fulla serverprov görs före byte.
+
+UI-prov visar blockerad linje avvisar väg utan nya lås, programmeringsspärr överlever avbrott/återanslutning och släpps först efter uttrycklig normalbegäran, växel133 visar låsorsak. Modellklockan provad med4× och paus, återställd1×/paus. Inga provlås/belagda provblock kvar. Preview45722 på9030/9031/wire9032 med bevarad state. Publicering återstår.
+
+Nästa kontrollerbara arbete: seriell gateway och virtuellt portprov, källbundna signalberoenden utan påhittade svenska fältkoder, driftprofiladministration och TrainMeet-kontraktsadapter. Fysiska fakta och ofullständiga skript ska fortfarande särskiljas från färdig/provad mjukvara. Automationen pausas senast08:00; det nya direkta arbetsuppdraget får fortsätta.

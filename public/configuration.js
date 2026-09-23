@@ -29,7 +29,7 @@ export function createConfiguration({root,config,onActive}) {
     $('reload').disabled=busy||unsaved;
     for(const id of ['name','description','reason']) $(id).disabled=busy||!data;
     $('object').disabled=busy||unsaved||!data; $('kind').disabled=busy||unsaved||!data; $('search').disabled=busy||unsaved||!data;
-    $('locks').textContent=unavailable?'Aktivering spärrad medan kontakt saknas eller ett lagringsfel finns.':locks?`Aktivering spärrad: ${locks} tågvägslås finns kvar.`:unsaved?'Spara den öppna ändringen innan du granskar eller byter objekt.':'Aktivering tillåts när inga tågvägslås finns. Servern kontrollerar villkoret igen.';
+    $('locks').textContent=unavailable?'Aktivering spärrad medan kontakt saknas eller ett lagringsfel finns.':locks?`Aktivering spärrad: ${locks} driftlås finns kvar.`:unsaved?'Spara den öppna ändringen innan du granskar eller byter objekt.':'Aktivering tillåts när inga tågvägslås finns. Servern kontrollerar villkoret igen.';
     $('unsaved').textContent=unsaved?' Ej sparat':'';
     for(const button of $('history').querySelectorAll('button')) button.disabled=busy||unsaved||!!data?.draft;
   }
@@ -74,5 +74,5 @@ export function createConfiguration({root,config,onActive}) {
   $('discard').onclick=()=>act('discard',{},'Det sparade utkastet är kastat. Aktiv version är oförändrad.');
   $('history').onclick=e=>{const v=e.target.closest('button')?.dataset.version;if(v!==undefined)act('restore',{version:Number(v)},'Versionen är hämtad till utkast. Granska skillnaderna före aktivering.');};
   load();
-  return {load,updateState(state,online){locks=state?.routes.length||0;unavailable=!online||!!state?.storageFault;controls();}};
+  return {load,updateState(state,online){locks=(state?.routes.length||0)+(state?.operating?.programming?.reserved?1:0);unavailable=!online||!!state?.storageFault;controls();}};
 }

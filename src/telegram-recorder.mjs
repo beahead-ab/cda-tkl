@@ -27,7 +27,7 @@ export class TelegramRecorder extends EventEmitter {
     this.provenance={profile:{id:profile.id,title:profile.title,sourceHash:profile.sourceHash||null,fingerprint:createHash('sha256').update(JSON.stringify(profile)).digest('hex')},
       transport:'LocoNet-over-TCP',capturePoint:'TKL transport, complete ASCII protocol lines after whitespace/CR/LF normalization',
       verification:'Fysisk MGP/LocoBuffer ej verifierad. Filerna är observationer från vald anslutning, inte bevis för svensk beskedsmappning.',
-      bindings:{turnouts:profile.turnouts,blocks:profile.blocks,signals:profile.signals}};
+      bindings:{turnouts:profile.turnouts,blocks:profile.blocks,signals:profile.signals,operatingControls:profile.operatingControls}};
     try {
       fs.mkdirSync(this.directory,{recursive:true});
       for(const file of fs.readdirSync(this.directory).filter(f=>ID.test(f.slice(0,-5))&&f.endsWith('.json'))) {

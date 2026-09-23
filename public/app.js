@@ -2,11 +2,14 @@ import { createSourceRegister } from './source-register.js';
 import { panelLayout } from './panel-layout.js';
 import { createTrainInformation } from './train-information.js';
 import { createTelegramRecorder } from './telegram-recorder.js';
+import { createModelClock } from './model-clock.js';
+import { createFeedback } from './feedback.js';
+import { createOperatingControls } from './operating-controls.js';
 const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
-let sourceRegister, trainInformation, telegramRecorder, layout, serverOffset = 0;
+let sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, feedback, layout, serverOffset = 0;
 function setPage(page) {
   history.replaceState(null,'',page==='admin'?'#register':'#panel');
   if(page==='admin') document.body.classList.remove('panel-compact');
@@ -35,7 +38,7 @@ function accessible(g, name, action) {
   svg('title', {}, g, name); g.addEventListener('click', action);
   g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); action(); } });
 }
-function message(text) { $('message').textContent = text; $('message').hidden = !text; }
+function message(text) { if(text)feedback?.error(); $('message').textContent = text; $('message').hidden = !text; }
 async function api(path, data) {
   const urgent=path==='emergency-cancel'||(path==='all-stop'&&data.enabled===true);
   if (pending&&!urgent) return; pending++;
@@ -206,7 +209,8 @@ function paintPlan() {
   for (const b of buttons) {
     b.g.classList.toggle('chosen', b.id === chosen); b.g.classList.toggle('unavailable', !b.available || (b.names.length && state.manual?.[b.names[0]]?.allowed===false));
     b.g.classList.toggle('in-route', !!state?.routes.some(r => r.from === b.id || r.to === b.id));
-    b.g.classList.toggle('locked',!!state?.routes.some(r=>b.names.some(n=>r.turnouts[n])));
+    b.g.classList.toggle('locked',!!state?.routes.some(r=>b.names.some(n=>r.turnouts[n]))||(state.operating?.programming?.reserved&&b.names.includes('Vx133')));
+    b.g.classList.toggle('line-is-blocked',!!state.operating?.lines.some(l=>l.blocked&&l.button===b.id));
   }
   for (const [id, data] of routeNodes) if (!state?.routes.some(r => r.id === id)) { data.g.remove(); routeNodes.delete(id); }
   for (const r of state?.routes || []) {
@@ -248,6 +252,8 @@ function paint() {
   sourceRegister?.updateState(state,online);
   trainInformation?.update(state,online);
   telegramRecorder?.update(state,online);
+  operatingControls?.update(state,online);
+  if(state.clock)modelClock?.update(state.clock,online);
   const c = $('connection'); c.textContent = !online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad';
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
   paintPlan(); paintInspector();
@@ -290,7 +296,8 @@ function paintInspector() {
   const locked = state.routes.filter(r => kind === 'signal' ? r.signals.includes(name) : r.turnouts[name]);
   const value = !online ? 'Okänt' : kind === 'signal' ? ({ go: 'Kör återrapporterat', stop: 'Stopp återrapporterat', unknown: 'Okänt besked' }[s.aspect]) : ({ C: 'Rakt', T: 'Avvikande', unknown: 'Okänt / omläggning' }[s.position]);
   const manual=state.manual?.[name], manualNotice=kind==='turnout'&&manual?`<p class="muted">${esc(manual.reason)}</p>`:'';
-  const detail = `<dl><dt>${kind === 'signal' ? 'Signal' : 'Växel'}</dt><dd><strong>${esc(name)}</strong></dd><dt>Rapporterat</dt><dd>${esc(value)}</dd><dt>Tågvägslås</dt><dd>${esc(locked.map(r => r.label).join(', ') || 'Inga')}</dd><dt>${kind === 'signal' ? 'Provadress / råkod' : 'Källadress'}</dt><dd>${kind === 'signal' ? b.address + ' / ' + (s.code ?? '—') : esc(b.source) + (b.inverted ? ' · inverterad' : '')}</dd></dl>`;
+  const programLock=kind==='turnout'&&name==='Vx133'&&state.operating?.programming?.reserved;
+  const detail = `<dl><dt>${kind === 'signal' ? 'Signal' : 'Växel'}</dt><dd><strong>${esc(name)}</strong></dd><dt>Rapporterat</dt><dd>${esc(value)}</dd><dt>Tågvägslås</dt><dd>${esc(locked.map(r => r.label).join(', ') || 'Inga')}</dd>${programLock?'<dt>Programmeringsspärr</dt><dd>Lastspår 3 · lås kvar</dd>':''}<dt>${kind === 'signal' ? 'Provadress / råkod' : 'Källadress'}</dt><dd>${kind === 'signal' ? b.address + ' / ' + (s.code ?? '—') : esc(b.source) + (b.inverted ? ' · inverterad' : '')}</dd></dl>`;
   html('inspector', detail + sourceInfo + sourceButton + manualNotice + (kind === 'turnout' ? `<div class="actions"><button data-manual="C" ${locked.length || !usable() || manual?.allowed===false ? 'disabled' : ''}>Lägg rakt</button><button data-manual="T" ${locked.length || !usable() || manual?.allowed===false ? 'disabled' : ''}>Lägg avvikande</button></div>` : `<p class="muted">Beskedskoderna är en preliminär provmappning. Fullständiga svenska signalbilder kräver verifiering mot din MGP-utrustning.</p>`));
 }
 function paintIndication(name) {
@@ -301,6 +308,8 @@ function paintIndication(name) {
 }
 async function start() {
   telegramRecorder=createTelegramRecorder();
+  operatingControls=createOperatingControls({api,openSource});
+  modelClock=createModelClock({api});feedback=createFeedback();
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.

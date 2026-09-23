@@ -822,7 +822,7 @@
       "name": "Hantera Fellägen",
       "enabled": true,
       "status": "partial",
-      "behavior": "Manöverfel visas med orsak och journal. Den äldre Fel-sensorn körs inte.",
+      "behavior": "Manöverfel visas med orsak, journal och tre sekunders lokal felindikering. Operatören kan aktivera en kort ersättningssignal; källans ljudfiler saknas. Den äldre Fel-sensorn körs inte.",
       "rules": [
         "IX:AUTO:0014C1"
       ]
@@ -1554,8 +1554,8 @@
       "id": "IX:AUTO:0023",
       "name": "Spärra spår",
       "enabled": true,
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår.",
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar.",
       "rules": [
         "IX:AUTO:0023C1",
         "IX:AUTO:0023C2",
@@ -1587,8 +1587,8 @@
       "id": "IX:AUTO:0025",
       "name": "Progspår",
       "enabled": true,
-      "status": "pending",
-      "behavior": "Programmeringsspårets omkoppling och bekräftelse återstår.",
+      "status": "replaced",
+      "behavior": "Växel133 måste vara bekräftat rakt. Beständig spärr av växel133 och Lastspår3 före LT134-order. Normaldrift kräver nya B1/B2-återrapporter; avbrott/omstart behåller spärren. Fysiskt elektriskt beteende och LS940-återrapport ej verifierade.",
       "rules": [
         "IX:AUTO:0025C1"
       ]
@@ -6098,7 +6098,7 @@
     "IX:AUTO:0014C1": {
       "group": "IX:AUTO:0014",
       "status": "partial",
-      "behavior": "Manöverfel visas med orsak och journal. Den äldre Fel-sensorn körs inte."
+      "behavior": "Manöverfel visas med orsak, journal och tre sekunders lokal felindikering. Operatören kan aktivera en kort ersättningssignal; källans ljudfiler saknas. Den äldre Fel-sensorn körs inte."
     },
     "IX:AUTO:0015C1": {
       "group": "IX:AUTO:0015",
@@ -10786,73 +10786,73 @@
     },
     "IX:AUTO:0023C1": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C2": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C3": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C4": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C5": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C6": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C7": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C8": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C9": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C10": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C11": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C12": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C13": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0023C14": {
       "group": "IX:AUTO:0023",
-      "status": "partial",
-      "behavior": "Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår."
+      "status": "replaced",
+      "behavior": "Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar."
     },
     "IX:AUTO:0024C1": {
       "group": "IX:AUTO:0024",
@@ -10861,8 +10861,8 @@
     },
     "IX:AUTO:0025C1": {
       "group": "IX:AUTO:0025",
-      "status": "pending",
-      "behavior": "Programmeringsspårets omkoppling och bekräftelse återstår."
+      "status": "replaced",
+      "behavior": "Växel133 måste vara bekräftat rakt. Beständig spärr av växel133 och Lastspår3 före LT134-order. Normaldrift kräver nya B1/B2-återrapporter; avbrott/omstart behåller spärren. Fysiskt elektriskt beteende och LS940-återrapport ej verifierade."
     },
     "IX:RTXINITIALIZER1T": {
       "group": "IX:RTXINITIALIZER",

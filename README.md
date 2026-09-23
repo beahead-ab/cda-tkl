@@ -1,4 +1,4 @@
-# Charlottendal TKL · version 0.11.0
+# Charlottendal TKL · version 0.12.0
 
 En första körbar lokal applikation med egen TKL-kärna och en separat anläggningssimulator. Den använder Charlottendals exporterade geometri och JMRI mod59-signalbilder. Claude Design behövs inte för att köra den.
 
@@ -32,6 +32,8 @@ Om appen redan är igång öppnar du länkarna direkt. Avsluta med Ctrl+C i dess
 - Okända eller gamla återrapporter behandlas som okända. Eko och transportkvittens räknas aldrig som bekräftat växelläge eller signalbesked.
 - Körbegäran i omvänd signalordning efter bekräftade växellägen. Kör visas först efter signalrapport. Oväntat kör från en motriktad signal stoppar den berörda provtågvägen.
 - Lokala villkor för 20 manuella växelknappar, AIS, nödåtertagning och beständiga spårspärrar. Lokal-/fjärrläge finns; fjärrsystem är ännu inte anslutet.
+- Sju beständiga linjespärrar och programmeringsspår med lås över avbrott/omstart, separat relä- och sensorrapport samt felprov i simulatorn. [Handhavande och fysisk begränsning](docs/linjer-programmering-klocka.md).
+- Gemensam modellklocka med trafikdygn, hastighet och paus/start; valbar kort felsignal och synlig felindikering.
 - Serverlagrade visningsinställningar med utkast, jämförelse och versionshistorik. Manuell tåginformation för alla 197 block samt sju inkommande fält; ändrad beläggning och omstart kräver kontroll.
 - Beständiga lås och händelsejournal. Omstart eller återanslutning återupptar aldrig körmedgivanden automatiskt.
 - Komplett sökbart XML-register med 25 kategorier, bland annat 66 signaler, 727 växelobjekt, 604 sensorer, 404 block, 174 minnen, 1 377 conditionals, signalmastlogik och 153 start-/målpar. Samtliga fält och referenser kan granskas, med paginering och nedladdning av oförändrad originalfil. Anteckningar sparas separat och kan exporteras.

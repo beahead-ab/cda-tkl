@@ -235,7 +235,7 @@ test('emergency requests survive restart without resuming or automatically relea
   const saved=new Map(),storage={load:(n,f)=>saved.has(n)?structuredClone(saved.get(n)):f,save:(n,v)=>saved.set(n,structuredClone(v)),event(){}};
   const r=rig(storage),route=r.request('htvCu','htvSpIA');r.advance(4000);
   r.engine.emergencyCancelAll();
-  const restarted=new Engine(profile,{storage});assert.equal(restarted.controls.stopAll,true);assert.equal(restarted.controls.version,2);
+  const restarted=new Engine(profile,{storage});assert.equal(restarted.controls.stopAll,true);assert.equal(restarted.controls.version,3);
   assert.deepEqual(restarted.emergencyRemaining().map(x=>x.id),[route.id]);assert.equal(restarted.routes[0].state,'held');assert.equal(restarted.routes[0].cancelRequested,false);
   assert.throws(()=>restarted.allStop(false),/Nödåtertagning/);
 });
@@ -257,7 +257,7 @@ test('local/remote authority persists, blocks local commands and cannot change w
 });
 test('legacy controls migrate without dropping AIS or blocks; invalid authority fails closed',()=>{
   const values={'controls.json':{version:1,stopAll:true,blocked:['SIA']}},storage={load:(n,f)=>structuredClone(values[n]||f),event(){}};
-  const e=new Engine(profile,{storage});assert.deepEqual(e.controls,{version:2,stopAll:true,blocked:['SIA'],mode:'local',emergency:null});
+  const e=new Engine(profile,{storage});assert.deepEqual(e.controls,{version:3,stopAll:true,blocked:['SIA'],mode:'local',emergency:null,lines:[],programming:{reserved:false,desired:false}});
   assert.equal(values['controls.json'].version,1,'read-only migration does not overwrite stored controls during startup');
   values['controls.json']={...e.controls,mode:'anything'};assert.throws(()=>new Engine(profile,{storage}),/ogiltig/);
 });

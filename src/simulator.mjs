@@ -42,6 +42,7 @@ const server = http.createServer(async (req, res) => {
       const data = await body(req);
       if (url.pathname === '/api/block') field.setBlock(data.name, data.occupied);
       else if (url.pathname === '/api/fault') field.setFault(data.kind, data.name);
+      else if (url.pathname === '/api/programming-fault') field.setProgrammingFault(data.enabled);
       else if (url.pathname === '/api/train') field.startTrain(data.id);
       else if (url.pathname === '/api/link') { link = !!data.connected; if (!link) for (const s of clients) s.destroy(); }
       else return json(res, { error: 'Okänd manöver' }, 404);

@@ -9,6 +9,7 @@ export class Field extends EventEmitter {
     this.blocks = Object.fromEntries(Object.keys(profile.blocks).map(n => [n, false]));
     this.signals = Object.fromEntries(Object.keys(profile.signals).map(n => [n, { permission: 'STOP', code: 0, due: 0 }]));
     this.faults = { turnout: '', signal: '', sensor: '' }; this.train = null; this.trains = []; this.nextTrain = 420;
+    this.programming=profile.programming?{relay:'T',active:false,target:false,due:0,fault:false}:null;
   }
   reportTurnout(name) {
     if (this.faults.turnout === name) return;
@@ -26,9 +27,13 @@ export class Field extends EventEmitter {
     const sent=new Set();
     for (const n of Object.keys(this.blocks)) if(!sent.has(this.profile.blocks[n].address)) {this.reportBlock(n);sent.add(this.profile.blocks[n].address);}
     for (const n of Object.keys(this.signals)) this.reportSignal(n);
+    this.reportProgramming();
   }
+  reportProgramming(){const p=this.programming,b=this.profile.programming;if(p&&!p.fault){this.emit('frame',switchReport(b.relayAddress,p.relay));this.emit('frame',sensorReport(b.reportAddress,p.active));}}
+  setProgrammingFault(enabled){if(!this.programming||typeof enabled!=='boolean')throw Error('Ogiltigt programmeringsfel.');this.programming.fault=enabled;this.tick();this.reportProgramming();}
   accept(bytes) {
     const d = decode(bytes); if (d.kind !== 'order' || !d.on) return;
+    if(this.programming&&d.address===this.profile.programming.relayAddress){this.programming.target=d.position==='C';this.programming.relay='unknown';this.programming.due=this.now()+this.movementMs;this.reportProgramming();}
     for (const [name, b] of Object.entries(this.profile.turnouts)) {
       if (b.address !== d.address) continue;
       const logical = b.inverted ? (d.position === 'C' ? 'T' : 'C') : d.position;
@@ -46,13 +51,15 @@ export class Field extends EventEmitter {
   }
   tick() {
     const now = this.now();
+    const p=this.programming;if(p&&p.due&&p.due<=now&&!p.fault){p.active=p.target;p.relay=p.active?'C':'T';p.due=0;this.reportProgramming();}
     for (const [n, s] of Object.entries(this.turnouts)) if (s.due && s.due <= now && this.faults.turnout !== n) {
       s.position = s.target; s.due = 0; this.reportTurnout(n);
     }
     for (const [n, s] of Object.entries(this.signals)) {
       const p = this.profile.protection[n];
       const alternatives=(p?.alternatives || (p?[p]:[])).filter(option=>Object.entries(option.turnouts).every(([t,pos])=>this.turnouts[t].position===pos));
-      const permitted = s.permission === 'GO' && now >= s.due && this.faults.signal !== n && alternatives.length>0 && alternatives.every(option=>option.blocks.every(b=>!this.blocks[b]));
+      const programSafe=option=>!this.programming||(!Object.hasOwn(option.turnouts,this.profile.programming.turnout)&&!option.blocks.some(b=>this.profile.programming.blocks.includes(b)))||(this.programming.relay==='T'&&!this.programming.active);
+      const permitted = s.permission === 'GO' && now >= s.due && this.faults.signal !== n && alternatives.length>0 && alternatives.every(option=>programSafe(option)&&option.blocks.every(b=>!this.blocks[b]));
       // Provisional CZ example codes; intentionally no invented Swedish aspect table.
       const code = permitted ? (alternatives.some(p=>Object.values(p.turnouts).includes('T')) ? 18 : 8) : 0;
       if (code !== s.code) { s.code = code; this.reportSignal(n); }
@@ -99,5 +106,5 @@ export class Field extends EventEmitter {
     this.train=this.trains[0] || null;
     // tick on the next 50 ms cycle recalculates local signal protection.
   }
-  snapshot() { return { turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, faults: this.faults, train: this.train, trains:this.trains, scenarios: this.profile.scenarios }; }
+  snapshot() { return { turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, programming:this.programming,faults: this.faults, train: this.train, trains:this.trains, scenarios: this.profile.scenarios }; }
 }

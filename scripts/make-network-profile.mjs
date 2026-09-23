@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { Topology } from '../src/topology.mjs';
 import { RoutePolicy, signalPlan, attachSourceEndpoints, searchSourceRoute } from '../src/route-policy.mjs';
 import { compileManualPolicies } from '../src/manual-policy.mjs';
+import { compileOperatingControls } from '../src/operating-policy.mjs';
 const read = file => JSON.parse(fs.readFileSync(new URL('../' + file, import.meta.url)));
 const write = (file, data) => {
   const target = new URL('../' + file, import.meta.url), content = JSON.stringify(data, null, 2) + '\n';
@@ -108,12 +109,18 @@ for (const route of routes) for (let i=0;i<route.boundaries.length;i++) {
   if(!list.some(o=>JSON.stringify(o)===JSON.stringify(option))) list.push(option);
 }
 const manualPolicies=compileManualPolicies(source,{turnouts,blocks,coupled,protection});
+const operatingControls=compileOperatingControls(source,panel,admin);
+for(const line of Object.values(operatingControls.lines)) {
+  const block=topology.segments[topology.buttons[line.button]?.segment]?.b;
+  if(!block||!blocks[block])throw Error('Linjeknappen saknar spåranknytning: '+line.id);
+  line.blocks=[block];
+}
 const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:false,sourceHash:source.sourceHash,
   description:'Utökad anläggningsmodell med källstyrda tågvägsval och signalriktningar. Fysiska MGP-bindningar återstår att verifiera.',
   transport:{host:'127.0.0.1',port:8912},staleMs:7000,commandTimeoutMs:6000,signalStepMs:300,
-  turnouts,blocks,signals,routes,coupled,manualPolicies,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),
+  turnouts,blocks,signals,routes,coupled,manualPolicies,operatingControls,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),
   sourcePolicy:[...source.mainRoutePolicies,...source.shuntRoutePolicies],excluded,releasePolicy:'whole-route-after-ordered-passage-and-stop-feedback'};
-const simulator={id:'charlottendal-independent-network-field',turnouts,blocks,signals,coupled,protection,
+const simulator={id:'charlottendal-independent-network-field',turnouts,blocks,signals,coupled,protection,programming:operatingControls.programming,
   scenarios:routes.map(r=>({id:r.id,label:r.label,blocks:r.blocks,signal:r.signals[0],signals:r.signals,signalEntries:r.signalEntries,turnouts:r.turnouts})),
   note:'Independent plant model. Only LocoNet bytes are received from TKL. Static scenarios are not TKL runtime state.'};
 write('profiles/charlottendal-network.json',profile); write('profiles/simulator-network.json',simulator);

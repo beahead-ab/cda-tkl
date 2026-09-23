@@ -14,7 +14,7 @@ const notes={
   '0011':['pending','Utfartssignalernas särskilda villkor återstår.'],
   '0012':['partial','V1–V4 beräknas läsande från källans OR-villkor. V1–V3 har anslutet underlag; V4 har fyra oanslutna NX och kan förbli okänd. Ingen fysisk bomstyrning eller bomkvittens.'],
   '0013':['partial','210 granskade huvudtågvägar och spärrade knappkombinationer. Spår6/IS266 har en källanknuten katalogknapp för de18 tidigare oanslutna paren; 3 motsägande regler spärrade. Knappminnet ersätts av panelens start/slutval.'],
-  '0014':['partial','Manöverfel visas med orsak och journal. Den äldre Fel-sensorn körs inte.'],
+  '0014':['partial','Manöverfel visas med orsak, journal och tre sekunders lokal felindikering. Operatören kan aktivera en kort ersättningssignal; källans ljudfiler saknas. Den äldre Fel-sensorn körs inte.'],
   '0015':['external','MQTT-proxyobjekt bevarade. Broker, ämnen och anslutningsuppgifter saknas.'],
   '0016':['partial','Nödåtertagning begär stopp och återtagning av alla befintliga vägar. AIS kvarstår till manuell återställning. Källans minne Tågmöte saknar ännu driftfunktion.'],
   '0017':['replaced','AIS begär stopp i alla 66 signaler, sparas beständigt och behåller lås. Nya stoppåterrapporter krävs före återställning. Fysiska beskedskoder ej verifierade.'],
@@ -23,9 +23,9 @@ const notes={
   '0020':['partial','Återtagning och ordnad passage ersätter frigivningen för anslutna vägar; lås släpps först efter stoppåterrapport.'],
   '0021':['disabled','Avstängd i original-XML. Har inte aktiverats.'],
   '0022':['external','MQTT-orderobjekt bevarade. Ingen brokeranslutning är aktiverad.'],
-  '0023':['partial','Beständiga administrativa spårspärrar skiljs från verklig beläggning. Särskilda linje-/knappspärrar genom saknade skript återstår.'],
+  '0023':['replaced','Beständiga linje- och spårspärrar skiljs från verklig beläggning. Linjespärrar täcker källknappen och dess grafanknutna spåravsnitt; berörda tågvägar stoppas med låsen kvar.'],
   '0024':['pending','Återställning av knappval finns. Saknade externa skript får inte användas för att radera driftlås.'],
-  '0025':['pending','Programmeringsspårets omkoppling och bekräftelse återstår.'],
+  '0025':['replaced','Växel133 måste vara bekräftat rakt. Beständig spärr av växel133 och Lastspår3 före LT134-order. Normaldrift kräver nya B1/B2-återrapporter; avbrott/omstart behåller spärren. Fysiskt elektriskt beteende och LS940-återrapport ej verifierade.'],
   'initializer':['replaced','Alla fälttillstånd startar okända och signaler begärs i stopp. Källans initieringskommandon behandlas inte som fysiska återrapporter.']
 };
 const groups=source.groups.map(group=>{const [status,behavior]=notes[group.id.startsWith('IX:AUTO:')?group.id.slice(-4):'initializer'];return {id:group.id,name:group.name,enabled:group.enabled,status,behavior,rules:group.rules};});
