@@ -1,9 +1,9 @@
 {
   "name": "charlottendal-tkl",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "type": "module",
-  "description": "Charlottendal TKL och en separat LocoNet-anl\u00e4ggningssimulator",
+  "description": "Charlottendal TKL och en separat LocoNet-anläggningssimulator",
   "engines": {
     "node": ">=22"
   },

@@ -236,3 +236,12 @@ Nattarbetets nästa ofärdiga etapp kan förbereda verklig MGP-verifiering genom
 En ny källkontroll av Vx95/Vx96 i docs/manuella-vaxlar.md visar att C33 och C34 har olika triggersCalc (no/yes) trots likartade åtgärder. Variabeltyp4 betyder CLOSED, inte THROWN. En ständig koppling eller omläggning på varje rapport är därför inte en säker översättning. Den automatiken förblir oaktiverad. Rangeröverlämning, vändskiva, programmeringsspår, fulla svenska signalbesked, TrainMeet och fysisk MGP återstår.
 
 Preview session90879,9030/9031/wire9032, bevarad state i /private/tmp/charlottendal-network-preview. Noll provlås, SLI fri, anslutning på, lokal manövrering och AIS av. Tab16/18 markerade för fortsatt arbete, inga browserfel. Automationen fortsätter var20min till08:00Europe/Stockholm; pausa då och sammanfatta ärligt. Gör inte om detta färdiga versionsbyte utan ny ändring.
+
+
+### Kontrollpunkt 06:18 – telegraminspelning klar lokalt
+
+Version 0.11 tillför läsande telegraminspelning i båda riktningarna, rå protokollrad och separat tolkning. B0-eko/SENT behandlas inte som fältkvittens. Felaktiga ramar bevaras utan att accepteras av kärnan. Profiler och adressbindningar följer exporten med uttrycklig status att fysisk svensk MGP inte verifierats. Inga extra order eller läsning av simulatorns interna tillstånd. Max två minuter/10 000 händelser/fyra MB händelser; 100 filer utan automatisk radering. Pågående data i RAM, avslutade filer beständiga, normal avstängning sparar, oväntat haveri kan förlora pågående data. Lagringsfel behåller loggen för export/återförsök. Samma autentisering och ursprungskontroll som övriga appen.
+
+Sju riktade enhetstester, fyra processhelhetstester och UI-prov godkända; syntaxkontroll görs före commit. UI-provat etablering/återtagning Cu→Spår1a, 4 762 inspelade rader, omladdning och automatisk sparning vid avbrott. Noll provlås, alla block fria och anslutning återställd. Ny preview session26631 på9030/9031/wire9032 med bevarat state. CUA nya tab3/4 (tidigare16/18 borttagna av användaren) markerade för fortsatt arbete. Full serverprovning och kontrollerad publicering återstår.
+
+Användaren frågade ”vad är kvar?” under arbetet. Har fått kort status i commentary; slutrapporten ska besvara frågan självständigt med verklig MGP/LocoBuffer, svenska signalbesked, TrainMeet, återstående manöverfall/oklara tågvägar, Jython-ersättningar och fortsatt visuell avstämning. Hela XML finns bevarad men alla beteenden körs inte. Automationen är ACTIVE till08Europe/Stockholm; pausa vid tidsgränsen.

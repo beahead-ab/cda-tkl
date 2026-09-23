@@ -75,3 +75,12 @@ UI: 1/5 med LT210, 6/8 med fem tomma utgångar, virtuell 6/7 och 3/5 med saknad 
 Sex riktade prov och utökat processprov för V1–V4 passerar lokalt. Alla 80 NX- och 13 sensorvillkor är källbundna. Var och en av de 76 anslutna NX prövas i sju faser, varje sensor kan ensam avgöra OR och alla fyra oanslutna V4-NX förblir okända. Alias, polaritet, gamla och motstridiga rapporter, anslutningsavbrott och lagringsfel kontrolleras. Läsande indikering skickar inga order och frigör inga lås. De fyra processhelhetstesterna passerar.
 
 UI: etablering/aktiv/återtagning för V1, V4:s delvis kända underlag och SLI-beläggning, avbruten/återupprättad LocoNet, skinbyte, omladdning, källregel och öppning från kompaktläge. Se docs/vagindikeringar.md. Alla 75 enhetstester och fyra helhetstester godkända på servern före publicering av 5104907; backup och efterkontroll godkända.
+
+
+## Nytillkomna prov i version 0.11
+
+Sju riktade enhetstester för telegraminspelning godkända lokalt: båda riktningar, felaktig kontrollsumma, okänd B1-variant, eko/transportkvittens, monoton ordning, filbeständighet, samtidiga paneler, gränser, avbrott, omstart och lagringsfel med bevarad nedladdning/återförsök. Transportprovet kontrollerar att tappningen inte skickar extra order och att en felaktig ram inte når kärnan.
+
+Alla fyra processhelhetstester passerar lokalt. Två samtidiga tåg spelas in med B0, B1, B2 och preliminär E4, återtagning av lås fungerar och filen hämtas efter stopp. Lösenordsprovet kontrollerar skyddad inspelningslista/nedladdning, avvisat annat ursprung, sparning vid normal serveravstängning, historik efter omstart, avvisad gammal serversession och återkallad nedladdningsrätt efter utloggning.
+
+UI-prov: Cu → Spår 1a går till KLAR och återtas under pågående inspelning. 4 762 rader sparas, historiken bevaras efter omladdning. En andra inspelning avslutas och sparas vid LocoNet-avbrott; startknappen är spärrad tills återanslutning. Därefter noll provlås, anslutning på, alla provblock fria. Komplett serverprov och publicering återstår vid denna kontrollpunkt.

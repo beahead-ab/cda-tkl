@@ -23,6 +23,7 @@ export class LocoNetClient extends EventEmitter {
     });
   }
   line(line) {
+    this.emit('protocol',{direction:'in',line});
     this.lastReceive = Date.now();
     if (line.startsWith('RECEIVE ')) {
       try { const data = fromHex(line.slice(8)); this.emit('wire', { direction: 'in', hex: hex(data) }); this.emit('frame', data); }
@@ -41,7 +42,7 @@ export class LocoNetClient extends EventEmitter {
   flush() {
     if (this.pending || !this.online || !this.queue.length) return;
     const bytes = this.queue.shift(); this.pending = Date.now();
-    this.socket.write('SEND ' + hex(bytes) + '\r\n'); this.emit('wire', { direction: 'out', hex: hex(bytes) });
+    const line='SEND ' + hex(bytes);this.socket.write(line + '\r\n');this.emit('protocol',{direction:'out',line});this.emit('wire', { direction: 'out', hex: hex(bytes) });
   }
   stop() { this.stopped = true; clearTimeout(this.retry); clearInterval(this.watch); this.socket?.destroy(); }
 }

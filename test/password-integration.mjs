@@ -59,6 +59,8 @@ test('password login protects both processes, requires change, revokes sessions 
     }
     assert.equal((await request(ports[0], '/login')).status, 200);
     assert.equal((await request(ports[0], '/auth.js')).status, 200);
+    for(const resource of ['/api/recordings','/api/recordings/00000000-0000-0000-0000-000000000000/download'])assert.equal((await request(ports[0],resource)).status,401);
+    for(const command of ['start','stop'])assert.equal((await request(ports[0],'/api/recordings/'+command,{})).status,401);
     const login = () => request(ports[0], '/api/auth/login', { password: initial });
     assert.equal((await request(ports[0], '/api/auth/login', { password: 'wrong' })).status, 401);
     assert.equal((await request(ports[0], '/api/auth/login', { password: initial }, null, null)).status, 403);
@@ -82,10 +84,27 @@ test('password login protects both processes, requires change, revokes sessions 
     assert.equal(source.status, 200); assert.equal(JSON.parse(source.body).meta.attributeCount,96142);
     const signals = await request(ports[0], '/data/signal-catalog.json', undefined, cookie);
     assert.equal(signals.status, 200); assert.equal(JSON.parse(signals.body).counts.sourceAspects,329);
+    const recorder=await request(ports[0],'/api/recordings',undefined,cookie);
+    assert.equal(recorder.status,200);
+    const recordingSession=JSON.parse(recorder.body).sessionId;
+    assert.equal((await request(ports[0],'/api/recordings/start',{sessionId:recordingSession},cookie,'https://evil.invalid')).status,400);
+    assert.equal((await request(ports[0],'/api/recordings/start',{sessionId:recordingSession},cookie,null)).status,403);
+    for(let n=0;n<100;n++){
+      const state=JSON.parse((await request(ports[0],'/api/state',undefined,cookie)).body);
+      if(state.connection==='connected')break;
+      await new Promise(resolve=>setTimeout(resolve,50));
+    }
+    const started=await request(ports[0],'/api/recordings/start',{sessionId:recordingSession,label:'Behörighetsprov'},cookie);
+    assert.equal(started.status,200);const captureId=JSON.parse(started.body).active.id;
     assert.equal((await login()).status, 401);
     await stop(backend); backend = launch('src/server.mjs'); await ready(ports[0]);
     assert.equal((await request(ports[0], '/api/state', undefined, cookie)).status, 200);
+    const capture=await request(ports[0],'/api/recordings/'+captureId+'/download',undefined,cookie);
+    assert.equal(capture.status,200);assert.equal(JSON.parse(capture.body).reason,'server-shutdown');
+    assert.equal(JSON.parse((await request(ports[0],'/api/recordings',undefined,cookie)).body).history.length,1);
+    assert.equal((await request(ports[0],'/api/recordings/stop',{sessionId:recordingSession,id:captureId},cookie)).status,409);
     assert.equal((await request(ports[0], '/api/auth/logout', {}, cookie)).status, 200);
+    assert.equal((await request(ports[0],'/api/recordings/'+captureId+'/download',undefined,cookie)).status,401);
     for (const port of ports.slice(0, 2)) assert.equal((await request(port, '/api/state', undefined, cookie)).status, 401);
     for (let i = 0; i < 4; i++) assert.equal((await login()).status, 401);
     assert.equal((await login()).status, 429);

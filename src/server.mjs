@@ -10,6 +10,7 @@ import { loadProfile } from './profile.mjs';
 import { Configuration } from './configuration.mjs';
 import { TrainInformation } from './train-information.mjs';
 import { PanelIndications } from './panel-indications.mjs';
+import { TelegramRecorder } from './telegram-recorder.mjs';
 
 const profile = loadProfile();
 const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
@@ -20,15 +21,17 @@ const engine = new Engine(profile, { storage, send: bytes => client.send(bytes) 
 const configuration = new Configuration(profile, {storage,canActivate:()=>!engine.routes.length && !engine.storageFault});
 const trainInformation=new TrainInformation(JSON.parse(fs.readFileSync(new URL('../public/data/train-fields.json',import.meta.url),'utf8')),profile,{storage});
 const panelIndications=new PanelIndications(JSON.parse(fs.readFileSync(new URL('../public/data/indications.json',import.meta.url),'utf8')),profile);
+const recorder=new TelegramRecorder(storage.directory,profile);
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
 auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
 function protect(action) { try { return action(); } catch (e) { engine.log('error', e.message); } }
 engine.on('change', () => { trainInformation.observe(engine.blocks,engine.connected); dirty = true; });
-client.on('connection', connected => protect(() => engine.connection(connected)));
+client.on('connection', connected => {recorder.connection(connected);protect(() => engine.connection(connected));});
 client.on('frame', bytes => protect(() => engine.receive(bytes)));
-client.on('fault', message => engine.log('transport', String(message)));
+client.on('fault', message => {recorder.fault(message);engine.log('transport', String(message));});
+client.on('protocol',line=>recorder.protocol(line));recorder.on('change',()=>{dirty=true;});
 client.on('wire', event => { trace.unshift({ ...event, at: Date.now() }); trace.length = Math.min(trace.length, 100); dirty = true; });
-const snapshot = () => {const state=engine.snapshot();return { ...state, panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
+const snapshot = () => {const state=engine.snapshot();return { ...state, recordings:recorder.view(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -40,6 +43,12 @@ const server = http.createServer(async (req, res) => {
       if (url.pathname === '/api/train-information') return json(res, {...trainInformation.snapshot(),...trainInformation.catalog()});
       if (url.pathname === '/api/configuration') return json(res, configuration.view());
       if (url.pathname === '/api/presentation') return json(res, configuration.presentation());
+      if (url.pathname === '/api/recordings') return json(res,recorder.view());
+      if (url.pathname.startsWith('/api/recordings/')&&url.pathname.endsWith('/download')) {
+        const id=url.pathname.slice('/api/recordings/'.length,-'/download'.length),doc=await recorder.export(id);
+        res.writeHead(200,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Disposition':`attachment; filename="charlottendal-telegram-${doc.id}.json"`});
+        return res.end(req.method==='HEAD'?undefined:JSON.stringify(doc,null,2)+'\n');
+      }
       if (url.pathname === '/api/events') {
         res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive', 'X-Content-Type-Options': 'nosniff' });
         if (req.method === 'HEAD') return res.end();
@@ -51,6 +60,8 @@ const server = http.createServer(async (req, res) => {
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
     const data = await body(req);
+    if(url.pathname==='/api/recordings/start'){recorder.start(data,engine.connected?'connected':'disconnected');return json(res,recorder.view());}
+    if(url.pathname==='/api/recordings/stop'){await recorder.stop(data);return json(res,recorder.view());}
     if (url.pathname.startsWith('/api/configuration/')) {
       const command=url.pathname.slice('/api/configuration/'.length);
       if(!['save','restore','discard','activate'].includes(command)) return json(res,{error:'Okänd inställningsåtgärd'},404);
@@ -82,16 +93,19 @@ const server = http.createServer(async (req, res) => {
 let tick, publish;
 server.listen(port, '127.0.0.1', () => {
   console.log(`Charlottendal TKL: http://127.0.0.1:${port}`); client.start();
-  tick = setInterval(() => protect(() => engine.tick()), 100);
+  tick = setInterval(() => {protect(() => engine.tick());recorder.tick();}, 100);
   publish = setInterval(() => {
     if (!dirty) return; dirty = false; const text = `data: ${JSON.stringify(snapshot())}\n\n`;
     for (const res of streams) { if (res.writableLength > 1e6) { res.end(); streams.delete(res); } else res.write(text); }
   }, 150);
 });
 server.on('error', e => { console.error(e.message); process.exit(1); });
-function close() {
+let closing=false;
+async function close() {
+  if(closing)return;closing=true;
   clearInterval(tick); clearInterval(publish);
   for (const n of Object.keys(engine.signals)) protect(() => engine.permission(n, 'STOP'));
+  await recorder.finish('server-shutdown');
   setTimeout(() => { client.stop(); for (const s of streams) s.end(); server.close(() => process.exit(0)); }, 250);
 }
 process.on('SIGINT', close); process.on('SIGTERM', close);
