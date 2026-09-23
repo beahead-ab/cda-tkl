@@ -8,3 +8,4 @@ var/*
 *.key
 deploy/secrets/
 node_modules/
+__pycache__/

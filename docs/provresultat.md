@@ -61,3 +61,10 @@ Processprovet lägger och återtar 7/10 → IIIev, kontrollerar målsignalen i s
 Sammansatta vägar behåller nu både källans hela NX-par och de ingående delparen. Det nya provet följer 3/5 → 6/9 genom den mellanliggande signalen 6/7, både som huvud- och växeltågväg, och kontrollerar att ursprungsreferensen finns kvar i en aktiv respektive hållen reservation. Alla 130 växeltågvägar behåller originalregelns uttryckliga NX-id.
 
 Täckningsregistret identifierar nu 133 av 153 NX-definitioner med minst en körbar väg; 20 saknar ännu koppling. Antalet körbara vägar är fortsatt 340. För de 25 berörda vägarna är geometri, signalordning och låsta fysiska resurser oförändrade. En nytillkommen full NX-referens används av en ansluten manuell växelregel; dess manöver var redan spärrad av de överlappande fysiska resurserna. Fullständigt regressionsprov kontrollerar den uppdaterade profilen.
+
+
+## Nytillkomna prov i version 0.9
+
+Fyra riktade signalregisterprov passerar: 66 master, 329 källbindningar, 310 lösta och 19 tomma utgångar, 117 relationer, exakt bildmatchning utan antagna typalias samt käll-/bildkontrollsummor och reproducerbar generering. Aktuell rapport skiljs från begärt medgivande; gamla, bortkopplade och okända besked döljer giltig råkod. Inloggningsprovet har utökats för den nya katalogen. Full serverkörning dokumenteras vid publicering.
+
+UI: 1/5 med LT210, 6/8 med fem tomma utgångar, virtuell 6/7 och 3/5 med saknad bilddefinition kontrollerade. Länk till 3/5 → 6/7 öppnade rätt källvillkor. Förladdade GIF visades med originalmått, tabellen var läsbar på smal skärm. Lagd Cu → Spår 1a visade kör; återtagning i en andra panel uppdaterade den redan öppna signalvyn till stopp. Inga provlås kvar. Se docs/signalregister.md.

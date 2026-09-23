@@ -1,4 +1,5 @@
 import { createConfiguration } from './configuration.js';
+import { createSignalDetails, preloadSignalReferences } from './signal-details.js';
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 const titles = { systemName:'Systemnamn', userName:'Namn', comment:'Kommentar', antecedent:'Villkorsuttryck', logicType:'Logiktyp', triggerOnChange:'Utlösning vid ändring', conditionalStateVariable:'Villkorsvariabel', conditionalAction:'Åtgärd', data:'Värde', delay:'Fördröjning', option:'Alternativ', type:'Typ', operator:'Operator', negated:'Negerat', triggersCalc:'Utlöser beräkning', num1:'Tal 1', num2:'Tal 2', dataString:'Textvärde', string:'Text', aspect:'Signalbesked', defines:'Besked', turnout:'Växelobjekt', turnoutstate:'Växelläge', enabled:'Aktiverad', feedback:'Återrapportering', inverted:'Inverterad', occupancysensor:'Beläggningssensor', sensor:'Sensor', occupiedsense:'Beläggningsvärde', sourceSignalMast:'Från signal', destinationSignalMast:'Till signal', destinationMast:'Målsignal', source:'Start', destination:'Mål', uniqueid:'Unikt ID', nxType:'Tågvägstyp', blockname:'Block', blocknameac:'Block A–C', blocknamebd:'Block B–D', continuing:'Rak gren', disabled:'Direktmanöver avstängd', hidden:'Dold i originalpanelen', turnoutname:'Växel', secondturnoutname:'Kopplad växel', class:'JMRI-klass', goingActive:'Fördröjning till aktiv', goingInActive:'Fördröjning till inaktiv', lockTurnouts:'Lås växlar', raytrack:'Vändskivespår', angle:'Vinkel', scale:'Skala', degrees:'Rotation', url:'Resurs', memory:'Minne', blockcontents:'Blockinnehåll' };
 const description = node => node.children.find(c=>c.tag==='userName')?.text || node.attrs.userName || node.attrs.systemName || node.attrs.ident || node.attrs.defines || node.attrs.destination || node.attrs.sensor || node.attrs.turnout || node.attrs.text || (node.text || '').trim();
@@ -33,7 +34,7 @@ function sourceXML(node, depth=0) {
   return `${indent}<${node.tag}${attrs}>${node.text?.trim()?esc(node.text.trim()):''}${node.children.length?'\n'+node.children.map(c=>sourceXML(c,depth+1)).join('\n')+'\n'+indent:''}</${node.tag}>`;
 }
 export function createSourceRegister({config, saveNote, onActive}) {
-  let configuration, lastState, lastOnline=false;
+  let configuration, signalCatalog, signalDetails, lastState, lastOnline=false;
   let index, migration, ready, treeReady, nodeMap, category='signals', page=0, selected, query='', status='all';
   const $=id=>document.getElementById(id), pageSize=50;
   const binding=r=> {
@@ -69,7 +70,7 @@ export function createSourceRegister({config, saveNote, onActive}) {
     $('registry-category').value=category;
   }
   async function showRecord(record) {
-    selected=record;
+    selected=record; signalDetails=null;
     $('source-detail').hidden=false; $('source-detail-heading').textContent=presentation(record).name||record.name;
     $('source-detail-body').textContent='Läser källuppgifter…'; $('source-xml').hidden=true;
     $('source-detail').scrollIntoView({behavior:'smooth',block:'start'});
@@ -80,6 +81,10 @@ export function createSourceRegister({config, saveNote, onActive}) {
       const statusText=document.createElement('p');statusText.className='muted';statusText.textContent=b?`Inkopplad i provprofil · ${b.source||'provadress '+b.address}. Källuppgifterna nedan är bevarade separat.`:'Importerad källinformation. Dessa JMRI-inställningar och regler körs inte automatiskt av TKL-kärnan.';holder.append(statusText);
       const op=operational(record);if(op){const text=document.createElement('p');text.className='source-operational';text.textContent=migrationLabels[op.status]+' · '+op.behavior;holder.append(text);}
       if(record.context) { const context=document.createElement('p');context.className='muted';context.textContent=record.context;holder.append(context); }
+      if(record.category==='signals') {
+        const mast=signalCatalog.masts.find(m=>m.sourceKey===record.key);
+        if(mast){signalDetails=createSignalDetails(mast,{config,openRecord:key=>{const other=recordByKey(key);if(other)showRecord(other);}});holder.append(signalDetails.element);signalDetails.update(lastState,lastOnline);}
+      }
       holder.append(treeView(node));
       if(record.refs?.length) {
         const related=document.createElement('details'); const summary=document.createElement('summary'); summary.textContent=`Referenser och andra förekomster (${record.refs.length})`;related.append(summary);
@@ -115,7 +120,7 @@ export function createSourceRegister({config, saveNote, onActive}) {
     $('source-all').onclick=()=>{category='';page=0;render();};
     $('registry-prev').onclick=()=>{page--;render();};$('registry-next').onclick=()=>{page++;render();};
     $('registry-rows').onclick=e=>{const key=e.target.closest('button')?.dataset.source;if(key)showRecord(recordByKey(key));};
-    $('source-close').onclick=()=>{$('source-detail').hidden=true;selected=null;};
+    $('source-close').onclick=()=>{$('source-detail').hidden=true;selected=null;signalDetails=null;};
     $('source-xml-button').onclick=()=>{if(selected&&nodeMap){$('source-xml').textContent=sourceXML(nodeMap.get(selected.path));$('source-xml').hidden=!$('source-xml').hidden;}};
     $('source-save').onclick=async()=>{
       if(!selected)return; const record=selected, key=record.noteKey||'xml:'+record.key, note=$('source-note').value;
@@ -126,9 +131,9 @@ export function createSourceRegister({config, saveNote, onActive}) {
     render();
   }
   async function open(kind, name) {
-    ready ||= Promise.all([fetch('/data/source/index.json').then(check),fetch('/data/migration.json').then(check)]).then(([data,status])=>{index=data;migration=status;initialize();}).catch(e=>{ready=null;document.getElementById('admin-view').textContent=e.message;throw e;});
+    ready ||= Promise.all([fetch('/data/source/index.json').then(check),fetch('/data/migration.json').then(check),fetch('/data/signal-catalog.json').then(check)]).then(async ([data,status,signals])=>{index=data;migration=status;signalCatalog=signals;if(signals.sourceHash!==index.meta.sha256)throw Error('Signalregistret stämmer inte med källfilen');await preloadSignalReferences(signals);initialize();}).catch(e=>{ready=null;document.getElementById('admin-view').textContent=e.message;throw e;});
     await ready;
     if(kind){category=kind;query='';status='all';page=0;$('search').value='';$('registry-status').value='all';render();if(name){const record=index.records.find(r=>r.category===kind&&r.name===name);if(record)await showRecord(record);}}
   }
-  return {open,presentationChanged(){if(index){render();if(selected)$('source-detail-heading').textContent=presentation(selected).name||selected.name;}},updateState(state,online){lastState=state;lastOnline=online;configuration?.updateState(state,online);}};
+  return {open,presentationChanged(){if(index){render();if(selected)$('source-detail-heading').textContent=presentation(selected).name||selected.name;}},updateState(state,online){lastState=state;lastOnline=online;configuration?.updateState(state,online);signalDetails?.update(state,online);}};
 }

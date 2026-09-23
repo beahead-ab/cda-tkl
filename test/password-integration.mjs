@@ -53,7 +53,7 @@ test('password login protects both processes, requires change, revokes sessions 
     await Promise.all(ports.slice(0, 2).map(ready));
     for (const port of ports.slice(0, 2)) {
       assert.equal((await request(port, '/')).headers.location, '/login');
-      for (const resource of ['/data/source/index.json','/data/source/tree.json','/data/source/Cda60.xml']) assert.equal((await request(port,resource)).headers.location,'/login');
+      for (const resource of ['/data/source/index.json','/data/source/tree.json','/data/source/Cda60.xml','/data/signal-catalog.json']) assert.equal((await request(port,resource)).headers.location,'/login');
       assert.equal((await request(port, '/api/state')).status, 401);
       assert.equal((await request(port, '/api/block', {})).status, 401);
     }
@@ -80,6 +80,8 @@ test('password login protects both processes, requires change, revokes sessions 
     }
     const source = await request(ports[0], '/data/source/index.json', undefined, cookie);
     assert.equal(source.status, 200); assert.equal(JSON.parse(source.body).meta.attributeCount,96142);
+    const signals = await request(ports[0], '/data/signal-catalog.json', undefined, cookie);
+    assert.equal(signals.status, 200); assert.equal(JSON.parse(signals.body).counts.sourceAspects,329);
     assert.equal((await login()).status, 401);
     await stop(backend); backend = launch('src/server.mjs'); await ready(ports[0]);
     assert.equal((await request(ports[0], '/api/state', undefined, cookie)).status, 200);

@@ -33,3 +33,8 @@ Det detaljerade arbetsunderlaget finns i arbetsytans work/usecase-review/signal-
 Alla 66 panelikoner deklarerar imageset mod59 och behåller källans position, rotation och skala. Arbetsytans Claude-export innehåller Charlottendal-signalikoner.json med masttyper och aspektbindningar samt jmri-mod59/definitions med officiella utseendefiler. Filernas proveniens är låst till JMRI-commit da190a99ac7ac41bb21b7718cd6e54ea3e54a47d och finns i public/assets/mod59/proveniens.json.
 
 De cachade definitionsfilerna har exakta typer för bland annat hsi_2, hsi_5, hsi_3+dvsi och dvsi_4. Det finns ingen fil med exakt namnet appearance-hsi_4.xml, appearance-hdvsi_8.xml eller appearance-sly_2.xml i den katalogen. Befintliga närliggande typer måste därför redovisas som tolkningar tills matchningen har verifierats. Ett nytt aspektregister kan visa källans namn och utgångsbindning även när exakt bildmappning saknas.
+
+
+## Genomfört i version 0.9
+
+Det källanknutna signalregistret är nu implementerat. Se [Signalbesked i appen](signalregister.md) för innehåll, bildproveniens och avgränsning. Fysisk MGP-mappning och full logisk beräkning av svenska besked återstår.
