@@ -51,6 +51,23 @@ test('network profile runs parallel trains across separate processes and release
     await post(httpPort,'configuration/activate',{revision:3,reason:'Återställ original'});
     assert.equal(JSON.parse(fs.readFileSync(path.join(dir,'configuration.json'))).versions.length,3);
 
+    const trainView=await (await fetch(`http://127.0.0.1:${httpPort}/api/train-information`)).json();
+    assert.equal(trainView.fields.length,204);assert.equal(trainView.anchors.length,44);
+    const bookRequest=(view,keys)=>({revision:view.revision,sessionId:view.sessionId,epochs:Object.fromEntries(keys.map(key=>[key,view.epochs[key]||0]))});
+    const oldBook=bookRequest(trainView,['incoming:CuppIn']);
+    let book=await post(httpPort,'train-information/save',{...oldBook,key:'incoming:CuppIn',value:'P777'});
+    await post(httpPort,'train-information/save',{...oldBook,key:'incoming:CuppIn',value:'Lost edit'},409);
+    book=await post(httpPort,'train-information/move',{...bookRequest(book,['incoming:CuppIn','block:SIA']),from:'incoming:CuppIn',to:'block:SIA'});
+    assert.equal(book.entries['block:SIA'].source,'manual');assert.equal(book.entries['incoming:CuppIn'],undefined);
+    assert.equal((await get(httpPort)).blocks.SIA.occupied,false);assert.equal((await get(httpPort)).routes.length,0);
+    await post(simPort,'block',{name:'SIA',occupied:true});
+    await until(async ()=>(await get(httpPort)).trainInformation.entries['block:SIA'].needsReview);
+    await post(httpPort,'train-information/save',{...bookRequest(book,['block:SIA']),key:'block:SIA',value:'P777'},409);
+    await post(simPort,'block',{name:'SIA',occupied:false});
+    await until(async ()=>(await get(httpPort)).blocks.SIA.occupied===false);
+    book=(await get(httpPort)).trainInformation;
+    await post(httpPort,'train-information/save',{...bookRequest(book,['block:SIA']),key:'block:SIA',value:''});
+
     assert.equal(JSON.parse(fs.readFileSync(path.join(dir,'routes.json'))).routes.length, 0);
     await post(httpPort, 'track-block', { name:'SIA', blocked:true });
     await post(httpPort, 'route', { from:'htvCu', to:'htvSpIA' }, 400);

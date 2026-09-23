@@ -1,4 +1,5 @@
 import http from 'node:http';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { Engine } from './engine.mjs';
 import { Storage } from './storage.mjs';
@@ -7,6 +8,7 @@ import { createAuth } from './auth.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
 import { loadProfile } from './profile.mjs';
 import { Configuration } from './configuration.mjs';
+import { TrainInformation } from './train-information.mjs';
 
 const profile = loadProfile();
 const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
@@ -15,15 +17,16 @@ const storage = new Storage(process.env.CHARLOTTENDAL_STATE_DIR || fileURLToPath
 const client = new LocoNetClient({ ...profile.transport, port: Number(process.env.CHARLOTTENDAL_WIRE_PORT || profile.transport.port), silenceMs: profile.staleMs });
 const engine = new Engine(profile, { storage, send: bytes => client.send(bytes) });
 const configuration = new Configuration(profile, {storage,canActivate:()=>!engine.routes.length && !engine.storageFault});
+const trainInformation=new TrainInformation(JSON.parse(fs.readFileSync(new URL('../public/data/train-fields.json',import.meta.url),'utf8')),profile,{storage});
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
 auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
 function protect(action) { try { return action(); } catch (e) { engine.log('error', e.message); } }
-engine.on('change', () => { dirty = true; });
+engine.on('change', () => { trainInformation.observe(engine.blocks,engine.connected); dirty = true; });
 client.on('connection', connected => protect(() => engine.connection(connected)));
 client.on('frame', bytes => protect(() => engine.receive(bytes)));
 client.on('fault', message => engine.log('transport', String(message)));
 client.on('wire', event => { trace.unshift({ ...event, at: Date.now() }); trace.length = Math.min(trace.length, 100); dirty = true; });
-const snapshot = () => ({ ...engine.snapshot(), trace, configurationVersion:configuration.data.activeVersion });
+const snapshot = () => ({ ...engine.snapshot(), trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() });
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -31,7 +34,8 @@ const server = http.createServer(async (req, res) => {
     const expires = await auth.authenticate(req);
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
-      if (url.pathname === '/api/config') return json(res, { ...profile, notes, presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || 'http://127.0.0.1:8911/', accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
+      if (url.pathname === '/api/config') return json(res, { ...profile, notes, trainFields:trainInformation.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || 'http://127.0.0.1:8911/', accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
+      if (url.pathname === '/api/train-information') return json(res, {...trainInformation.snapshot(),...trainInformation.catalog()});
       if (url.pathname === '/api/configuration') return json(res, configuration.view());
       if (url.pathname === '/api/presentation') return json(res, configuration.presentation());
       if (url.pathname === '/api/events') {
@@ -50,6 +54,13 @@ const server = http.createServer(async (req, res) => {
       if(!['save','restore','discard','activate'].includes(command)) return json(res,{error:'Okänd inställningsåtgärd'},404);
       const result=configuration[command](data); dirty=true;
       engine.log('configuration',command==='activate'?`Visningsinställningar version ${result.active.activeVersion} aktiverad.`:'Inställningsutkast '+({save:'sparat',restore:'hämtat från historiken',discard:'kastat'}[command])+'.');
+      return json(res,result);
+    }
+    if(url.pathname.startsWith('/api/train-information/')) {
+      const command=url.pathname.slice('/api/train-information/'.length);
+      if(!['save','move'].includes(command)) return json(res,{error:'Okänd informationsåtgärd'},404);
+      const result=trainInformation[command](data);dirty=true;
+      engine.log('train-information',command==='move'?'Tågnummer flyttat manuellt mellan informationsfält.':'Tåginformation registrerad eller kontrollerad manuellt.');
       return json(res,result);
     }
     if (url.pathname === '/api/route') engine.request(data.from, data.to);

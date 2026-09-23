@@ -33,3 +33,5 @@ En första användbar implementation kan omfatta serverlagrade manuella inkomman
 Automatisk förflyttning kräver en uttrycklig modell: ingångsidentitet, riktad reserverad väg, obruten och entydig beläggningsföljd samt hantering av samtidiga tåg, delade sensorer, avbrott och okänd position. Vid tvetydighet ska identiteten hållas för kontroll, inte gissas eller raderas. Koppling av minnesnamn till A/B/C/D:s faktiska riktning ska härledas ur källan, inte ur skärmplaceringen ensam.
 
 Första UI-etappen kan välja en läsbar informationsoverlay för alla 44 källankare som uttrycklig ny presentation, med originalets hidden-attribut åtkomligt i registret. Den måste fungera med alla tre skins och kompakt panel utan att större tomma ytor återinförs. Aktiv drift ska inte påstå att TrainMeet är anslutet förrän det kontraktet och autentiseringen faktiskt verifierats.
+
+Den manuella etappen ovan är införd i version 0.6. Se [handhavande och verifiering](taginformation.md). Automatisk förflyttning och extern identitetskälla återstår.

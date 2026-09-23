@@ -1,10 +1,11 @@
 import { createSourceRegister } from './source-register.js';
 import { panelLayout } from './panel-layout.js';
+import { createTrainInformation } from './train-information.js';
 const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
-let sourceRegister, layout, serverOffset = 0;
+let sourceRegister, trainInformation, layout, serverOffset = 0;
 function setPage(page) {
   history.replaceState(null,'',page==='admin'?'#register':'#panel');
   if(page==='admin') document.body.classList.remove('panel-compact');
@@ -64,6 +65,7 @@ function presentationDescription(kind,id) { return config.presentation?.override
 function applyPresentation(value) {
   config.presentation=value;
   sourceRegister?.presentationChanged();
+  trainInformation?.presentationChanged();
   // Change text in place: never rebuild the SVG or signal image elements.
   for(const option of $('block-choice').options) option.textContent=displayName('blocks',option.value)+(displayName('blocks',option.value)!==option.value?' · '+option.value:'');
   for(const id of ['catalog-from','catalog-to']) for(const option of $(id)?.options||[]) option.textContent=label(option.value);
@@ -217,6 +219,7 @@ const statuses = { setting: 'Lägger växlar', establishing: 'Etablerar', cleari
 function paint() {
   if (!state) return;
   sourceRegister?.updateState(state,online);
+  trainInformation?.update(state,online);
   const c = $('connection'); c.textContent = !online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad';
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
   paintPlan(); paintInspector();
@@ -270,6 +273,7 @@ async function start() {
     .then(results => { if(results.some(r=>r.status==='rejected')) message('En signalbild kunde inte laddas. Berörd signal visas som okänd.'); });
   sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   buildPlan();
+  trainInformation=createTrainInformation({catalog:config.trainFields,plan:$('track-plan'),displayName,openSource});
   $('compact-toggle').onclick=()=>{ const compact=document.body.classList.toggle('panel-compact'); $('compact-toggle').textContent=compact?'Visa verktyg':'Dölj verktyg'; };
 
   $('block-choice').innerHTML=Object.keys(config.blocks).sort((a,b)=>a.localeCompare(b,'sv',{numeric:true})).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
