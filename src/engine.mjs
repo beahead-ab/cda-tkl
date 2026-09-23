@@ -116,6 +116,7 @@ export class Engine extends EventEmitter {
     if(this.policy) {const decision=this.policy.inspect(from,to); if(!decision.allowed) throw Error(decision.reason);}
     const def = this.profile.routes.find(r => r.from === from && r.to === to);
     if (!def) throw Error('Tågvägens fullständiga koppling är ännu inte verifierad i den aktiva profilen.');
+    if(def.adminDisabled)throw Error('Tågvägen är avstängd i driftinställningarna.');
     const operatingReason=this.operating.routeReason(def);if(operatingReason)throw Error(operatingReason);
     const blocked = def.blocks.find(b => this.trackBlocked(b));
     if (blocked) throw Error(`${blocked} är administrativt spärrat.`);
@@ -157,6 +158,7 @@ export class Engine extends EventEmitter {
     const refuse=reason=>({allowed:false,reason});
     if(!this.profile.turnouts[name]) return refuse('Okänd växel.');
     const names=this.profile.coupled?.[name]||[name];
+    if(names.some(n=>this.profile.manualDisabled?.includes(n)))return refuse('Direktmanövern är avstängd i driftinställningarna.');
     const programReason=this.operating.manualReason(names,this.profile.manualPolicies?.byTurnout[name]?.blocks);if(programReason)return refuse(programReason);
     if(!this.connected||this.storageFault||this.controls.stopAll) return refuse('Manövrering spärrad: anslutning, lagring eller AIS.');
     if(this.controls.mode!=='local') return refuse('Fjärrläge: lokal växelmanöver är spärrad.');

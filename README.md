@@ -1,4 +1,4 @@
-# Charlottendal TKL · version 0.13.0
+# Charlottendal TKL · version 0.14.0
 
 En första körbar lokal applikation med egen TKL-kärna och en separat anläggningssimulator. Den använder Charlottendals exporterade geometri och JMRI mod59-signalbilder. Claude Design behövs inte för att köra den.
 
@@ -94,3 +94,5 @@ Geometri och register kommer från den exporterade Charlottendal-designen och de
 [Signalbesked och källbilder](docs/signalregister.md) · [Beräknade V1–V4-indikeringar](docs/vagindikeringar.md)
 
 [Seriell LocoBuffer-gateway](docs/locobuffer-gateway.md) · [Läsande TrainMeet-anslutning](docs/trainmeet-adapter.md)
+
+[Driftbindningar, manöverbegränsningar och granskade profilbyten](docs/driftbindningar.md)

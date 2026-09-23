@@ -91,6 +91,28 @@ test('network profile runs parallel trains across separate processes and release
     await post(httpPort,'configuration/restore',{revision:2,version:0});
     await post(httpPort,'configuration/activate',{revision:3,reason:'Återställ original'});
     assert.equal(JSON.parse(fs.readFileSync(path.join(dir,'configuration.json'))).versions.length,3);
+    const bindings=async()=>(await fetch(`http://127.0.0.1:${httpPort}/api/bindings`)).json();
+    const bind=async(action,data,expected=200)=>{const v=await bindings();return post(httpPort,'bindings/'+action,{sessionId:v.sessionId,revision:v.revision,...data},expected);};
+    await bind('save',{key:'routes:htvCu--htvSpIA',values:{enabled:false}});
+    await bind('activate',{reason:'Disabled test route'},409);
+    await post(httpPort,'all-stop',{enabled:true});await until(async()=>(await get(httpPort)).allStopReset.allowed);
+    await post(simPort,'block',{name:'SIA',occupied:true});await until(async()=>(await get(httpPort)).blocks.SIA.occupied);
+    await bind('activate',{reason:'Occupied block refuses profile change'},409);
+    await post(simPort,'block',{name:'SIA',occupied:false});await until(async()=>(await get(httpPort)).blocks.SIA.occupied===false);
+    await bind('save',{key:'turnouts:Vx131',values:{address:500,inverted:true}});
+    await bind('activate',{reason:'Unreported new address refuses profile change'},409);
+    await bind('save',{key:'turnouts:Vx131',values:{address:131,inverted:true}});
+    const oldOperating=(await get(httpPort)).operating.sessionId;
+    await bind('activate',{reason:'Disable a reviewed route'});
+    assert.equal((await get(httpPort)).bindingVersion,1);assert.equal((await get(httpPort)).controls.stopAll,true);
+    assert.notEqual((await get(httpPort)).operating.sessionId,oldOperating);
+    await until(async()=>(await get(httpPort)).allStopReset.allowed);await post(httpPort,'all-stop',{enabled:false});
+    const denied=await post(httpPort,'route',{from:'htvCu',to:'htvSpIA'},400);assert.match(denied.error,/driftinställningarna/);
+    await bind('restore',{version:0});await post(httpPort,'all-stop',{enabled:true});await until(async()=>(await get(httpPort)).allStopReset.allowed);
+    await bind('activate',{reason:'Restore reviewed baseline'});await until(async()=>(await get(httpPort)).allStopReset.allowed);await post(httpPort,'all-stop',{enabled:false});
+    assert.equal((await get(httpPort)).bindingVersion,2);
+    const exported=await (await fetch(`http://127.0.0.1:${httpPort}/api/bindings/export`)).json();assert.equal(exported.version,2);assert.equal(exported.commissioned,false);
+
 
     await post(httpPort,'route',{from:'htvSpVI',to:'htvSpIIIA'});
     await until(async ()=>(await get(httpPort)).routes[0]?.state==='active');

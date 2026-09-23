@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `0cfc8d0` · version 0.12.0 (23 september 2026, 06:58) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/0cfc8d0` |
+| Driftsatt kodversion | `2798f31` · version 0.13.0 (23 september 2026, 07:14) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/2798f31` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -164,3 +164,8 @@ Extern HTTPS-efterkontroll med systemets curl och normal certifikatverifiering: 
 Release0cfc8d0 publicerad06:58. 97 enhetstester och fyra processhelhetstester passerade på servern. XML, import och syntax verifierade. Backup `/root/charlottendal-backups/network-0cfc8d0-20260923T045842Z`, tidigare540f2e3. Tjänster anslutna och noll lås vid bytet. Externa HTTPS-prov: login200, TKL/simulator401, klockmanöver401 utan session. Programmeringsspärr kontrolleras nu också före profilbyte.
 
 controls.json sparas i format3 vid nästa manöver. Återgång till äldre kod får aldrig ske genom att radera nya spärrar. model-clock.json och tidigare driftdata ingår i katalogbackup. Se docs/linjer-programmering-klocka.md.
+
+
+### Version0.13 – seriell transport och TrainMeet-läsning
+
+Release2798f31 publicerad07:14. 108 enhetstester och sex processhelhetstester passerade på servern, inklusive POSIX-serieportprovet på Linux. Backup `/root/charlottendal-backups/network-2798f31-20260923T051427Z`, tidigare0cfc8d0. Tjänster anslutna och noll lås vid bytet. Externa HTTPS-prov: login200, TrainMeet-parkoppling401 utan session. Ingen fysisk port eller verklig TrainMeet-server aktiverad. Riktig origin/station/anslutningskod och LocoBuffer-inställningar återstår.

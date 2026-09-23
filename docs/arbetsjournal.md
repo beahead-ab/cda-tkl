@@ -277,3 +277,16 @@ Release0cfc8d0 finns på privat GitHub och är aktiv på servern. 97 enhetsteste
 Seriell gateway implementerad med explicit enhet/hastighet/flöde, loopback och en klient, verkligt eko före SENT OK, begränsade köer och ingen omsändning efter osäkert utfall. Fyra riktade tester och POSIX-PTY-processprov passerar. TKL:s motor har ingen simulatorgren. Ingen fysisk serieport öppnad.
 
 Läsande TrainMeet HTTPv1-adapter implementerad mot lokalt granskat kontrakt63f3fd1: ordinarie tkl_terminal-parkoppling, privat0600nyckel, stationskontext och display/klocka, validerade snapshots och stale-markering, inga driftmanövrer. Sju riktade tester+processprov över omstart passerar. Aktuell riktig origin/station/kod saknas fortfarande; ingen TrainMeet-installation har ändrats. UI-prov mot enbart påhittade tåg visade korrekt station/klocka/två rader, utan ändrade fälttillstånd. Läs docs/locobuffer-gateway.md och trainmeet-adapter.md. Full lokal svit och publicering följer.
+
+
+### Kontrollpunkt 07:27 – version0.14 lokalt
+
+Version0.13 är publicerad:108enhetstester och6processprov passerade även på servern, backup network-2798f31-20260923T051427Z. Privat GitHub uppdaterat, externa login200/TrainMeet401 kontrollerade.
+
+0.14 bygger versionerade driftbindningar för637objekt/grupper, granskade tågvägar/direktmanövrer kan avaktiveras utan att grundvillkor förbigås. Alias ändras tillsammans; signal-/sensor-/orderkonflikter och kodöverlapp avvisas. Aktivering kräver AIS, inga lås, fungerande anslutning/lagring, ingen inspelning samt färska faktiska telegram för fria/kända/stopp/normal enligt föreslagen profil. Bunden modell och transport byggs om; AIS och all övrig state bevaras. Simulatorns profil ändras inte. Sex riktade tester och utökat4processhelhetsprov passerar. UI-provat adresskollision,Vx170 avstängd, profilversion1→återgång tillgrund i version2. Full lokal svit pågår före publicering.
+
+Preview66183 på9030/9031/9032, samma statekatalog. TrainMeet-provkopplingen borttagen och provservern avslutad. Ursprunglig driftprofil återställd; AIS ska återställas efter färska rapporter vid avslut av UI-provet. Ingen fysisk utrustning eller riktig TrainMeet-installation har kontaktats.
+
+### 23 september 07:38 – färdig lokal kontroll av driftadministration
+
+114 enhetstester och fyra utökade kärn-/inloggningsprocessprov passerar. Växelns överlappande osynliga informationsyta borttagen; väljaren Visa växel läser enbart detaljer, den ursprungliga pluppen är uttryckligen märkt Manövrera växel. Vx170 provad i UI och återställd rakt. Konfigurationsformuläret använder befintlig responsiv layout. Publicering förbereds med skydd mot återgång till äldre kod som inte läser aktiva driftbindningar.

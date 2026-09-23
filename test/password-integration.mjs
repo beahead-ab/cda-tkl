@@ -61,7 +61,7 @@ test('password login protects both processes, requires change, revokes sessions 
     assert.equal((await request(ports[0], '/auth.js')).status, 200);
     for(const resource of ['/api/recordings','/api/recordings/00000000-0000-0000-0000-000000000000/download'])assert.equal((await request(ports[0],resource)).status,401);
     for(const command of ['start','stop'])assert.equal((await request(ports[0],'/api/recordings/'+command,{})).status,401);
-    for(const command of ['programming','line-block','clock','trainmeet/pair','trainmeet/refresh','trainmeet/disconnect'])assert.equal((await request(ports[0],'/api/'+command,{})).status,401);
+    for(const command of ['programming','line-block','clock','trainmeet/pair','trainmeet/refresh','trainmeet/disconnect','bindings/save','bindings/activate'])assert.equal((await request(ports[0],'/api/'+command,{})).status,401);
     const login = () => request(ports[0], '/api/auth/login', { password: initial });
     assert.equal((await request(ports[0], '/api/auth/login', { password: 'wrong' })).status, 401);
     assert.equal((await request(ports[0], '/api/auth/login', { password: initial }, null, null)).status, 403);

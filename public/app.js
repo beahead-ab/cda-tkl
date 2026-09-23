@@ -103,9 +103,8 @@ function buildPlan() {
     }
     switches.push({ ...t, legs });
     svg('text', { x: t.cx + 3, y: t.cy - 11, class: 'turnout-number' }, labels, t.name.replace('Vx', ''));
-    const g = svg('g', { class: 'touch-target turnout-target' }, controls);
-    svg('circle', { cx: t.cx, cy: t.cy, r: 16, class: 'hit' }, g);
-    accessible(g, `Växel ${t.name}`, () => { inspected = { kind: 'turnout', name: t.name }; paintInspector(); });
+    // The source manoeuvre dot already occupies this position. A second,
+    // invisible button underneath it gave pointer and keyboard different actions.
   }
   for (const l of panel.labels.filter(l => !l.hidden && l.y < 840)) {
     const destination=/Lekby|Vagnsta|Kungsfors/i.test(l.text), size=destination?11:l.size||12;
@@ -147,7 +146,7 @@ function buildPlan() {
         sourceLamps.push({g,lens,unknown,name:indication.name,color:indication.lamps.g.name===b.sensor?'g':'r'});
       }
     }
-    accessible(g,isRoute?`${label(b.sensor)} · ${isShunt?'växeltågväg':'tågvägsknapp'}`:b.sensor,()=>{
+    accessible(g,isRoute?`${label(b.sensor)} · ${isShunt?'växeltågväg':'tågvägsknapp'}`:names.length?`Manövrera växel ${names.join(' / ')}`:b.sensor,()=>{
       if(isRoute) return choose(b.sensor);
       const indication=sourceLamps.find(l=>l.g===g);
       if(indication)return inspectIndication(indication.name);
@@ -325,6 +324,8 @@ async function start() {
 
   $('block-choice').innerHTML=Object.keys(config.blocks).sort((a,b)=>a.localeCompare(b,'sv',{numeric:true})).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
   $('block-choice').onchange=paint;
+  $('inspect-turnout').innerHTML='<option value="">Välj växel för information…</option>'+[...new Set(Object.values(panel.turnouts).map(t=>t.name))].sort((a,b)=>a.localeCompare(b,'sv',{numeric:true})).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  $('inspect-turnout').onchange=()=>{const name=$('inspect-turnout').value;if(name){inspected={kind:'turnout',name};paintInspector();}};
   $('toggle-block').onclick=()=>api('track-block',{name:$('block-choice').value,blocked:!isBlocked($('block-choice').value)});
   $('all-stop').onclick=()=>api('all-stop',{enabled:true});
   $('emergency-cancel').onclick=()=>api('emergency-cancel',{});
@@ -355,7 +356,7 @@ async function start() {
   const source = new EventSource('/api/events');
   let presentationLoading=false;
   source.onmessage = e => {
-    state = JSON.parse(e.data); serverOffset=state.serverTime-Date.now(); online = true; lastEvent = Date.now(); paint();
+    state = JSON.parse(e.data);if(state.bindingVersion!==config.bindingVersion){location.reload();return;} serverOffset=state.serverTime-Date.now(); online = true; lastEvent = Date.now(); paint();
     if(!presentationLoading && state.configurationVersion!==config.presentation?.activeVersion) {
       presentationLoading=true;
       fetch('/api/presentation').then(r=>{if(!r.ok)throw Error('Kunde inte hämta nya visningsinställningar.');return r.json();}).then(applyPresentation).catch(e=>message(e.message)).finally(()=>{presentationLoading=false;});

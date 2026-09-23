@@ -1,12 +1,14 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import {decode} from './protocol.mjs';
 import { Engine } from './engine.mjs';
 import { Storage } from './storage.mjs';
 import { LocoNetClient } from './transport.mjs';
 import { createAuth } from './auth.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
 import { loadProfile } from './profile.mjs';
+import { BindingConfiguration } from './binding-configuration.mjs';
 import { Configuration } from './configuration.mjs';
 import { TrainInformation } from './train-information.mjs';
 import { PanelIndications } from './panel-indications.mjs';
@@ -14,28 +16,57 @@ import { TrainMeet } from './trainmeet.mjs';
 import { ModelClock } from './model-clock.mjs';
 import { TelegramRecorder } from './telegram-recorder.mjs';
 
-const profile = loadProfile();
+const baseProfile=loadProfile();
 const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
 const auth = createAuth(root, true);
 const storage = new Storage(process.env.CHARLOTTENDAL_STATE_DIR || fileURLToPath(new URL('../var', import.meta.url)));
-const client = new LocoNetClient({ ...profile.transport, port: Number(process.env.CHARLOTTENDAL_WIRE_PORT || profile.transport.port), silenceMs: profile.staleMs });
-const engine = new Engine(profile, { storage, send: bytes => client.send(bytes) });
-const configuration = new Configuration(profile, {storage,canActivate:()=>!engine.routes.length && !engine.controls.programming.reserved && !engine.storageFault});
-const trainInformation=new TrainInformation(JSON.parse(fs.readFileSync(new URL('../public/data/train-fields.json',import.meta.url),'utf8')),profile,{storage});
-const panelIndications=new PanelIndications(JSON.parse(fs.readFileSync(new URL('../public/data/indications.json',import.meta.url),'utf8')),profile);
-const recorder=new TelegramRecorder(storage.directory,profile);
+let profile,client,engine,configuration,trainInformation,panelIndications,recorder;
+const bindingReports=new Map();
+function activationStatus(proposed){
+  const deny=reason=>({allowed:false,reason});
+  if(!engine||!engine.controls.stopAll)return deny('Aktivera Alla signaler i stopp före profilbyte.');
+  if(!engine.connected||engine.storageFault)return deny('Anslutning och fungerande lagring krävs.');
+  if(engine.routes.length||engine.controls.programming.reserved)return deny('Återta alla tågvägs- och programmeringslås först.');
+  if(recorder.active||recorder.pending)return deny('Avsluta och spara telegraminspelningen först.');
+  if(proposed){
+    const report=(kind,address)=>{const r=bindingReports.get(kind+':'+address);return r&&Date.now()-r.at<=proposed.staleMs?r.data:null;};
+    for(const [n,b] of Object.entries(proposed.turnouts)){const r=report('turnout',b.address);if(!r||!['C','T'].includes(r.position))return deny(n+': den föreslagna adressen saknar aktuellt känt växelläge.');}
+    for(const [n,b] of Object.entries(proposed.blocks)){const r=report('sensor',b.address);if(!r||(b.activeMeansOccupied?r.active:!r.active))return deny(n+': den föreslagna bindningen saknar färsk frirapport.');}
+    for(const [n,b] of Object.entries(proposed.signals)){const r=report('signal',b.reportAddress);if(!r||!b.stopCodes.includes(r.code))return deny(n+': den föreslagna bindningen saknar färskt stoppbesked.');}
+    const p=proposed.operatingControls?.programming;if(p&&(report('turnout',p.relayAddress)?.position!=='T'||report('sensor',p.reportAddress)?.active!==false))return deny('Föreslaget programmeringsområde saknar färsk normalrapport.');
+  }
+  return {allowed:true,reason:'AIS aktiv och inga lås. Föreslagna adresser måste ha färska fria lägen och stoppbesked vid aktivering.'};
+}
+function createRuntime(p){
+  const c=new LocoNetClient({...p.transport,port:Number(process.env.CHARLOTTENDAL_WIRE_PORT||p.transport.port),silenceMs:p.staleMs});
+  const e=new Engine(p,{storage,send:bytes=>c.send(bytes)});if(e.storageFault)throw Error(e.storageFault);
+  return {profile:p,client:c,engine:e,
+    configuration:new Configuration(p,{storage,canActivate:()=>!e.routes.length&&!e.controls.programming.reserved&&!e.storageFault}),
+    trainInformation:new TrainInformation(JSON.parse(fs.readFileSync(new URL('../public/data/train-fields.json',import.meta.url))),p,{storage}),
+    panelIndications:new PanelIndications(JSON.parse(fs.readFileSync(new URL('../public/data/indications.json',import.meta.url))),p),
+    recorder:new TelegramRecorder(storage.directory,p)};
+}
+const bindings=new BindingConfiguration(baseProfile,{storage,canActivate:activationStatus,prepare:p=>{const next=createRuntime(p);return ()=>installRuntime(next);}});
 const trainMeet=new TrainMeet({storage,origin:process.env.CHARLOTTENDAL_TRAINMEET_ORIGIN||''});
 const modelClock=new ModelClock(storage);let clockPublished=0;
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
 auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
 function protect(action) { try { return action(); } catch (e) { engine.log('error', e.message); } }
-engine.on('change', () => { trainInformation.observe(engine.blocks,engine.connected); dirty = true; });
-client.on('connection', connected => {recorder.connection(connected);protect(() => engine.connection(connected));});
-client.on('frame', bytes => protect(() => engine.receive(bytes)));
-client.on('fault', message => {recorder.fault(message);engine.log('transport', String(message));});
-client.on('protocol',line=>recorder.protocol(line));recorder.on('change',()=>{dirty=true;});trainMeet.on('change',()=>{dirty=true;});
-client.on('wire', event => { trace.unshift({ ...event, at: Date.now() }); trace.length = Math.min(trace.length, 100); dirty = true; });
-const snapshot = () => {const state=engine.snapshot();return { ...state, recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
+function installRuntime(next,start=true){
+  if(client){client.removeAllListeners();client.stop();engine.removeAllListeners();recorder.removeAllListeners();}
+  ({profile,client,engine,configuration,trainInformation,panelIndications,recorder}=next);trace.length=0;
+  const {client:c,engine:e,trainInformation:book,recorder:recording}=next;
+  e.on('change',()=>{book.observe(e.blocks,e.connected);dirty=true;});
+  c.on('connection',connected=>{bindingReports.clear();recording.connection(connected);protect(()=>e.connection(connected));});
+  c.on('frame',bytes=>protect(()=>{const d=decode(bytes);if(['turnout','sensor','signal'].includes(d.kind)){const key=d.kind+':'+d.address;if(!bindingReports.has(key)&&bindingReports.size>=6000)bindingReports.delete(bindingReports.keys().next().value);bindingReports.set(key,{at:Date.now(),data:d});}e.receive(bytes);}));
+  c.on('fault',message=>{recording.fault(message);e.log('transport',String(message));});
+  c.on('protocol',line=>recording.protocol(line));recording.on('change',()=>{dirty=true;});
+  c.on('wire',event=>{trace.unshift({...event,at:Date.now()});trace.length=Math.min(trace.length,100);dirty=true;});
+  if(start)c.start();dirty=true;
+}
+trainMeet.on('change',()=>{dirty=true;});
+installRuntime(createRuntime(bindings.profile()),false);
+const snapshot = () => {const state=engine.snapshot();return { ...state,bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -43,8 +74,10 @@ const server = http.createServer(async (req, res) => {
     const expires = await auth.authenticate(req);
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
-      if (url.pathname === '/api/config') return json(res, { ...profile, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || 'http://127.0.0.1:8911/', accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
+      if (url.pathname === '/api/config') return json(res, { ...profile,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || 'http://127.0.0.1:8911/', accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
       if (url.pathname === '/api/train-information') return json(res, {...trainInformation.snapshot(),...trainInformation.catalog()});
+      if(url.pathname==='/api/bindings')return json(res,bindings.view());
+      if(url.pathname==='/api/bindings/export'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','Content-Disposition':'attachment; filename=charlottendal-driftprofil.json'});return res.end(req.method==='HEAD'?undefined:JSON.stringify(bindings.export(),null,2));}
       if (url.pathname === '/api/configuration') return json(res, configuration.view());
       if (url.pathname === '/api/presentation') return json(res, configuration.presentation());
       if (url.pathname === '/api/recordings') return json(res,recorder.view());
@@ -64,6 +97,7 @@ const server = http.createServer(async (req, res) => {
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
     const data = await body(req);
+    if(url.pathname.startsWith('/api/bindings/')){const command=url.pathname.slice('/api/bindings/'.length);if(!['save','discard','restore','activate'].includes(command))return json(res,{error:'Okänd driftinställning'},404);const result=bindings[command](data);engine.log('bindings',command==='activate'?'Driftprofil version '+result.activeVersion+' aktiverad. AIS kvarstår, alla rapporter läses in på nytt.':'Driftinställningarnas utkast uppdaterat.');dirty=true;return json(res,result);}
     if(url.pathname.startsWith('/api/trainmeet/')){const command=url.pathname.slice('/api/trainmeet/'.length);if(!['pair','refresh','disconnect'].includes(command))return json(res,{error:'Okänd TrainMeet-åtgärd'},404);return json(res,await trainMeet[command](data));}
     if(url.pathname==='/api/clock'){const result=modelClock.change(data);dirty=true;engine.log('clock','Modellklockan '+(result.running?'går':'är pausad')+' med hastighet '+result.rate+'×.');return json(res,result);}
     if(url.pathname==='/api/recordings/start'){recorder.start(data,engine.connected?'connected':'disconnected');return json(res,recorder.view());}
