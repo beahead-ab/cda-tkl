@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `eedf31a` (23 september 2026, 01:57) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/eedf31a` |
+| Driftsatt kodversion | `e0b10a5` (23 september 2026, 02:31) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/e0b10a5` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -108,3 +108,10 @@ AIS/spårspärrar sparas i `controls.json` i samma beständiga katalog som tågv
 Aktiv release `eedf31a` ger serverlagrade utkast, fältjämförelse, validering och versionshistorik för namn/beskrivningar. Aktivering och återställning spärras vid kvarvarande tågvägslås. Läs [admininstruktionen](admin.md). Inga driftbindningar, autentiseringsuppgifter eller ursprungliga XML-fält har ändrats.
 
 42 enhetstester och 4 helhetstester godkända på servern. Efterkontroll visar anslutna tjänster, noll lås vid bytet och skydd även av de nya admin-API:erna. Backup `/root/charlottendal-backups/network-eedf31a-20260922T235720Z`, tidigare kod `a88c3a8`. `configuration.json` ska ingå i framtida säkerhetskopior av datakatalogen.
+
+
+### Version0.4 – lokala växelvillkor och signalordning
+
+Aktiv release `e0b10a5`.20 källregler styr24 växlar med lokala villkor;15 knappregler är uttryckligt spärrade av saknat kopplings-/rangerunderlag. Körkvittens måste komma efter senaste order även när tidstämplar är lika. Ett för tidigt körbesked håller vägen med låsen kvar. Läs [manuell omläggning](manuella-vaxlar.md).
+
+48 enhetstester och4 helhetstester godkända på servern, inklusive alla252 tågvägars passage och alla20 anslutna manuella regler. XML- och operationskontroller passerar. Båda tjänsterna anslutna; inga lås före profilbytet. Extern HTTPS-inloggning200 och skyddade API401. Backup `/root/charlottendal-backups/network-e0b10a5-20260923T003132Z`, tidigare release `eedf31a`. Tillstånd och visningsinställningar bevarade.

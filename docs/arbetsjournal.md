@@ -107,3 +107,12 @@ Manuell omläggning för ready-regler kräver lokala fria spårledningar, inga a
 48 enhetstester och4 processbaserade helhetstester passerar. Alla20 manuella regler har faktiskt bytes-/fältprov för rätt kopplad grupp. Prov omfattar oberoende tågväg, lokalt belagt/okänt/spärrat, skyddande signal, kvarstående lås och alla15 blockerade regler. UI: Vx170 lades om under Cu→SpIA, infarten blev klar, Vx100 kvar låst; Vx114 spärrad med orsak. Provvägen återtagen och Vx170 återlagd rakt. Lokal previewsession62756 på9030/9031. Visningsversion4 från förra passet bevarad. Full operationsverifiering och syntax godkända; XML-test ingår i sviten.
 
 Serverpreflight: releaseeedf31a, tjänster aktiva,0 lås. Version0.4.0 förberedd; publicering och efterkontroll återstår. Nästa funktion efter denna etapp: spårvis delutlösning (med bevarade skyddsresurser) eller nödåtertagningens specificerade villkor; fler signalbilder och återstående integrationsberoenden kvarstår.
+
+
+### Kontrollpunkt02:32 – version0.4 publicerad
+
+Releasee0b10a5 är aktiv och finns på privat GitHub. Backup `/root/charlottendal-backups/network-e0b10a5-20260923T003132Z`, tidigare eedf31a.48 enhetstester och4 helhetstester godkända på servern. Full XML/operations/syntaxkontroll godkänd. Efterkontroll tjänster anslutna/noll lås, externa login200 och TKL-/admin-/simulatorAPI401. Inga driftlås eller administrativa visningsändringar raderade.
+
+Läs nya `docs/manoverfalt-forstudie.md` före nästa funktion. Källfynd: rsAckRangeFri=LS931, rsAckRangeRet=LS933 (verkliga källadresser finns, fysisk användning fortfarande inte mätt).0006C3:s sanna/falska grenar beror på saknade HandlePanel/HandleFreeArea-skript.0016 pulserar nödindikering ochAIS;0018 har137 NX_ACTIVE-villkor och141 NX-växlingsåtgärder, fyra regler innehåller extrapar. En kontrollerad ersättning kan begära stopp och normal återtagning av samtliga befintliga reservationer utan att tvångsradera skyddande lås. Lokal/fjärrbytet ska kräva inga kvarvarande reservationer och hålla nödstopp tillgängligt. Inget av dessa nästa steg är aktiverat i0.4.
+
+Nästa pass ska fortsätta ny funktion enligt förstudien, inte göra om redan godkända prov. Manuell växel-/signalordningsetapp är färdig. Lokal preview62756 på9030/9031, tab16/18 markerade för fortsatt arbete, inga provlås. Automationen fortsätter till08:00, inga subagenter.
