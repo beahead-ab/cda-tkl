@@ -2,7 +2,7 @@
 
 ## Automatiska prov
 
-75 av 75 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända på servern i version 0.10.0. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
+82 av 82 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända på servern i version 0.11.0. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
 
 - Publicerade byteexempel för B0, B1, B2 och den preliminära E4-profilen; kontrollsummor och fragmenterade strömmar.
 - Kommandoeko ändrar inte rapporterade växellägen.
@@ -83,4 +83,4 @@ Sju riktade enhetstester för telegraminspelning godkända lokalt: båda riktnin
 
 Alla fyra processhelhetstester passerar lokalt. Två samtidiga tåg spelas in med B0, B1, B2 och preliminär E4, återtagning av lås fungerar och filen hämtas efter stopp. Lösenordsprovet kontrollerar skyddad inspelningslista/nedladdning, avvisat annat ursprung, sparning vid normal serveravstängning, historik efter omstart, avvisad gammal serversession och återkallad nedladdningsrätt efter utloggning.
 
-UI-prov: Cu → Spår 1a går till KLAR och återtas under pågående inspelning. 4 762 rader sparas, historiken bevaras efter omladdning. En andra inspelning avslutas och sparas vid LocoNet-avbrott; startknappen är spärrad tills återanslutning. Därefter noll provlås, anslutning på, alla provblock fria. Komplett serverprov och publicering återstår vid denna kontrollpunkt.
+UI-prov: Cu → Spår 1a går till KLAR och återtas under pågående inspelning. 4 762 rader sparas, historiken bevaras efter omladdning. En andra inspelning avslutas och sparas vid LocoNet-avbrott; startknappen är spärrad tills återanslutning. Därefter noll provlås, anslutning på, alla provblock fria. Alla 82 enhetstester och fyra helhetstester passerade därefter på servern; version 0.11.0 publicerad med backup och godkänd efterkontroll.

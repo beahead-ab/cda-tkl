@@ -42,6 +42,8 @@ Om appen redan är igång öppnar du länkarna direkt. Avsluta med Ctrl+C i dess
 
 Spårbeteckningarna i gränssnittet följer **den tryckta spårplanen**. Exempelvis heter knappen vid tryckt **2c** internt `htvSpIIA`. Dessa två beteckningar får inte blandas ihop.
 
+Aktuell [lägesbild med vad som fungerar och vad som återstår](docs/status.md) sammanfattar hela projektet.
+
 ## Det som återstår före fysisk användning
 
 Detta är en utvecklingsprofil för modelljärnvägen. Simulatorn är en uttrycklig provmodell av delar av MGP-beteendet; den är ännu inte verifierad mot din utrustning eller en inspelad trafiklogg.

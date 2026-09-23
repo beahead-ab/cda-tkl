@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `e0b10a5` (23 september 2026, 02:31) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/e0b10a5` |
+| Driftsatt kodversion | `540f2e3` · version 0.11.0 (23 september 2026, 06:21) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/540f2e3` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -75,7 +75,7 @@ Appen använder nu lösenord på användarens begäran. Minimilängden är 6 tec
 - Cloudflare fortsätter hantera DNS, proxy och HTTPS. Den tidigare e-postinloggningen är vilande: Access-app `070f6609-baf9-4ed8-808c-a84a92ff2734` heter nu **Charlottendal TKL – e-postinloggning vilande** och ligger på `cda-tkl-access.trainmeet.app`. Ingen ny DNS-post skapades för den adressen. Befintlig e-postpolicy är bevarad för eventuell återgång.
 - Zero Trust Free-kontot och teamet `wild-field-8422.cloudflareaccess.com` finns kvar. Planen aktiverades efter uttryckligt godkännande av villkoren (0 USD/månad upp till gratisgränserna). Ingen betalplan har lagts till.
 
-Verifierat: 23 enhetstester och 3 processbaserade helhetstester godkända lokalt; alla tre helhetstester även godkända på servern. Båda tjänsterna är aktiva. Det tillfälliga lösenordet fungerar; båda API:erna nekar åtkomst tills första bytet är gjort. Externa anrop visar inloggningssidan (200) och nekas till panelens och simulatorns API (401). Lösenordet har inte bytts åt användaren.
+Verifierat vid införandet av lösenordsinloggningen: 23 enhetstester och 3 processbaserade helhetstester godkända lokalt; alla tre helhetstester även godkända på servern. Båda tjänsterna är aktiva. Det tillfälliga lösenordet fungerar; båda API:erna nekar åtkomst tills första bytet är gjort. Externa anrop visar inloggningssidan (200) och nekas till panelens och simulatorns API (401). Lösenordet har inte bytts åt användaren.
 
 Säkerhetskopia före övergången finns på servern i `/root/charlottendal-backups/password-20260922/` med gamla driftinställningar, tjänstefiler och anläggningsdata. För återgång behöver både tidigare kod/miljö och Access-appens värdnamn återställas tillsammans.
 
@@ -148,3 +148,12 @@ Release `b3f6a78`: 210 huvudtågvägar + 130 växeltågvägar. 70 nya granskade 
 Aktiv release `470ff88`. Sammansatta tågvägar bevarar hela källans NX-par tillsammans med mellanliggande delpar. 133 av 153 NX-definitioner har körbar koppling; totalt fortsatt 340 vägar. Ändringen förbättrar källspårning och fullständigheten i NX-spärrvillkoren.
 
 65 enhetstester och fyra helhetstester godkända på servern. XML, deterministisk import och syntax kontrollerade. Tjänster anslutna och noll lås vid bytet. Extern HTTPS-efterkontroll: inloggning 200, skyddade API 401 utan session. Backup `/root/charlottendal-backups/network-470ff88-20260923T021002Z`, tidigare release `b3f6a78`. Driftdata, administrativa versioner och autentisering bevarade.
+
+
+### Aktuell version 0.11 – telegraminspelning
+
+Release540f2e3 publicerad23september06:21. 82 enhetstester och fyra processhelhetstester godkända på servern. XML och samtliga importer är verifierade. Noll lås vid byte, båda tjänster anslutna efter omstart. Backup `/root/charlottendal-backups/network-540f2e3-20260923T042118Z`, föregående kod5104907. Driftdata och autentisering bevarade.
+
+Inspelningar lagras under `/var/lib/charlottendal-tkl/telegram-recordings/` och ingår i samma driftbackup. Färdiga filer överlever omstart; pågående inspelning avslutas och sparas vid normal tjänsteavstängning. Undvik versionsbyte under pågående inspelning så att provserien inte avbryts. Ett oväntat processhaveri kan fortfarande förlora den pågående loggen. Se [handhavande och gränser](telegraminspelning.md).
+
+Extern HTTPS-efterkontroll med systemets curl och normal certifikatverifiering: login200, panel-/simulator-API401, inspelningslista och nedladdning401 utan inloggning. Den lokala Python-installationens certifikatarkiv saknade kedjan; ingen certifikatkontroll stängdes av.

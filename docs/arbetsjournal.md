@@ -238,10 +238,21 @@ En ny källkontroll av Vx95/Vx96 i docs/manuella-vaxlar.md visar att C33 och C34
 Preview session90879,9030/9031/wire9032, bevarad state i /private/tmp/charlottendal-network-preview. Noll provlås, SLI fri, anslutning på, lokal manövrering och AIS av. Tab16/18 markerade för fortsatt arbete, inga browserfel. Automationen fortsätter var20min till08:00Europe/Stockholm; pausa då och sammanfatta ärligt. Gör inte om detta färdiga versionsbyte utan ny ändring.
 
 
-### Kontrollpunkt 06:18 – telegraminspelning klar lokalt
+### Kontrollpunkt 06:17 – telegraminspelning klar lokalt
 
 Version 0.11 tillför läsande telegraminspelning i båda riktningarna, rå protokollrad och separat tolkning. B0-eko/SENT behandlas inte som fältkvittens. Felaktiga ramar bevaras utan att accepteras av kärnan. Profiler och adressbindningar följer exporten med uttrycklig status att fysisk svensk MGP inte verifierats. Inga extra order eller läsning av simulatorns interna tillstånd. Max två minuter/10 000 händelser/fyra MB händelser; 100 filer utan automatisk radering. Pågående data i RAM, avslutade filer beständiga, normal avstängning sparar, oväntat haveri kan förlora pågående data. Lagringsfel behåller loggen för export/återförsök. Samma autentisering och ursprungskontroll som övriga appen.
 
 Sju riktade enhetstester, fyra processhelhetstester och UI-prov godkända; syntaxkontroll görs före commit. UI-provat etablering/återtagning Cu→Spår1a, 4 762 inspelade rader, omladdning och automatisk sparning vid avbrott. Noll provlås, alla block fria och anslutning återställd. Ny preview session26631 på9030/9031/wire9032 med bevarat state. CUA nya tab3/4 (tidigare16/18 borttagna av användaren) markerade för fortsatt arbete. Full serverprovning och kontrollerad publicering återstår.
 
 Användaren frågade ”vad är kvar?” under arbetet. Har fått kort status i commentary; slutrapporten ska besvara frågan självständigt med verklig MGP/LocoBuffer, svenska signalbesked, TrainMeet, återstående manöverfall/oklara tågvägar, Jython-ersättningar och fortsatt visuell avstämning. Hela XML finns bevarad men alla beteenden körs inte. Automationen är ACTIVE till08Europe/Stockholm; pausa vid tidsgränsen.
+
+
+### Kontrollpunkt 06:22 – version 0.11 publicerad
+
+Release540f2e3 aktiv på cda-tkl.trainmeet.app och sparad på privat GitHub. Backup `/root/charlottendal-backups/network-540f2e3-20260923T042118Z`, tidigare5104907. Alla82 enhetstester/fyra processhelhetstester godkända på servern, inklusive alla340 passager. XML och operations-/signal-/indikeringsimport reproducerade utan skillnader. Noll lås vid versionsbyte. Tjänster anslutna och inget startupfel. Externa HTTPS-prov via systemets curl godkända utan att stänga av certifikatkontroll: login200, vanliga API och nya inspelningsendpoints401. Python lokalt saknade certifikatkedja, därför användes systemverktygets normala förtroendearkiv.
+
+Samlad lägesbild i docs/status.md besvarar användarens ”vad är kvar?”. README, provresultat och driftens huvudtabell uppdaterade. Alla XML-data bevarade betyder fortfarande inte alla beteenden körbara. Fysisk MGP/USB, fulla svenska signalbesked, TrainMeet, ranger/godsöverlämning, vändskiva, programmeringsspår, övriga oklara regler och full driftkonfiguration i admin återstår. UI ska fortfarande stämmas av mot Claude och accepteras av Casper.
+
+Nästa nattpass kan välja en verifierbar del av manöverfallen/admin/visuell avstämning eller förbättra underlaget för fysisk anslutning. Hitta inte på saknade skriptbeteenden eller MGP-bindningar. Läs docs/status.md, ursprungsplanen och respektive förstudie först; upprepa inte den färdiga inspelningsleveransen eller fulla prov utan ny ändring. Friställa spår och extra växellåsplupp fortsatt vilande. TKL och simulator fortsatt åtskilda.
+
+Preview session26631,9030/9031/wire9032, bevarad state/private/tmp/charlottendal-network-preview. Ingen pågående inspelning; två sparade UI-prov finns, noll lås, anslutning på, fria block, AIS av/lokalt. Tab3/4 markerade för fortsatt arbete. Inga browserfel. Automationen är ACTIVE var20min till08Europe/Stockholm; pausa vid tidsgränsen och lämna samlad rapport. Inga subagenter eller nya kostnader.
