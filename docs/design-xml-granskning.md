@@ -1,5 +1,7 @@
 # Genomgång mot Claude Design och Cda60.xml
 
+**Historisk jämförelse från 22 september.** Sedan dess har appen utökats till 340 provade tågvägar, versionshanterade visningsinställningar, manuell tåginformation och signalregister. Aktuell funktion och begränsningar finns i [arbetsjournalen](arbetsjournal.md), [provresultaten](provresultat.md) och [signalregistret](signalregister.md). Tabellen nedan beskriver läget vid den ursprungliga granskningen.
+
 Genomförd 22 september 2026. Jämförelsen utgår från den öppna Claude-designens Reläpanel, chatthistorik och Admin Charlottendal samt projektets exporterade HTML/data. Källan är Cda60.xml från den ursprungliga leveransen; kopiorna i referensmappen, JMRI-importen och Claude-exporten har identisk SHA-256.
 
 ## Resultat

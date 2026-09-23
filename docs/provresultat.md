@@ -2,7 +2,7 @@
 
 ## Automatiska prov
 
-65 av 65 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända i version 0.8.1. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
+69 av 69 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända på servern i version 0.9.0. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
 
 - Publicerade byteexempel för B0, B1, B2 och den preliminära E4-profilen; kontrollsummor och fragmenterade strömmar.
 - Kommandoeko ändrar inte rapporterade växellägen.
@@ -65,6 +65,6 @@ Täckningsregistret identifierar nu 133 av 153 NX-definitioner med minst en kör
 
 ## Nytillkomna prov i version 0.9
 
-Fyra riktade signalregisterprov passerar: 66 master, 329 källbindningar, 310 lösta och 19 tomma utgångar, 117 relationer, exakt bildmatchning utan antagna typalias samt käll-/bildkontrollsummor och reproducerbar generering. Aktuell rapport skiljs från begärt medgivande; gamla, bortkopplade och okända besked döljer giltig råkod. Inloggningsprovet har utökats för den nya katalogen. Full serverkörning dokumenteras vid publicering.
+Fyra riktade signalregisterprov passerar: 66 master, 329 källbindningar, 310 lösta och 19 tomma utgångar, 117 relationer, exakt bildmatchning utan antagna typalias samt käll-/bildkontrollsummor och reproducerbar generering. Aktuell rapport skiljs från begärt medgivande; gamla, bortkopplade och okända besked döljer giltig råkod. Inloggningsprovet har utökats för den nya katalogen. Full serverkörning godkänd: 69 enhetstester och fyra helhetstester.
 
 UI: 1/5 med LT210, 6/8 med fem tomma utgångar, virtuell 6/7 och 3/5 med saknad bilddefinition kontrollerade. Länk till 3/5 → 6/7 öppnade rätt källvillkor. Förladdade GIF visades med originalmått, tabellen var läsbar på smal skärm. Lagd Cu → Spår 1a visade kör; återtagning i en andra panel uppdaterade den redan öppna signalvyn till stopp. Inga provlås kvar. Se docs/signalregister.md.

@@ -26,3 +26,19 @@ Införd och provad ersättning i version 0.5: begär stopp i alla signaler, beg�
 0006C16 kräver Lokalstyrd ACTIVE och tvactive INACTIVE före växling av Lokalbevakad indikering.0006C15 växlar Fjärrbevakad indikering och anropar HandlePanel med pnlunlock eller pnllock. Skriptet saknas. En ersättning behöver därför definiera serverns manöverbehörighet, kontrollera alla kvarvarande reservationer och hålla AIS/nödåtertagning tillgängliga även när vanlig lokal manövrering är spärrad. Fjärrläge innebär inte att TrainMeet redan är anslutet.
 
 Version 0.5 inför det beständiga manöverläget och nödåtertagningen ovan. Se [handhavande och lagringsformat](manoverlage-och-nodatertagning.md). Rangeröverlämning och Tågmöte-minnets driftfunktion återstår.
+
+
+## V1–V4: nästa källbundna indikering
+
+Läsande kontroll 23 september 04:52 mot oförändrad XML och profil 0.9. Grupp 0012 har fyra regler med logicType=2. Den cachade officiella JMRI-källan Conditional.java definierar 2 som ALL_OR, och DefaultConditional.calculate läser då alla variabler som OR. Äldre strängen antecedent innehåller delvis AND men används bara vid MIXED; den får inte feltolkas som aktiv logik här. Verifiera och testa detta uttryckligt före en översättning.
+
+| Indikering | NX_ACTIVE-villkor | SENSOR_ACTIVE-villkor | NX täckta av provprofilen |
+|---|---:|---|---:|
+| V1 | 30 | slS100, slS101, slS103 | 30/30 |
+| V2 | 30 | slS120, slS125, slS126, slS130, slS131 | 30/30 |
+| V3 | 16 | slS3d, slS165, slS166 | 16/16 |
+| V4 | 4 | slSL1, slSL2 | 0/4 |
+
+Alla 13 sensorvillkor går att följa till befintliga provdetektorer via sourceSensor. Alias delar adress och ska inte behandlas som fristående fysiska rapporter. Källans slS3d motsvarar SIIID, slSL1/2 motsvarar SLI/SLII. Utgångarna V1g/r–V4g/r är interna IS251–IS258, alltså panelindikeringar. Sant sätter g ACTIVE och r INACTIVE; falskt tvärtom. Namn/färg bevisar inte fysiskt bomläge.
+
+En möjlig nästa implementation är en läsande, källanknuten beräkning av dessa panelindikeringar. Den måste redovisa härlett läge, aldrig fysisk bomkvittens, och behålla okänt när underlag saknas. V4:s fyra ej anslutna NX får inte behandlas som säkert inaktiva för att ge ett falskt komplett resultat. Körbara tågvägars nxIds omfattar både fullt originalpar och delpar sedan 0.8.1; klargör vilken kärnfas som motsvarar källans NX_ACTIVE och prova etablering, aktiv, hållen, återtagning och anslutningsavbrott. Inga V-indikeringar eller bomkommandon har aktiverats av denna förstudie.
