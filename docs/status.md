@@ -7,9 +7,10 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 - Tre panelutseenden, förladdade originalikoner, större träffytor och tågväg som tänds i färdriktningen. Samma start och mål återtar vägen.
 - 210 huvudtågvägar och 130 växeltågvägar med etablerings- och passageprov. 49 växlar, 197 körbara layoutblock och 66 signaler. Låsta växlar kan inte läggas om manuellt.
 - Separat simulator över telegramgränsen, inklusive två samtidiga tåg, beläggning, avbrott och uteblivna återrapporter. TKL läser inte simulatorns interna tillstånd.
-- Beständiga lås, spårspärrar, AIS, nödåtertagning samt lokal-/fjärrläge. Läget fjärr innebär ännu ingen anslutning till ett fjärrsystem.
+- Beständiga lås, spårspärrar, AIS, nödåtertagning sju linjespärrar, programmeringsspår samt lokal-/fjärrläge. Läget fjärr innebär ännu ingen anslutning till ett fjärrsystem.
 - Manuell tåginformation för 197 block och sju inkommande fält, med kontroll vid ändrad beläggning/omstart.
 - Hela original-XML bevarad och sökbar; 1 377 regeldefinitioner har spårbar införandestatus. Signalregistret innehåller alla 329 aspektrader och 117 relationer. V1–V4 visas som beräknade panelindikeringar, med okänt underlag där villkor saknas.
+- Gemensam modellklocka med paus/start, trafikdygn och hastighet samt valbar lokal felsignal. Programmeringsspåret har beständigt lås och separat återrapport i simulatorn; fysisk funktion återstår att verifiera.
 - Inloggning, befintlig webbdrift och kontrollerade versionsbyten med backup. Visningsnamn och beskrivningar kan ändras med utkast och versionshistorik.
 
 ## Kvar för en fullständig ersättning
@@ -18,7 +19,7 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 |---|---|---|
 | Verklig MGP/LocoBuffer | USB/seriell adapter vid banan, rätt adresser och verifierat beteende i båda riktningarna. | Buffertmodell, inställningar, moduler/firmware och inspelad fysisk trafik. |
 | Svenska signalbesked | Fulla huvud-/försignalbesked, signalberoenden och fysisk beskedsmappning. Nuvarande kör/stopp använder en uttryckligt preliminär CZ-profil. | Verifierade svenska beskedskoder och de saknade exakta ikondefinitionerna där originalunderlaget inte räcker. |
-| Återstående driftfunktioner | Ranger-/godsområdets överlämning, vändskiva, programmeringsspår, återstående automatik och frigivning i delar av en tågväg. | Källbundna regler och specificerade ersättningar för saknade skript. |
+| Återstående driftfunktioner | Ranger-/godsområdets överlämning, vändskiva, återstående automatik och frigivning i delar av en tågväg. | Källbundna regler och specificerade ersättningar för saknade skript. |
 | Oklara tågvägar | Tre motsägande huvudtågvägsregler, 15 undantagna växelpar och 20 NX-definitioner utan körbar koppling behöver avgöras. Dessa antal överlappar och ska inte summeras. | Rättelse eller beslutat undantag för de konkreta källoklarheterna. |
 | TrainMeet | Läsning av klocka/tågrörelser, koppling mellan stations-/spår-id, därefter klareringsutbyte utan dubbla händelser vid återanslutning. | Bekräftat aktuellt gränssnitt och dess normala parning/inloggning. |
 | Admin och panel | Full administration av driftbindningar och regler; fortsatt avstämning mot Claudes layout och arbetsflöden, därefter gemensamt acceptansprov. | Den befintliga designen och provfallens förväntade beteenden. |
@@ -29,6 +30,6 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
 
 ## Nästa praktiska steg
 
-Den publicerade versionen 0.11 har klarat 82 enhetstester och fyra processhelhetstester. Telegraminspelningen ger namngivna loggar med båda riktningarna, råtelegram och separat tolkning. Det förbereder jämförelsen mellan simulator och fysisk utrustning. Det ersätter inte hårdvaruanslutningen. Fortsätt samtidigt med verifierbara manöverfall, admin och visuell avstämning; aktivera inte okända signal- eller adressbindningar genom gissning.
+Den publicerade versionen 0.12 har klarat 97 enhetstester och fyra processhelhetstester. Telegraminspelningen ger namngivna loggar med båda riktningarna, råtelegram och separat tolkning. Det förbereder jämförelsen mellan simulator och fysisk utrustning. Det ersätter inte hårdvaruanslutningen. Fortsätt samtidigt med verifierbara manöverfall, admin och visuell avstämning; aktivera inte okända signal- eller adressbindningar genom gissning.
 
 Aktuell publicerad release och provstatus finns i [arbetsjournalen](arbetsjournal.md), [provresultaten](provresultat.md) och [driftuppgifterna](drift.md).

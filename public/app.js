@@ -2,6 +2,7 @@ import { createSourceRegister } from './source-register.js';
 import { panelLayout } from './panel-layout.js';
 import { createTrainInformation } from './train-information.js';
 import { createTelegramRecorder } from './telegram-recorder.js';
+import { createTrainMeet } from './trainmeet.js';
 import { createModelClock } from './model-clock.js';
 import { createFeedback } from './feedback.js';
 import { createOperatingControls } from './operating-controls.js';
@@ -9,7 +10,7 @@ const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
-let sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, feedback, layout, serverOffset = 0;
+let sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout, serverOffset = 0;
 function setPage(page) {
   history.replaceState(null,'',page==='admin'?'#register':'#panel');
   if(page==='admin') document.body.classList.remove('panel-compact');
@@ -254,6 +255,7 @@ function paint() {
   telegramRecorder?.update(state,online);
   operatingControls?.update(state,online);
   if(state.clock)modelClock?.update(state.clock,online);
+  trainMeet?.update(state.trainMeet,online);
   const c = $('connection'); c.textContent = !online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad';
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
   paintPlan(); paintInspector();
@@ -309,7 +311,7 @@ function paintIndication(name) {
 async function start() {
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
-  modelClock=createModelClock({api});feedback=createFeedback();
+  modelClock=createModelClock({api});trainMeet=createTrainMeet({api});feedback=createFeedback();
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.

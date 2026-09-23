@@ -10,6 +10,7 @@ import { loadProfile } from './profile.mjs';
 import { Configuration } from './configuration.mjs';
 import { TrainInformation } from './train-information.mjs';
 import { PanelIndications } from './panel-indications.mjs';
+import { TrainMeet } from './trainmeet.mjs';
 import { ModelClock } from './model-clock.mjs';
 import { TelegramRecorder } from './telegram-recorder.mjs';
 
@@ -23,6 +24,7 @@ const configuration = new Configuration(profile, {storage,canActivate:()=>!engin
 const trainInformation=new TrainInformation(JSON.parse(fs.readFileSync(new URL('../public/data/train-fields.json',import.meta.url),'utf8')),profile,{storage});
 const panelIndications=new PanelIndications(JSON.parse(fs.readFileSync(new URL('../public/data/indications.json',import.meta.url),'utf8')),profile);
 const recorder=new TelegramRecorder(storage.directory,profile);
+const trainMeet=new TrainMeet({storage,origin:process.env.CHARLOTTENDAL_TRAINMEET_ORIGIN||''});
 const modelClock=new ModelClock(storage);let clockPublished=0;
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
 auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
@@ -31,9 +33,9 @@ engine.on('change', () => { trainInformation.observe(engine.blocks,engine.connec
 client.on('connection', connected => {recorder.connection(connected);protect(() => engine.connection(connected));});
 client.on('frame', bytes => protect(() => engine.receive(bytes)));
 client.on('fault', message => {recorder.fault(message);engine.log('transport', String(message));});
-client.on('protocol',line=>recorder.protocol(line));recorder.on('change',()=>{dirty=true;});
+client.on('protocol',line=>recorder.protocol(line));recorder.on('change',()=>{dirty=true;});trainMeet.on('change',()=>{dirty=true;});
 client.on('wire', event => { trace.unshift({ ...event, at: Date.now() }); trace.length = Math.min(trace.length, 100); dirty = true; });
-const snapshot = () => {const state=engine.snapshot();return { ...state, recordings:recorder.view(),clock:modelClock.snapshot(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
+const snapshot = () => {const state=engine.snapshot();return { ...state, recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -62,6 +64,7 @@ const server = http.createServer(async (req, res) => {
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
     const data = await body(req);
+    if(url.pathname.startsWith('/api/trainmeet/')){const command=url.pathname.slice('/api/trainmeet/'.length);if(!['pair','refresh','disconnect'].includes(command))return json(res,{error:'Okänd TrainMeet-åtgärd'},404);return json(res,await trainMeet[command](data));}
     if(url.pathname==='/api/clock'){const result=modelClock.change(data);dirty=true;engine.log('clock','Modellklockan '+(result.running?'går':'är pausad')+' med hastighet '+result.rate+'×.');return json(res,result);}
     if(url.pathname==='/api/recordings/start'){recorder.start(data,engine.connected?'connected':'disconnected');return json(res,recorder.view());}
     if(url.pathname==='/api/recordings/stop'){await recorder.stop(data);return json(res,recorder.view());}
@@ -98,7 +101,7 @@ const server = http.createServer(async (req, res) => {
 let tick, publish;
 server.listen(port, '127.0.0.1', () => {
   console.log(`Charlottendal TKL: http://127.0.0.1:${port}`); client.start();
-  tick = setInterval(() => {protect(() => engine.tick());recorder.tick();modelClock.checkpoint();if(Date.now()-clockPublished>1000){dirty=true;clockPublished=Date.now();}}, 100);
+  tick = setInterval(() => {protect(() => engine.tick());recorder.tick();modelClock.checkpoint();trainMeet.tick();if(Date.now()-clockPublished>1000){dirty=true;clockPublished=Date.now();}}, 100);
   publish = setInterval(() => {
     if (!dirty) return; dirty = false; const text = `data: ${JSON.stringify(snapshot())}\n\n`;
     for (const res of streams) { if (res.writableLength > 1e6) { res.end(); streams.delete(res); } else res.write(text); }

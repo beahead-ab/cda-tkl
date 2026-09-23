@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `540f2e3` · version 0.11.0 (23 september 2026, 06:21) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/540f2e3` |
+| Driftsatt kodversion | `0cfc8d0` · version 0.12.0 (23 september 2026, 06:58) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/0cfc8d0` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -157,3 +157,10 @@ Release540f2e3 publicerad23september06:21. 82 enhetstester och fyra processhelhe
 Inspelningar lagras under `/var/lib/charlottendal-tkl/telegram-recordings/` och ingår i samma driftbackup. Färdiga filer överlever omstart; pågående inspelning avslutas och sparas vid normal tjänsteavstängning. Undvik versionsbyte under pågående inspelning så att provserien inte avbryts. Ett oväntat processhaveri kan fortfarande förlora den pågående loggen. Se [handhavande och gränser](telegraminspelning.md).
 
 Extern HTTPS-efterkontroll med systemets curl och normal certifikatverifiering: login200, panel-/simulator-API401, inspelningslista och nedladdning401 utan inloggning. Den lokala Python-installationens certifikatarkiv saknade kedjan; ingen certifikatkontroll stängdes av.
+
+
+### Version0.12 – linjer, programmeringsspår och klocka
+
+Release0cfc8d0 publicerad06:58. 97 enhetstester och fyra processhelhetstester passerade på servern. XML, import och syntax verifierade. Backup `/root/charlottendal-backups/network-0cfc8d0-20260923T045842Z`, tidigare540f2e3. Tjänster anslutna och noll lås vid bytet. Externa HTTPS-prov: login200, TKL/simulator401, klockmanöver401 utan session. Programmeringsspärr kontrolleras nu också före profilbyte.
+
+controls.json sparas i format3 vid nästa manöver. Återgång till äldre kod får aldrig ske genom att radera nya spärrar. model-clock.json och tidigare driftdata ingår i katalogbackup. Se docs/linjer-programmering-klocka.md.

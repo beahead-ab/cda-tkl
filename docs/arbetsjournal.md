@@ -265,3 +265,15 @@ Casper har uttryckligen bett att alla steg som går att kontrollera här ska byg
 UI-prov visar blockerad linje avvisar väg utan nya lås, programmeringsspärr överlever avbrott/återanslutning och släpps först efter uttrycklig normalbegäran, växel133 visar låsorsak. Modellklockan provad med4× och paus, återställd1×/paus. Inga provlås/belagda provblock kvar. Preview45722 på9030/9031/wire9032 med bevarad state. Publicering återstår.
 
 Nästa kontrollerbara arbete: seriell gateway och virtuellt portprov, källbundna signalberoenden utan påhittade svenska fältkoder, driftprofiladministration och TrainMeet-kontraktsadapter. Fysiska fakta och ofullständiga skript ska fortfarande särskiljas från färdig/provad mjukvara. Automationen pausas senast08:00; det nya direkta arbetsuppdraget får fortsätta.
+
+
+### Kontrollpunkt 07:00 – version0.12 publicerad
+
+Release0cfc8d0 finns på privat GitHub och är aktiv på servern. 97 enhetstester+4processhelhetstester godkända även på servern. Backup network-0cfc8d0-20260923T045842Z, tidigare540f2e3. Full import/XML/syntax och externa skyddskontroller passerar. Ny seriell gateway ligger ännu separat som lokalt arbete: fyra riktade tester samt riktigt POSIX-portprov genom PTY passerar. Den har inte öppnat någon fysisk serieport. Nästaarbete fortsätter enligt direktinstruktionen.
+
+
+### Kontrollpunkt 07:15 – version0.13 lokalt
+
+Seriell gateway implementerad med explicit enhet/hastighet/flöde, loopback och en klient, verkligt eko före SENT OK, begränsade köer och ingen omsändning efter osäkert utfall. Fyra riktade tester och POSIX-PTY-processprov passerar. TKL:s motor har ingen simulatorgren. Ingen fysisk serieport öppnad.
+
+Läsande TrainMeet HTTPv1-adapter implementerad mot lokalt granskat kontrakt63f3fd1: ordinarie tkl_terminal-parkoppling, privat0600nyckel, stationskontext och display/klocka, validerade snapshots och stale-markering, inga driftmanövrer. Sju riktade tester+processprov över omstart passerar. Aktuell riktig origin/station/kod saknas fortfarande; ingen TrainMeet-installation har ändrats. UI-prov mot enbart påhittade tåg visade korrekt station/klocka/två rader, utan ändrade fälttillstånd. Läs docs/locobuffer-gateway.md och trainmeet-adapter.md. Full lokal svit och publicering följer.
