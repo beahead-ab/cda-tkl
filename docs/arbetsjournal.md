@@ -2,7 +2,7 @@
 
 ## Aktuellt 23 september 2026, natt
 
-**04:04: version 0.8, b3f6a78, är publicerad och efterkontrollerad. 340 tågvägar, 64 + 4 serverprov. Ny kontroll visar att några hela NX-referenser saknas i täckningsregistret trots att deras delgränser finns; detta rättas i nästa version.**
+**04:05: servern kör b3f6a78 (0.8). Rättningen 0.8.1 för fullständiga NX-referenser är klar lokalt: 65 + 4 tester passerade, 133/153 NX-definitioner spårade till körbara vägar. Publicering återstår.**
 
 Casper: ”jag godkänner allt! Kör på inatt hela vägen.” Hela planen i `../../granskning-2026-09-23/plan.md` (relativt denna dokumentmapp) är godkänd. Arbeta självständigt genom implementation, tester och kontrollerad publicering inom befintlig kostnadsram. Verklig MGP/TrainMeet-verifiering får inte påstås utan underlag. Inga subagenter är beställda.
 
@@ -182,3 +182,10 @@ Aktiv release b3f6a78, backup `/root/charlottendal-backups/network-b3f6a78-20260
 Ny spårbarhetskontroll: 25 körbara vägar (3 huvud, 22 växel) saknar sin fullständiga käll-NX-referens i route.nxIds när vägen har en mellanliggande signal. Registreringen innehåller endast intilliggande signalpar. Nuvarande rapport räknar därför 111/153 anslutna NX; unionen av explicit begärt par och ingående delpar är 133/153. Även manuell NX-spärr använder nxIds, så originalets fulla referens ska finnas kvar tillsammans med delparen. Åtgärda med regressionsprov och kompatibelt profilbyte utan lås. Ändra inte väggeometri, signalordning eller källregler för detta.
 
 Signalutredning: 66 master, 55 turnoutsignalmast + 11 virtualsignalmast. De 55 har 329 aspektrader: 310 hänvisar till befintliga utgångsobjekt (121 unika LT), 19 saknar utgång i källan. Alla angivna namn/systemnamn går att lösa när båda uppslagen används. 1/5 skickar samtliga körvarianter genom samma LT210/closed; det räcker inte för att särskilja fysiskt besked. Detaljer i work/usecase-review/signal-aspect-bindings.json i arbetsytan. Fortsatt signalarbete får inte härleda svenska MGP-koder från CZ-profilen.
+
+
+### Kontrollpunkt 04:05 – fullständiga NX-referenser rättade
+
+Version 0.8.1 behåller begärt helt NX-par i source.requestedNxIds och unionen med intilliggande signalpar i nxIds. 25 vägar berörs; geometrin, ordningsföljden och de fysiska låsresurserna är oförändrade. 133/153 NX-definitioner har nu körbar koppling, 20 saknar sådan. NX-spärrreferensen som tillkommer i en ansluten manuell regel var redan skyddad genom överlappande fysiska resurser.
+
+65 enhetstester och fyra helhetstester godkända. Det nya provet följer 3/5 → 6/9 för både huvud-/växeltågväg genom aktiv och hållen reservation och kontrollerar hela referensen samt kvarvarande delpar. Alla 130 växelvägar behåller originalregelns NX-id. Alla 340 vägar har full passage även efter rättningen; operations-/syntaxkontroll godkänd. Nya docs/signalbesked-forstudie.md för nästa etapp. Kontrollerad publicering med backup återstår.

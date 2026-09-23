@@ -39,6 +39,23 @@ test('XML signal direction takes precedence over nearby opposite-facing icons',(
   const through=profile.routes.find(r=>r.from==='htvSpIIA'&&r.to==='htvSpIIB');
   assert.deepEqual(through.signals,['2/7']);
 });
+test('a composed route retains the complete source NX identity alongside intermediate signal pairs',()=>{
+  const nx='IN:39525608-38c1-4fcb-a4e4-d58cf419e20c'; // XML 3/5 → 6/9
+  for(const id of ['htvSpIIIA--htvSpVI','tvv3/5--tvv6/9']) {
+    const def=profile.routes.find(r=>r.id===id);
+    assert.deepEqual(def.signals,['3/5','6/7']);assert.ok(def.nxIds.includes(nx));
+    assert.deepEqual(def.source.requestedNxIds,[nx]);assert.ok(def.nxIds.length>1,'intermediate NX identities are also retained');
+    const r=rig(),route=r.request(def.from,def.to);r.advance(6500);assert.equal(route.state,'active');assert.ok(route.nxIds.includes(nx));
+    r.engine.hold(route,'Held reservation keeps its source identity');assert.ok(route.nxIds.includes(nx));
+  }
+  for(const def of shuntRoutes) {
+    const sourceRule=source.shuntRoutePolicies.find(r=>r.rule===def.source.rules[0]);
+    assert.ok(sourceRule.nxIds.every(id=>def.nxIds.includes(id)),def.id);
+  }
+  const coverage=read('public/data/route-coverage.json');
+  assert.ok(coverage.nx.find(n=>n.id===nx).routes.includes('tvv3/5--tvv6/9'));
+  assert.equal(coverage.nx.filter(n=>n.routes.length).length,133);
+});
 test('Spår6 catalog routes keep their distinct source NX boundaries and protect both directions',()=>{
   const six=mainRoutes.filter(r=>r.from==='htvSpVI'||r.to==='htvSpVI');assert.equal(six.length,18);
   const cu=six.find(r=>r.from==='htvCu'),bu=six.find(r=>r.from==='htvBu'),out=six.find(r=>r.from==='htvSpVI'&&r.to==='htvCu');

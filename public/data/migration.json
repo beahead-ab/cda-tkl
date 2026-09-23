@@ -7499,9 +7499,12 @@
     },
     "IX:AUTO:0018C33": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "htvSpIIIA--htvSpVI",
+        "tvv3/5--tvv6/9"
+      ]
     },
     "IX:AUTO:0018C34": {
       "group": "IX:AUTO:0018",
@@ -7582,27 +7585,35 @@
     },
     "IX:AUTO:0018C40": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "tvv1/4--tvv3/8"
+      ]
     },
     "IX:AUTO:0018C41": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "tvv1/4--tvv4/8"
+      ]
     },
     "IX:AUTO:0018C42": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "tvv1/4--tvv5/8"
+      ]
     },
     "IX:AUTO:0018C43": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "tvv1/4--tvv6/8"
+      ]
     },
     "IX:AUTO:0018C44": {
       "group": "IX:AUTO:0018",
@@ -7918,27 +7929,35 @@
     },
     "IX:AUTO:0018C66": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "tvv2/4--tvv3/8"
+      ]
     },
     "IX:AUTO:0018C67": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "tvv2/4--tvv4/8"
+      ]
     },
     "IX:AUTO:0018C68": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "tvv2/4--tvv5/8"
+      ]
     },
     "IX:AUTO:0018C69": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "tvv2/4--tvv6/8"
+      ]
     },
     "IX:AUTO:0018C70": {
       "group": "IX:AUTO:0018",
@@ -8183,9 +8202,11 @@
     },
     "IX:AUTO:0018C93": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "tvv3/2--tvv6/6"
+      ]
     },
     "IX:AUTO:0018C94": {
       "group": "IX:AUTO:0018",
@@ -8293,9 +8314,12 @@
     },
     "IX:AUTO:0018C102": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "htvSpIVA--htvSpVI",
+        "tvv4/5--tvv6/9"
+      ]
     },
     "IX:AUTO:0018C103": {
       "group": "IX:AUTO:0018",
@@ -8671,9 +8695,12 @@
     },
     "IX:AUTO:0018C133": {
       "group": "IX:AUTO:0018",
-      "status": "excluded",
-      "behavior": "NX-fallet är bevarat men inte anslutet till någon körbar väg i profilen.",
-      "routes": []
+      "status": "replaced",
+      "behavior": "Anslutna reservationer återtas uttryckligen; ingen blind NX-växling eller tvångsradering. Fria resurser och nya stoppbesked krävs.",
+      "routes": [
+        "htvSpVA--htvSpVI",
+        "tvv5/5--tvv6/9"
+      ]
     },
     "IX:AUTO:0018C134": {
       "group": "IX:AUTO:0018",

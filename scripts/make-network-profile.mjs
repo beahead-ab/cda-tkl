@@ -56,7 +56,11 @@ for (const pair of policy.allowed()) {
     if(JSON.stringify(reviewed.rules)!==JSON.stringify(provenance.rules) || JSON.stringify(reviewed.nxButtons)!==JSON.stringify(decision.nxButtons) || JSON.stringify(reviewed.signals)!==JSON.stringify(plan.signals) || reviewed.target!==targetMast) throw Error('Ändrad granskad växeltågväg: '+pair.from+' → '+pair.to);
   }
   const sensors = [...plan.boundaries.map(b => b.sensor), target];
-  const nxIds = sensors.slice(0,-1).flatMap((s,i) => source.nxPairs.filter(p => p.fromSensor===s && p.toSensor===sensors[i+1]).map(p=>p.id));
+  // A source NX pair can span intermediate signals. Keep that complete
+  // identity as well as adjacent signal pairs for source locks and coverage.
+  const requestedNxIds=source.nxPairs.filter(p=>p.fromSensor===decision.nxButtons[0] && p.toSensor===decision.nxButtons[1]).map(p=>p.id);
+  const nxIds = [...new Set([...requestedNxIds,...sensors.slice(0,-1).flatMap((s,i) => source.nxPairs.filter(p => p.fromSensor===s && p.toSensor===sensors[i+1]).map(p=>p.id))])];
+  provenance.requestedNxIds=requestedNxIds;
   const label = routeButtons[pair.from].label + ' → ' + routeButtons[pair.to].label;
   routes.push({ id: pair.from+'--'+pair.to, ...pair, label, kind, source: provenance, nxIds,
     blocks: path.blocks, turnouts: path.settings, crossings: path.crossings, segments: path.used,

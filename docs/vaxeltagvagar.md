@@ -31,3 +31,8 @@ Följande 15 tillåtna källpar förblir oanslutna eftersom deras skyddsgräns i
 | 2/2 | 2/4 | Målets signalgräns kan inte bekräftas från vald grafväg. |
 
 Lastspår, kolgård och lokstall behöver uttryckliga växlingsgränser och villkor före införande. 2/2 → 2/4 har en geometrisk väg men målsignalens skydd kan inte bekräftas längs den valda vägen. Ingen genväg runt dessa kontroller har lagts in.
+
+
+## Täckning av NX-definitioner
+
+Från version 0.8.1 redovisas både hela källpar och eventuella delpar mellan signalerna. 133 av källans 153 NX-definitioner är kopplade till minst en av de 340 provade vägarna. 20 återstår utan körbar koppling. Detta antal ska hållas isär från de 15 undantagna knappkombinationerna: flera käll-NX kan sakna eget aktuellt knappval, och en sammansatt väg kan innehålla flera NX-referenser. Alla 153 rader finns i registret med sin täckning.

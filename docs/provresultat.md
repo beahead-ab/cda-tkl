@@ -2,7 +2,7 @@
 
 ## Automatiska prov
 
-64 av 64 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända i version 0.8. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
+65 av 65 enhetstester och fyra helhetstester med riktiga Node-processer, TCP och HTTP godkända i version 0.8.1. Alla 340 anslutna huvud-/växeltågvägar provas genom etablering och passage. Se arbetsjournalen för varje publicering.
 
 - Publicerade byteexempel för B0, B1, B2 och den preliminära E4-profilen; kontrollsummor och fragmenterade strömmar.
 - Kommandoeko ändrar inte rapporterade växellägen.
@@ -54,3 +54,10 @@ Alla 130 granskade växeltågvägar, inklusive de 70 nya listvalen, passerar eta
 Extra prov kontrollerar konflikt med huvudtågväg, återtagning med belagt spår, anslutningsavbrott och signal som vägrar kör. En redan begärd återtagning kvarstår vid avbrott och fullföljs först efter nya fria/stoppåterrapporter; inga körorder skickas vid återanslutningen. Detta skiljer sig från processomstart, då operatören måste begära återtagning på nytt.
 
 Processprovet lägger och återtar 7/10 → IIIev, kontrollerar målsignalen i stopp och avvisar både 2/2 → 2/4 och 9/10 → LastSp1in. I UI visades 7/10 → IIIev som KLAR; samma listval återtog till noll lås. Start-/målslistor i växeltågvägsläge sorteras i naturlig nummerordning. Originalets dolda ikoner och kartkoordinater är oförändrade.
+
+
+## Korrigerad NX-spårning i version 0.8.1
+
+Sammansatta vägar behåller nu både källans hela NX-par och de ingående delparen. Det nya provet följer 3/5 → 6/9 genom den mellanliggande signalen 6/7, både som huvud- och växeltågväg, och kontrollerar att ursprungsreferensen finns kvar i en aktiv respektive hållen reservation. Alla 130 växeltågvägar behåller originalregelns uttryckliga NX-id.
+
+Täckningsregistret identifierar nu 133 av 153 NX-definitioner med minst en körbar väg; 20 saknar ännu koppling. Antalet körbara vägar är fortsatt 340. För de 25 berörda vägarna är geometri, signalordning och låsta fysiska resurser oförändrade. En nytillkommen full NX-referens används av en ansluten manuell växelregel; dess manöver var redan spärrad av de överlappande fysiska resurserna. Fullständigt regressionsprov kontrollerar den uppdaterade profilen.
