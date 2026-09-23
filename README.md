@@ -19,7 +19,7 @@ Om appen redan är igång öppnar du länkarna direkt. Avsluta med Ctrl+C i dess
 2. Klicka växel **121**. Manöverknapparna är spärrade medan tågvägen låser den.
 3. Öppna anläggningen och välj samma färd under **Kör ett tåg**. Detektorerna rapporterar belagt och fritt. TKL visar händelserna och behåller låsen.
 4. Klicka **Återta** eller samma start- och slutpluppar igen. Låsen frigörs först när alla frigivningsvillkor är uppfyllda.
-5. Prova **Cu → Spår 2b** för två signaler: 2/7 klarsätts först, därefter 1/5. Du kan också välja **Spår 12 → Spår 5b** för en avvikande växel.
+5. Prova **Cu → Spår 2b** för tre signaler: 2/7 klarsätts först, därefter 1/5 och sist 1/3. Du kan också välja **Spår 12 → Spår 5b** för en avvikande växel.
 6. Prova uteblivet växelsvar, signal som hålls i stopp, tyst detektor eller bruten LocoNet i anläggningsfönstret. Åtgärda felet, återta vägen och lägg den på nytt.
 
 **Original**, **Reläpanel** och **Trafikskärm** delar samma funktioner. Utseendena är kodade tolkningar av designen; den kompletta Claude-exporten finns separat i designarkivet. Zoom underlättar manövrering på mindre skärmar. Ikoner laddas och avkodas före första visningen och bildnoderna ligger kvar vid tillståndsbyte.

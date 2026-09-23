@@ -141,3 +141,10 @@ Aktiv release `cbf1327`. De 18 huvudtågvägarna till/från Spår 6 nås genom p
 Release `b3f6a78`: 210 huvudtågvägar + 130 växeltågvägar. 70 nya granskade listval, 15 geometriskt oklara par kvar undantagna och en motsägande källregel spärrad. [Handhavande och undantag](vaxeltagvagar.md).
 
 64 enhetstester och fyra helhetstester passerade på servern. Full XML-, operations- och syntaxkontroll godkänd; tjänster anslutna och noll lås vid profilbyte. Externa HTTPS-kontroller: login 200, skyddade API 401. Backup `/root/charlottendal-backups/network-b3f6a78-20260923T020134Z`, tidigare `cbf1327`. Inga driftdata eller autentiseringsinställningar raderade.
+
+
+### Version 0.8.1 – fullständiga NX-referenser
+
+Aktiv release `470ff88`. Sammansatta tågvägar bevarar hela källans NX-par tillsammans med mellanliggande delpar. 133 av 153 NX-definitioner har körbar koppling; totalt fortsatt 340 vägar. Ändringen förbättrar källspårning och fullständigheten i NX-spärrvillkoren.
+
+65 enhetstester och fyra helhetstester godkända på servern. XML, deterministisk import och syntax kontrollerade. Tjänster anslutna och noll lås vid bytet. Extern HTTPS-efterkontroll: inloggning 200, skyddade API 401 utan session. Backup `/root/charlottendal-backups/network-470ff88-20260923T021002Z`, tidigare release `b3f6a78`. Driftdata, administrativa versioner och autentisering bevarade.

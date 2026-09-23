@@ -2,7 +2,7 @@
 
 ## Aktuellt 23 september 2026, natt
 
-**04:05: servern kör b3f6a78 (0.8). Rättningen 0.8.1 för fullständiga NX-referenser är klar lokalt: 65 + 4 tester passerade, 133/153 NX-definitioner spårade till körbara vägar. Publicering återstår.**
+**04:10: aktiv serverrelease är 470ff88, version 0.8.1. Publicerad och efterkontrollerad: 340 tågvägar, 65 + 4 godkända serverprov, 133/153 NX-definitioner med körbar koppling. Fortsätt nästa ofärdiga steg; publiceringen är KLAR.**
 
 Casper: ”jag godkänner allt! Kör på inatt hela vägen.” Hela planen i `../../granskning-2026-09-23/plan.md` (relativt denna dokumentmapp) är godkänd. Arbeta självständigt genom implementation, tester och kontrollerad publicering inom befintlig kostnadsram. Verklig MGP/TrainMeet-verifiering får inte påstås utan underlag. Inga subagenter är beställda.
 
@@ -189,3 +189,14 @@ Signalutredning: 66 master, 55 turnoutsignalmast + 11 virtualsignalmast. De 55 h
 Version 0.8.1 behåller begärt helt NX-par i source.requestedNxIds och unionen med intilliggande signalpar i nxIds. 25 vägar berörs; geometrin, ordningsföljden och de fysiska låsresurserna är oförändrade. 133/153 NX-definitioner har nu körbar koppling, 20 saknar sådan. NX-spärrreferensen som tillkommer i en ansluten manuell regel var redan skyddad genom överlappande fysiska resurser.
 
 65 enhetstester och fyra helhetstester godkända. Det nya provet följer 3/5 → 6/9 för både huvud-/växeltågväg genom aktiv och hållen reservation och kontrollerar hela referensen samt kvarvarande delpar. Alla 130 växelvägar behåller originalregelns NX-id. Alla 340 vägar har full passage även efter rättningen; operations-/syntaxkontroll godkänd. Nya docs/signalbesked-forstudie.md för nästa etapp. Kontrollerad publicering med backup återstår.
+
+
+### Kontrollpunkt 04:10 – version 0.8.1 publicerad
+
+Release 470ff88 är aktiv på cda-tkl.trainmeet.app och sparad på privat GitHub. Backup `/root/charlottendal-backups/network-470ff88-20260923T021002Z`, tidigare b3f6a78. Alla 65 + 4 tester passerade på servern; full XML-, operations- och syntaxkontroll godkänd. Externt login 200 och skyddade API 401 med normal TLS-verifiering. Tjänsterna anslutna, noll lås vid bytet. Inga användaruppgifter eller drifttillstånd borttagna.
+
+Samlad leverans under detta fortsättningspass: 0.6 manuell tåginformation/inkommande fält, 0.7 samtliga 18 Spår 6-vägar, 0.8 ytterligare 70 granskade växeltågvägar, 0.8.1 fullständiga NX-referenser. Nu 210 huvud + 130 växel. De 15 oklara växelparen och den motsägande 0019C162 är avvisade. Tre huvudtågvägsregler förblir motsägande/spärrade. Alla 153 NX-rader finns i register; 20 saknar ännu körbar koppling. Detta är fortsatt utvecklingsprofil, ingen fysisk MGP-driftsättning.
+
+Nästa ofärdiga arbetsmoment: läs docs/signalbesked-forstudie.md och förbättra den källanknutna signalinspektionen/aspektregistret före nya fysiska besked. Källans 329 aspektrader, tomma utgångar och virtuella master är kartlagda. Arbetsytans work/claude-export/uploads/Charlottendal-TKL-underlag/Charlottendal-signalikoner.json och jmri-mod59/definitions innehåller användbart originalunderlag; exakta definitionsfiler för hsi_4, hdvsi_8 och sly_2 saknas i just den katalogen. Visa verifieringsstatus och skilj källbild/kommando från rapporterat besked. Läs även docs/trainmeet-forstudie.md vid adapterarbete. Aktivera inte okända MGP-koder, rangeröverlämning eller saknade Jython-beteenden genom gissning. Vändskiva, V1–V4, programmeringsläge, svenska signalberoenden och andra återstående användningsfall finns i ursprungsplanen.
+
+Lokal preview är session 78992, TKL 9030, simulator 9031, LocoNet 9032, state /private/tmp/charlottendal-network-preview. Aktuell profil 0.8.1, ansluten, noll lås, AIS av/lokal manövrering. Visningsversion 4 och tomma aktuella tåguppgifter bevarade. CUA tab16/18 markerade för fortsatt arbete. Automationen charlottendal-tkl-nattarbete-till-08 kontrollerad ACTIVE, var 20:e minut till 23 september 08:00 Europe/Stockholm; pausa vid tidsgränsen. Inga subagenter och inga nya kostnader. Gör inte om dessa färdiga publiceringar eller fulla prov utan ny ändring som motiverar det.

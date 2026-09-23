@@ -26,3 +26,10 @@ Regelgruppernas roll behöver prövas tillsammans med mastdefinitionerna:
 Nästa genomförbara steg är ett källanknutet signalregister i appen: samtliga aspekter, utgångar, beroenden och originalikoner ska gå att granska. Därefter kan den logiska beskedsmodellen och källans hastighets-/försignalberoenden provas separat. Koppla den till fysiska E4-koder först när aktuell svensk MGP-profil eller inspelade telegram verifierar mappningen. Den nuvarande CZ-profilens 0/8/18 förblir uttryckligt preliminär.
 
 Det detaljerade arbetsunderlaget finns i arbetsytans work/usecase-review/signal-aspect-bindings.json. Denna sammanställning bygger endast på källan; ingen fysisk utrustning eller TrainMeet har anropats.
+
+
+## Bildunderlag för nästa etapp
+
+Alla 66 panelikoner deklarerar imageset mod59 och behåller källans position, rotation och skala. Arbetsytans Claude-export innehåller Charlottendal-signalikoner.json med masttyper och aspektbindningar samt jmri-mod59/definitions med officiella utseendefiler. Filernas proveniens är låst till JMRI-commit da190a99ac7ac41bb21b7718cd6e54ea3e54a47d och finns i public/assets/mod59/proveniens.json.
+
+De cachade definitionsfilerna har exakta typer för bland annat hsi_2, hsi_5, hsi_3+dvsi och dvsi_4. Det finns ingen fil med exakt namnet appearance-hsi_4.xml, appearance-hdvsi_8.xml eller appearance-sly_2.xml i den katalogen. Befintliga närliggande typer måste därför redovisas som tolkningar tills matchningen har verifierats. Ett nytt aspektregister kan visa källans namn och utgångsbindning även när exakt bildmappning saknas.
