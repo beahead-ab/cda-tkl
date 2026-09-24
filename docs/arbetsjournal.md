@@ -328,3 +328,12 @@ Full provrapport: [Steg 1, 24 september](provkorning-2026-09-24.md).
 - Nattautomationen är fortsatt pausad. Elektrisk polarisering och fysiskt kortslutningsskydd återstår till hårdvaruprovet. Den extra låspluppen och Friställa spår är fortsatt vilande.
 
 Detaljer: [Kompisväxlar](kompisvaxlar.md).
+
+
+## 24 september 2026 · 06:14 · Tydlig manuell kompisinformation publicerad
+
+- Efter Caspers godkännande tillagd tillfällig markering av vald växel och dess verifierat kopplade kompisar vid muspekning/tangentbordsfokus. Informationsrutan ligger kvar efter manöver, visar återrapporterat läge och spårstatus samt serverns spärrorsak. Begärt läge visas separat. Läget för en kompis utanför vyn är tillgängligt genom Visa Vx… utan order.
+- Båda manuella vägarna (plupp/detaljknapp) använder samma återkoppling. Ingen extra bekräftelseruta, elektrisk kortslutningsdetektering eller ändring av kärnans manövervillkor infördes. Befintliga kopplingsdata avgör vilka kompisar som visas; oklara specialregler aktiveras inte.
+- UI-prov av belagt/okänt S101, Cu → Spår 1c med låst växelpar, återtagning och återställning. Alla tre utseenden och 390/1280 pixlars vyer kontrollerade. Inga konsolfel. Provområdet återställt, noll lås, viewport återställd. Lokalt 14 riktade enhetstester och sex helhetstester godkända; initial EPERM för testportar löstes med normal behörig omkörning.
+- Release `c868a44` / 0.16.2 pushad till privat GitHub och publicerad efter serverns 134 enhetstester, sex helhetstester och full XML/operations/syntax. Backup `/root/charlottendal-backups/network-c868a44-20260924T041452Z`; föregående `7dd7f71`. Efterkontroll: anslutna tjänster, noll lås, HTTPS-login 200 och API 401 utan inloggning.
+- Nattautomationen förblir pausad. Extra växellåsplupp och Friställa spår är fortsatt vilande; tillfällig blå markering av manövergruppen är en separat visningsfunktion.

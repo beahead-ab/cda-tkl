@@ -51,3 +51,6 @@ Efter en manöver ligger informationen kvar. Begärt läge skiljs från återrap
 Växlar utanför den aktuella vyn märks ”utanför vyn”; **Visa Vx…** rullar fram dem utan att skicka order. Informationen fungerar även i kompakt läge och med Original, Reläpanel och Trafikskärm. Stängknappen eller Escape tar bort markeringen; val av tågväg eller signalinformation avslutar också den manuella visningen. Den tillfälliga markeringen är inte den extra växellåsplupp som hålls vilande.
 
 Webbläsarprov: fokus före manöver utan lägesändring, Vx100 till avvikande, Vx101 tillbaka till rakt genom detaljknappen, belagt respektive tyst S101, tågvägslås för Cu → Spår 1c och visning av Vx161 utanför en 390 pixlar bred vy. Markeringar och information kontrollerade i alla tre utseenden samt kompakt läge. Provets spår/frånfällda fel återställda och tågvägen återtagen normalt. 14 riktade befintliga växelprov och sex processhelhetstester godkända lokalt; syntaxkontroll passerar. Inga driftvillkor, adresser eller dataformat har ändrats.
+
+
+Version 0.16.2 är publicerad som `c868a44` den 24 september kl. 06:14 svensk tid. Serverns samtliga 134 enhetstester och sex processhelhetstester passerade före byte. Backup och efterkontroller dokumenteras i [driftuppgifterna](drift.md).

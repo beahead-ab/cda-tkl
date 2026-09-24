@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `7dd7f71` · version 0.16.1 (24 september 2026, 03:27) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/7dd7f71` |
+| Driftsatt kodversion | `c868a44` · version 0.16.2 (24 september 2026, 06:14) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/c868a44` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -200,3 +200,10 @@ Release `7dd7f71` publicerad 24 september 2026 kl. 03:27 svensk tid. Omläggning
 134 enhetstester och sex processhelhetstester godkända både lokalt och på servern före versionsbytet. Full XML-, operations- och syntaxkontroll passerade. Backup `/root/charlottendal-backups/network-7dd7f71-20260924T012756Z`; tidigare release `bf2a372` finns kvar. Tjänsterna är anslutna och inga aktiva lås fanns vid efterkontrollen. Extern HTTPS-kontroll: login 200, skyddat API 401 utan session.
 
 Ingen ändring av driftdataformat, den publicerade nätprofilens adresser eller autentisering. Den äldre provprofilen har fått explicita växel–detektorkopplingar för samma skydd. Webbläsarprovet kördes lokalt mot separat simulator; fysisk elektrisk polarisering och kortslutningsskydd är inte verifierade.
+
+
+### Version 0.16.2 – synliga kompisväxlar vid manuell manöver
+
+Release `c868a44` publicerad 24 september 2026 kl. 06:14 svensk tid. Tillfälliga markeringar och en informationsruta visar den valda växeln och dess kopplade kompisar, återrapporterat läge, spårstatus och spärrar. Växlar utanför vyn kan rullas fram utan manöver. Inga nya växelkopplingar, behörigheter, driftvillkor eller dataformat har införts. [Handhavande och webbläsarprov](kompisvaxlar.md).
+
+14 riktade enhetstester och sex processhelhetstester godkända lokalt. Publiceringsservern körde hela sviten: 134 enhetstester och sex helhetstester godkända, liksom syntax, full XML och operationsimport. Backup `/root/charlottendal-backups/network-c868a44-20260924T041452Z`; föregående release `7dd7f71`. Tjänster anslutna, inga aktiva lås, extern login 200 och skyddat API 401 utan session. Inloggning och driftdata bevarade.
