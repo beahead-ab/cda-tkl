@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `97c6546` · version 0.17.1 (24 september 2026, 07:27) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/97c6546` |
+| Driftsatt kodversion | `f2bbaef` · version 0.25.0 (24 september 2026, 22:09) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/f2bbaef` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -238,3 +238,15 @@ Ny läsande kontroll bekräftade att `/opt/charlottendal/current` fortfarande pe
 Version 0.19.1 tillför högerklicksöppnad objektinformation i en modal nära klickpunkten. Lokal syntaxkontroll och webbläsarprov godkända enligt [provresultaten](provresultat.md). Ingen backend- eller driftformatsändring och inget nytt publiceringsförsök; samma blockerande serverväg inväntar besked.
 
 Version 0.20.0 är lokalt färdig med panelmanövrer under spårplanen och normalvikt för spårtexterna. Webbläsarprov, syntax och sex helhetstester godkända. Ändringen återanvänder befintliga manöveranrop och ändrar inget driftdataformat. Ingen publicering utförd; tidigare Au → Spår 1a behöver fortfarande hanteras genom den normala återtagningsprocessen enligt väntande fråga.
+
+## 24 september 2026 · 22:09 – version 0.25.0 publicerad
+
+Release `f2bbaef` ersätter `97c6546` efter Caspers klartecken. Vid förkontrollen fanns två kvarhållna vägar: An → Spår 1a och Bn → Spår 3b. Båda återtogs genom den inloggade appens vanliga Återta-knappar. Appen kvitterade stoppbesked, fri väg och frigivna lås; serverfilen bekräftade noll vägar. AIS lämnades aktivt. Inga driftfiler redigerades för att frigöra lås.
+
+Före versionsbytet passerade syntax, fullständig XML-/operationskontroll, 171 enhetstester och sju processhelhetstester på servern. Simulatorn hade inga belagda spår, pågående tåg eller injicerade fel. Säkerhetskopian omfattar beständiga driftdata, inloggning, inställningar, tjänstefiler och Nginx:
+`/root/charlottendal-backups/network-f2bbaef-20260924T200907Z`.
+Föregående kod finns kvar i `/opt/charlottendal/releases/97c6546`. Simulatorns tillstånd finns i minnet och ingår inte i filbackupen; därför kontrollerades den före omstart.
+
+Nginx har uppdaterats med separata uppladdningsgränser för AI-underlag, Excel/CSV och granskningsutkast samt komprimering av källdata. Konfigurationen validerades före omladdning. Efterkontroll: båda tjänster aktiva, färsk LocoNet-anslutning utan startfel, noll lås, identisk controls.json inklusive AIS och oförändrad autentiseringsfil. Extern HTTPS med normal certifikatkontroll: login 200, panel-/simulator-API och Excelmall 401 utan session.
+
+Webbläsaren visar 0.25.0 med bibehållen inloggning, ny meny, manöverknappar och tidtabellsfält. Manuell inmatning, Excel-/CSV-import och båda mallänkarna är tillgängliga. Inga konsolfel observerades. Ingen provtidtabell lades in i webbdriften. AI-tolkning inväntar serverns OpenAI-nyckel; riktig TrainMeet-parkoppling och fysisk MGP-verifiering återstår. Den tidigare publiceringsblockeringen är därmed löst.

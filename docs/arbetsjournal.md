@@ -425,3 +425,12 @@ Detaljer: [Kompisväxlar](kompisvaxlar.md).
 - 171 enhetstester och två processhelhetsprov godkända. Excel/CSV genom riktiga HTTP-anrop, mallars GET/HEAD, inloggning, originalfil, granskning och omstart. Webbläsarprov: Exceluppladdning, rättat spår, aktivering och panelvisning samt CSV-nedladdning, inläsning och panelvisning. Isolerad provdata användes; normal förhandsvisnings tidtabell ändrades inte.
 - Biblioteken låsta i package-lock. Beroendekontrollen visar inga kända sårbarheter. Nginx-konfigurationen kompletterad med 3 MB för direktimportens JSON.
 - Lokal förhandsvisning uppdaterad. Ingen webbpublicering och inga ändringar av serverns befintliga tågvägslås; frågan om Au → Spår 1a är fortsatt obesvarad.
+
+## 24 september 2026 · 22:09 – kontrollerad publicering av 0.25.0
+
+- Casper godkände återtagning och publicering, loggade in i webbappen och gav därefter klartecken att fortsätta. Aktuell serverkontroll visade An → Spår 1a och Bn → Spår 3b, inte den tidigare Au-vägen.
+- Återtog båda aktuella vägarna med appens vanliga knappar. Verifierade för varje väg kvittensen stopp bekräftat, vägen fri och lås frigivna. Därefter noll lås i både panel och sparade driftdata. En äldre nödåtertagningskvittens visades samtidigt och användes inte som bevis för aktuella lås. Ingen direkt radering eller omskrivning av driftdata.
+- Förberedde release f2bbaef i separat katalog och verifierade arkivets SHA-256. Syntax, hela XML/operationsunderlaget, 171 enhetstester och sju processhelhetstester passerade på servern. Den aktiva versionen fortsatte köra under testerna.
+- Kontrollerade att simulatorn saknade pågående tåg, beläggningar och injicerade fel. Tog backup av beständiga driftdata, inloggning och driftskonfiguration i /root/charlottendal-backups/network-f2bbaef-20260924T200907Z. Uppdaterade current och Nginx; båda tjänster omstartade. Automatisk återgång förberedd men behövde inte användas.
+- Efterkontroll: båda tjänster anslutna utan startfel, noll lås, controls.json och autentiseringsfil identiska med backupen. AIS är kvar aktivt. Extern HTTPS-login 200, panel-/simulator-API och Excelmall 401 utan session. Webbläsaren visar version 0.25.0, ny meny, tidtabellsfält och tillgänglig Excel-/CSV-import med mallar; inga konsolfel.
+- Ingen provtidtabell eller verkligt AI-anrop i webbdriften. OpenAI-nyckel, riktig TrainMeet-anslutning och fysisk MGP-verifiering återstår. Nattautomationen är oförändrad.
