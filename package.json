@@ -1,6 +1,6 @@
 {
   "name": "charlottendal-tkl",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "private": true,
   "type": "module",
   "description": "Charlottendal TKL och en separat LocoNet-anläggningssimulator",
@@ -20,6 +20,13 @@
     "verify:operations": "python3 scripts/import-operations.py --check && node scripts/make-network-profile.mjs --check && node scripts/make-migration.mjs --check && node scripts/make-train-fields.mjs --check && python3 scripts/make-signal-catalog.py --check && node scripts/make-indications.mjs --check"
   },
   "dependencies": {
-    "jose": "6.2.12"
+    "csv-parse": "7.0.2",
+    "jose": "6.2.12",
+    "read-excel-file": "9.3.10",
+    "saxes": "6.0.0",
+    "yauzl": "3.4.0"
+  },
+  "devDependencies": {
+    "fflate": "0.8.3"
   }
 }

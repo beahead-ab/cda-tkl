@@ -105,3 +105,4 @@ body[data-skin=relay] #trainmeet-timetable{border-color:#8b8973;background:#b3ba
 @media(max-width:700px){#import-view{padding:18px 12px}.import-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#timetable-import .card{padding:16px 12px}.import-row{padding:10px}.timetable-choice label{flex-wrap:wrap}}
 
 #ti-edit .actions{display:flex;gap:10px;flex-wrap:wrap}#ti-edit-active{margin-left:14px}
+.import-templates{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}.import-templates a{border:1px solid var(--border);border-radius:6px;padding:10px 14px}.import-templates a:hover{background:#293a3b}.import-format{margin:16px 0;font-size:13px;line-height:1.6}.import-format summary{cursor:pointer}.import-format p{overflow-wrap:anywhere}

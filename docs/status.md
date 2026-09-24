@@ -59,3 +59,5 @@ Den publicerade versionen 0.17.0 har klarat 134 enhetstester och sex processhelh
 Aktuell publicerad release och provstatus finns i [arbetsjournalen](arbetsjournal.md), [provresultaten](provresultat.md) och [driftuppgifterna](drift.md).
 
 [Avstämning av samtliga 54 användningsfall och tio produktkrav](acceptans-2026-09-23.md) visar exakt vad som är provat, avsiktligt vilande eller beroende av ytterligare underlag.
+
+Version 0.25.0 lägger till direkt Excel-/CSV-import och nedladdningsbara mallar med tio fasta kolumner. Ingen AI-nyckel krävs. Exakta värden och radreferenser går genom befintlig granskning till panelens kolumner. 171 enhetstester och två riktade processhelhetsprov godkända. Lokalt uppdaterad, ännu inte webbpublicerad; tidigare obesvarade fråga om återtagning av Au → Spår 1a kvarstår.

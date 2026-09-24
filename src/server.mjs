@@ -1,5 +1,6 @@
 import http from 'node:http';
 import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {decode} from './protocol.mjs';
 import { Engine } from './engine.mjs';
@@ -79,11 +80,17 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
       if(url.pathname==='/api/timetable-import')return json(res,timetableImport.view());
+      const templateMatch=url.pathname.match(/^\/api\/timetable-import\/template\.(csv|xlsx)$/);
+      if(templateMatch){
+        const ext=templateMatch[1],bytes=fs.readFileSync(path.join(root,'templates','cda-tkl-tidtabell.'+ext));
+        res.writeHead(200,{'Content-Type':ext==='csv'?'text/csv; charset=utf-8':'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Content-Disposition':`attachment; filename="cda-tkl-tidtabell.${ext}"`,'Cache-Control':'no-cache','X-Content-Type-Options':'nosniff'});
+        return res.end(req.method==='HEAD'?undefined:bytes);
+      }
       const sourceMatch=url.pathname.match(/^\/api\/timetable-import\/source\/([a-f0-9-]{36})\/(\d+)$/);
       if(sourceMatch){
         const file=timetableImport.sourceFile(sourceMatch[1],sourceMatch[2]);
         const bytes=fs.readFileSync(file.path);
-        res.writeHead(200,{'Content-Type':file.mime,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"sandbox; default-src 'none'",'Content-Disposition':(file.mime==='application/pdf'?'attachment':'inline')+"; filename*=UTF-8''"+encodeURIComponent(file.name)});
+        res.writeHead(200,{'Content-Type':file.mime,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"sandbox; default-src 'none'",'Content-Disposition':(file.mime.startsWith('image/')?'inline':'attachment')+"; filename*=UTF-8''"+encodeURIComponent(file.name)});
         return res.end(req.method==='HEAD'?undefined:bytes);
       }
       if (url.pathname === '/api/config') return json(res, { ...profile,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
@@ -108,11 +115,12 @@ const server = http.createServer(async (req, res) => {
       if (url.pathname.startsWith('/api/')) return json(res, { error: 'Finns inte' }, 404);
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
-    if(url.pathname==='/api/timetable-import/begin'){
+    if(['/api/timetable-import/begin','/api/timetable-import/table'].includes(url.pathname)){
       if(importUploading)return json(res,{error:'En uppladdning pågår redan.'},409);
-      if(!timetableImport.reader.configured)return json(res,{error:'AI-tolkning är inte ansluten. Lägg till serverns API-nyckel först.'},503);
+      const table=url.pathname.endsWith('/table');
+      if(!table&&!timetableImport.reader.configured)return json(res,{error:'AI-tolkning är inte ansluten. Lägg till serverns API-nyckel först.'},503);
       importUploading=true;
-      try{return json(res,timetableImport.begin(await body(req,IMPORT_LIMITS.requestBytes)),202);}finally{importUploading=false;}
+      try{const data=await body(req,table?3*1024*1024:IMPORT_LIMITS.requestBytes);return json(res,table?await timetableImport.table(data):timetableImport.begin(data),table?200:202);}finally{importUploading=false;}
     }
     const data = await body(req,url.pathname==='/api/timetable-import/save'?2*1024*1024:65536);
     if(url.pathname.startsWith('/api/timetable-import/')){const command=url.pathname.slice('/api/timetable-import/'.length);if(!['manual','edit','append','save','activate','discard','select'].includes(command))return json(res,{error:'Okänd tidtabellsåtgärd'},404);return json(res,timetableImport[command](data));}

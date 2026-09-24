@@ -415,3 +415,13 @@ Detaljer: [Kompisväxlar](kompisvaxlar.md).
 - Skapa, lägga till rörelser, spara, välja inkluderade rader, godkänna och återöppna manuella tabeller. Aktiv tabell bevaras medan ett utkast redigeras. Ingen AI-nyckel eller AI-begäran krävs för manuell inmatning. Källreferenser för filimport kan inte skrivas om via manuell redigering.
 - Tolv riktade enhetsprov och två processhelhetsprov passerar. Verifierat omstart, aktiv tabell kvar under rättningar, versionskonflikter, 300-radersgräns, API-inloggning och inga fältorder/klockändringar. UI-prov med två manuella tåg utan AI-nyckel, sparande före tillägg, aktivering och rättat spår som blir synligt först efter godkännande. Inga konsolfel under detta prov.
 - Lokal förhandsvisning uppdaterad. Inga ändringar i webbdriftens tågvägslås och ingen webbpublicering; tidigare fråga om Au → Spår 1a kvarstår.
+
+
+## 24 september 2026 · Exakt Excel- och CSV-import, version 0.25.0
+
+- På Caspers begäran lagt till direktimport av .xlsx och UTF-8 CSV med exakt tio svenska rubriker. Excel- och CSV-mallar med två exempelrader hämtas från importsidan. Excelmallen innehåller textformaterade beteckningar, tidsvärden, Ja/Nej-val och ett instruktionsblad.
+- Ingen AI eller nyckel behövs. Filen ger ett beständigt granskningsutkast med rad-/bladreferenser och sparat original. Aktivering använder samma tidtabellsfält som manuell inmatning och TrainMeet. Aktiv tabell lämnas kvar under import och fel.
+- Separat worker, tids- och minnesgräns samt kontroll av ZIP-expansion. Fasta kolumner, obligatoriska fält, exakta minuter, nollor, citattecken och radbrytningar. Formler och dolda datarader avvisas. Versionskontroll efter worker hindrar överskrivning av samtidiga rättningar.
+- 171 enhetstester och två processhelhetsprov godkända. Excel/CSV genom riktiga HTTP-anrop, mallars GET/HEAD, inloggning, originalfil, granskning och omstart. Webbläsarprov: Exceluppladdning, rättat spår, aktivering och panelvisning samt CSV-nedladdning, inläsning och panelvisning. Isolerad provdata användes; normal förhandsvisnings tidtabell ändrades inte.
+- Biblioteken låsta i package-lock. Beroendekontrollen visar inga kända sårbarheter. Nginx-konfigurationen kompletterad med 3 MB för direktimportens JSON.
+- Lokal förhandsvisning uppdaterad. Ingen webbpublicering och inga ändringar av serverns befintliga tågvägslås; frågan om Au → Spår 1a är fortsatt obesvarad.

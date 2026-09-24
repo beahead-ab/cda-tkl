@@ -1,6 +1,34 @@
-# Egen tidtabell och import · 0.24.0
+# Egen tidtabell och import · 0.25.0
 
-TKL kan importera en tidtabell från flera bilder och PDF-filer utan TrainMeet. OpenAI läser underlagen tillsammans och skapar ett utkast. Ingenting används i panelen innan användaren har granskat och godkänt det.
+TKL kan ta emot en egen tidtabell manuellt, från Excel/CSV med fasta kolumner eller genom AI-tolkning av bilder och PDF. Ingenting används i panelen innan användaren har granskat och godkänt det. Alla källor visas i samma kolumnfält under spårplanen.
+
+## Importera Excel eller CSV
+
+Öppna **Meny → Tidtabell och import → Importera Excel eller CSV**. Hämta **Excelmall** eller **CSV-mall**, ersätt de två exempelraderna och välj **Läs in fil**. Ingen AI-tjänst eller API-nyckel används. Mallarna hämtas via `/api/timetable-import/template.xlsx` respektive `.csv`, bakom samma inloggning som panelen.
+
+Rubrikraden och kolumnordningen ska vara exakt:
+
+| Kolumn | Innehåll |
+| --- | --- |
+| Tågnummer | Obligatoriskt. Text, till exempel P401 eller 00402. |
+| Station | Obligatoriskt. Station eller driftplats. |
+| Trafikdag | Obligatoriskt. Exempelvis Dagl, Lör eller 2026-09-24. |
+| Ankomst | HH:MM eller tomt. |
+| Avgång | HH:MM eller tomt. Minst en av de två tiderna krävs. |
+| Spår | Valfri beteckning, exempelvis 1a. |
+| Från | Valfri avsändande station. |
+| Till | Valfri mottagande station. |
+| Passerar | Ja för passage utan uppehåll, annars Nej. |
+| Anmärkning | Valfri text, högst 2 000 tecken. |
+
+En fil får innehålla högst 300 tågrörelser och vara högst 2 MB. Övriga textfält får vara högst 160 tecken. Helt tomma rader hoppas över. Tider till och med 99:59 stöds, inklusive 25:10 efter midnatt. Sekunder avrundas inte till minuter. Inledande nollor i textvärden bevaras.
+
+- **Excel:** `.xlsx`, med data på bladet **Tidtabell**, rubriker på rad 1 och tio kolumner A–J. Mallen har även ett instruktionsblad **Läs mig**. Andra blad avvisas så att data inte tappas tyst. Vanliga Excel-tidsceller och HH:MM-text stöds. Mallen använder textformat för beteckningar och tidsformat för tider. Behåll textformatet för tågnummer/spår. Använd värden utan formler; även formler med sparat resultat avvisas. Dolda datarader, sammanslagna celler, felvärden, makron och externa arbetsbokslänkar avvisas. Äldre `.xls` måste sparas som `.xlsx`.
+- **CSV:** UTF-8, med eller utan BOM, semikolon eller komma. Rubrikerna avgör avskiljaren. Citattecken, avskiljare och radbrytningar i ett fält hanteras enligt CSV-reglerna. Vid redigering av CSV i Excel behöver beteckningskolumner importeras som text för att Excel självt inte ska ta bort nollor.
+
+Felformaterade uppgifter ger rad-/kolumnfel före utkastet skapas. Ett giltigt utkast granskas, rättas, sparas och godkänns på samma sätt som annan egen tidtabell. Varje rad visar fil och radnummer, samt bladnamn för Excel. Originalet kan laddas ner. Dubbletter måste rättas eller uteslutas före aktivering. Den tidigare aktiva tidtabellen ligger kvar under hela granskningen och vid fel.
+
+Filinläsningen kör i en separat worker med 10 sekunders gräns och begränsat minne. ZIP-filens både angivna och verkliga uppackade storlek kontrolleras (12 MB, högst 128 poster). Rättningar från andra klienter under inläsningen upptäcks innan något sparas. Inläsningen har ingen koppling till fältorder eller TrainMeet-skrivningar. Bibliotek: [read-excel-file](https://github.com/catamphetamine/read-excel-file), [csv-parse](https://csv.js.org/parse/), [yauzl](https://github.com/thejoshwolfe/yauzl) och [saxes](https://github.com/lddubeau/saxes).
 
 ## Skriv in en tidtabell manuellt
 
@@ -27,7 +55,7 @@ Sätt `OPENAI_API_KEY` i serverns skyddade miljöfil för TKL-tjänsten. Nyckeln
 
 Utan nyckel visar importsidan att AI inte är ansluten och spärrar tolkning. Sparade, godkända tidtabeller fungerar fortfarande. API-kostnaden hör till det OpenAI-projekt vars nyckel används; ange önskade användningsgränser där. Appen återförsöker inte automatiskt efter avbrott, kvotfel eller omstart.
 
-Uppdatera också Nginx från `deploy/nginx-app.conf` vid publicering: endast importens uppladdningsadress tillåter 23 MB JSON, och rättningsadressen 2 MB. Övriga anropsgränser behålls. Base64-innehållet är större än originalfilerna. Tolkningen startas i bakgrunden och uppladdningsanropet väntar inte på AI-svaret.
+Uppdatera också Nginx från `deploy/nginx-app.conf` vid publicering: AI-uppladdningen tillåter 23 MB JSON, Excel/CSV-adressen `/api/timetable-import/table` 3 MB och rättningsadressen 2 MB. Övriga anropsgränser behålls. Base64-innehållet är större än originalfilerna. AI-tolkningen startas i bakgrunden och uppladdningsanropet väntar inte på AI-svaret.
 
 Integrationen använder [Responses med PDF-indata](https://developers.openai.com/api/docs/guides/file-inputs) och [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs). [Modellens egenskaper](https://developers.openai.com/api/docs/models/gpt-5-mini) kontrollerades mot OpenAI-dokumentationen. Begäran har `store: false`, inga verktyg och en fast OpenAI-adress. Detta är inte ett löfte om noll lagring hos leverantören.
 
@@ -41,11 +69,6 @@ AI vägras lämna ett användbart utkast när svaret avbrutits, saknar källrefe
 
 ## Verifiering
 
-För 0.24.0 passerar tolv riktade tidtabellsprov samt två processhelhetsprov (import/manuell inmatning och inloggningsskydd). Proven omfattar manuell tabell utan AI-nyckel, tillägg, granskning, återöppning, bibehållen aktiv tabell, omstart, revisionskonflikt, radgräns och avsaknad av fältorder. Webbläsarprov: två manuella tåg, automatiskt sparande före ny rad, aktivering till panelens kolumner och ändrat spår som visas först efter godkännande.
+För 0.25.0 passerar samtliga 171 enhetstester och två riktade processhelhetsprov (tidtabellsimport och lösenord). Excel-/CSV-proven omfattar mallarnas faktiska innehåll, tidsvärden inklusive 00:00/25:10, 1904-datumsystem, XML-namnrymder, nollor, citattecken, radbrytningar, felrubriker, obligatoriska fält, formler, dolda rader, sammanslagna celler, storleksgränser, samtidiga rättningar, aktivering och omstart. HTTP-prov verifierar nedladdning/HEAD, originalfil, åtkomstskydd och att tågvägar, beläggningar och klockans auktoritet är oförändrade.
 
-Tidigare importleverans:
-161 enhetstester och sju processhelhetstester godkända. Proven omfattar flerfilsöverföring, storleks-/typkontroll, dubbletter, sidreferenser, felaktiga och ofullständiga AI-svar, samtidighet, lagringsfel, inloggningsskydd, beständiga rättningar och källbyte. Integrationsprovet verifierar att inga fältorder eller klockändringar skapas.
-
-Webbläsarflödet har provats med en separat testserver och kontrollerat AI-testsvar: uppladdning av bild och PDF, osäker rad, rättning, sparande, granskningsspärr, aktivering samt byte till TrainMeet och tillbaka. Från 0.23.0 visas tidtabellen i kolumner med bläddring; vid 390 pixlar ryms en kolumn utan sidöverflöde. Testfixturernas filer provar transporten, inte verklig dokumenttolkning.
-
-**Kvar före riktig AI-användning:** konfigurera servernyckeln och verifiera tolkningen på representativa tidtabellsbilder och flersidiga PDF:er. Ingen verklig AI-tolkning har ännu körts i denna installation. Webbpubliceringen inväntar också tidigare besked om den kvarhållna provtågvägen Au → Spår 1a.
+I webbläsaren har Excelmallen laddats upp utan AI-nyckel, granskats, fått rättat spår och aktiverats i panelens ordinarie kolumner. CSV-mallen har laddats ner, lästs in med radreferenser och aktiverats i samma panelkolumner. Föregående aktiva tabell bevarades under granskningen. Ingen riktig AI-tolkning ingår i dessa prov.

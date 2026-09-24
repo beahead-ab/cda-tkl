@@ -2,6 +2,7 @@ import {EventEmitter} from 'node:events';
 import {randomUUID,createHash} from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import {tableUpload,readTable} from './timetable-table.mjs';
 export const IMPORT_LIMITS={files:8,fileBytes:8*1024*1024,totalBytes:16*1024*1024,rows:300,requestBytes:23*1024*1024};
 const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});};
 const object=v=>v&&typeof v==='object'&&!Array.isArray(v);
@@ -79,6 +80,16 @@ export class TimetableImport extends EventEmitter {
     const previous=d.rows.at(-1);
     return this.commit({...this.data,draft:{...d,rows:[...d.rows,blankRow(previous?.station,previous?.day)]}});
   }
+  async table(data){
+    this.check(data);if(this.data.draft)fail('Slutför eller kasta det befintliga utkastet före en ny import.',409);
+    const file=tableUpload(data.file),rows=await readTable(file);
+    // Another client may have edited the timetable while the worker was reading.
+    this.check(data);if(this.data.draft)fail('Ett annat utkast har skapats. Läs in senaste versionen.',409);
+    const id=randomUUID(),directory=this.directory(id),{bytes,kind,...metadata}=file;
+    const draft={id,kind,title:file.name.replace(/\.(xlsx|csv)$/i,''),createdAt:this.now(),status:'review',error:'',rows:rows.map(r=>({...r,id:randomUUID()})),warnings:reviewWarnings(rows),coverage:[],files:[metadata]};
+    try{fs.mkdirSync(directory,{recursive:true,mode:0o700});fs.writeFileSync(path.join(directory,file.id),bytes,{mode:0o600,flag:'wx'});return this.commit({...this.data,draft});}
+    catch(e){fs.rmSync(directory,{recursive:true,force:true});throw e.status?e:Object.assign(Error('Underlaget kunde inte sparas.'),{status:507});}
+  }
   begin(data){
     this.check(data);if(this.data.draft)fail('Slutför eller kasta det befintliga utkastet före en ny import.',409);
     if(!this.reader.configured)fail('AI-tolkning är inte ansluten. Lägg till serverns API-nyckel först.',503);
@@ -105,7 +116,7 @@ export class TimetableImport extends EventEmitter {
     if(!draft||draft.status!=='review')fail('Det finns inget färdigt utkast att redigera.',409);
     if(!text(data.title)||!data.title.trim()||!Array.isArray(data.rows)||data.rows.length!==draft.rows.length)fail('Utkastets titel eller rader är ogiltiga.');
     const ids=new Set();const rows=data.rows.map(row=>{const original=draft.rows.find(r=>r.id===row.id);if(!original||ids.has(row.id)||typeof row.included!=='boolean')fail('Utkastets radidentiteter stämmer inte.');ids.add(row.id);return {...original,...rowValues(row),included:row.included};});
-    return this.commit({...this.data,draft:{...draft,title:data.title.trim(),rows}});
+    return this.commit({...this.data,draft:{...draft,title:data.title.trim(),rows,...(['csv','xlsx'].includes(draft.kind)?{warnings:reviewWarnings(rows)}:{})}});
   }
   activate(data){
     this.check(data);const d=this.data.draft;

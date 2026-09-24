@@ -35,5 +35,19 @@ test('process imports files, edits and activates reviewed rows, selects sources 
     response=await request('/api/timetable-import/edit',{sessionId:v.sessionId,revision:v.revision});assert.equal(response.status,200);v=await response.json();
     response=await request('/api/timetable-import/append',{sessionId:v.sessionId,revision:v.revision});assert.equal(response.status,200);v=await response.json();assert.equal(v.draft.rows.length,2);assert.equal(v.active.rows.length,1);
     const manualState=await(await request('/api/state')).json();assert.equal(manualState.routes.length,0);assert.ok(Object.values(manualState.blocks).every(b=>b.occupied===null));assert.equal(manualState.clock.authority,'local');assert.equal(manualState.trainMeet.status,'unconfigured');assert.equal(output,'');
+    response=await request('/api/timetable-import/discard',{sessionId:v.sessionId,revision:v.revision});v=await response.json();
+    for(const ext of ['csv','xlsx']){
+      const template=await request('/api/timetable-import/template.'+ext);assert.equal(template.status,200);assert.match(template.headers.get('content-disposition'),/attachment; filename="cda-tkl-tidtabell/);
+      const bytes=Buffer.from(await template.arrayBuffer());assert.deepEqual(bytes,fs.readFileSync(path.join(cwd,'public/templates/cda-tkl-tidtabell.'+ext)));
+      const head=await fetch('http://127.0.0.1:'+port+'/api/timetable-import/template.'+ext,{method:'HEAD'});assert.equal(head.status,200);assert.equal((await head.text()).length,0);
+      const active=structuredClone(v.active);
+      response=await request('/api/timetable-import/table',{sessionId:v.sessionId,revision:v.revision,file:{name:'Prov.'+ext,data:bytes.toString('base64')}});assert.equal(response.status,200);v=await response.json();assert.equal(v.aiConfigured,false);assert.equal(v.draft.kind,ext);assert.deepEqual(v.active,active);
+      const original=await request('/api/timetable-import/source/'+v.draft.id+'/1');assert.match(original.headers.get('content-disposition'),/^attachment/);assert.deepEqual(Buffer.from(await original.arrayBuffer()),bytes);
+      response=await request('/api/timetable-import/activate',{sessionId:v.sessionId,revision:v.revision,reviewed:true});assert.equal(response.status,200);v=await response.json();assert.equal(v.active.rows[1].trainNumber,'00402');
+    }
+    await stop();launch('');v=await until(view);assert.equal(v.active.kind,'xlsx');assert.equal(v.active.rows[0].arrival,'09:05');
+    response=await request('/api/timetable-import/table',{sessionId:v.sessionId,revision:v.revision,file:{name:'fel.csv',data:Buffer.from('Fel;kolumner').toString('base64')}});assert.equal(response.status,400);assert.match((await response.json()).error,/Rubrikraden/);assert.deepEqual((await view()).active,v.active);
+    response=await request('/api/timetable-import/table',{sessionId:v.sessionId,revision:v.revision,file:{name:'stor.csv',data:'A'.repeat(3*1024*1024)}});assert.equal(response.status,413);
+    const tableState=await(await request('/api/state')).json();assert.equal(tableState.routes.length,0);assert.deepEqual(tableState.blocks,manualState.blocks);assert.equal(tableState.clock.authority,'local');assert.equal(tableState.trainMeet.status,'unconfigured');assert.equal(output,'');
   }finally{if(child?.exitCode===null)await stop();fs.rmSync(dir,{recursive:true,force:true});}
 });
