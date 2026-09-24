@@ -122,3 +122,10 @@ Webbläsarprov från båda växelplupparna visade att båda bilderna följer med
 Manuell återkoppling provad i webbläsaren: tangentbordsfokus visar båda kompisväxlarna före manöver; direktplupp och detaljknapp visar individuella återrapporter. Belagt S101, tyst S101 och låst Vx100/Vx101 gav tydliga spärrorsaker utan omläggning. Visa Vx161 rullade fram en kompis från utanför en 390 pixlar bred vy utan order. Original, Reläpanel, Trafikskärm och kompakt läge kontrollerade; inga konsolfel/varningar. Noll provlås, båda Vx100/Vx101 rakt, S101 fritt och detektorfelet borttaget vid avslut. Fönsterstorleken återställd.
 
 14 relevanta befintliga enhetstester och sex helhetstester godkända lokalt. Första helhetstestförsöket hindrades av sandlådans lokala portbehörighet (EPERM); omkörning med tillåten lokal nätverksåtkomst passerade. Servern körde hela sviten med 134 enhetstester och sex helhetstester godkända före publicering av `c868a44`. Syntax, XML/operationskontroller och extern efterkontroll passerade. Ingen fysisk anläggning eller riktig TrainMeet-anslutning användes.
+
+
+## 24 september 2026 – version 0.17.0
+
+Ren panel och separat Verktyg-sida har genomgått [webbläsarprov](panel-och-verktyg.md): smal/bred vy, direktlänk och bakåtknapp, osparat tågnummer, klick på tågnummer från panelen, signalruta, kompisväxel från verktygen, tågväg över sidbyte/registerbesök och återtagning, aktivt stopp och synkroniserad tågvägstyp. P1700 tömdes efter prov, AIS återställd, noll provlås. Inga konsolfel eller varningar.
+
+Sex befintliga processhelhetstester godkända lokalt. Serverns hela svit passerade: 134 enhetstester och sex helhetstester, samt syntax, XML och operationsimport. Release `bea8a85` publicerad med backup och godkänd efterkontroll av tjänster, lås, HTTPS och inloggningsskydd. Ingen fysisk utrustning manövrerades.

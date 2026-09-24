@@ -337,3 +337,12 @@ Detaljer: [Kompisväxlar](kompisvaxlar.md).
 - UI-prov av belagt/okänt S101, Cu → Spår 1c med låst växelpar, återtagning och återställning. Alla tre utseenden och 390/1280 pixlars vyer kontrollerade. Inga konsolfel. Provområdet återställt, noll lås, viewport återställd. Lokalt 14 riktade enhetstester och sex helhetstester godkända; initial EPERM för testportar löstes med normal behörig omkörning.
 - Release `c868a44` / 0.16.2 pushad till privat GitHub och publicerad efter serverns 134 enhetstester, sex helhetstester och full XML/operations/syntax. Backup `/root/charlottendal-backups/network-c868a44-20260924T041452Z`; föregående `7dd7f71`. Efterkontroll: anslutna tjänster, noll lås, HTTPS-login 200 och API 401 utan inloggning.
 - Nattautomationen förblir pausad. Extra växellåsplupp och Friställa spår är fortsatt vilande; tillfällig blå markering av manövergruppen är en separat visningsfunktion.
+
+
+## 24 september 2026 · 07:14 · Ren panel och separat Verktyg-sida
+
+- På Caspers begäran flyttat stödfunktionerna runt spårplanen till `#tools`, med trafik, manövrer/spärrar, utseende, anslutningar och händelser. Ren panel är standard på `#panel`; bara grundläggande panelmanövrer och anslutning syns permanent. Anläggningsregistret behålls på `#register`.
+- Visa/Dölj verktyg ersatt av sidnavigation, direktlänkar och fungerande bakåtknapp. Spårplanens DOM och förladdade signalbilder byggs inte om. Tågnummerklick öppnar rätt verktygsfält; Visa kompisväxel återgår till panelen utan manöver. Signaluppgifter öppnas i tillfällig ruta. Aktiva stopp/fel/fjärrmeddelanden är gemensamma för sidorna.
+- UI-prov i 390/1280 pixlar: draft över sidbyte, sparat P1700 på SIA och återöppning från spårplan, aktiv Cu → Spår 1c över sidbyte/register, normal återtagning, signalruta, kompisvisning, AIS och tågvägstyp. Provnumret tömt, AIS återställd, inga lås, fönsterstorlek återställd. Inga konsolfel. Ingen ny funktion för egen panelredigering byggd; framtida tillägg kan väljas separat.
+- Sex processhelhetstester och syntax passerade lokalt. Release `bea8a85` / 0.17.0 pushad till privat GitHub och publicerad efter 134 enhetstester, sex helhetstester samt full XML/operations/syntax på servern. Backup `/root/charlottendal-backups/network-bea8a85-20260924T051423Z`, föregående `c868a44`. Efterkontroll: tjänster anslutna, noll lås, extern login 200 och skyddat API 401 utan inloggning.
+- Inga driftregler, adresser, dataformat eller konton ändrade. Nattautomationen fortsatt pausad; tidigare vilande funktioner och fysiska verifieringsbehov oförändrade.
