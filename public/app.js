@@ -1,3 +1,4 @@
+import { createManualFeedback } from './manual-feedback.js';
 import { createSourceRegister } from './source-register.js';
 import { panelLayout } from './panel-layout.js';
 import { createTrainInformation } from './train-information.js';
@@ -10,7 +11,7 @@ const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
-let sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout, serverOffset = 0;
+let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout, serverOffset = 0;
 function setPage(page) {
   history.replaceState(null,'',page==='admin'?'#register':'#panel');
   if(page==='admin') setCompact(false);
@@ -52,6 +53,7 @@ async function api(path, data) {
 }
 function clearChoice(repaint=true) { chosen = null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('clear-selection').hidden = true; if(repaint)paint(); }
 function choose(id) {
+  manualFeedback?.clear();
   if (!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
   if(state.controls?.mode==='remote') return message('Fjärrläge: lokal tågvägsläggning är spärrad.');
   if (!chosen) {
@@ -82,6 +84,7 @@ function buildPlan() {
   layout = panelLayout(panel);
   const {x,y,width,height}=layout.crop;
   $('track-plan').setAttribute('viewBox',`${x} ${y} ${width} ${height}`);
+  manualFeedback=createManualFeedback({config,plan:$('track-plan'),scroll:document.querySelector('.panel-scroll'),panelView:$('panel-view'),stateOf:()=>state,online:()=>online,isBlocked,esc});
   const root = $('track-plan'), track = svg('g', {}, root), turnouts = svg('g', {}, root);
   const flow = svg('g', { id: 'flow-layer', 'pointer-events': 'none' }, root), labels = svg('g', {}, root), icons = svg('g', {}, root), controls = svg('g', {}, root);
   for (const s of panel.segs.filter(s => s.b !== 'frame' && !s.hide && Math.min(s.y1, s.y2) < 850)) {
@@ -102,6 +105,7 @@ function buildPlan() {
       indicatorLamps.push({block:t.block,node:svg('circle',{cx:(t.cx+x)/2,cy:(t.cy+y)/2,r:2.5,class:'relay-lens'},turnouts)});
     }
     switches.push({ ...t, legs });
+    manualFeedback.addTurnout(t);
     svg('text', { x: t.cx + 3, y: t.cy - 11, class: 'turnout-number' }, labels, t.name.replace('Vx', ''));
     // The source manoeuvre dot already occupies this position. A second,
     // invisible button underneath it gave pointer and keyboard different actions.
@@ -146,19 +150,20 @@ function buildPlan() {
         sourceLamps.push({g,lens,unknown,name:indication.name,color:indication.lamps.g.name===b.sensor?'g':'r'});
       }
     }
+    let manualName=names[0];
     accessible(g,isRoute?`${label(b.sensor)} · ${isShunt?'växeltågväg':'tågvägsknapp'}`:names.length?`Manövrera växel ${names.join(' / ')}`:b.sensor,()=>{
       if(isRoute) return choose(b.sensor);
       const indication=sourceLamps.find(l=>l.g===g);
       if(indication)return inspectIndication(indication.name);
       if(names.length){
-        if(!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
+        manualFeedback.select(manualName);
         if(!available) return message('Växelgruppen finns i källan men är ännu inte ansluten till driftprofilen.');
-        const name=names[0]; inspected={kind:'turnout',name}; paintInspector();
-        if(state.manual?.[name]&&!state.manual[name].allowed) return message(state.manual[name].reason);
-        return api('turnout',{name,position:state.turnouts[name]?.position==='C'?'T':'C'});
+        const name=manualName; inspected={kind:'turnout',name}; paintInspector();
+        return manualTurnout(name,state?.turnouts[name]?.position==='C'?'T':'C');
       }
       openSource('sensors',b.sensor);
     });
+    if(names.length)manualName=manualFeedback.addControl(g,names,b.centerX,b.centerY);
     if(isButton) buttons.push({id:b.sensor,g,hit,hitCap:b.hitCap,available,names});
   }
   new ResizeObserver(()=>{
@@ -168,8 +173,17 @@ function buildPlan() {
   $('derived-indications').innerHTML='<span>Beräknat:</span>'+(config.panelIndications?.indicators||[]).map(i=>`<button type="button" data-indication="${esc(i.name)}"><i></i>${esc(i.name)} <span>?</span></button>`).join('');
   $('derived-indications').onclick=e=>{const name=e.target.closest('button')?.dataset.indication;if(name)inspectIndication(name);};
 }
+async function manualTurnout(name,position) {
+  manualFeedback.select(name);
+  if(!usable())return message('Panelen saknar aktuell kontakt med anläggningen.');
+  if(state.manual?.[name]?.allowed!==true)return message(state.manual?.[name]?.reason||'Ingen verifierad manöverregel är ansluten.');
+  if(pending)return;
+  manualFeedback.order(name,position);
+  if(!await api('turnout',{name,position}))manualFeedback.failed($('message-text').textContent);
+}
 let inspectorOrigin;
 function showInspector(kind,name) {
+  if(kind==='turnout')manualFeedback.select(name);else manualFeedback.clear();
   inspectorOrigin=document.activeElement;
   inspected={kind,name};paintInspector();
   if(document.body.classList.contains('panel-compact')) {
@@ -278,7 +292,7 @@ function paint() {
   const c = $('connection'); c.textContent = !online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad';
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
   $('panel-connection').textContent=c.textContent;$('panel-connection').className=c.className;
-  paintPlan(); paintInspector();
+  paintPlan(); paintInspector(); manualFeedback?.update();
   $('ais-status').hidden = !state.controls?.stopAll;
   $('all-stop').disabled = !online;
   $('emergency-cancel').disabled = !online;
@@ -350,7 +364,7 @@ async function start() {
   $('block-choice').innerHTML=Object.keys(config.blocks).sort((a,b)=>a.localeCompare(b,'sv',{numeric:true})).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
   $('block-choice').onchange=paint;
   $('inspect-turnout').innerHTML='<option value="">Välj växel för information…</option>'+[...new Set(Object.values(panel.turnouts).map(t=>t.name))].sort((a,b)=>a.localeCompare(b,'sv',{numeric:true})).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
-  $('inspect-turnout').onchange=()=>{const name=$('inspect-turnout').value;if(name){inspected={kind:'turnout',name};paintInspector();}};
+  $('inspect-turnout').onchange=()=>{const name=$('inspect-turnout').value;if(name){manualFeedback.select(name);inspected={kind:'turnout',name};paintInspector();}};
   $('toggle-block').onclick=()=>api('track-block',{name:$('block-choice').value,blocked:!isBlocked($('block-choice').value)});
   $('all-stop').onclick=()=>api('all-stop',{enabled:true});
   $('emergency-cancel').onclick=()=>api('emergency-cancel',{});
@@ -368,9 +382,9 @@ async function start() {
   $('route-mode').onchange=routeMode; $('catalog-from').onchange=targets;routeMode();
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
-  $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) api('turnout', { name: inspected.name, position }); };
+  $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };
   $('clear-selection').onclick = ()=>clearChoice();
-  document.addEventListener('keydown', e => { if(e.key==='Escape'){if(document.body.classList.contains('inspector-open'))closeInspector();else clearChoice();} });
+  document.addEventListener('keydown', e => { if(e.key==='Escape'){manualFeedback.clear();if(document.body.classList.contains('inspector-open'))closeInspector();else clearChoice();} });
   for (const b of document.querySelectorAll('.skin-picker button')) b.onclick = () => setSkin(b.dataset.skin);
   function setSkin(value) { document.body.dataset.skin = value; localStorage.setItem('charlottendal-skin', value); for (const b of document.querySelectorAll('.skin-picker button')) b.classList.toggle('selected', b.dataset.skin === value); }
   setSkin(localStorage.getItem('charlottendal-skin') || 'relay');

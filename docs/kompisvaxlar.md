@@ -41,3 +41,13 @@ Detta verifierar manöverlogik, förregling och återrapport i simulatorn. Banan
 ## Publicering
 
 Version 0.16.1 (`7dd7f71`) publicerad på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app) den 24 september 2026 kl. 03:27 svensk tid. Backup och tidigare release finns kvar enligt [driftuppgifterna](drift.md). Efterkontrollen visade anslutna tjänster, inga aktiva lås och fortsatt inloggningsskydd.
+
+## Tydlig manuell återkoppling i version 0.16.2
+
+När en växelplupp pekas ut med musen eller får tangentbordsfokus markeras den och samtliga kopplade växlar med tillfälliga blå ringar. En informationsruta visar vilka växlar som påverkas, deras faktiska återrapporterade lägen, berörda spårs beläggning och lås/spärrar. Den klickade pluppens närmaste växel namnges som vald; manövern går fortfarande till den verifierade gruppen i servern.
+
+Efter en manöver ligger informationen kvar. Begärt läge skiljs från återrapporterat läge. Vid utebliven eller okänd spårrapport för kompisen visas att det inte går att bekräfta fritt spår. Rutan ändrar inte serverns villkor: belagda, okända, spärrade eller låsta berörda resurser tillåter ingen manuell omläggning. En misslyckad begäran visas också i rutan. Ingen extra bekräftelseruta eller påstådd elektrisk kortslutningsdetektering har införts.
+
+Växlar utanför den aktuella vyn märks ”utanför vyn”; **Visa Vx…** rullar fram dem utan att skicka order. Informationen fungerar även i kompakt läge och med Original, Reläpanel och Trafikskärm. Stängknappen eller Escape tar bort markeringen; val av tågväg eller signalinformation avslutar också den manuella visningen. Den tillfälliga markeringen är inte den extra växellåsplupp som hålls vilande.
+
+Webbläsarprov: fokus före manöver utan lägesändring, Vx100 till avvikande, Vx101 tillbaka till rakt genom detaljknappen, belagt respektive tyst S101, tågvägslås för Cu → Spår 1c och visning av Vx161 utanför en 390 pixlar bred vy. Markeringar och information kontrollerade i alla tre utseenden samt kompakt läge. Provets spår/frånfällda fel återställda och tågvägen återtagen normalt. 14 riktade befintliga växelprov och sex processhelhetstester godkända lokalt; syntaxkontroll passerar. Inga driftvillkor, adresser eller dataformat har ändrats.
