@@ -79,3 +79,13 @@ Tågnummer, ankomst, avgång, spår och från/till syns direkt. Anmärkningar oc
 **Meny → Tidtabell och import** samlar källval, manuell inmatning och uppladdning. Välj mellan TrainMeet och **Egen tidtabell**. Den egna tidtabellen kan från 0.24.0 skrivas för hand eller tolkas från bilder/PDF; båda visas i samma kolumnfält. Källbytet bevarar båda och påverkar inga signaler, tågvägar eller klockor. Se [handhavande och installation](tidtabellsimport.md).
 
 Kolumnlayouten är provad med 37 tydligt märkta provrörelser: samtliga sidor, tom ankomst, tid över 24:00, flera trafikdagar, lång anmärkning, text som innehåller HTML-tecken, TrainMeet-spårbyte och levande klocka. Tre skins, fullskärm, detaljmodal, tangentbord och 390-pixlars vy utan horisontellt sidöverflöde är granskade i webbläsaren. Backend och importformat är oförändrade.
+
+## Version 0.26 – fast ställverksyta
+
+Spårplan, driftmeddelanden, tidtabell och manöverknappar har reserverade fält inom skärmytan. De ändrar inte storlek eller position när meddelanden tillkommer, ett startval görs, tågvägar räknas om eller tidtabellen fylls/bläddras. Endast uttrycklig zoom eller ändrad skärmstorlek ändrar skalan. Vid smal skärm kan spårplanen och knappfältet panoreras var för sig; sidan rullar inte automatiskt.
+
+Manöverknappar öppnar en modal ovanpå ställverket. Stäng eller Escape återgår till samma panelposition. Högerklicksdetaljer ligger fortsatt nära objektet. Symbolerna förstoras inte vid hover; den större befintliga träffytan lyses upp utan geometriförändring.
+
+Originalets signalbilder förladdas och avkodas i en gemensam omgång med begränsad startväntan. Alla bildvarianter ligger kvar med fasta mått. Stopp, beläggning och okända besked växlar direkt; signalbilder tonas aldrig ihop. Ljuset längs en tågväg följer en monoton lokal klocka, uppdateras i takt med webbläsarens bildrutor och kan inte gå bakåt av en senare tidsuppgift. Reducerad rörelse stöds; övergångarnas varningsblinkning behåller sin funktion.
+
+Upprepade rapporter skrivs inte om till samma SVG-attribut. Flera uppdateringar under samma bildruta samlas; en stillastående panel har ingen permanent animationsslinga. Tidtabellens oförändrade rader lämnas monterade när en annan rad uppdateras. Fullskärmsknappen är oförändrad och ligger i menyn.

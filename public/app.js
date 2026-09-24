@@ -1,3 +1,4 @@
+import {attribute,style,text as setText,flowProgress,createPanelFrames} from './panel-rendering.js';
 import {createTimetableImport} from './timetable-import.js';
 import { createManualFeedback } from './manual-feedback.js';
 import { createSourceRegister } from './source-register.js';
@@ -16,7 +17,7 @@ const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
-let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout, serverOffset = 0;
+let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
 let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport;
 const pageFromHash=()=>({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet','#import':'import'})[location.hash]||'panel';
 function setPage(page,{historyMode='push'}={}) {
@@ -26,7 +27,7 @@ function setPage(page,{historyMode='push'}={}) {
   closeInspector(false);manualFeedback?.clear();
   if(currentPage!==page)clearChoice(false);
   currentPage=page;document.body.dataset.page=page;
-  appMenu?.close();
+  appMenu?.close();panelConsole?.close();
   (page==='panel'?document.querySelector('.panel-actions'):$('header-menu-slot')).append($('menu-toggle'));
   for(const p of ['panel','tools','admin','trainmeet','import']) {
     $(p+'-view').hidden=p!==page;$(p+'-tab').classList.toggle('selected',p===page);
@@ -150,8 +151,7 @@ function buildPlan() {
   svg('line', { x1: tt.cx - tt.r, y1: tt.cy, x2: tt.cx + tt.r, y2: tt.cy, class: 'rail unconfigured' }, track);
   for (const m of panel.micons.filter(m => m.y < 850)) {
     const type = iconTypes[m.type] || iconTypes.hsi_2;
-    const sample = imageCache.find(i => i.src.endsWith(encodeURIComponent(type[0]) + '.gif'));
-    const w = (sample?.naturalWidth || type[3]) * (m.scale || 1), h = (sample?.naturalHeight || type[4]) * (m.scale || 1);
+    const w = type[3] * (m.scale || 1), h = type[4] * (m.scale || 1);
     const rad = m.deg * Math.PI / 180, rw = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad)), rh = Math.abs(h * Math.cos(rad)) + Math.abs(w * Math.sin(rad));
     const g = svg('g', { transform: `translate(${m.x + rw / 2},${m.y + rh / 2})`, class: 'touch-target signal-target' }, icons);
     svg('rect', { x: -rw / 2 - 5, y: -rh / 2 - 6, width: rw + 10, height: rh + 12, class: 'hit' }, g);
@@ -200,7 +200,7 @@ function buildPlan() {
     if(isButton) buttons.push({id:b.sensor,g,hit,hitCap:b.hitCap,available,names});
   }
   new ResizeObserver(()=>{
-    const scale=root.getBoundingClientRect().width/layout.crop.width;
+    const scale=root.getScreenCTM()?.a||1;
     for(const b of buttons) b.hit.setAttribute('r',Math.min(b.hitCap,32*Math.min(1.6,1/Math.max(.1,scale)))/2);
   }).observe(root);
   $('derived-indications').innerHTML='<span>Beräknat:</span>'+(config.panelIndications?.indicators||[]).map(i=>`<button type="button" data-indication="${esc(i.name)}"${i.crossing?' data-crossing="true"':''}><i></i>${esc(i.name)} <span>?</span></button>`).join('');
@@ -231,20 +231,20 @@ function paintPlan() {
   const fresh = online && state?.connection === 'connected';
   for (const r of rails) {
     const value = fresh ? state.blocks[r.block]?.occupied : null;
-    r.node.setAttribute('class', 'rail ' + (isBlocked(r.block)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
+    attribute(r.node,'class', 'rail ' + (isBlocked(r.block)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
   }
   for (const t of switches) {
     const value = fresh ? state.turnouts[t.name]?.position : 'unknown';
     const continuing = t.continuing === 2 ? 'B' : 'C', active = value === 'C' ? continuing : value === 'T' ? (continuing === 'B' ? 'C' : 'B') : null;
     const occupied = fresh && state.blocks[t.block]?.occupied;
-    for (const [leg, node] of Object.entries(t.legs)) node.setAttribute('class', 'rail ' + (occupied ? 'occupied ' : '') + (!active ? 'unknown' : leg === 'A' || leg === active ? '' : 'branch-off'));
+    for (const [leg, node] of Object.entries(t.legs)) attribute(node,'class', 'rail ' + (occupied ? 'occupied ' : '') + (!active ? 'unknown' : leg === 'A' || leg === active ? '' : 'branch-off'));
   }
   for (const s of signals) {
     const value = fresh ? state.signals[s.mast]?.aspect : 'unknown';
     const requested=value==='stop'?0:value==='go'?1:2;
     const selected=decodedIcons.has(s.type[requested])?requested:2;
-    s.images.forEach((image,i)=>image.setAttribute('visibility',i===selected?'visible':'hidden'));
-    s.unknown.style.display = selected !== 2 ? 'none' : '';
+    s.images.forEach((image,i)=>attribute(image,'visibility',i===selected?'visible':'hidden'));
+    style(s.unknown,'display',selected !== 2 ? 'none' : '');
     s.g.classList.toggle('unconfigured', !config.signals[s.mast]);
   }
   for(const lamp of indicatorLamps) lamp.node.classList.toggle('occupied',fresh&&state.blocks[lamp.block]?.occupied===true);
@@ -252,11 +252,11 @@ function paintPlan() {
     const indication=state.panelIndications?.[lamp.name];
     const value=fresh?(lamp.crossing?indication?.warning?.value:indication?.value):null;
     lamp.g.classList.toggle('crossing-active',lamp.crossing&&value===true);
-    lamp.g.dataset.value=value===true?'active':value===false?'inactive':'unknown';
-    lamp.lens.setAttribute('class','indicator-off '+(value==null?'derived-missing':!lamp.crossing&&value===(lamp.color==='g')?'derived-on-'+lamp.color:''));
-    lamp.unknown.style.display=value==null&&lamp.color==='g'?'':'none';
+    attribute(lamp.g,'data-value',value===true?'active':value===false?'inactive':'unknown');
+    attribute(lamp.lens,'class','indicator-off '+(value==null?'derived-missing':!lamp.crossing&&value===(lamp.color==='g')?'derived-on-'+lamp.color:''));
+    style(lamp.unknown,'display',value==null&&lamp.color==='g'?'':'none');
     const text=lamp.name+' · '+(lamp.crossing?'vägövergång · '+(value===true?'röd växelblinkning':value===false?'släckta lampor':'okänt underlag'): 'beräknad panelindikering · '+(value===true?'aktivt underlag':value===false?'inaktivt underlag':'okänt underlag'));
-    lamp.g.setAttribute('aria-label',text+' · '+(lamp.crossing?(lamp.color==='g'?'vänster':'höger'):lamp.color));
+    attribute(lamp.g,'aria-label',text+' · '+(lamp.crossing?(lamp.color==='g'?'vänster':'höger'):lamp.color));
   }
   for(const button of $('derived-indications').querySelectorAll('button')) {
     const crossing=button.dataset.crossing==='true',indication=state.panelIndications?.[button.dataset.indication];
@@ -283,31 +283,37 @@ function paintPlan() {
         for(let j=0;j<count;j++){const dist=(j+.5)/count*part.length; lamps.push({at:part.distance+dist,node:svg('circle',{cx:part.x1+(part.x2-part.x1)*(j+.5)/count,cy:part.y1+(part.y2-part.y1)*(j+.5)/count,r:3.4,class:'lamp'},g)});}
         return { ...part, node, lamps };
       });
-      routeNodes.set(r.id, { g, parts });
+      routeNodes.set(r.id, { g, parts, timing:{} });
     }
   }
-  animateFlow();
 }
-function animateFlow() {
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+function animateFlow(now=performance.now()) {
+  if(currentPage!=='panel'||document.hidden)return false;
+  let moving=false;
   for (const r of state?.routes || []) {
     const entry = routeNodes.get(r.id); if (!entry) continue;
     const total = r.flow.at(-1)?.distance + r.flow.at(-1)?.length || 1;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const fraction = online && r.state === 'establishing' && !reduced ? Math.min(1, Math.max(0, (Date.now() + serverOffset - r.establishedAt) / (r.flowDuration || 1200))) : 1;
-    const status = !online ? 'held' : r.state;
+    const fresh=online&&state.connection==='connected';
+    const fraction = fresh ? flowProgress(r,entry.timing,now,state.serverTime,reducedMotion.matches) : 1;
+    if(fresh&&r.state==='establishing'&&fraction<1&&!reducedMotion.matches)moving=true;
+    const status = !fresh ? 'held' : r.state;
     for (const part of entry.parts) {
       const lit = Math.max(0, Math.min(part.length, fraction * total - part.distance));
-      const occupied = online && state.blocks[part.block]?.occupied === true;
-      part.node.setAttribute('class', 'route-flow ' + status);
-      part.node.style.visibility = occupied ? 'hidden' : '';
-      if (r.state === 'establishing' && online) part.node.setAttribute('stroke-dasharray', `${lit} ${part.length + 1}`);
-      else part.node.removeAttribute('stroke-dasharray');
-      for (const lamp of part.lamps) lamp.node.style.visibility = !occupied && ['establishing', 'clearing', 'active', 'traversing'].includes(status) && lamp.at <= fraction * total ? 'visible' : 'hidden';
+      const occupied = fresh && state.blocks[part.block]?.occupied === true;
+      attribute(part.node,'class','route-flow ' + status);
+      style(part.node,'visibility',occupied ? 'hidden' : '');
+      if (r.state === 'establishing' && fresh) attribute(part.node,'stroke-dasharray',`${lit} ${part.length + 1}`);
+      else if(part.node.hasAttribute('stroke-dasharray'))part.node.removeAttribute('stroke-dasharray');
+      for (const lamp of part.lamps) style(lamp.node,'visibility',!occupied && ['establishing', 'clearing', 'active', 'traversing'].includes(status) && lamp.at <= fraction * total ? 'visible' : 'hidden');
     }
   }
+  return moving;
 }
 const statuses = { setting: 'Lägger växlar', establishing: 'Etablerar', clearing: 'Klarsätter', active: 'Klar', traversing:'Tåg passerar', held: 'Stopp · lås kvar', occupied: 'Lås kvar', cancelling: 'Återtar' };
-function paint() {
+const frames=createPanelFrames({render:renderPanel,animate:animateFlow});
+function paint(){frames.paint();}
+function renderPanel() {
   if (!state) return;
   sourceRegister?.updateState(state,online);
   trainInformation?.update(state,online);
@@ -317,10 +323,12 @@ function paint() {
   trainMeet?.update(state.trainMeet,online,state.timetableImport);
   timetableImport?.update(state.timetableImport,online);
   if(chosen && (!usable() || state.controls?.mode==='remote')) clearChoice(false);
-  const c = $('connection'); c.textContent = !online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad';
+  const c = $('connection'); setText(c,!online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad');
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
-  $('panel-connection').textContent=c.textContent;$('panel-connection').className=c.className;
-  paintPlan(); paintInspector(); manualFeedback?.update();
+  setText($('panel-connection'),c.textContent);attribute($('panel-connection'),'class',c.className);
+  if(currentPage==='panel')paintPlan();
+  paintInspector(); manualFeedback?.update();
+  document.body.dataset.panelReady='true';
   $('ais-status').hidden = !state.controls?.stopAll;
   $('all-stop').disabled = !online;
   $('emergency-cancel').disabled = !online;
@@ -392,8 +400,11 @@ async function start() {
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.
   // Each displayed variant is decoded before it can replace the dark indication.
-  Promise.allSettled(files.map(async file => { const i = new Image(); imageCache.push(i); i.src = icon(file); await i.decode(); decodedIcons.add(file); if(state) paintPlan(); }))
-    .then(results => { if(results.some(r=>r.status==='rejected')) message('En signalbild kunde inte laddas. Berörd signal visas som okänd.'); });
+  const preload=Promise.allSettled(files.map(async file => { const i = new Image(); imageCache.push(i); i.src = icon(file); await i.decode(); decodedIcons.add(file); }))
+    .then(results => { if(results.some(r=>r.status==='rejected')) message('En signalbild kunde inte laddas. Berörd signal visas som okänd.');paint(); });
+  let preloadTimer;
+  await Promise.race([preload,new Promise(resolve=>{preloadTimer=setTimeout(resolve,2000);})]);
+  clearTimeout(preloadTimer);
   sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   buildPlan();
   trainInformation=createTrainInformation({catalog:config.trainFields,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
@@ -428,7 +439,7 @@ async function start() {
   for (const b of document.querySelectorAll('.skin-picker button')) b.onclick = () => setSkin(b.dataset.skin);
   function setSkin(value) { document.body.dataset.skin = value; localStorage.setItem('charlottendal-skin', value); for (const b of document.querySelectorAll('.skin-picker button')) b.classList.toggle('selected', b.dataset.skin === value); }
   setSkin(localStorage.getItem('charlottendal-skin') || 'relay');
-  $('zoom').onchange = () => { $('track-plan').style.width = $('zoom').value + '%'; };
+  $('zoom').onchange = () => { const value=$('zoom').value+'%';$('track-plan').style.width=value;$('track-plan').style.height=value; };
   document.addEventListener('click',e=>{
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}
@@ -442,7 +453,7 @@ async function start() {
   const source = new EventSource('/api/events');
   let presentationLoading=false;
   source.onmessage = e => {
-    state = JSON.parse(e.data);if(state.bindingVersion!==config.bindingVersion){location.reload();return;} serverOffset=state.serverTime-Date.now(); online = true; lastEvent = Date.now(); paint();
+    state = JSON.parse(e.data);if(state.bindingVersion!==config.bindingVersion){location.reload();return;} online = true; lastEvent = Date.now(); paint();
     if(!presentationLoading && state.configurationVersion!==config.presentation?.activeVersion) {
       presentationLoading=true;
       fetch('/api/presentation').then(r=>{if(!r.ok)throw Error('Kunde inte hämta nya visningsinställningar.');return r.json();}).then(applyPresentation).catch(e=>message(e.message)).finally(()=>{presentationLoading=false;});
@@ -450,6 +461,7 @@ async function start() {
   };
   source.onerror = () => { online = false; paint(); };
   setInterval(() => { if (Date.now() - lastEvent > 3000 && online) { online = false; paint(); } }, 750);
-  function animation() { if (state?.routes.some(r => r.state === 'establishing')) animateFlow(); requestAnimationFrame(animation); } animation();
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)frames.stop();else paint();});
+  reducedMotion.addEventListener('change',paint);
 }
 start().catch(e => { message('Startfel: ' + e.message); for(const id of ['connection','panel-connection'])$(id).textContent='Kunde inte starta panelen'; });

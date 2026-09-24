@@ -434,3 +434,9 @@ Detaljer: [Kompisväxlar](kompisvaxlar.md).
 - Kontrollerade att simulatorn saknade pågående tåg, beläggningar och injicerade fel. Tog backup av beständiga driftdata, inloggning och driftskonfiguration i /root/charlottendal-backups/network-f2bbaef-20260924T200907Z. Uppdaterade current och Nginx; båda tjänster omstartade. Automatisk återgång förberedd men behövde inte användas.
 - Efterkontroll: båda tjänster anslutna utan startfel, noll lås, controls.json och autentiseringsfil identiska med backupen. AIS är kvar aktivt. Extern HTTPS-login 200, panel-/simulator-API och Excelmall 401 utan session. Webbläsaren visar version 0.25.0, ny meny, tidtabellsfält och tillgänglig Excel-/CSV-import med mallar; inga konsolfel.
 - Ingen provtidtabell eller verkligt AI-anrop i webbdriften. OpenAI-nyckel, riktig TrainMeet-anslutning och fysisk MGP-verifiering återstår. Nattautomationen är oförändrad.
+
+## 24 september 2026 – fast panel och bildrutestyrd visning, 0.26.0
+
+Casper vill att panelen upplevs som en permanent fysisk anläggning. Statusfält, tidtabell och manöverfält har därför fasta platser; manöverdetaljer är modala och orsakar inte automatisk sidrullning. Hover lyser upp träffytan utan att skala symbolen. Alla signalvarianter hålls förladdade med fasta mått. Tågvägens ljusflöde använder en monoton klocka och bara aktiv animation begär nya bildrutor. Upprepade identiska SVG-värden lämnas orörda och tidtabellsändringar berör endast ändrade rader.
+
+174 enhetstester, riktad omkontroll av rörelsepreferens och syntax godkända. Separat webbläsarprov med tågväg, AIS, avbrott, 23 tidtabellsrader, modaler, tre skins och skärmstorlekar. Se provresultat.md för mått och fullskärmsprovets begränsning. Backend, driftregler, autentisering och fysiska bindningar är oförändrade.

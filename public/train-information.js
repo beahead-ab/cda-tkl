@@ -1,3 +1,4 @@
+import {attribute,text as setText} from './panel-rendering.js';
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function createTrainInformation({catalog,plan,displayName,openSource,onOpen=()=>{}}) {
@@ -76,11 +77,11 @@ export function createTrainInformation({catalog,plan,displayName,openSource,onOp
     $('train-count').textContent=Object.keys(info.entries).length||'';
     for(const {a,group,rect,text,hint} of nodes) {
       const e=info.entries[a.key],review=e&&(!online||e.needsReview||a.duplicate);
-      group.setAttribute('visibility',e?'visible':'hidden');group.setAttribute('tabindex',e?'0':'-1');group.classList.toggle('needs-review',!!review);
+      attribute(group,'visibility',e?'visible':'hidden');attribute(group,'tabindex',e?'0':'-1');group.classList.toggle('needs-review',!!review);
       const label=e?e.value+(review?' ?':''):'';
-      text.textContent=label;rect.setAttribute('width',Math.max(34,label.length*8+6));
+      setText(text,label);attribute(rect,'width',Math.max(34,label.length*8+6));
       const description=`${a.block}: ${label||'inget tågnummer'} · ${e?.source==='follow'?'nummerföljning':'manuellt'}${a.duplicate?' · dubblerad blockreferens i originalet':''}${e?.needsReview?' · placeringen behöver kontrolleras':''}`;
-      group.setAttribute('aria-label',description);hint.textContent=description;
+      attribute(group,'aria-label',description);setText(hint,description);
     }
     if(!dirty&&!busy)loadEditor();else paintEditor();
     const describeKey=key=>fields.has(key)?title(fields.get(key)):key;

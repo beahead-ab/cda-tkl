@@ -6,7 +6,7 @@ export function createPanelConsole({onOpen}) {
     <div class="panel-key-group" id="route-keys"><h2>Tågvägar</h2><button type="button" class="panel-key" data-route-mode="main" aria-pressed="true">Huvudtågväg</button><button type="button" class="panel-key" data-route-mode="shunt" aria-pressed="false">Växeltågväg</button><button type="button" class="panel-key" data-panel-tool="panel-route-tools" aria-expanded="false" aria-controls="panel-route-tools">Tågvägar</button></div>
     <div class="panel-key-group" id="operation-keys"><h2>Drift</h2><button type="button" class="panel-key" data-panel-tool="track-block-tools" aria-expanded="false" aria-controls="track-block-tools">Spårspärrar</button><button type="button" class="panel-key" data-panel-tool="operating-controls" aria-expanded="false" aria-controls="operating-controls">Linjer / prog.</button><button type="button" class="panel-key" data-panel-tool="train-information" aria-expanded="false" aria-controls="train-information">Tågnummer</button><button type="button" class="panel-key" data-panel-tool="model-clock" aria-expanded="false" aria-controls="model-clock">Modellklocka</button></div>
     </div><div class="panel-control-status"><span id="panel-mode-status"></span><span id="panel-selection-slot"></span><span id="panel-mode-reason" class="muted"></span></div>
-    <section id="panel-drawer" hidden><div class="panel-drawer-heading"><h2 id="panel-drawer-title"></h2><button type="button" id="close-panel-drawer" aria-label="Stäng manöverfält">Stäng</button></div><div id="panel-drawer-content"></div></section>`;
+    <dialog id="panel-drawer" aria-labelledby="panel-drawer-title"><div class="panel-drawer-heading"><h2 id="panel-drawer-title"></h2><button type="button" id="close-panel-drawer" aria-label="Stäng manöverfält">Stäng</button></div><div id="panel-drawer-content"></div></dialog>`;
   for (const [target, ids] of [['signal-keys',['all-stop','reset-ais']],['route-keys',['clear-selection','emergency-cancel']],['operation-keys',['toggle-authority']]]) {
     for (const id of ids) {const button=$(id);button.classList.add('panel-key');$(target).append(button);}
   }
@@ -26,7 +26,7 @@ export function createPanelConsole({onOpen}) {
   $('traffic-tools').remove();$('operating-tools').remove();
   let active=null,trigger=null;
   function close(restore=false) {
-    $('panel-drawer').hidden=true;for(const pane of panes)pane.hidden=true;
+    if($('panel-drawer').open)$('panel-drawer').close();for(const pane of panes)pane.hidden=true;
     for(const b of root.querySelectorAll('[data-panel-tool]'))b.setAttribute('aria-expanded','false');
     active=null;if(restore)trigger?.focus({preventScroll:true});
   }
@@ -37,16 +37,17 @@ export function createPanelConsole({onOpen}) {
     if(toggle&&active===id){close();return true;}
     active=id;trigger=root.querySelector(`[data-panel-tool="${id}"]`);
     $('panel-drawer-title').textContent=({ 'panel-route-tools':'Tågvägar och återtagning','track-block-tools':'Spårspärrar','operating-controls':'Linjespärrar och programmeringsspår','train-information':'Tågnummer och nummerföljning','model-clock':'Modellklocka','trainmeet-timetable':'Tidtabell' })[id];
-    $('panel-drawer').hidden=false;
+    if(!$('panel-drawer').open)$('panel-drawer').showModal();
     for(const p of panes){p.hidden=p!==pane;if(p===pane&&p.tagName==='DETAILS')p.open=true;}
     for(const b of root.querySelectorAll('[data-panel-tool]'))b.setAttribute('aria-expanded',String(b===trigger));
     if(id==='train-information'&&$('train-editor'))$('train-editor').open=true;
-    pane.scrollIntoView({block:'nearest'});return true;
+    $('close-panel-drawer').focus({preventScroll:true});return true;
   }
   root.addEventListener('click',e=>{const id=e.target.closest('[data-panel-tool]')?.dataset.panelTool;if(id)open(id,{toggle:true});});
   $('close-panel-drawer').onclick=()=>close(true);
   $('panel-drawer').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close(true);}});
-  return {open,update(state) {
+  $('panel-drawer').addEventListener('cancel',e=>{e.preventDefault();close(true);});
+  return {open,close,update(state) {
     $('all-stop').setAttribute('aria-pressed',String(!!state.controls?.stopAll));
     $('toggle-authority').setAttribute('aria-pressed',String(state.controls?.mode==='remote'));
     const routeButton=root.querySelector('[data-panel-tool="panel-route-tools"]');

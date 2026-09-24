@@ -47,7 +47,13 @@ export function createTrainMeetTimetable({selectSource}) {
     }
     if(html!==last){
       const focused=$('content').contains(document.activeElement)?document.activeElement.dataset.timetableRow:null;
-      last=html;$('content').innerHTML=html;
+      const template=document.createElement('template');template.innerHTML=html;
+      const oldColumns=$('content').querySelector('.tt-columns'),newColumns=template.content.querySelector('.tt-columns');
+      const oldRows=[...$('content').querySelectorAll('li')],newRows=[...template.content.querySelectorAll('li')];
+      const sameLayout=oldColumns&&newColumns&&oldColumns.getAttribute('style')===newColumns.getAttribute('style')&&oldRows.length===newRows.length&&oldRows.every((li,i)=>li.querySelector('button').dataset.timetableRow===newRows[i].querySelector('button').dataset.timetableRow);
+      if(sameLayout){for(let i=0;i<oldRows.length;i++)if(oldRows[i].innerHTML!==newRows[i].innerHTML)oldRows[i].replaceChildren(...newRows[i].childNodes);}
+      else $('content').replaceChildren(...template.content.childNodes);
+      last=html;
       if(focused!=null)$('content').querySelector('[data-timetable-row="'+Number(focused)+'"]')?.focus({preventScroll:true});
     }
     drawDetails();
@@ -55,8 +61,7 @@ export function createTrainMeetTimetable({selectSource}) {
   function layout(){
     frame=0;const width=$('content').clientWidth;if(!width)return;
     const nextColumns=Math.max(1,Math.floor((width+12)/300));
-    const budget=Math.max(170,Math.min(270,innerHeight*.28));
-    const nextRows=Math.max(2,Math.min(4,Math.floor((budget-root.querySelector('.tt-heading').offsetHeight-32)/56)));
+    const nextRows=Math.max(1,Math.min(4,Math.floor(($('content').clientHeight-18)/56)));
     if(nextColumns!==columns||nextRows!==perColumn){const first=page*columns*perColumn;columns=nextColumns;perColumn=nextRows;page=Math.floor(first/(columns*perColumn));render();}
   }
   const schedule=()=>{if(!frame)frame=requestAnimationFrame(layout);};

@@ -1,0 +1,48 @@
+/* A fixed instrument face. Only an explicit viewport/zoom change resizes it. */
+body[data-page=panel]{--status-height:48px;--timetable-height:204px;--console-height:132px;height:100dvh;overflow:hidden;overscroll-behavior:none}
+body[data-page=panel] #panel-view{position:fixed;inset:var(--status-height) 0 0;margin:0;overflow:hidden}
+body[data-page=panel] #panel-view .panel-shell{height:100%;display:grid;grid-template-rows:40px minmax(0,1fr) var(--timetable-height) var(--console-height)}
+body[data-page=panel] #global-status{position:fixed;inset:0 0 auto;height:var(--status-height);display:flex;align-content:flex-start;align-items:stretch;flex-wrap:wrap;overflow:auto;overscroll-behavior:contain;border-bottom:1px solid #59625d55;background:#18201c;scrollbar-gutter:stable}
+body[data-page=panel] #global-status>div:not([hidden]){flex:1 1 460px;padding:5px 12px;font-size:11px;line-height:17px;border-width:0;min-height:24px;align-items:center}
+body[data-page=panel] #global-status:has(>div:not([hidden])){border-bottom-color:#8e7355}
+body[data-page=panel] #global-status:not(:has(>div:not([hidden])))::before{content:'DRIFTMEDDELANDEN · Inga aktiva meddelanden';align-self:center;padding:0 14px;font-size:10px;letter-spacing:1px;color:#8f9b91}
+body[data-page=panel] #global-status button{padding:2px 8px;white-space:nowrap}
+#panel-view .panel-name{height:40px;min-height:0;display:grid;grid-template-columns:auto minmax(0,1fr) 34px;gap:12px;padding:4px 14px;overflow:hidden}
+#panel-view #panel-connection{min-width:0;overflow:hidden;text-overflow:ellipsis;justify-self:end;margin:0}
+#panel-view .panel-actions{margin:0;display:flex;flex-wrap:nowrap}
+#panel-view .panel-scroll{position:relative;min-height:0;overflow:auto;overscroll-behavior:contain;overflow-anchor:none;scroll-behavior:auto;contain:layout paint}
+#panel-view #track-plan{width:100%;height:100%;min-height:0;min-width:0;overflow:hidden;user-select:none;-webkit-user-select:none}
+body:not([data-panel-ready=true]) #track-plan{visibility:hidden}
+body:not([data-panel-ready=true]) .panel-scroll::before{content:'Läser in ställverket…';position:absolute;inset:45% 0 auto;text-align:center;color:var(--ink);font-size:12px;letter-spacing:1px}
+#panel-console{height:calc(var(--console-height) - 8px);min-height:0;margin:0 14px 8px;overflow:hidden}
+.panel-keyboard{display:grid;grid-template-columns:2fr 5fr 5fr;height:96px;overflow-x:auto;overflow-y:hidden}
+.panel-key-group{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:2px;padding:23px 8px 7px;min-width:0;border-bottom:0}
+.panel-key-group h2{top:7px;left:12px}
+.panel-key{width:100%;min-width:0;max-width:none;height:64px;min-height:0;padding:3px 2px;grid-template-rows:24px 28px;gap:4px;font-size:10px;line-height:12px;overflow:hidden;transition:background-color 100ms,border-color 100ms}
+.panel-key::after{width:25px;height:25px}
+.panel-control-status{height:26px;min-height:0;padding:3px 12px;display:grid;grid-template-columns:170px minmax(0,1fr) minmax(0,1fr);gap:10px;overflow:hidden}
+.panel-control-status>span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-control-status #selection-hint{white-space:nowrap}
+.panel-control-status #mode-reason{font-size:10px}
+#panel-drawer{position:fixed;inset:auto auto 10px 50%;transform:translateX(-50%);margin:0;width:min(900px,calc(100vw - 24px));max-height:calc(100dvh - 80px);overflow:auto;overscroll-behavior:contain;border:1px solid #819080;border-radius:5px;box-shadow:0 8px 35px #0009;scrollbar-gutter:stable}
+#panel-drawer::backdrop{background:#0002}
+#panel-drawer .panel-drawer-heading{position:sticky;top:-14px;background:var(--page);z-index:1;padding:10px 0}
+#trainmeet-timetable{height:calc(var(--timetable-height) - 10px);min-height:0;display:grid;grid-template-rows:29px 17px minmax(0,1fr);gap:0;overflow:hidden;margin:0 14px 10px;padding:8px 12px}
+.tt-heading{height:29px;min-height:0;margin:0;flex-wrap:nowrap;overflow:hidden}
+#tt-status{display:block;height:17px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;line-height:17px}
+#tt-status[hidden]{display:block!important;visibility:hidden}
+#tt-content{min-height:0;overflow:hidden}
+.tt-columns{height:100%;min-height:0}
+.tt-pagination #tt-range{width:82px;min-width:82px;white-space:nowrap}
+#tt-clock{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.touch-target .dot,.touch-target:hover .dot,.touch-target:focus-visible .dot{transform:none}
+.touch-target .hit{transition:fill 100ms,stroke 100ms}
+.touch-target .dot{transition:fill 100ms}
+.signal-target image{transition:none}
+@media(min-height:900px){body[data-page=panel]{--timetable-height:260px}}
+@media(max-width:900px){.panel-keyboard{grid-template-columns:160px 380px 380px}.panel-control-status{grid-template-columns:125px minmax(0,1fr)}#panel-mode-reason{display:none}#panel-view .panel-name{grid-template-columns:auto minmax(0,1fr) 34px;gap:8px;padding-inline:10px}#panel-view .panel-name>span:first-child{font-size:10px;letter-spacing:1px}}
+@media(max-width:700px){#panel-console,#trainmeet-timetable{margin-inline:8px}#panel-view .panel-actions{flex:none}#tt-station{flex:1 1 auto}#tt-clock{max-width:100px}.tt-heading{gap:6px}.tt-heading h2{font-size:9px;letter-spacing:.5px}.tt-pagination{gap:4px}.tt-pagination #tt-range{width:64px;min-width:64px}.panel-key{font-size:10px}#panel-drawer{width:calc(100vw - 16px);padding:12px 8px}}
+@media(max-height:600px){body[data-page=panel]{--timetable-height:148px;--status-height:32px}}
+@media(prefers-reduced-motion:reduce){.touch-target .hit,.touch-target .dot,.panel-key{transition:none}}
+/* On a phone, retain readable symbols with deliberate panning inside the plan. */
+@media(max-width:700px){#panel-view #track-plan{min-width:1000px}}
