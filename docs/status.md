@@ -15,6 +15,12 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 - Gemensam modellklocka med paus/start, trafikdygn och hastighet samt valbar lokal felsignal. Programmeringsspåret har beständigt lås och separat återrapport i simulatorn; fysisk funktion återstår att verifiera.
 - Inloggning, befintlig webbdrift och kontrollerade versionsbyten med backup. Visningsnamn och beskrivningar kan ändras med utkast och versionshistorik.
 
+## Färdig ändring som inväntar publicering
+
+Version 0.18.0 (`92bc576`) har V1–V3 med släckta vilolampor och växelvis röd blinkning vid korsande tågvägsreservation eller belagt korsande block. Den nya visningen följer panelens geometri; originalets XML-projektion bevaras. [Beteende och prov](vagindikeringar.md).
+
+13 riktade indikeringsprov och sex processhelhetstester passerade lokalt. Serverns 141 enhetstester, sex helhetstester, XML-, operations- och syntaxkontroller passerade. Publiceringsförsöket stoppades av kvarvarande lås för Au → Spår 1a. Den tidigare versionen 0.17.1 (`97c6546`) återställdes med låsen bevarade. Tjänsterna är aktiva, anslutningen återställd utan startfel och HTTPS-login svarar 200. Casper har fått frågan om provvägen får återtas före ett nytt publiceringsförsök. Ingen tillåtelse har ännu kommit; ingen tågväg eller beläggning har raderats.
+
 ## Kvar för en fullständig ersättning
 
 | Del | Vad som återstår | Underlag som behövs |

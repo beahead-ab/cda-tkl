@@ -353,3 +353,12 @@ Detaljer: [Kompisväxlar](kompisvaxlar.md).
 - På Caspers begäran tillagd Fullskärm bredvid Verktyg. Text och ikon följer verkligt fullskärmsläge, även vid Escape. Hela dokumentet omfattas så att statusmeddelanden, signaluppgifter och stödsidor är kvar. Växling bygger inte om panelen och skickar inga fältorder.
 - Knapp, tangentbord, Escape, signalruta, Verktyg och återgång samt bevarat Cu-startval provade i webbläsaren. Knappraden granskad vid 390 pixlar. Provval och fönsterstorlek återställda; inga konsolfel. Safari-reservanrop finns, men äldre Safari har inte körts.
 - Lokal syntaxkontroll godkänd. Release `97c6546` / 0.17.1 pushad till privat GitHub och publicerad efter serverns 134 enhetstester, sex helhetstester samt XML/operations/syntax. Backup `/root/charlottendal-backups/network-97c6546-20260924T052720Z`, föregående `bea8a85`. Efterkontroll: anslutna tjänster, noll lås, extern login 200 och skyddat API 401 utan session.
+
+
+## 24 september 2026 · 07:47 · V1–V3 färdigprovade, publicering inväntar provväg
+
+- Byggt Caspers önskade viloläge och två växelvis blinkande röda lampor för V1–V3. 80 blink/minut per lampa, 40/60 ljus/mörker och 375 ms fasförskjutning. Blinkning gäller verklig tid i alla tre skins och fullskärm.
+- Ny läsande varningsprojektion följer de faktiska strecken T152/T166/T172, korsande block och tågvägarnas geometri. Reservation håller varningen aktiv även under etablering/återtagning/kvarvarande lås. Originalets 93 XML-villkor och råa värde bevarade; V4 oförändrad.
+- 13 riktade prov och sex helhetstester passerade lokalt. UI-prov med S100, S121, S165a, Cu → Bu, återtagning, avbrott/återanslutning, detaljer, skins och fullskärm. Provblock fria, inga lokala provvägar kvar, Original och normalt fönsterläge återställda; inga konsolfel.
+- Kod `92bc576` / 0.18.0 pushad. Serverkontroller godkända: 141 enhetstester, sex helhetstester, XML/operations/syntax. Därefter avbröt publiceringsskyddet på kvarvarande Au → Spår 1a. Tidigare release `97c6546` återställd utan att radera lås. Tjänster aktiva och anslutna utan startfel, HTTPS-login 200.
+- Tillfrågat Casper om normal återtagning av provvägen före publicering. Inget besked ännu; inga servervägar eller beläggningar har manuellt raderats. Nattautomationen oförändrat pausad.

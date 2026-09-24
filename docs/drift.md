@@ -221,3 +221,10 @@ Sex processhelhetstester godkända lokalt. Full serverkontroll: 134 enhetstester
 Release `97c6546` publicerad kl. 07:27 svensk tid. Fullskärm finns bredvid Verktyg på panelen, med återgång via samma knapp eller Escape. Hela dokumentet omfattas så att meddelanden, detaljer och sidnavigation förblir tillgängliga. Se [handhavande och webbläsarprov](panel-och-verktyg.md).
 
 Lokal syntaxkontroll och webbläsarprov godkända. Serverns 134 enhetstester, sex helhetstester, XML-, operations- och syntaxkontroller passerade före bytet. Backup `/root/charlottendal-backups/network-97c6546-20260924T052720Z`; föregående release `bea8a85`. Efterkontroll: tjänster anslutna, noll lås, extern login 200 och skyddat API 401 utan session. Driftregler, adresser, dataformat och inloggning oförändrade.
+
+
+## 24 september 2026 · 07:47 – publicering av 0.18.0 stoppad av kvarvarande lås
+
+Kodrelease `92bc576` med V1–V3:s nya vägövergångsvisning finns i privat GitHub. Före byte passerade syntax, hela XML, operationsimport, 141 enhetstester och sex helhetstester på servern. Publiceringsskyddet hittade kvarvarande tågväg Au → Spår 1a och avbröt utan att radera tillstånd. Föregående kodrelease `97c6546` återställdes och båda tjänsterna startades. Låset finns kvar som `held`; Casper har tillfrågats om normal återtagning före nytt publiceringsförsök. Ännu inget svar eller återtagning.
+
+Efterkontroll av föregående version: båda tjänster aktiva, LocoNet ansluten, inga fel efter start och extern HTTPS-login 200. Ingen ny releasebackup hann tas före låskontrollen; senaste fullständiga releasebackup är fortsatt `network-97c6546-20260924T052720Z`. Utrullningslogg finns lokalt i `work/deploy-network-92bc576.log`.

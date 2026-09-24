@@ -61,3 +61,8 @@ Sex riktade prov verifierar alla fyra källregler, varje enskilt sensorvillkor, 
 UI-prov: V1 okänt under etablering och grönt efter bekräftad körväg, bevarat genom skinbyte och omladdning; alla tre skins visuellt granskade. V4 okänt med två av sex kända, grönt när simulatorns SLI belades, okänt direkt vid brutet LocoNet, återanslutet och återställt efter fritt. Källregel och kompaktläge provade. Noll tågvägslås och fria provblock efteråt.
 
 Inga nya drifttillstånd lagras. Detta lägger ett informationsfält till serverns svar men ändrar inte driftprofilens identitet, beständiga lås, inloggning eller befintliga dataformat.
+
+
+## Publiceringsläge för 0.18.0
+
+Kod `92bc576` är pushad och har klarat serverns 141 enhetstester och sex helhetstester samt XML/operations/syntax. Publiceringen avbröts därefter av kvarvarande lås för Au → Spår 1a. Föregående 0.17.1 (`97c6546`) är återställd och i drift. Ändringen är färdig för ett nytt försök när provvägen får återtas; Caspers besked inväntas.

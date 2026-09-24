@@ -136,3 +136,10 @@ Sex befintliga processhelhetstester godkända lokalt. Serverns hela svit passera
 Fullskärm provad via knapp och Enter, återgång via knapp och Escape, signaluppgifter samt sidbyte till Verktyg och tillbaka. Cu-startvalet bevarades vid fullskärmsbyte; därefter avbröts provvalet utan att lägga någon tågväg. Knappraden granskad vid 390 pixlars bredd, normal fönsterstorlek återställd. Inga konsolfel. Äldre WebKit-reserven är kodgranskad men inte provad i äldre Safari.
 
 Lokal syntax godkänd. Serverns 134 enhetstester och sex processhelhetstester passerade tillsammans med XML-, operations- och syntaxkontroller. `97c6546` publicerad med backup och verifierad anslutning, noll lås, extern login 200 samt API 401 utan session. Ingen fysisk utrustning manövrerades.
+
+
+## 24 september 2026 – version 0.18.0, provad men inte publicerad
+
+V1–V3:s geometri, reservationsfaser, individuella block, flera orsaker, polaritet och okända rapporter täcks av sju nya tester. De sex äldre indikeringsproven passerar. Sex processhelhetstester godkända lokalt; det utökade nätprovet belägger/frigör S100, S121 och S165a genom simulatorns telegram. [Webbläsarproven](vagindikeringar.md) visar släckt viloläge, korrekt växelblinkning, genomgående tågväg, återtagning, avbrott/återanslutning, alla tre utseenden och fullskärm. Provdata och fönsterläge återställda; inga konsolfel.
+
+Serverns hela kontroll passerade med 141 enhetstester och sex helhetstester samt XML/operations/syntax. Publicering av `92bc576` avbröts av befintliga tågvägslås; 0.17.1 (`97c6546`) är fortfarande den publicerade versionen. Återställda tjänster och kontakt verifierade. Provvägen Au → Spår 1a har bevarats och inväntar Caspers besked.
