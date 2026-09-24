@@ -32,14 +32,14 @@ export function createManualFeedback({config, plan, scroll, panelView, stateOf, 
     box.hidden=!name||!state;if(box.hidden)return;
     const connected=online()&&state.connection==='connected';
     const policy=state.manual?.[name],companions=names.slice(1);
-    const pending=selected===name&&requested;
+    const pending=selected===name&&requested,orderFailure=selected===name&&failure;
     const canMove=connected&&!state.storageFault&&policy?.allowed===true;
     const reason=!connected?'Panelen saknar aktuell kontakt med anläggningen.':state.storageFault?'Lagringsfel · manövrering spärrad.':policy?.reason||'Ingen verifierad manöverregel är ansluten.';
     const moving=connected&&pending&&reason.includes('växelläge')&&names.some(n=>{const s=state.turnouts[n];return s?.desired===pending&&s.position==='unknown'&&state.serverTime-s.commandAt<=config.commandTimeoutMs;});
-    box.dataset.status=failure?'blocked':moving?'moving':canMove?'ready':'blocked';
+    box.dataset.status=orderFailure?'blocked':moving?'moving':canMove?'ready':'blocked';
     const unknownPeer=companions.find(n=>state.blocks[config.turnouts[n]?.block]?.occupied==null);
     const unknownReason=unknownPeer&&reason.includes('saknar aktuell återrapport')?`Kan inte bekräfta att kompisväxelns spår är fritt (${config.turnouts[unknownPeer].block}).`:reason;
-    const status=failure?'Manövern kunde inte bekräftas · '+failure:moving?'Omläggning pågår · inväntar återrapporter.':canMove?'Manöver möjlig · skyddsvillkoren är uppfyllda.':'Manöver spärrad · '+unknownReason;
+    const status=orderFailure?'Manövern kunde inte bekräftas · '+orderFailure:moving?'Omläggning pågår · inväntar återrapporter.':canMove?'Manöver möjlig · skyddsvillkoren är uppfyllda.':'Manöver spärrad · '+unknownReason;
     const rows=names.map(n=>{
       const t=config.turnouts[n],s=state.turnouts[n],block=t?.block,occupied=connected?state.blocks[block]?.occupied:null;
       const position=connected?({C:'Rakt',T:'Avvikande'}[s?.position]||'Okänt / omläggning'):'Okänt läge';
