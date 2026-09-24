@@ -129,3 +129,10 @@ Manuell återkoppling provad i webbläsaren: tangentbordsfokus visar båda kompi
 Ren panel och separat Verktyg-sida har genomgått [webbläsarprov](panel-och-verktyg.md): smal/bred vy, direktlänk och bakåtknapp, osparat tågnummer, klick på tågnummer från panelen, signalruta, kompisväxel från verktygen, tågväg över sidbyte/registerbesök och återtagning, aktivt stopp och synkroniserad tågvägstyp. P1700 tömdes efter prov, AIS återställd, noll provlås. Inga konsolfel eller varningar.
 
 Sex befintliga processhelhetstester godkända lokalt. Serverns hela svit passerade: 134 enhetstester och sex helhetstester, samt syntax, XML och operationsimport. Release `bea8a85` publicerad med backup och godkänd efterkontroll av tjänster, lås, HTTPS och inloggningsskydd. Ingen fysisk utrustning manövrerades.
+
+
+## 24 september 2026 – version 0.17.1
+
+Fullskärm provad via knapp och Enter, återgång via knapp och Escape, signaluppgifter samt sidbyte till Verktyg och tillbaka. Cu-startvalet bevarades vid fullskärmsbyte; därefter avbröts provvalet utan att lägga någon tågväg. Knappraden granskad vid 390 pixlars bredd, normal fönsterstorlek återställd. Inga konsolfel. Äldre WebKit-reserven är kodgranskad men inte provad i äldre Safari.
+
+Lokal syntax godkänd. Serverns 134 enhetstester och sex processhelhetstester passerade tillsammans med XML-, operations- och syntaxkontroller. `97c6546` publicerad med backup och verifierad anslutning, noll lås, extern login 200 samt API 401 utan session. Ingen fysisk utrustning manövrerades.

@@ -346,3 +346,10 @@ Detaljer: [Kompisväxlar](kompisvaxlar.md).
 - UI-prov i 390/1280 pixlar: draft över sidbyte, sparat P1700 på SIA och återöppning från spårplan, aktiv Cu → Spår 1c över sidbyte/register, normal återtagning, signalruta, kompisvisning, AIS och tågvägstyp. Provnumret tömt, AIS återställd, inga lås, fönsterstorlek återställd. Inga konsolfel. Ingen ny funktion för egen panelredigering byggd; framtida tillägg kan väljas separat.
 - Sex processhelhetstester och syntax passerade lokalt. Release `bea8a85` / 0.17.0 pushad till privat GitHub och publicerad efter 134 enhetstester, sex helhetstester samt full XML/operations/syntax på servern. Backup `/root/charlottendal-backups/network-bea8a85-20260924T051423Z`, föregående `c868a44`. Efterkontroll: tjänster anslutna, noll lås, extern login 200 och skyddat API 401 utan inloggning.
 - Inga driftregler, adresser, dataformat eller konton ändrade. Nattautomationen fortsatt pausad; tidigare vilande funktioner och fysiska verifieringsbehov oförändrade.
+
+
+## 24 september 2026 · 07:27 · Fullskärmsknapp publicerad
+
+- På Caspers begäran tillagd Fullskärm bredvid Verktyg. Text och ikon följer verkligt fullskärmsläge, även vid Escape. Hela dokumentet omfattas så att statusmeddelanden, signaluppgifter och stödsidor är kvar. Växling bygger inte om panelen och skickar inga fältorder.
+- Knapp, tangentbord, Escape, signalruta, Verktyg och återgång samt bevarat Cu-startval provade i webbläsaren. Knappraden granskad vid 390 pixlar. Provval och fönsterstorlek återställda; inga konsolfel. Safari-reservanrop finns, men äldre Safari har inte körts.
+- Lokal syntaxkontroll godkänd. Release `97c6546` / 0.17.1 pushad till privat GitHub och publicerad efter serverns 134 enhetstester, sex helhetstester samt XML/operations/syntax. Backup `/root/charlottendal-backups/network-97c6546-20260924T052720Z`, föregående `bea8a85`. Efterkontroll: anslutna tjänster, noll lås, extern login 200 och skyddat API 401 utan session.

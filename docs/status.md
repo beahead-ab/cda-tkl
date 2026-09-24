@@ -4,7 +4,7 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Färdigt i den körbara grunden
 
-- Ren ställverkssida och separat [Verktyg-sida](panel-och-verktyg.md) för trafik, manövrer, utseende, anslutningar och händelser. Signal- och kompisinformation visas vid behov; aktiva stopp och fel är fortsatt synliga.
+- Ren ställverkssida med fullskärmsknapp och separat [Verktyg-sida](panel-och-verktyg.md) för trafik, manövrer, utseende, anslutningar och händelser. Signal- och kompisinformation visas vid behov; aktiva stopp och fel är fortsatt synliga.
 
 - Tre panelutseenden, förladdade originalikoner, större träffytor och tågväg som tänds i färdriktningen. Samma start och mål återtar vägen.
 - 210 huvudtågvägar och 130 växeltågvägar med etablerings- och passageprov. 49 växlar, 197 körbara layoutblock och 66 signaler. Låsta växlar kan inte läggas om manuellt. Kompisväxlar följer med; omläggning kontrollerar även kompisens spår utanför färdvägen.
@@ -32,7 +32,7 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
 
 ## Nästa praktiska steg
 
-[Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation och anslutningsstatus finns på den renodlade panelen; återtagningslistan och stödfunktionerna finns nu under Verktyg. Casper kan nu provköra version 0.17.0 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
+[Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation och anslutningsstatus finns på den renodlade panelen; återtagningslistan och stödfunktionerna finns nu under Verktyg. Casper kan nu provköra version 0.17.1 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
 
 Den publicerade versionen 0.17.0 har klarat 134 enhetstester och sex processhelhetstester. Backupens driftdata har återlästs i en isolerad kopia utan fältorder. Telegraminspelningen ger namngivna loggar med båda riktningarna, råtelegram och separat tolkning. Det förbereder jämförelsen mellan simulator och fysisk utrustning. Det ersätter inte hårdvaruanslutningen. Fortsätt samtidigt med verifierbara manöverfall, admin och visuell avstämning; aktivera inte okända signal- eller adressbindningar genom gissning.
 

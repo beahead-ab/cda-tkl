@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `bea8a85` · version 0.17.0 (24 september 2026, 07:14) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/bea8a85` |
+| Driftsatt kodversion | `97c6546` · version 0.17.1 (24 september 2026, 07:27) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/97c6546` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -214,3 +214,10 @@ Release `c868a44` publicerad 24 september 2026 kl. 06:14 svensk tid. Tillfällig
 Release `bea8a85` publicerad 24 september 2026 kl. 07:14 svensk tid. Panelen på `/#panel` har renodlats; trafikverktyg, modellklocka, manövrer/spärrar, utseende, TrainMeet och händelser finns på `/#tools`. Registret finns kvar på `/#register`. Aktiva tågvägar och osparade inmatningar bevaras vid sidbyte; signal- och kompisinformation visas vid behov. [Handhavande och webbläsarprov](panel-och-verktyg.md).
 
 Sex processhelhetstester godkända lokalt. Full serverkontroll: 134 enhetstester och sex helhetstester godkända, liksom syntax, full XML och operationsimport. Backup `/root/charlottendal-backups/network-bea8a85-20260924T051423Z`; föregående release `c868a44`. Efterkontroll: anslutna tjänster, noll lås, extern login 200 och skyddat API 401 utan session. Profiler, adresser, driftdataformat och inloggning är oförändrade.
+
+
+## 24 september 2026 – fullskärmsknapp, version 0.17.1
+
+Release `97c6546` publicerad kl. 07:27 svensk tid. Fullskärm finns bredvid Verktyg på panelen, med återgång via samma knapp eller Escape. Hela dokumentet omfattas så att meddelanden, detaljer och sidnavigation förblir tillgängliga. Se [handhavande och webbläsarprov](panel-och-verktyg.md).
+
+Lokal syntaxkontroll och webbläsarprov godkända. Serverns 134 enhetstester, sex helhetstester, XML-, operations- och syntaxkontroller passerade före bytet. Backup `/root/charlottendal-backups/network-97c6546-20260924T052720Z`; föregående release `bea8a85`. Efterkontroll: tjänster anslutna, noll lås, extern login 200 och skyddat API 401 utan session. Driftregler, adresser, dataformat och inloggning oförändrade.
