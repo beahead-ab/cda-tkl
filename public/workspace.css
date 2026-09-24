@@ -10,6 +10,12 @@ body[data-page=panel]>.app-header,body[data-page=panel]>footer{display:none}
 #panel-view #clear-selection{font-size:11px}
 #open-tools,.app-header nav a,.back-to-panel{display:inline-block;text-decoration:none;border:1px solid var(--border);border-radius:3px;padding:6px 10px;font-size:12px;color:var(--text)}
 #open-tools{letter-spacing:0;white-space:nowrap}
+#toggle-fullscreen{display:inline-flex;align-items:center;gap:6px;min-height:29px}
+#toggle-fullscreen svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+#toggle-fullscreen .fullscreen-contract,#toggle-fullscreen[aria-pressed=true] .fullscreen-expand{display:none}
+#toggle-fullscreen[aria-pressed=true] .fullscreen-contract{display:block}
+html:fullscreen{overflow:auto;background:var(--page)}
+html:-webkit-full-screen{overflow:auto;background:var(--page)}
 .app-header nav{display:flex;gap:6px;flex-wrap:wrap}.app-header nav a.selected{background:#293931;border-color:#779281}
 #tools-view{max-width:1150px;margin:auto;padding:24px 20px}
 .tools-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.tools-heading h1{font-size:23px;margin:0}.tools-heading h1:focus{outline:none}

@@ -2,6 +2,14 @@
 
 Version 0.17.0 öppnar ett renodlat ställverk på `/#panel`. Spårplan, signaler, växelpluppar och tågnummer finns kvar på sina platser. Den lilla överkanten innehåller namn, anslutningsstatus, tågvägstyp, Alla signaler i stopp och länken Verktyg. Hjälpen för start/slut visas bara under ett pågående val.
 
+## Fullskärm (0.17.1)
+
+Knappen **Fullskärm** bredvid Verktyg använder webbläsarens fullskärmsläge. Samma knapp byter till **Avsluta fullskärm**. Escape lämnar fullskärmen; pågående startval och öppna uppgifter bevaras när fullskärmsläget växlas. Webbläsarens egna ändringar uppdaterar knappens text, ikon och tillgängliga läge.
+
+Hela appdokumentet visas i fullskärm, så stopp, felmeddelanden och tillfälliga informationsrutor finns kvar. Verktyg och anläggningsregister går att använda i samma läge. Ingen spårplan eller signalbild laddas om och inga manöverorder skickas av knappen. Om webbläsaren inte stöder eller tillåter funktionen visas ett meddelande.
+
+Webbläsarprov: in/ut via knapp, Enter, Escape, signaluppgifter, Verktyg och tillbaka, bibehållet Cu-startval samt knapprad vid 390 pixlars bredd. Provvalet avbrutet och normal fönsterstorlek återställd. Inga konsolfel. Stödet följer [Fullscreen API](https://fullscreen.spec.whatwg.org/); äldre WebKit-anrop finns som reserv men har inte provats i en äldre Safari-version.
+
 ## Verktyg
 
 `/#tools` samlar stödfunktionerna i fem avsnitt:

@@ -7,6 +7,7 @@ import { createTrainMeet } from './trainmeet.js';
 import { createModelClock } from './model-clock.js';
 import { createFeedback } from './feedback.js';
 import { createOperatingControls } from './operating-controls.js';
+import { createFullscreen } from './fullscreen.js';
 const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
@@ -356,6 +357,7 @@ function paintIndication(name) {
   html('inspector',`<h2>${esc(name)} · panelindikering</h2><dl><dt>Beräknat läge</dt><dd>${value===true?'Aktivt underlag · grön lampa':value===false?'Inaktivt underlag · röd lampa':'Okänt underlag · inget fastställt läge'}</dd><dt>Kända villkor</dt><dd>${fresh?s?.known||0:0} av ${s?.total||def.conditions.length}</dd></dl><p class="muted">Indikering från tågvägar och sensorrapporter. Ingen fysisk bomkvittens eller bommanöver.</p><p class="muted">Ett aktivt villkor räcker för grön indikering. Röd kräver att alla villkor är kända och inaktiva. Tågväg som läggs, återtas eller hålls kvar ger okänt NX-villkor.</p>${important.length?`<ul class="indication-causes">${important.map(c=>`<li><strong>${esc(c.label)}</strong> · ${esc(c.reason)}</li>`).join('')}</ul>`:''}<button class="source-inspect" data-source-kind="conditionals" data-source-name="${esc(def.name)}">Visa källregeln och alla villkor →</button>`);
 }
 async function start() {
+  const fullscreen = createFullscreen({button: $('toggle-fullscreen'), onError: message});
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
   modelClock=createModelClock({api});trainMeet=createTrainMeet({api});feedback=createFeedback();
@@ -394,7 +396,7 @@ async function start() {
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };
   $('clear-selection').onclick = ()=>clearChoice();
-  document.addEventListener('keydown', e => { if(e.key==='Escape'){manualFeedback.clear();if(!$('inspector-host').hidden)closeInspector();else clearChoice();} });
+  document.addEventListener('keydown', e => { if(e.key==='Escape'){if(fullscreen.active()){fullscreen.exit();return;}manualFeedback.clear();if(!$('inspector-host').hidden)closeInspector();else clearChoice();} });
   for (const b of document.querySelectorAll('.skin-picker button')) b.onclick = () => setSkin(b.dataset.skin);
   function setSkin(value) { document.body.dataset.skin = value; localStorage.setItem('charlottendal-skin', value); for (const b of document.querySelectorAll('.skin-picker button')) b.classList.toggle('selected', b.dataset.skin === value); }
   setSkin(localStorage.getItem('charlottendal-skin') || 'relay');
