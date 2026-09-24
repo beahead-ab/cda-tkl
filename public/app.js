@@ -13,7 +13,7 @@ let state, config, panel, registry, chosen = null, inspected = null, online = fa
 let sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout, serverOffset = 0;
 function setPage(page) {
   history.replaceState(null,'',page==='admin'?'#register':'#panel');
-  if(page==='admin') document.body.classList.remove('panel-compact');
+  if(page==='admin') setCompact(false);
   for (const p of ['panel','admin']) { $(p+'-view').hidden=p!==page; $(p+'-tab').classList.toggle('selected',p===page); }
   if(page==='admin') return sourceRegister.open().catch(e=>message(e.message));
 }
@@ -39,7 +39,7 @@ function accessible(g, name, action) {
   svg('title', {}, g, name); g.addEventListener('click', action);
   g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); action(); } });
 }
-function message(text) { if(text)feedback?.error(); $('message').textContent = text; $('message').hidden = !text; }
+function message(text) { if(text)feedback?.error(); $('message-text').textContent = text; $('message').hidden = !text; }
 async function api(path, data) {
   const urgent=path==='emergency-cancel'||(path==='all-stop'&&data.enabled===true);
   if (pending&&!urgent) return; pending++;
@@ -50,9 +50,9 @@ async function api(path, data) {
     message(''); return answer;
   } catch (e) { message(e.message); } finally { pending--; paint(); }
 }
-function clearChoice() { chosen = null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('clear-selection').hidden = true; paint(); }
+function clearChoice(repaint=true) { chosen = null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('clear-selection').hidden = true; if(repaint)paint(); }
 function choose(id) {
-  if (!online) return message('Panelen saknar kontakt med den lokala kärnan.');
+  if (!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
   if(state.controls?.mode==='remote') return message('Fjärrläge: lokal tågvägsläggning är spärrad.');
   if (!chosen) {
     chosen = id; $('selection-hint').textContent = label(id) + ' → välj slutpunkt'; $('clear-selection').hidden = false; paint();
@@ -122,7 +122,7 @@ function buildPlan() {
     svg('rect', { x: -rw / 2 - 5, y: -rh / 2 - 6, width: rw + 10, height: rh + 12, class: 'hit' }, g);
     const images=type.slice(0,3).map((file,i)=>svg('image',{x:-w/2,y:-h/2,width:w,height:h,transform:`rotate(${m.deg})`,href:icon(file),visibility:i===2?'visible':'hidden','pointer-events':'none'},g));
     const unknown = svg('text', { x: rw / 2 + 1, y: 3, class: 'signal-unknown' }, g, '?');
-    accessible(g, `Signal ${m.mast}`, () => { inspected = { kind: 'signal', name: m.mast }; paintInspector(); });
+    accessible(g, `Signal ${m.mast}`, () => showInspector('signal',m.mast));
     signals.push({ ...m, g, images, unknown, type });
   }
   const used = new Set(config.routes.flatMap(r => [r.from, r.to]));
@@ -168,7 +168,26 @@ function buildPlan() {
   $('derived-indications').innerHTML='<span>Beräknat:</span>'+(config.panelIndications?.indicators||[]).map(i=>`<button type="button" data-indication="${esc(i.name)}"><i></i>${esc(i.name)} <span>?</span></button>`).join('');
   $('derived-indications').onclick=e=>{const name=e.target.closest('button')?.dataset.indication;if(name)inspectIndication(name);};
 }
-function inspectIndication(name){if(document.body.classList.contains('panel-compact'))$('compact-toggle').click();inspected={kind:'indication',name};paintInspector();$('inspector').scrollIntoView({behavior:'smooth',block:'nearest'});}
+let inspectorOrigin;
+function showInspector(kind,name) {
+  inspectorOrigin=document.activeElement;
+  inspected={kind,name};paintInspector();
+  if(document.body.classList.contains('panel-compact')) {
+    document.body.classList.add('inspector-open');
+    $('inspector-card').focus({preventScroll:true});
+  } else $('inspector-card').scrollIntoView({block:'nearest'});
+}
+function closeInspector() {
+  document.body.classList.remove('inspector-open');
+  if(inspectorOrigin?.isConnected)inspectorOrigin.focus({preventScroll:true});
+}
+function setCompact(compact) {
+  document.body.classList.toggle('panel-compact',compact);
+  document.body.classList.remove('inspector-open');
+  $('compact-toggle').textContent=compact?'Visa verktyg':'Dölj verktyg';
+  $('compact-toggle').setAttribute('aria-pressed',String(compact));
+}
+function inspectIndication(name){showInspector('indication',name);}
 function isBlocked(name) { const address=config.blocks[name]?.address;return address!=null && (state?.controls?.blocked || []).some(n=>config.blocks[n]?.address===address); }
 function usable() { return online && state?.connection === 'connected' && !state.storageFault; }
 function paintPlan() {
@@ -255,8 +274,10 @@ function paint() {
   operatingControls?.update(state,online);
   if(state.clock)modelClock?.update(state.clock,online);
   trainMeet?.update(state.trainMeet,online);
+  if(chosen && (!usable() || state.controls?.mode==='remote')) clearChoice(false);
   const c = $('connection'); c.textContent = !online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad';
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
+  $('panel-connection').textContent=c.textContent;$('panel-connection').className=c.className;
   paintPlan(); paintInspector();
   $('ais-status').hidden = !state.controls?.stopAll;
   $('all-stop').disabled = !online;
@@ -279,6 +300,8 @@ function paint() {
   $('toggle-block').disabled = !online || pending || !!state.storageFault || (remote&&isBlocked($('block-choice').value));
   for (const b of $('route-catalog').querySelectorAll('button')) b.disabled = !usable() || pending || remote;
   html('active-routes', state.routes.map(r => `<div class="route-item"><strong>${esc(displayName('routes',r.definitionId,r.label))}<span class="route-state ${esc(r.state)}">${esc(statuses[r.state])}</span></strong><small>${esc(r.reason)}${r.passage&&r.enteredAt?' · '+r.passage.filter(p=>p.state==='clear').length+'/'+r.passage.length+' avsnitt passerade':''}</small><button data-cancel="${esc(r.id)}" ${!online || r.cancelRequested ? 'disabled' : ''}>${r.cancelRequested ? 'Inväntar frigivning' : 'Återta'}</button></div>`).join(''));
+  $('route-activity').hidden=!state.routes.length;
+  $('route-summary').textContent=`${state.routes.length} ${state.routes.length===1?'tågväg':'tågvägar'} · ${state.routes.map(r=>statuses[r.state]).filter((v,i,a)=>a.indexOf(v)===i).join(' / ')}`;
   $('event-status').textContent = state.routes.length + ' tågvägslås · ' + Object.keys(config.turnouts).length + ' anslutna växlar';
   html('events', state.events.filter(e => !['report', 'transport'].includes(e.kind)).slice(0, 7).map(e => `<div class="event-row"><time>${time(e.at)}</time><span>${esc(e.message)}</span></div>`).join(''));
   $('wire').textContent = (state.trace || []).slice(0, 40).map(e => `${time(e.at)}  ${e.direction === 'out' ? 'SKICKAT ' : 'MOTTAGET'}  ${e.hex}`).join('\n');
@@ -320,7 +343,9 @@ async function start() {
   sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   buildPlan();
   trainInformation=createTrainInformation({catalog:config.trainFields,plan:$('track-plan'),displayName,openSource});
-  $('compact-toggle').onclick=()=>{ const compact=document.body.classList.toggle('panel-compact'); $('compact-toggle').textContent=compact?'Visa verktyg':'Dölj verktyg'; };
+  $('compact-toggle').onclick=()=>setCompact(!document.body.classList.contains('panel-compact'));
+  $('close-inspector').onclick=closeInspector;
+  $('dismiss-message').onclick=()=>message('');
 
   $('block-choice').innerHTML=Object.keys(config.blocks).sort((a,b)=>a.localeCompare(b,'sv',{numeric:true})).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
   $('block-choice').onchange=paint;
@@ -344,8 +369,8 @@ async function start() {
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) api('turnout', { name: inspected.name, position }); };
-  $('clear-selection').onclick = clearChoice;
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') clearChoice(); });
+  $('clear-selection').onclick = ()=>clearChoice();
+  document.addEventListener('keydown', e => { if(e.key==='Escape'){if(document.body.classList.contains('inspector-open'))closeInspector();else clearChoice();} });
   for (const b of document.querySelectorAll('.skin-picker button')) b.onclick = () => setSkin(b.dataset.skin);
   function setSkin(value) { document.body.dataset.skin = value; localStorage.setItem('charlottendal-skin', value); for (const b of document.querySelectorAll('.skin-picker button')) b.classList.toggle('selected', b.dataset.skin === value); }
   setSkin(localStorage.getItem('charlottendal-skin') || 'relay');
@@ -366,4 +391,4 @@ async function start() {
   setInterval(() => { if (Date.now() - lastEvent > 3000 && online) { online = false; paint(); } }, 750);
   function animation() { if (state?.routes.some(r => r.state === 'establishing')) animateFlow(); requestAnimationFrame(animation); } animation();
 }
-start().catch(e => { message('Startfel: ' + e.message); $('connection').textContent = 'Kunde inte starta panelen'; });
+start().catch(e => { message('Startfel: ' + e.message); for(const id of ['connection','panel-connection'])$(id).textContent='Kunde inte starta panelen'; });

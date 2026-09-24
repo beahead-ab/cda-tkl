@@ -36,7 +36,7 @@ const server = http.createServer(async (req, res) => {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
     if (await auth.handle(req, res, url)) return;
     await auth.authenticate(req);
-    if (req.method === 'GET' && url.pathname === '/api/config') return json(res, { tklUrl: process.env.CHARLOTTENDAL_TKL_URL || 'http://127.0.0.1:8910/' });
+    if (req.method === 'GET' && url.pathname === '/api/config') return json(res, { tklUrl: process.env.CHARLOTTENDAL_TKL_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_PORT || 8910)}/` });
     if (req.method === 'GET' && url.pathname === '/api/state') return json(res, { ...field.snapshot(), link, clients: clients.size, trace });
     if (req.method === 'POST') {
       const data = await body(req);

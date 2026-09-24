@@ -1,5 +1,7 @@
 # Samarbete med Claude Design · 22 september 2026
 
+> Historisk portningsanteckning. För dagens omfattning och provresultat, se [status](status.md) och [provkörningen den 24 september](provkorning-2026-09-24.md).
+
 På Caspers begäran kontaktades Claude i det befintliga designprojektet. Claude fick en konkret beskrivning av glappet mellan prototypen och appen: fyra fasta driftvägar, delvis ansluten anläggningsmodell, förenklad rendering och saknade adminfunktioner. Inga lösenord, nycklar eller driftkonton delades.
 
 [Portningshjälp i Claude Design](https://claude.ai/design/p/d60a7b7b-d5aa-4db2-abc1-92414b959fdc?file=Portningshj%C3%A4lp.md)

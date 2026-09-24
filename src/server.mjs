@@ -74,7 +74,7 @@ const server = http.createServer(async (req, res) => {
     const expires = await auth.authenticate(req);
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
-      if (url.pathname === '/api/config') return json(res, { ...profile,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || 'http://127.0.0.1:8911/', accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
+      if (url.pathname === '/api/config') return json(res, { ...profile,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
       if (url.pathname === '/api/train-information') return json(res, {...trainInformation.snapshot(),...trainInformation.catalog()});
       if(url.pathname==='/api/bindings')return json(res,bindings.view());
       if(url.pathname==='/api/bindings/export'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','Content-Disposition':'attachment; filename=charlottendal-driftprofil.json'});return res.end(req.method==='HEAD'?undefined:JSON.stringify(bindings.export(),null,2));}
