@@ -15,9 +15,7 @@
   <a id="panel-tab" href="#panel">Ställverk</a>
   <a id="trainmeet-tab" href="#trainmeet">TrainMeet <span id="menu-trainmeet-status">Ej ansluten</span></a>
   <hr>
-  <a id="tools-tab" href="#tools" data-tools-section="traffic-tools">Trafik och tågnummer</a>
-  <a href="#tools" data-tools-section="operating-tools">Manövrer och spärrar</a>
-  <a href="#tools" data-tools-section="appearance-tools">Utseende och ljud</a>
+  <a id="tools-tab" href="#tools" data-tools-section="appearance-tools">Utseende och ljud</a>
   <a href="#tools" data-tools-section="connections-tools">Anslutningar</a>
   <a id="admin-tab" href="#register">Anläggningsregister</a>
   <a href="#tools" data-tools-section="journal-tools">Händelser och loggar</a>
@@ -29,7 +27,7 @@
 <div id="global-status">
   <div id="message" class="message" role="status" hidden><span id="message-text"></span><button id="dismiss-message" aria-label="Stäng meddelandet">Stäng</button></div>
   <div id="ais-status" class="ais-status" hidden><span id="ais-text">AIS aktiv · alla körmedgivanden återkallade, tågvägslås behålls</span><button id="reset-ais">Återställ AIS</button></div>
-  <div id="remote-notice" class="notice" hidden>Fjärrläge · lokal tågvägsläggning och växelmanöver är spärrade. Fjärrsystem är ännu inte anslutet. Stopp och återtagning fungerar fortfarande. <a href="#tools">Öppna verktyg</a></div>
+  <div id="remote-notice" class="notice" hidden>Fjärrläge · lokal tågvägsläggning och växelmanöver är spärrade. Fjärrsystem är ännu inte anslutet. Stopp och återtagning fungerar fortfarande. <a href="#panel">Till ställverket</a></div>
   <div id="emergency-status" class="notice" role="status" hidden></div>
 </div>
 <main id="panel-view">
@@ -44,11 +42,12 @@
       <span id="selection-hint" hidden>Välj startplupp och därefter slutplupp</span><button id="clear-selection" hidden>Avbryt val · Esc</button>
     </div>
     <div class="panel-scroll"><svg id="track-plan" viewBox="24 128 2102 640" role="group" aria-label="Spårplan med signaler, växlar och tågvägsknappar"></svg></div>
+    <section id="panel-console" aria-label="Ställverkets manöverfält"></section>
   </section>
 </main>
 <main id="tools-view" hidden>
   <div class="tools-heading"><h1 tabindex="-1">Verktyg</h1><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div>
-  <nav class="tools-sections" aria-label="Verktygsavsnitt"><a href="#tools" data-tools-section="traffic-tools">Trafik</a><a href="#tools" data-tools-section="operating-tools">Manövrer</a><a href="#tools" data-tools-section="appearance-tools">Utseende</a><a href="#tools" data-tools-section="connections-tools">Anslutningar</a><a href="#tools" data-tools-section="journal-tools">Händelser</a></nav>
+  <nav class="tools-sections" aria-label="Verktygsavsnitt"><a href="#tools" data-tools-section="appearance-tools">Utseende</a><a href="#tools" data-tools-section="connections-tools">Anslutningar</a><a href="#tools" data-tools-section="journal-tools">Händelser</a></nav>
   <section id="traffic-tools" class="tools-section" aria-labelledby="traffic-heading">
     <h2 id="traffic-heading">Trafik</h2>
     <details id="route-activity" class="route-activity" hidden open><summary id="route-summary">Aktiva tågvägar</summary><div id="active-routes"></div></details>
@@ -78,5 +77,5 @@
 <main id="trainmeet-view" hidden><div class="tools-heading"><h1 tabindex="-1">TrainMeet</h1><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div><p class="muted">Anslut till träffen och läs Charlottendals tågrörelser.</p><section id="trainmeet" class="card"></section></main>
 <main id="admin-view" hidden><p class="muted">Läser det kompletta källregistret…</p></main>
 <dialog id="inspector-host" class="inspector-host" aria-labelledby="inspector-heading"></dialog>
-<footer>Charlottendal TKL · version 0.19.1</footer>
+<footer>Charlottendal TKL · version 0.20.0</footer>
 </body></html>

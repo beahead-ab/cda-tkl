@@ -1,10 +1,22 @@
 # Ren panel och separat verktygssida
 
-Ställverket öppnas på `/#panel`. Spårplan, signaler, växelpluppar och tågnummer finns kvar på sina platser. Från version 0.19.0 innehåller den lilla överkanten namn, anslutningsstatus, tågvägstyp, Alla signaler i stopp och en hamburgerknapp. Hjälpen för start/slut visas bara under ett pågående val.
+Ställverket öppnas på `/#panel`. Spårplan, signaler, växelpluppar och tågnummer finns kvar på sina platser. Från version 0.20.0 innehåller överkanten bara namn, anslutningsstatus och hamburgerknappen. Själva manöverfunktionerna finns under spårplanen.
+
+## Manöverfält under spårplanen (0.20.0, lokalt färdigt)
+
+Runda knappar med text ovanför följer JMRI-referensens nedre manöverfält; Trafikskärm använder kantigare knappar. Signaler, Tågvägar och Drift utgör tre grupper. På smal skärm bryts grupperna till nya rader utan sidledes överflöde.
+
+- **Signaler:** Alla signaler i stopp och Återställ stopp. Återställning är bara tillgänglig när AIS är aktiv och servern tillåter den; gamla tågvägar återupptas inte automatiskt.
+- **Tågvägar:** Huvudtågväg, Växeltågväg, Tågvägar, Avbryt val och Nödåterta alla. Tågvägar öppnar listval och aktiva vägars normala återtagning direkt nedanför knapparna. Antalet kvarvarande vägar syns på knappen.
+- **Drift:** Spårspärrar, Linjer / prog., Tågnummer, Modellklocka och Fjärrmanövrering. De fyra första öppnar respektive befintligt manöverfält under raden; fjärrknappen byter driftläge enligt befintliga villkor. Ett tryckt fjärrval betyder fortfarande inte att ett fjärrsystem är anslutet.
+
+Ett manöverfält visas åt gången och kan stängas med samma knapp, Stäng eller Escape inne i fältet. Formulärutkast bevaras vid fältbyte. Fälten återanvänder samma kontroller och serveranrop som tidigare; inga lås eller återrapportkrav nollställs när visningen öppnas, stängs eller byts. Nödåtertagning är fortsatt en stopp-/frigivningsbegäran och raderar inte lås.
+
+Spårtexterna använder normalvikt 400, med befintliga typsnittsfamiljer, storlekar och positioner. Destinationsskyltar använder 500. Detta är en visuell anpassning till de smalare texterna i de fysiska ställverksreferenserna, inte ett påstående om exakt typsnittsidentifiering. JMRI-bilden och originalets XML har faktiskt fetare etiketter. Originaldata ändras inte och inga nya typsnitt laddas från nätet.
 
 ## Gemensam meny (0.19.0, lokalt färdig)
 
-Hamburgerknappen samlar Ställverk, TrainMeet, Trafik och tågnummer, Manövrer och spärrar, Utseende och ljud, Anslutningar, Anläggningsregister, Händelser och loggar samt Fullskärm. Simulator och Byt lösenord visas där när installationen erbjuder dem. TrainMeet har en egen sida på `/#trainmeet` med serveradress, parkoppling och tåginformation.
+Hamburgerknappen samlar Ställverk, TrainMeet, Utseende och ljud, Anslutningar, Anläggningsregister, Händelser och loggar samt Fullskärm. Från 0.20.0 ligger trafik- och manöverfunktionerna under panelen. Simulator och Byt lösenord visas i menyn när installationen erbjuder dem. TrainMeet har en egen sida på `/#trainmeet` med serveradress, parkoppling och tåginformation.
 
 Samma meny finns i sidhuvudet på stödsidorna. Den kan öppnas med tangentbord; pilknappar flyttar fokus. Escape stänger menyn före fullskärm eller startval, och klick utanför stänger den. Att bara öppna/stänga menyn bevarar panelens pågående startval. Menyn ryms även vid 390 pixlars bredd; längre menyer kan rullas.
 
@@ -18,10 +30,8 @@ Webbläsarprov: in/ut via knapp, Enter, Escape, signaluppgifter, Verktyg och til
 
 ## Verktyg
 
-`/#tools` samlar stödfunktionerna i fem avsnitt:
+`/#tools` samlar stödfunktionerna i tre avsnitt:
 
-- **Trafik:** aktiva tågvägar och återtagning, tågvägslistor, objektinformation samt inkommande tåg, nummerregistrering och nummerföljning.
-- **Manövrer:** lokal-/fjärrläge, nödåtertagning, spår- och linjespärrar, programmeringsspår och modellklocka.
 - **Utseende:** panelutseende, zoom, ljud och teckenförklaring.
 - **Anslutningar:** installationsöversikt samt länkar till TrainMeet och anläggningsregistret. Simulator och kontolänk finns i menyn.
 - **Händelser:** journal, protokolltrafik och telegraminspelning.
@@ -34,9 +44,9 @@ Från 0.19.1 öppnas information för växlar, signaler och vägövergångar med
 
 Rutan samlar objektets uppgifter och, för växlar, kompisarnas återrapporter, spårstatus och spärrorsaker. Den uppdateras medan den är öppen. Stäng, Escape eller klick utanför stänger rutan och tar bort kompisringen. Bakgrunden kan inte manövreras medan rutan är öppen; klicket som stänger den skickas inte vidare till växelpluppen bakom. Escape stänger rutan före fullskärm och bevarar ett påbörjat startval. Rutan ryms i 390 pixlars bredd och rullar internt om höjden inte räcker.
 
-Växelväljaren på Verktyg ger fortfarande uttrycklig detaljvisning där. Visa Vx… från Verktyg återgår till panelen och rullar fram växeln utan order. Klick på ett registrerat tågnummer i spårplanen öppnar motsvarande fält på Verktyg.
+Objektinformationen öppnas alltid i modalen; den tidigare separata växelväljaren på Verktyg behövs inte längre. Visa Vx… rullar fram växeln utan order. Klick på ett registrerat tågnummer i spårplanen öppnar motsvarande fält under manöverraden.
 
-Aktiva stopp, fjärrläge och felmeddelanden visas även när panelen är renodlad. Befintliga spärrvillkor och driftdataformat är oförändrade. En sidväxling skickar inga fältorder och bygger inte om spårplanen eller de förladdade signalbilderna. Pågående tågvägar och inmatningsutkast bevaras; ett halvfärdigt start-/slutval avbryts vid sidbyte. Väljaren för huvud-/växeltågväg är synkroniserad mellan panelen och tågvägslistan.
+Aktiva stopp, fjärrläge och felmeddelanden visas även när panelen är renodlad. Befintliga spärrvillkor och driftdataformat är oförändrade. En sidväxling skickar inga fältorder och bygger inte om spårplanen eller de förladdade signalbilderna. Pågående tågvägar och inmatningsutkast bevaras; ett halvfärdigt start-/slutval avbryts vid sidbyte. Knapparna för huvud-/växeltågväg är synkroniserade med tågvägslistans väljare.
 
 Inga driftfunktioner har raderats. Framtida tillägg på panelen kan väljas separat utan att först behöva återställa verktygen. Någon redigerare för egna panelmoduler ingår inte i denna ändring.
 

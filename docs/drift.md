@@ -236,3 +236,5 @@ Hamburger-meny och särskild TrainMeet-sida med sparbar serveradress är färdig
 Ny läsande kontroll bekräftade att `/opt/charlottendal/current` fortfarande pekar på `97c6546` och att Au → Spår 1a är kvar i `held` med `cancelRequested: false`. Ingen ny publicering eller tjänsteomstart har gjorts. Tidigare återtagningsfråga inväntar svar; den riktiga TrainMeet-adressen och serverns placering är också efterfrågade. Lokalt finns förhandsvisningen på `http://127.0.0.1:9030/`.
 
 Version 0.19.1 tillför högerklicksöppnad objektinformation i en modal nära klickpunkten. Lokal syntaxkontroll och webbläsarprov godkända enligt [provresultaten](provresultat.md). Ingen backend- eller driftformatsändring och inget nytt publiceringsförsök; samma blockerande serverväg inväntar besked.
+
+Version 0.20.0 är lokalt färdig med panelmanövrer under spårplanen och normalvikt för spårtexterna. Webbläsarprov, syntax och sex helhetstester godkända. Ändringen återanvänder befintliga manöveranrop och ändrar inget driftdataformat. Ingen publicering utförd; tidigare Au → Spår 1a behöver fortfarande hanteras genom den normala återtagningsprocessen enligt väntande fråga.

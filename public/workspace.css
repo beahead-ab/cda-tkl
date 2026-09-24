@@ -56,3 +56,32 @@ body[data-page]:not([data-page=panel])>.app-header{position:sticky;top:0;z-index
 @media(max-width:700px){#trainmeet-view{padding:18px 12px}#panel-view .panel-actions #menu-toggle{margin-left:auto}}
 #trainmeet .catalog{align-items:end}#trainmeet label{display:flex;flex-direction:column;gap:7px;font-size:12px}#trainmeet input{padding:9px 10px;max-width:100%;min-width:0}#trainmeet .tm-server-label{flex:1;min-width:180px}#trainmeet .actions{margin:18px 0}#trainmeet .trainmeet-heading{margin-top:24px}
 @media(max-width:700px){#trainmeet{padding:16px 12px}#trainmeet label{flex:1 1 100%}#trainmeet input{width:100%}}
+
+/* Track lettering and a tactile operating strip inspired by the reference panels. */
+.panel-shell .track-label{font-weight:400;letter-spacing:.15px}
+.panel-shell .track-label.destination-label{font-weight:500;letter-spacing:.5px}
+body[data-skin=traffic] .panel-shell .track-label{font-weight:400}
+#panel-console{color:var(--ink);margin:0 14px 12px;border:1px solid #59625d;border-radius:4px;background:#ffffff03}
+.panel-keyboard{display:flex;flex-wrap:wrap;align-items:stretch}
+.panel-key-group{display:flex;flex-wrap:wrap;gap:3px;position:relative;padding:26px 10px 9px;border-right:1px solid #59625d}
+.panel-key-group:last-child{border-right:0;flex:1}
+.panel-key-group h2{position:absolute;top:9px;left:14px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:400;opacity:.7}
+.panel-key{display:grid;grid-template-rows:26px 30px;justify-items:center;align-items:center;gap:7px;min-width:76px;max-width:90px;min-height:76px;padding:5px 6px;border:1px solid transparent;border-radius:3px;background:transparent!important;color:inherit;font:400 10px/1.25 "Helvetica Neue",Arial,sans-serif;text-align:center}
+.panel-key::after{content:"";display:block;width:28px;height:28px;border-radius:50%;border:1px solid #727b79;background:radial-gradient(circle at 38% 30%,#dce0da,#a7b0a7 60%,#68736c);box-shadow:0 0 0 3px #080d0d,0 0 0 4px #48524a,0 3px 5px #000a}
+.panel-key:hover:not(:disabled){border-color:#88988a;background:#c8d5c50c!important}.panel-key:hover:not(:disabled)::after{filter:brightness(1.2)}
+.panel-key:active:not(:disabled)::after{transform:translateY(1px);box-shadow:0 0 0 3px #080d0d,0 0 0 4px #48524a,inset 0 2px 6px #0007}
+.panel-key[aria-pressed=true]::after,.panel-key[aria-expanded=true]::after{background:radial-gradient(circle at 38% 30%,#ecf3c9,#d2d995 60%,#7f9361);box-shadow:0 0 0 3px #080d0d,0 0 0 4px #718259,0 0 9px #c8e58b35}
+.panel-key:disabled{opacity:.35}#panel-console #clear-selection{font-size:10px}
+#panel-console #all-stop::after{background:radial-gradient(circle at 38% 30%,#d58470,#9f493b 60%,#66392f)}
+#panel-console #all-stop[aria-pressed=true]::after{background:radial-gradient(circle at 38% 30%,#ffe0b6,#f27052 60%,#a63728);box-shadow:0 0 0 3px #180c09,0 0 0 4px #bd6149,0 0 10px #ff603666}
+#panel-console #emergency-cancel{border:1px solid transparent;color:#ddc3a3}#panel-console #emergency-cancel::after{border-color:#b79368;background:radial-gradient(circle at 38% 30%,#dfc69d,#a98b64 60%,#645342)}
+.panel-control-status{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-top:1px solid #59625d;padding:7px 14px;font-size:10px;min-height:29px}.panel-control-status strong{font-weight:400}.panel-control-status .muted{font-size:10px}.panel-control-status #selection-hint{color:#e4dcad}
+#panel-drawer{border-top:1px solid #59625d;padding:14px;color:var(--text);background:var(--page);scroll-margin-top:8px}
+.panel-drawer-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.panel-drawer-heading h2{font-size:13px;font-weight:400}.panel-drawer-heading button{font-size:11px;padding:5px 9px}
+#panel-drawer-content>.card,#panel-drawer-content>details{margin:0}#panel-drawer #route-activity{margin:0 0 12px}#panel-drawer .route-activity summary{font-size:11px}
+#panel-drawer .model-clock form{position:static;width:auto;padding:14px 0 0;border:0;box-shadow:none;background:transparent}#panel-drawer .model-clock input{max-width:100%}
+#panel-drawer #programming-controls .actions{flex-wrap:wrap;justify-content:flex-start}#panel-drawer .catalog{align-items:end}#panel-drawer .catalog label{display:flex;flex-direction:column;gap:6px;font-size:12px}
+#panel-drawer #open-train-editor{display:none}
+body[data-skin=relay] #panel-console{background:#b3ba9210;border-color:#8b8973}body[data-skin=relay] .panel-key-group,body[data-skin=relay] .panel-control-status{border-color:#8b8973}
+body[data-skin=traffic] .panel-key{font-family:Menlo,Consolas,monospace}body[data-skin=traffic] .panel-key::after{border-radius:2px;box-shadow:none;background:#747c76}body[data-skin=traffic] .panel-key[aria-pressed=true]::after,body[data-skin=traffic] .panel-key[aria-expanded=true]::after{background:#c5d958}
+@media(max-width:700px){#panel-view .panel-actions{flex:0 0 auto;margin-left:auto}#panel-console{margin:0 8px 8px}.panel-key-group{flex:1 1 auto;border-right:0;border-bottom:1px solid #59625d;padding-inline:8px}.panel-key-group:last-child{border-bottom:0}.panel-key{min-width:62px;max-width:66px;font-size:9px}#panel-drawer{padding:12px 8px}.panel-control-status{padding:7px 10px}#panel-drawer .catalog>label{max-width:100%}}

@@ -17,6 +17,8 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Färdig ändring som inväntar publicering
 
+Version 0.20.0 samlar panelmanövrerna under spårplanen som ställverksknappar: signalstopp/återställning, tågvägstyp, tågvägar/återtagning, avbryt val, nödåtertagning, spärrar, programmeringsspår, tågnummer, modellklocka och driftläge. Menyn innehåller stödsidorna. Spårtexterna använder normalvikt 400 med oförändrad storlek och källdata. Tre utseenden, mobilbredd och manövrer är provade i webbläsaren; sex helhetstester och syntax passerar. [Handhavande](panel-och-verktyg.md). Tidigare publiceringshinder nedan kvarstår.
+
 Version 0.19.1 flyttar objektinformation till högerklick och en modal nära klickpunkten. Vänsterklick manövrerar fortsatt växeln, medan muspekning/fokus inte öppnar detaljer. Kompisuppgifter ingår i samma ruta. Tangentbord, fullskärm, skärmkant, mobilbredd, levande återrapport samt stängning utan genomsläppt växelmanöver är provade lokalt. Publiceringshindret nedan kvarstår.
 
 Version 0.19.0 samlar stödfunktionerna i en hamburger-meny och ger TrainMeet en egen sida för serveradress och parkoppling. Adressen sparas över omstart; serverbyte kräver frånkoppling så att ingen gammal nyckel skickas vidare. Samtliga 146 enhetstester och sex processhelhetstester passerar lokalt. Meny, tangentbord, mobilvy, fullskärm, adressvalidering, sidbyte och formulärutkast är provade i webbläsaren. [Anslutning och begränsningar](trainmeet-adapter.md). Riktig TrainMeet-anslutning väntar på Caspers serveradress och placering. Publiceringen inväntar fortfarande besked om den kvarhållna tågvägen nedan.

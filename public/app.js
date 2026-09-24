@@ -10,12 +10,13 @@ import { createOperatingControls } from './operating-controls.js';
 import { createFullscreen } from './fullscreen.js';
 import { createAppMenu } from './app-menu.js';
 import { createContextDialog } from './context-dialog.js';
+import { createPanelConsole } from './panel-console.js';
 const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout, serverOffset = 0;
-let currentPage='panel',appMenu,contextDialog;
+let currentPage='panel',appMenu,contextDialog,panelConsole;
 const pageFromHash=()=>({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet'})[location.hash]||'panel';
 function setPage(page,{historyMode='push'}={}) {
   const hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet'}[page];
@@ -35,6 +36,7 @@ function setPage(page,{historyMode='push'}={}) {
   if(page==='admin')return sourceRegister.open().catch(e=>message(e.message));
 }
 function openTools(section) {
+  if(panelConsole?.open(section))return;
   if(currentPage!=='tools')setPage('tools');
   const target=$(section);if(target){if(target.tagName==='DETAILS')target.open=true;target.scrollIntoView({block:'start'});}
 }
@@ -79,13 +81,13 @@ async function api(path, data) {
     message(''); return answer;
   } catch (e) { message(e.message); } finally { pending--; paint(); }
 }
-function clearChoice(repaint=true) { chosen = null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('selection-hint').hidden=true; $('clear-selection').hidden = true; if(repaint)paint(); }
+function clearChoice(repaint=true) { chosen = null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('selection-hint').hidden=true; $('clear-selection').disabled = true; if(repaint)paint(); }
 function choose(id) {
   manualFeedback?.clear();
   if (!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
   if(state.controls?.mode==='remote') return message('Fjärrläge: lokal tågvägsläggning är spärrad.');
   if (!chosen) {
-    chosen = id; $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + ' → välj slutpunkt'; $('clear-selection').hidden = false; paint();
+    chosen = id; $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + ' → välj slutpunkt'; $('clear-selection').disabled = false; paint();
   } else if (chosen === id) clearChoice();
   else { const from = chosen; clearChoice(); api('route', { from, to: id }); }
 }
@@ -141,7 +143,7 @@ function buildPlan() {
   for (const l of panel.labels.filter(l => !l.hidden && l.y < 840)) {
     const destination=/Lekby|Vagnsta|Kungsfors/i.test(l.text), size=destination?11:l.size||12;
     if(l.br!=null || destination) svg('rect',{x:l.x-3,y:l.y-3,width:l.text.length*size*.58+12,height:size*1.5+3,fill:destination?'#1d211a':`rgb(${l.br},${l.bg},${l.bb})`,class:destination?'destination-plate':''},labels);
-    svg('text', { x: l.x, y: l.y + size, class: 'track-label'+(destination?' destination-label':''), style:`font-size:${size}px;font-weight:${(l.style&1)||destination?700:400}` }, labels, destination?l.text.toUpperCase():l.text);
+    svg('text', { x: l.x, y: l.y + size, class: 'track-label'+(destination?' destination-label':''), style:`font-size:${size}px` }, labels, destination?l.text.toUpperCase():l.text);
   }
   const tt = panel.turntable; svg('circle', { cx: tt.cx, cy: tt.cy, r: tt.r, class: 'rail unconfigured' }, track);
   svg('line', { x1: tt.cx - tt.r, y1: tt.cy, x2: tt.cx + tt.r, y2: tt.cy, class: 'rail unconfigured' }, track);
@@ -215,10 +217,8 @@ function showInspector(kind,name,event) {
   if(kind==='turnout')manualFeedback.select(name);else manualFeedback.clear();
   inspected={kind,name};paintInspector();
   $('inspector-heading').textContent=({turnout:'Växel',signal:'Signal',indication:'Indikering'})[kind]+' '+name;
-  if(currentPage==='panel') {
-    $('inspector-host').append($('inspector-card'));
-    contextDialog.open(event);
-  } else $('inspector-card').scrollIntoView({block:'nearest'});
+  $('inspector-host').append($('inspector-card'));
+  contextDialog.open(event);
 }
 function closeInspector(restoreFocus=true) {
   contextDialog?.close(restoreFocus);
@@ -325,13 +325,13 @@ function paint() {
   const remote=state.controls?.mode==='remote', emergency=state.controls?.emergency, remaining=state.emergencyRemaining?.length||0;
   $('control-mode').textContent=remote?'Fjärrläge · lokal manövrering spärrad':'Lokal manövrering';
   $('remote-notice').hidden=!remote;
-  $('toggle-authority').textContent=remote?'Återgå till lokal manövrering':'Växla till fjärrläge';
+  $('toggle-authority').title=remote?'Återgå till lokal manövrering':'Växla till fjärrläge';
   $('toggle-authority').disabled=!online||pending||!state.modeChange?.allowed;
   $('mode-reason').textContent=state.modeChange?.allowed?'':state.modeChange?.reason||'';
   $('emergency-status').hidden=!emergency||(!state.controls.stopAll&&!remaining);
   $('emergency-status').textContent=remaining?`Nödåtertagning pågår · ${remaining} av ${emergency.routeIds.length} tågvägslås kvar. Fria spår, kända växellägen och nya stoppbesked krävs. Efter omstart: begär återtagning igen.`:emergency?'Nödåtertagning färdig · alla berörda lås är frigivna. Återställ AIS när anläggningen har kontrollerats.':'';
   $('ais-text').textContent=remaining?'AIS aktiv · nödåtertagning pågår, låsen skyddar kvarvarande vägar':'AIS aktiv · alla körmedgivanden återkallade';
-  $('reset-ais').disabled = !usable() || pending || !state.allStopReset?.allowed;
+  $('reset-ais').disabled = !state.controls?.stopAll || !usable() || pending || !state.allStopReset?.allowed;
   $('reset-ais').title=state.allStopReset?.reason||'';
   const blocks=state.controls?.blocked || [];
   $('blocked-count').textContent=blocks.length ? `· ${blocks.length} spärrade` : '';
@@ -345,6 +345,7 @@ function paint() {
   $('event-status').textContent = state.routes.length + ' tågvägslås · ' + Object.keys(config.turnouts).length + ' anslutna växlar';
   html('events', state.events.filter(e => !['report', 'transport'].includes(e.kind)).slice(0, 7).map(e => `<div class="event-row"><time>${time(e.at)}</time><span>${esc(e.message)}</span></div>`).join(''));
   $('wire').textContent = (state.trace || []).slice(0, 40).map(e => `${time(e.at)}  ${e.direction === 'out' ? 'SKICKAT ' : 'MOTTAGET'}  ${e.hex}`).join('\n');
+  panelConsole?.update(state);
 }
 function paintInspector() {
   if (!inspected || !state) return;
@@ -384,6 +385,7 @@ async function start() {
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
   modelClock=createModelClock({api});trainMeet=createTrainMeet({api});feedback=createFeedback();
+  panelConsole=createPanelConsole({onOpen:()=>{if(currentPage!=='panel')setPage('panel');}});
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.
@@ -415,6 +417,7 @@ async function start() {
   $('catalog-to').onchange=catalogHint;
   function routeMode(){ const mode=$('route-mode').value; document.body.dataset.routeMode=mode; clearChoice(); const starts=catalogOrder([...new Set(config.routes.filter(r=>(r.kind||'main')===mode).map(r=>r.from))]); $('catalog-from').innerHTML=starts.map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('');targets(); }
   $('route-mode').onchange=()=>{$('catalog-mode').value=$('route-mode').value;routeMode();}; $('catalog-mode').onchange=()=>{$('route-mode').value=$('catalog-mode').value;routeMode();}; $('catalog-from').onchange=targets;routeMode();
+  for(const b of document.querySelectorAll('#panel-console [data-route-mode]'))b.onclick=()=>{$('route-mode').value=b.dataset.routeMode;$('catalog-mode').value=b.dataset.routeMode;routeMode();};
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };
