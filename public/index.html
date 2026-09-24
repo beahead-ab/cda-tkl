@@ -1,15 +1,67 @@
 <!doctype html>
-<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Charlottendal · TKL</title><link rel="stylesheet" href="/app.css"><script type="module" src="/app.js"></script></head>
-<body data-skin="relay">
-<header class="app-header"><a class="brand" href="/"><span>Charlottendal TKL</span></a><nav><button id="panel-tab" class="selected">Ställverk</button><button id="admin-tab">Anläggningsregister</button></nav><div class="connection" id="connection">Startar…</div><a id="field-link" class="text-link" hidden target="_blank" rel="noopener">Öppna anläggningen ↗</a><a id="account-link" href="/account" hidden>Byt lösenord</a></header>
-<main id="panel-view"><div class="toolbar"><div><span class="eyebrow">LOKAL TÅGKLARERING</span><h1>Charlottendal</h1></div><div class="toolbar-controls"><details id="model-clock" class="model-clock"></details><button id="sound-toggle" aria-pressed="false">Ljud av</button><span id="error-lamp" class="error-lamp" hidden>Fel</span><div class="skin-picker" role="group" aria-label="Panelutseende"><button data-skin="original">Original</button><button data-skin="relay" class="selected">Reläpanel</button><button data-skin="traffic">Trafikskärm</button></div><label class="compact">Zoom <select id="zoom"><option value="100">Anpassa</option><option value="140">140 %</option><option value="200">200 %</option></select></label></div></div>
-<div class="notice"><span class="tag">ANLÄGGNINGSSIMULATOR</span> <span id="profile-summary">Läser anläggningsprofilen…</span></div>
-<section class="panel-shell" aria-label="Charlottendals spårplan"><div class="panel-name"><span>CHARLOTTENDAL</span><span id="panel-connection" class="connection" role="status">Startar…</span><span id="selection-hint">Välj startplupp och därefter slutplupp</span><div class="panel-actions"><select id="route-mode" aria-label="Typ av tågväg"><option value="main">Huvudtågväg</option><option value="shunt">Växeltågväg</option></select><button id="clear-selection" hidden>Avbryt val · Esc</button><button id="all-stop" class="stop-button">Alla signaler i stopp</button><button id="emergency-cancel" class="stop-button" title="Begär stopp och återtagning. Lås släpps först när frigivningsvillkoren är uppfyllda.">Nödåterta alla</button><button id="compact-toggle" aria-pressed="false">Dölj verktyg</button></div></div><div class="panel-scroll"><svg id="track-plan" viewBox="24 128 2102 640" role="group" aria-label="Spårplan med signaler, växlar och tågvägsknappar"></svg></div><p class="panel-scroll-hint">Bläddra spårplanen i sidled för att se hela anläggningen.</p><div class="legend"><span><i class="line free"></i> Fritt</span><span><i class="line route"></i> Tågväg</span><span><i class="line occupied"></i> Belagt</span><span><i class="line held"></i> Lås kvar</span><span><i class="line unknown"></i> Okänt / ej inkopplat</span><span id="derived-indications" aria-label="Beräknade panelindikeringar"></span><span class="legend-end">Signalbilder · JMRI mod59</span></div></section>
-<details id="route-activity" class="route-activity" hidden open><summary id="route-summary">Aktiva tågvägar</summary><div id="active-routes"></div></details>
-<section id="train-information" aria-label="Tågnummer och inkommande tåg"></section>
-<div id="message" class="message" role="status" hidden><span id="message-text"></span><button id="dismiss-message" aria-label="Stäng meddelandet">Stäng</button></div><div id="ais-status" class="ais-status" hidden><span id="ais-text">AIS aktiv · alla körmedgivanden återkallade, tågvägslås behålls</span><button id="reset-ais">Återställ AIS</button></div>
-<div class="authority-bar"><div><strong id="control-mode">Lokal manövrering</strong><span id="mode-reason" class="muted"></span></div><button id="toggle-authority">Växla till fjärrläge</button></div><div id="remote-notice" class="notice" hidden>Fjärrläge · lokal tågvägsläggning och växelmanöver är spärrade. Fjärrsystem är ännu inte anslutet. Stopp och återtagning fungerar fortfarande.</div><div id="emergency-status" class="notice" role="status" hidden></div><div class="work-grid"><section class="card"><div class="card-heading"><h2>Tågvägar</h2><span class="muted">Välj här eller med plupparna i panelen</span></div><div id="route-catalog" class="catalog"></div></section><section id="inspector-card" class="card inspector" aria-label="Detaljer för valt objekt" tabindex="-1"><div class="card-heading"><h2>Detaljer</h2><button id="close-inspector" aria-label="Stäng detaljer">Stäng</button><span class="muted">Signalikon visar detaljer · växelplupp manövrerar</span></div><label>Visa växel<select id="inspect-turnout" aria-label="Visa växel"></select></label><div id="inspector"><p class="muted">Manövrar går till den lokala kärnan. Lägen och signalbesked visas först när återrapporten har kommit.</p><p class="muted">Tryck samma start och slut igen för att återta tågvägen.</p></div></section></div>
-<details class="card operating-tools"><summary>Spårspärrar <span id="blocked-count"></span></summary><p class="muted">En spärr hindrar nya tågvägar över spåret. En redan lagd väg stoppas med låsen kvar. Detektorns verkliga besked ändras inte.</p><div class="catalog"><label>Spårledning<select id="block-choice"></select></label><button id="toggle-block">Spärra spår</button></div><div id="blocked-list" class="field-list"></div></details><details class="card operating-tools" id="operating-controls"></details><details id="trainmeet" class="card operating-tools"></details><section class="card journal"><div class="card-heading"><h2>Händelser</h2><span class="muted" id="event-status">Väntar på rapporter</span></div><div id="events"></div><details><summary>Visa protokolltrafik</summary><div id="recording-tools"></div><pre id="wire"></pre></details></section></main>
+<html lang="sv">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Charlottendal · TKL</title>
+  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body data-skin="relay" data-page="panel">
+<header class="app-header">
+  <a class="brand" href="#panel"><span>Charlottendal TKL</span></a>
+  <nav aria-label="Huvudnavigation"><a id="panel-tab" href="#panel">Ställverk</a><a id="tools-tab" href="#tools">Verktyg</a><a id="admin-tab" href="#register">Anläggningsregister</a></nav>
+  <div class="connection" id="connection">Startar…</div>
+</header>
+<div id="global-status">
+  <div id="message" class="message" role="status" hidden><span id="message-text"></span><button id="dismiss-message" aria-label="Stäng meddelandet">Stäng</button></div>
+  <div id="ais-status" class="ais-status" hidden><span id="ais-text">AIS aktiv · alla körmedgivanden återkallade, tågvägslås behålls</span><button id="reset-ais">Återställ AIS</button></div>
+  <div id="remote-notice" class="notice" hidden>Fjärrläge · lokal tågvägsläggning och växelmanöver är spärrade. Fjärrsystem är ännu inte anslutet. Stopp och återtagning fungerar fortfarande. <a href="#tools">Öppna verktyg</a></div>
+  <div id="emergency-status" class="notice" role="status" hidden></div>
+</div>
+<main id="panel-view">
+  <section class="panel-shell" aria-label="Charlottendals spårplan">
+    <div class="panel-name">
+      <span>CHARLOTTENDAL</span><span id="panel-connection" class="connection" role="status">Startar…</span>
+      <div class="panel-actions">
+        <select id="route-mode" aria-label="Typ av tågväg"><option value="main">Huvudtågväg</option><option value="shunt">Växeltågväg</option></select>
+        <button id="all-stop" class="stop-button">Alla signaler i stopp</button><a id="open-tools" href="#tools">Verktyg</a>
+      </div>
+      <span id="selection-hint" hidden>Välj startplupp och därefter slutplupp</span><button id="clear-selection" hidden>Avbryt val · Esc</button>
+    </div>
+    <div class="panel-scroll"><svg id="track-plan" viewBox="24 128 2102 640" role="group" aria-label="Spårplan med signaler, växlar och tågvägsknappar"></svg></div>
+  </section>
+</main>
+<main id="tools-view" hidden>
+  <div class="tools-heading"><h1 tabindex="-1">Verktyg</h1><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div>
+  <nav class="tools-sections" aria-label="Verktygsavsnitt"><a href="#tools" data-tools-section="traffic-tools">Trafik</a><a href="#tools" data-tools-section="operating-tools">Manövrer</a><a href="#tools" data-tools-section="appearance-tools">Utseende</a><a href="#tools" data-tools-section="connections-tools">Anslutningar</a><a href="#tools" data-tools-section="journal-tools">Händelser</a></nav>
+  <section id="traffic-tools" class="tools-section" aria-labelledby="traffic-heading">
+    <h2 id="traffic-heading">Trafik</h2>
+    <details id="route-activity" class="route-activity" hidden open><summary id="route-summary">Aktiva tågvägar</summary><div id="active-routes"></div></details>
+    <div class="work-grid"><section class="card"><div class="card-heading"><h3>Tågvägar</h3><select id="catalog-mode" aria-label="Typ av tågväg i listan"><option value="main">Huvudtågväg</option><option value="shunt">Växeltågväg</option></select></div><div id="route-catalog" class="catalog"></div></section><div id="inspector-home">
+      <section id="inspector-card" class="card inspector" aria-label="Detaljer för valt objekt" tabindex="-1"><div class="card-heading"><h3>Detaljer</h3><button id="close-inspector" aria-label="Stäng detaljer">Stäng</button></div><label>Visa växel<select id="inspect-turnout" aria-label="Visa växel"></select></label><div id="inspector"><p class="muted">Välj en växel här eller klicka på en signal i spårplanen.</p></div></section>
+    </div></div>
+    <section id="train-information" aria-label="Tågnummer och inkommande tåg"></section>
+  </section>
+  <section id="operating-tools" class="tools-section" aria-labelledby="operating-heading">
+    <h2 id="operating-heading">Manövrer och spärrar</h2>
+    <div class="card"><div class="authority-bar"><div><strong id="control-mode">Lokal manövrering</strong><span id="mode-reason" class="muted"></span></div><button id="toggle-authority">Växla till fjärrläge</button></div><button id="emergency-cancel" class="stop-button" title="Begär stopp och återtagning. Lås släpps först när frigivningsvillkoren är uppfyllda.">Nödåterta alla</button></div>
+    <details class="card operating-tools"><summary>Spårspärrar <span id="blocked-count"></span></summary><p class="muted">En spärr hindrar nya tågvägar över spåret. En redan lagd väg stoppas med låsen kvar. Detektorns verkliga besked ändras inte.</p><div class="catalog"><label>Spårledning<select id="block-choice"></select></label><button id="toggle-block">Spärra spår</button></div><div id="blocked-list" class="field-list"></div></details>
+    <details class="card operating-tools" id="operating-controls"></details>
+    <details id="model-clock" class="card model-clock"></details>
+  </section>
+  <section id="appearance-tools" class="tools-section" aria-labelledby="appearance-heading">
+    <h2 id="appearance-heading">Utseende och ljud</h2>
+    <div class="card appearance-controls"><div class="skin-picker" role="group" aria-label="Panelutseende"><button data-skin="original">Original</button><button data-skin="relay" class="selected">Reläpanel</button><button data-skin="traffic">Trafikskärm</button></div><label>Zoom <select id="zoom"><option value="100">Anpassa</option><option value="140">140 %</option><option value="200">200 %</option></select></label><button id="sound-toggle" aria-pressed="false">Ljud av</button><span id="error-lamp" class="error-lamp" hidden>Fel</span></div>
+    <details class="card"><summary>Teckenförklaring</summary><div class="legend"><span><i class="line free"></i> Fritt</span><span><i class="line route"></i> Tågväg</span><span><i class="line occupied"></i> Belagt</span><span><i class="line held"></i> Lås kvar</span><span><i class="line unknown"></i> Okänt / ej inkopplat</span><span id="derived-indications" aria-label="Beräknade panelindikeringar"></span></div></details>
+  </section>
+  <section id="connections-tools" class="tools-section" aria-labelledby="connections-heading">
+    <h2 id="connections-heading">Anslutningar och konto</h2>
+    <div class="card"><p id="profile-summary">Läser anläggningsprofilen…</p><div class="tool-links"><a id="field-link" hidden target="_blank" rel="noopener">Öppna anläggningen ↗</a><a href="#register">Anläggningsregister →</a><a id="account-link" href="/account" hidden>Byt lösenord</a></div></div>
+    <details id="trainmeet" class="card operating-tools"></details>
+  </section>
+  <section id="journal-tools" class="card journal tools-section" aria-labelledby="journal-heading"><div class="card-heading"><h2 id="journal-heading">Händelser</h2><span class="muted" id="event-status">Väntar på rapporter</span></div><div id="events"></div><details><summary>Visa protokolltrafik</summary><div id="recording-tools"></div><pre id="wire"></pre></details></section>
+</main>
 <main id="admin-view" hidden><p class="muted">Läser det kompletta källregistret…</p></main>
-<footer>Charlottendal TKL · version 0.16.2 <span>TrainMeet · separat tåginformation</span></footer>
+<div id="inspector-host" class="inspector-host" hidden></div><div id="manual-feedback-host"></div>
+<footer>Charlottendal TKL · version 0.17.0</footer>
 </body></html>

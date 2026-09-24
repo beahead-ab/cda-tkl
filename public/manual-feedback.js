@@ -1,5 +1,5 @@
 // Presentation only: permissions and all turnout orders stay in the server.
-export function createManualFeedback({config, plan, scroll, panelView, stateOf, online, isBlocked, esc}) {
+export function createManualFeedback({config, plan, scroll, panelView, stateOf, online, isBlocked, esc, revealPlan=()=>{}}) {
   const box=document.createElement('aside');
   box.className='manual-feedback';box.hidden=true;box.setAttribute('aria-label','Manuell växelmanöver');
   box.innerHTML='<button class="manual-feedback-close" type="button" aria-label="Stäng växelinformation">×</button><div id="manual-feedback-body" role="status" aria-live="polite" aria-atomic="true"></div>';
@@ -15,12 +15,13 @@ export function createManualFeedback({config, plan, scroll, panelView, stateOf, 
   body.onclick=e=>{
     const name=e.target.closest('[data-show-turnout]')?.dataset.showTurnout;
     const marker=markers.get(name);if(!marker)return;
-    selected=active();hovered=focused=null;
+    const nameBeforeNavigation=active();revealPlan();selected=nameBeforeNavigation;hovered=focused=null;update();
     marker.scrollIntoView({block:'center',inline:'center',behavior:'instant'});update();
   };
   function visible(name) {
     const marker=markers.get(name);if(!marker)return false;
     const r=marker.getBoundingClientRect(),clip=scroll.getBoundingClientRect(),cover=box.getBoundingClientRect();
+    if(!r.width||!r.height||!clip.width||!clip.height)return false;
     const inside=r.left>=Math.max(0,clip.left)&&r.right<=Math.min(innerWidth,clip.right)&&r.top>=Math.max(0,clip.top)&&r.bottom<=Math.min(innerHeight,clip.bottom);
     const covered=!box.hidden&&r.right>cover.left&&r.left<cover.right&&r.bottom>cover.top&&r.top<cover.bottom;
     return inside&&!covered;

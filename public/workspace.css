@@ -1,0 +1,27 @@
+/* A quiet operating panel with supporting functions on their own page. */
+body[data-page=panel]{background:#101316}
+body[data-page=panel]>.app-header,body[data-page=panel]>footer{display:none}
+#panel-view{padding:0;max-width:none}
+#panel-view .panel-shell{border:0;border-radius:0;box-shadow:none}
+#panel-view .panel-scroll{padding:0}
+#panel-view .panel-name{padding:10px 14px;gap:12px}
+#panel-view #panel-connection{display:flex;margin:0;max-width:none;letter-spacing:0;white-space:nowrap;font-size:10px}
+#panel-view #selection-hint{flex-basis:auto;margin:0;letter-spacing:0}
+#panel-view #clear-selection{font-size:11px}
+#open-tools,.app-header nav a,.back-to-panel{display:inline-block;text-decoration:none;border:1px solid var(--border);border-radius:3px;padding:6px 10px;font-size:12px;color:var(--text)}
+#open-tools{letter-spacing:0;white-space:nowrap}
+.app-header nav{display:flex;gap:6px;flex-wrap:wrap}.app-header nav a.selected{background:#293931;border-color:#779281}
+#tools-view{max-width:1150px;margin:auto;padding:24px 20px}
+.tools-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.tools-heading h1{font-size:23px;margin:0}.tools-heading h1:focus{outline:none}
+.tools-sections{display:flex;gap:18px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding:18px 0}.tools-sections a{color:var(--muted);font-size:13px;text-decoration:none}.tools-sections a:hover{color:var(--text)}
+.tools-section{margin-top:28px;scroll-margin-top:18px}.tools-section>h2{font-size:16px;font-weight:500;margin:0 0 12px}.card-heading h3{margin:0;font-size:13px;font-weight:500}
+#tools-view .work-grid{margin-top:14px}.appearance-controls,.tool-links{display:flex;align-items:center;flex-wrap:wrap;gap:16px}.appearance-controls label,.tool-links a{font-size:12px}.tool-links{margin-top:14px}
+#tools-view #model-clock{margin-top:16px;min-width:0}#tools-view .model-clock form{position:static;width:auto;padding:14px 0 0;border:0;box-shadow:none;background:transparent}#tools-view .model-clock input{max-width:100%}
+#inspector-home .inspector{height:100%}#inspector-home #close-inspector{display:none}
+.inspector-host .inspector{position:fixed;z-index:40;right:16px;bottom:16px;width:min(460px,calc(100vw - 32px));max-height:65vh;overflow:auto;box-shadow:0 8px 40px #0009;border-color:#6e8780}
+.inspector-host #close-inspector{display:block;margin-left:auto}.inspector-host .inspector:focus{outline:none}
+#global-status:empty{display:none}#global-status>div:not([hidden]){margin:0;border-radius:0;padding:10px 14px}#global-status .message{display:flex;align-items:center;gap:14px}#global-status .notice a{margin-left:10px;white-space:nowrap}
+@media(max-width:700px){#tools-view{padding:18px 12px}.tools-heading h1{font-size:20px}.tools-heading{gap:10px}.tools-sections{gap:14px}.appearance-controls{align-items:flex-start;gap:14px}.appearance-controls .skin-picker{flex-wrap:wrap}#panel-view .panel-name{padding:8px 10px;gap:8px}#panel-view .panel-name>span:first-child{font-size:11px;letter-spacing:2px}#panel-view .panel-actions{flex:1 1 100%;margin:0;gap:6px}#panel-view .panel-actions #open-tools{margin-left:auto}#panel-view .panel-actions button,#open-tools{font-size:10px}#panel-view #selection-hint{flex:1 1 auto;font-size:10px}.inspector-host .inspector{right:8px;bottom:8px;width:calc(100vw - 16px)}.tool-links{align-items:flex-start;flex-direction:column}#tools-view .model-clock .catalog>label{max-width:100%}}
+#tools-view .work-grid{align-items:start}#inspector-home .inspector{height:auto}
+body[data-page]:not([data-page=panel])>.app-header{position:sticky;top:0;z-index:30}
+.tools-section{scroll-margin-top:85px}

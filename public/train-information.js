@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export function createTrainInformation({catalog,plan,displayName,openSource}) {
+export function createTrainInformation({catalog,plan,displayName,openSource,onOpen=()=>{}}) {
   const fields=new Map(catalog.fields.map(f=>[f.key,f])),nodes=[],chips=[];
   let info=null,state=null,online=false,dirty=false,busy=false,base=null;
   const title=f=>f.kind==='incoming'?'Inkommande '+f.label:displayName('blocks',f.name)+(f.label!==f.name?' · '+f.label:'');
@@ -99,6 +99,7 @@ export function createTrainInformation({catalog,plan,displayName,openSource}) {
     finally {busy=false;paint();}
   }
   function open(key) {
+    onOpen();
     $('train-editor').open=true;
     if(dirty) {$('train-field').value=activeKey;$('train-message').textContent='Spara texten eller välj Läs in senaste innan du byter fält.';}
     else {if(fields.has(key))$('train-field').value=key;activeKey=$('train-field').value;$('train-message').textContent='';loadEditor();}

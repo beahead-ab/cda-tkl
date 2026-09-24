@@ -12,11 +12,26 @@ const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout, serverOffset = 0;
-function setPage(page) {
-  history.replaceState(null,'',page==='admin'?'#register':'#panel');
-  if(page==='admin') setCompact(false);
-  for (const p of ['panel','admin']) { $(p+'-view').hidden=p!==page; $(p+'-tab').classList.toggle('selected',p===page); }
-  if(page==='admin') return sourceRegister.open().catch(e=>message(e.message));
+let currentPage='panel';
+const pageFromHash=()=>location.hash==='#register'?'admin':location.hash==='#tools'?'tools':'panel';
+function setPage(page,{historyMode='push'}={}) {
+  const hash={panel:'#panel',tools:'#tools',admin:'#register'}[page];
+  if(!hash)return;
+  if(historyMode!=='none'&&location.hash!==hash)history[historyMode==='replace'?'replaceState':'pushState'](null,'',hash);
+  closeInspector(false);manualFeedback?.clear();
+  if(currentPage!==page)clearChoice(false);
+  currentPage=page;document.body.dataset.page=page;
+  for(const p of ['panel','tools','admin']) {
+    $(p+'-view').hidden=p!==page;$(p+'-tab').classList.toggle('selected',p===page);
+    if(p===page)$(p+'-tab').setAttribute('aria-current','page');else $(p+'-tab').removeAttribute('aria-current');
+  }
+  document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister'})[page]+' · Charlottendal TKL';
+  window.scrollTo(0,0);paint();
+  if(page==='admin')return sourceRegister.open().catch(e=>message(e.message));
+}
+function openTools(section) {
+  if(currentPage!=='tools')setPage('tools');
+  const target=$(section);if(target){if(target.tagName==='DETAILS')target.open=true;target.scrollIntoView({block:'start'});}
 }
 async function openSource(kind,name) { await setPage('admin'); await sourceRegister.open(kind,name); }
 const rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], sourceLamps=[],routeNodes = new Map();
@@ -51,13 +66,13 @@ async function api(path, data) {
     message(''); return answer;
   } catch (e) { message(e.message); } finally { pending--; paint(); }
 }
-function clearChoice(repaint=true) { chosen = null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('clear-selection').hidden = true; if(repaint)paint(); }
+function clearChoice(repaint=true) { chosen = null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('selection-hint').hidden=true; $('clear-selection').hidden = true; if(repaint)paint(); }
 function choose(id) {
   manualFeedback?.clear();
   if (!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
   if(state.controls?.mode==='remote') return message('Fjärrläge: lokal tågvägsläggning är spärrad.');
   if (!chosen) {
-    chosen = id; $('selection-hint').textContent = label(id) + ' → välj slutpunkt'; $('clear-selection').hidden = false; paint();
+    chosen = id; $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + ' → välj slutpunkt'; $('clear-selection').hidden = false; paint();
   } else if (chosen === id) clearChoice();
   else { const from = chosen; clearChoice(); api('route', { from, to: id }); }
 }
@@ -84,7 +99,7 @@ function buildPlan() {
   layout = panelLayout(panel);
   const {x,y,width,height}=layout.crop;
   $('track-plan').setAttribute('viewBox',`${x} ${y} ${width} ${height}`);
-  manualFeedback=createManualFeedback({config,plan:$('track-plan'),scroll:document.querySelector('.panel-scroll'),panelView:$('panel-view'),stateOf:()=>state,online:()=>online,isBlocked,esc});
+  manualFeedback=createManualFeedback({config,plan:$('track-plan'),scroll:document.querySelector('.panel-scroll'),panelView:$('manual-feedback-host'),stateOf:()=>state,online:()=>online,isBlocked,esc,revealPlan:()=>{if(currentPage!=='panel')setPage('panel');}});
   const root = $('track-plan'), track = svg('g', {}, root), turnouts = svg('g', {}, root);
   const flow = svg('g', { id: 'flow-layer', 'pointer-events': 'none' }, root), labels = svg('g', {}, root), icons = svg('g', {}, root), controls = svg('g', {}, root);
   for (const s of panel.segs.filter(s => s.b !== 'frame' && !s.hide && Math.min(s.y1, s.y2) < 850)) {
@@ -186,20 +201,15 @@ function showInspector(kind,name) {
   if(kind==='turnout')manualFeedback.select(name);else manualFeedback.clear();
   inspectorOrigin=document.activeElement;
   inspected={kind,name};paintInspector();
-  if(document.body.classList.contains('panel-compact')) {
-    document.body.classList.add('inspector-open');
+  if(currentPage==='panel') {
+    $('inspector-host').append($('inspector-card'));$('inspector-host').hidden=false;
     $('inspector-card').focus({preventScroll:true});
   } else $('inspector-card').scrollIntoView({block:'nearest'});
 }
-function closeInspector() {
-  document.body.classList.remove('inspector-open');
-  if(inspectorOrigin?.isConnected)inspectorOrigin.focus({preventScroll:true});
-}
-function setCompact(compact) {
-  document.body.classList.toggle('panel-compact',compact);
-  document.body.classList.remove('inspector-open');
-  $('compact-toggle').textContent=compact?'Visa verktyg':'Dölj verktyg';
-  $('compact-toggle').setAttribute('aria-pressed',String(compact));
+function closeInspector(restoreFocus=true) {
+  if($('inspector-host').hidden)return;
+  $('inspector-host').hidden=true;$('inspector-home').append($('inspector-card'));
+  if(restoreFocus&&inspectorOrigin?.isConnected)inspectorOrigin.focus({preventScroll:true});
 }
 function inspectIndication(name){showInspector('indication',name);}
 function isBlocked(name) { const address=config.blocks[name]?.address;return address!=null && (state?.controls?.blocked || []).some(n=>config.blocks[n]?.address===address); }
@@ -322,6 +332,7 @@ function paint() {
 }
 function paintInspector() {
   if (!inspected || !state) return;
+  $('inspect-turnout').value=inspected.kind==='turnout'?inspected.name:'';
   if(inspected.kind==='indication')return paintIndication(inspected.name);
   const { kind, name } = inspected, b = kind === 'signal' ? config.signals[name] : config.turnouts[name];
   const sourceKind = kind === 'signal' ? 'signals' : 'layoutTurnouts';
@@ -356,8 +367,7 @@ async function start() {
     .then(results => { if(results.some(r=>r.status==='rejected')) message('En signalbild kunde inte laddas. Berörd signal visas som okänd.'); });
   sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   buildPlan();
-  trainInformation=createTrainInformation({catalog:config.trainFields,plan:$('track-plan'),displayName,openSource});
-  $('compact-toggle').onclick=()=>setCompact(!document.body.classList.contains('panel-compact'));
+  trainInformation=createTrainInformation({catalog:config.trainFields,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
   $('close-inspector').onclick=closeInspector;
   $('dismiss-message').onclick=()=>message('');
 
@@ -379,18 +389,25 @@ async function start() {
   function targets(){const from=$('catalog-from').value;$('catalog-to').innerHTML=catalogOrder(config.routes.filter(r=>r.from===from).map(r=>r.to)).map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('');catalogHint();}
   $('catalog-to').onchange=catalogHint;
   function routeMode(){ const mode=$('route-mode').value; document.body.dataset.routeMode=mode; clearChoice(); const starts=catalogOrder([...new Set(config.routes.filter(r=>(r.kind||'main')===mode).map(r=>r.from))]); $('catalog-from').innerHTML=starts.map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('');targets(); }
-  $('route-mode').onchange=routeMode; $('catalog-from').onchange=targets;routeMode();
+  $('route-mode').onchange=()=>{$('catalog-mode').value=$('route-mode').value;routeMode();}; $('catalog-mode').onchange=()=>{$('route-mode').value=$('catalog-mode').value;routeMode();}; $('catalog-from').onchange=targets;routeMode();
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };
   $('clear-selection').onclick = ()=>clearChoice();
-  document.addEventListener('keydown', e => { if(e.key==='Escape'){manualFeedback.clear();if(document.body.classList.contains('inspector-open'))closeInspector();else clearChoice();} });
+  document.addEventListener('keydown', e => { if(e.key==='Escape'){manualFeedback.clear();if(!$('inspector-host').hidden)closeInspector();else clearChoice();} });
   for (const b of document.querySelectorAll('.skin-picker button')) b.onclick = () => setSkin(b.dataset.skin);
   function setSkin(value) { document.body.dataset.skin = value; localStorage.setItem('charlottendal-skin', value); for (const b of document.querySelectorAll('.skin-picker button')) b.classList.toggle('selected', b.dataset.skin === value); }
   setSkin(localStorage.getItem('charlottendal-skin') || 'relay');
   $('zoom').onchange = () => { $('track-plan').style.width = $('zoom').value + '%'; };
-  for (const page of ['panel','admin']) $(page+'-tab').onclick=()=>setPage(page);
-  setPage(location.hash==='#register'?'admin':'panel');
+  document.addEventListener('click',e=>{
+    const section=e.target.closest('[data-tools-section]');
+    if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}
+    const link=e.target.closest('a[href^="#"]');
+    const page={'#panel':'panel','#tools':'tools','#register':'admin'}[link?.getAttribute('href')];
+    if(page){e.preventDefault();setPage(page);}
+  });
+  window.addEventListener('hashchange',()=>setPage(pageFromHash(),{historyMode:'none'}));
+  setPage(pageFromHash(),{historyMode:'replace'});
   applyPresentation(config.presentation);
   const source = new EventSource('/api/events');
   let presentationLoading=false;
