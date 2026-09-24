@@ -107,6 +107,27 @@ export class Engine extends EventEmitter {
     this.send(switchOrder(b.address, physical));
     this.log('order', `${name}: begär ${position === 'C' ? 'rakt' : 'avvikande'}.`, { address: b.address });
   }
+  turnoutConfirmed(name, position) {
+    const s=this.turnouts[name];
+    return this.fresh(s) && s.position===position && s.updatedAt>=(s.commandAt||0) && (!s.desired || s.desired===position);
+  }
+  sharedTurnoutSetting(route,name,position) {
+    return this.turnouts[name].desired===position && this.routes.some(other=>other.id!==route.id && other.state==='setting' && other.turnouts[name]===position);
+  }
+  turnoutMovementReason(route) {
+    // A coupled turnout may be outside the train's passage detectors. Its
+    // own detector still protects movement; adding it to route.blocks would
+    // incorrectly make automatic release wait for a train to pass that track.
+    for(const [name,position] of Object.entries(route.turnouts)) {
+      if(this.turnoutConfirmed(name,position)) continue;
+      const block=this.profile.turnouts[name].block, binding=this.profile.blocks[block];
+      if(!binding) return `${name} saknar verifierad spårledning för omläggning.`;
+      if(this.trackBlocked(block)) return `${name} kan inte läggas om: ${block} är administrativt spärrat.`;
+      if(!this.fresh(this.blocks[block]) || this.blocks[block].occupied!==false) return `${name} kan inte läggas om: ${block} är belagt eller saknar aktuell återrapport.`;
+      if(!this.sharedTurnoutSetting(route,name,position) && this.routes.some(other=>other.id!==route.id && other.blocks.some(n=>this.profile.blocks[n].address===binding.address))) return `${name} kan inte läggas om: ${block} är reserverat av en annan tågväg.`;
+    }
+    return null;
+  }
   request(from, to) {
     const existing = this.routes.find(r => r.from === from && r.to === to);
     if (existing) return this.cancel(existing.id);
@@ -129,13 +150,18 @@ export class Engine extends EventEmitter {
       if (def.signals.some(s => route.signals.includes(s))) throw Error('Signal används av en annan tågväg.');
       if (Object.entries(def.turnouts).some(([n, p]) => route.turnouts[n] && route.turnouts[n] !== p)) throw Error('En kopplad växel är låst i motsatt läge.');
     }
+    const movementReason=this.turnoutMovementReason(def);if(movementReason)throw Error(movementReason);
     const r = { ...structuredClone(def), definitionId: def.id, id: randomUUID(), state: 'setting', createdAt: this.now(), cancelRequested: false, nextSignal: def.signals.length - 1, reason: 'Inväntar växlarnas återrapporter.' };
     if(r.autoRelease) r.passage=[...new Set(r.blocks.map(b=>this.profile.blocks[b].address))].map(address=>({address,state:'pending'}));
     this.routes.push(r); this.persist(); // Locks are durable BEFORE any field commands.
     this.log('route-request', `${r.label}: resurser reserverade.`);
     for (const [n, p] of Object.entries(r.turnouts)) {
       const shared = this.routes.some(other => other.id !== r.id && other.turnouts[n] === p);
-      if (!(shared && this.fresh(this.turnouts[n]) && this.turnouts[n].position === p)) this.turnoutOrder(n, p);
+      const address=this.profile.blocks[this.profile.turnouts[n].block]?.address;
+      const companion=!r.blocks.some(block=>this.profile.blocks[block].address===address);
+      // A second compatible route waits for the first route's pending order;
+      // it must not restart movement of an already reserved turnout.
+      if (!this.sharedTurnoutSetting(r,n,p) && !((shared || companion) && this.turnoutConfirmed(n,p))) this.turnoutOrder(n, p);
     }
     return r;
   }
@@ -322,6 +348,7 @@ export class Engine extends EventEmitter {
         this.hold(r, this.storageFault ? 'Lagringsfel.' : !this.connected ? 'Ingen anslutning.' : 'Beläggning eller okänd detektor.', free ? 'held' : 'occupied'); continue;
       }
       if (r.state === 'setting') {
+        const movementReason=this.turnoutMovementReason(r);if(movementReason){this.hold(r,movementReason);continue;}
         if (correct) { r.state = 'establishing'; r.establishedAt = now; r.reason = 'Växellägen bekräftade. Tågvägen etableras.'; this.persist(); this.log('established', `${r.label}: växlarna återrapporterar rätt läge.`); }
         else if (now - r.createdAt > this.profile.commandTimeoutMs) this.hold(r, 'Växelåterrapport uteblev eller visar fel läge.');
         continue;

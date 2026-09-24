@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { Engine } from '../src/engine.mjs';
 import { Field } from '../src/field.mjs';
-import { decode, sensorReport, signalReport } from '../src/protocol.mjs';
+import { decode, sensorReport, signalReport, switchOrder } from '../src/protocol.mjs';
 import { RoutePolicy } from '../src/route-policy.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url)));
 const profile=read('profiles/charlottendal-network.json'), fieldProfile=read('profiles/simulator-network.json'), source=read('public/data/operations-source.json');
@@ -269,4 +269,106 @@ test('failed emergency persistence still sends STOP and never removes a reservat
   assert.ok(r.commands.slice(before).length>=Object.keys(profile.signals).length);
   assert.ok(r.commands.slice(before).every(c=>c.position==='T'),'failure sends only stop requests');
   assert.throws(()=>r.engine.setMode('remote'),/lagring/);
+});
+
+// The crossover on the Lekby side: each half must protect its companion,
+// including when only one half is physically traversed by the chosen route.
+test('Vx100/Vx101 manual movement works from either half in both directions',()=>{
+  for(const selected of ['Vx100','Vx101']) {
+    const r=rig();
+    for(const position of ['T','C']) {
+      const before=r.commands.length;r.engine.manual(selected,position);
+      const sent=r.commands.slice(before);
+      assert.deepEqual(sent.map(c=>[c.address,c.position]).sort((a,b)=>a[0]-b[0]),[[100,position],[101,position]]);
+      assert.equal(r.engine.turnouts.Vx100.position,'unknown');
+      assert.equal(r.engine.turnouts.Vx101.position,'unknown','sending a command is not confirmation');
+      r.drain();r.advance(300);
+      for(const name of ['Vx100','Vx101']) {
+        assert.equal(r.field.turnouts[name].position,position,selected+' must command the independent field companion');
+        assert.equal(r.engine.turnouts[name].position,position,selected+' must receive each companion report');
+      }
+    }
+  }
+});
+test('every network route reserves the complete source-linked companion group',()=>{
+  for(const route of profile.routes)for(const [name,position] of Object.entries(route.turnouts)) {
+    for(const peer of profile.coupled[name]||[name])assert.equal(route.turnouts[peer],position,route.id+' must reserve '+peer+' together with '+name);
+  }
+});
+test('a route along one track locks the off-path crossover companion without a partial command',()=>{
+  const r=rig(),route=r.request('htvCu','htvSpIA');r.advance(4000);
+  assert.equal(route.state,'active');
+  assert.ok(!route.flow.some(p=>p.id.startsWith('VX:Vx101:')),'Vx101 is the companion on the other track');
+  assert.equal(route.turnouts.Vx100,'C');assert.equal(route.turnouts.Vx101,'C');
+  for(const selected of ['Vx100','Vx101']) {
+    const before=r.commands.length;
+    assert.throws(()=>r.engine.manual(selected,'T'),/låst/);
+    assert.equal(r.commands.length,before,'the whole group must be refused before either half moves');
+  }
+  assert.equal(r.field.turnouts.Vx100.position,'C');assert.equal(r.field.turnouts.Vx101.position,'C');
+});
+test('missing crossover companion feedback prevents GO and retains locks after recovery',()=>{
+  const r=rig();r.field.setFault('turnout','Vx101');r.drain();
+  const route=r.request('htvAu','htvSpIIA');r.drain();r.advance(profile.commandTimeoutMs+1000);
+  assert.equal(route.turnouts.Vx100,'T');assert.equal(route.turnouts.Vx101,'T');
+  assert.equal(r.field.turnouts.Vx100.position,'T');assert.equal(r.engine.turnouts.Vx101.position,'unknown');
+  assert.equal(route.state,'held');assert.equal(r.engine.routes.length,1);
+  const signalAddresses=new Set(Object.values(profile.signals).map(s=>s.address));
+  assert.ok(!r.commands.some(c=>signalAddresses.has(c.address)&&c.position==='C'),'no signal may receive GO when one half is unconfirmed');
+  assert.throws(()=>r.engine.manual('Vx100','C'),/låst/);
+  r.field.setFault('turnout','');r.drain();r.advance(1000);
+  assert.equal(r.engine.turnouts.Vx101.position,'T');assert.equal(route.state,'held','a late report must not resume the route');
+  r.engine.cancel(route.id);r.drain();r.advance(300);assert.equal(r.engine.routes.length,0);
+});
+test('unexpected movement of the off-path companion stops the protected route',()=>{
+  const r=rig(),route=r.request('htvCu','htvSpIA');r.advance(4000);
+  assert.equal(route.state,'active');
+  // A field-side order represents another controller or a wrong physical state.
+  r.field.accept(switchOrder(profile.turnouts.Vx101.address,'T'));r.drain();r.advance(300);
+  assert.equal(route.state,'held');assert.equal(r.engine.routes.length,1);
+  assert.ok(route.signals.every(name=>r.engine.signals[name].desired==='STOP'));
+  assert.equal(r.engine.turnouts.Vx100.position,'C');assert.equal(r.engine.turnouts.Vx101.position,'T');
+  const before=r.commands.length;assert.throws(()=>r.engine.manual('Vx100','T'),/låst/);assert.equal(r.commands.length,before);
+});
+test('route creation cannot move an occupied crossover companion on the other track',()=>{
+  const r=rig();r.engine.manual('Vx100','T');r.drain();r.advance(300);
+  r.field.setBlock('S101',true);r.drain();
+  const before=r.commands.length;
+  assert.throws(()=>r.request('htvCu','htvSpIA'),/Vx101|S101/);
+  assert.equal(r.commands.length,before,'reject the whole request before any field order');
+  assert.equal(r.engine.routes.length,0);
+  assert.equal(r.field.turnouts.Vx100.position,'T');assert.equal(r.field.turnouts.Vx101.position,'T');
+});
+test('an occupied off-path companion already confirmed in the required position receives no order',()=>{
+  const r=rig();r.field.setBlock('S101',true);r.drain();const before=r.commands.length;
+  const route=r.request('htvCu','htvSpIA');r.drain();r.advance(4000);
+  assert.equal(route.state,'active',route.reason);
+  assert.ok(!r.commands.slice(before).some(c=>c.address===profile.turnouts.Vx101.address));
+  assert.ok(!route.blocks.includes('S101'),'companion protection must not become a fictitious passage detector');
+  assert.equal(route.turnouts.Vx101,'C');
+});
+test('occupancy during off-path companion movement holds the route without any GO permission',()=>{
+  const r=rig();r.engine.manual('Vx100','T');r.drain();r.advance(300);
+  const before=r.commands.length,route=r.request('htvCu','htvSpIA');r.drain();
+  assert.equal(r.engine.turnouts.Vx101.position,'unknown');
+  r.field.setBlock('S101',true);r.drain();r.advance(4000);
+  assert.equal(route.state,'held');assert.match(route.reason,/Vx101|S101/);assert.equal(r.engine.routes.length,1);
+  const signalAddresses=new Set(Object.values(profile.signals).map(s=>s.address));
+  assert.ok(!r.commands.slice(before).some(c=>signalAddresses.has(c.address)&&c.position==='C'));
+});
+test('unknown or administratively blocked companion detection prevents the whole route movement',()=>{
+  for(const fault of ['unknown','blocked']) {
+    const r=rig();r.engine.manual('Vx100','T');r.drain();r.advance(300);
+    if(fault==='unknown'){r.field.setFault('sensor','S101');r.drain();r.advance(profile.staleMs+1000);}
+    else r.engine.blockTrack('S101',true);
+    const before=r.commands.length;
+    assert.throws(()=>r.request('htvCu','htvSpIA'),/Vx101|S101/);
+    assert.equal(r.commands.length,before,fault+' must refuse before any turnout or signal command');assert.equal(r.engine.routes.length,0);
+  }
+});
+test('compatible routes share a pending companion order without restarting either turnout',()=>{
+  const r=rig();r.engine.manual('Vx100','T');r.drain();r.advance(300);const before=r.commands.length;
+  const a=r.request('htvCu','htvSpIA'),b=r.request('htvAn','htvSpIIA');
+  for(const name of ['Vx100','Vx101'])assert.equal(r.commands.slice(before).filter(c=>c.address===profile.turnouts[name].address).length,1,name+' receives only the first route order');
+  r.drain();r.advance(4000);assert.equal(a.state,'active',a.reason);assert.equal(b.state,'active',b.reason);
 });

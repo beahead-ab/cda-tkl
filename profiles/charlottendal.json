@@ -15,72 +15,84 @@
       "address": 121,
       "inverted": false,
       "source": "LT121",
+      "block": "S121",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx120": {
       "address": 120,
       "inverted": false,
       "source": "LT120",
+      "block": "S120",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx122": {
       "address": 122,
       "inverted": false,
       "source": "LT122",
+      "block": "S122",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx123": {
       "address": 123,
       "inverted": false,
       "source": "LT123",
+      "block": "S123",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx126": {
       "address": 126,
       "inverted": false,
       "source": "LT126",
+      "block": "S126",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx131": {
       "address": 131,
       "inverted": true,
       "source": "LT131",
+      "block": "S131",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx95": {
       "address": 95,
       "inverted": false,
       "source": "LT95",
+      "block": "S95",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx100": {
       "address": 100,
       "inverted": false,
       "source": "LT100",
+      "block": "S100",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx101": {
       "address": 101,
       "inverted": false,
       "source": "LT101",
+      "block": "S101",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx102": {
       "address": 102,
       "inverted": false,
       "source": "LT102",
+      "block": "S102",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx117": {
       "address": 117,
       "inverted": false,
       "source": "LT117",
+      "block": "S117",
       "provenance": "JMRI source; electrical behavior not measured"
     },
     "Vx110": {
       "address": 110,
       "inverted": false,
       "source": "LT110",
+      "block": "S110",
       "provenance": "JMRI source; electrical behavior not measured"
     }
   },
@@ -221,6 +233,18 @@
       "address": 3023,
       "activeMeansOccupied": true,
       "sourceSensor": "slS117",
+      "provenance": "Explicit bench address. Internal/derived source sensor is NOT claimed to be a physical LS address."
+    },
+    "S120": {
+      "address": 3024,
+      "activeMeansOccupied": true,
+      "sourceSensor": "slS120",
+      "provenance": "Explicit bench address. Internal/derived source sensor is NOT claimed to be a physical LS address."
+    },
+    "S110": {
+      "address": 3025,
+      "activeMeansOccupied": true,
+      "sourceSensor": "slS110",
       "provenance": "Explicit bench address. Internal/derived source sensor is NOT claimed to be a physical LS address."
     }
   },

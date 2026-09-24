@@ -19,9 +19,9 @@ const names = [...new Set(routes.flatMap(r => Object.keys(r.turnouts)))];
 const turnouts = Object.fromEntries(names.map(name => {
   const d = admin.turnouts.find(t => t.id === name && /^LT\d+$/.test(t.sys));
   if (!d) throw Error('Saknad källadress ' + name);
-  return [name, { address: +d.sys.slice(2), inverted: d.inverted === 'true', source: d.sys, provenance: 'JMRI source; electrical behavior not measured' }];
+  return [name, { address: +d.sys.slice(2), inverted: d.inverted === 'true', source: d.sys, block: topology.turnouts[name].block, provenance: 'JMRI source; electrical behavior not measured' }];
 }));
-const blocks = Object.fromEntries([...new Set(routes.flatMap(r => r.blocks))].map((name, i) => [name, {
+const blocks = Object.fromEntries([...new Set([...routes.flatMap(r => r.blocks),...Object.values(turnouts).map(t=>t.block)])].map((name, i) => [name, {
   address: 3001 + i, activeMeansOccupied: true, sourceSensor: panel.lblocks.find(b => b.user === name)?.sensor || null,
   provenance: 'Explicit bench address. Internal/derived source sensor is NOT claimed to be a physical LS address.'
 }]));
