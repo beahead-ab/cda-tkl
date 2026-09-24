@@ -17,8 +17,9 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Publicerat på webbadressen
 
-Version **0.25.0**, release `f2bbaef`, publicerades 24 september kl. 22:09 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/). Den tidigare blockeringen med tågvägslås är löst genom normal återtagning. AIS bevarades aktivt vid uppdateringen.
+Version **0.26.0**, release `ed27e49`, publicerades 24 september kl. 22:53 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/). Den tidigare blockeringen med tågvägslås är löst genom normal återtagning. Aktuellt stoppläge och inloggning bevarades; simulatorn fortsatte köra.
 
+- Fast ställverksyta: status, spårplan, tidtabell och knappar har reserverade fält. Detaljer öppnas ovanpå, hover flyttar inga symboler och ljusflödet följer bildrutorna med monoton tidsmätning.
 - V1–V3 har släckta vilolampor och växelvis röd blinkning vid korsande tågvägsreservation eller belagt korsande block.
 - Stödfunktioner ligger i menyn. Objektinformation öppnas med högerklick nära objektet. Panelmanövrerna ligger under spårplanen och spårtexterna har normalvikt.
 - TrainMeet har en egen anslutningssida och en läsande tidtabellsadapter. Verklig serveradress och parkoppling återstår.
@@ -26,7 +27,7 @@ Version **0.25.0**, release `f2bbaef`, publicerades 24 september kl. 22:09 på [
 - Excel-/CSV-import med tio fasta kolumner och nedladdningsbara mallar fungerar utan AI-nyckel. Underlagen granskas och godkänns före användning. [Format och handhavande](tidtabellsimport.md).
 - Bilder/PDF kan förberedas för AI-tolkning, men serverns OpenAI-nyckel behöver fortfarande läggas in. Verklig tolkningskvalitet är ännu inte verifierad.
 
-Serverns fullständiga XML-/operations- och syntaxkontroller, **171 enhetstester och sju processhelhetstester** passerade före publicering. Därefter verifierades tjänster, anslutning, skyddade API:er, inloggning och meny/import i webbläsaren. Backup och föregående kodversion är bevarade; se [driftuppgifterna](drift.md). Inga provtidtabeller lades in i webbdriften.
+Version 0.25.0 klarade serverns XML-/operations- och syntaxkontroller, 171 enhetstester och sju processhelhetstester. Version 0.26.0 klarade **174 lokala enhetstester**, webbläsarprov och serverns tre nya renderingsprov/syntaxkontroll; jämförelsen bekräftar oförändrad backend och driftdata. Därefter verifierades tjänster, anslutning, skyddade API:er, inloggning och meny/import i webbläsaren. Backup och föregående kodversion är bevarade; se [driftuppgifterna](drift.md). Inga provtidtabeller lades in i webbdriften.
 
 ## Kvar för en fullständig ersättning
 
@@ -45,7 +46,7 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
 
 ## Nästa praktiska steg
 
-[Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation och anslutningsstatus finns på den renodlade panelen; återtagning nås via panelens Tågvägar-knapp och stödfunktionerna via menyn. Casper kan nu provköra version 0.25.0 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
+[Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation och anslutningsstatus finns på den renodlade panelen; återtagning nås via panelens Tågvägar-knapp och stödfunktionerna via menyn. Casper kan nu provköra version 0.26.0 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
 
 Vid införandet av version 0.17.0 passerade 134 enhetstester och sex processhelhetstester. Backupens driftdata har återlästs i en isolerad kopia utan fältorder. Telegraminspelningen ger namngivna loggar med båda riktningarna, råtelegram och separat tolkning. Det förbereder jämförelsen mellan simulator och fysisk utrustning. Det ersätter inte hårdvaruanslutningen. Fortsätt samtidigt med verifierbara manöverfall, admin och visuell avstämning; aktivera inte okända signal- eller adressbindningar genom gissning.
 

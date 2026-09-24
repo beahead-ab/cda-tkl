@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `f2bbaef` · version 0.25.0 (24 september 2026, 22:09) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/f2bbaef` |
+| Driftsatt kodversion | `ed27e49` · version 0.26.0 (24 september 2026, 22:53) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/ed27e49` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -250,3 +250,11 @@ Föregående kod finns kvar i `/opt/charlottendal/releases/97c6546`. Simulatorns
 Nginx har uppdaterats med separata uppladdningsgränser för AI-underlag, Excel/CSV och granskningsutkast samt komprimering av källdata. Konfigurationen validerades före omladdning. Efterkontroll: båda tjänster aktiva, färsk LocoNet-anslutning utan startfel, noll lås, identisk controls.json inklusive AIS och oförändrad autentiseringsfil. Extern HTTPS med normal certifikatkontroll: login 200, panel-/simulator-API och Excelmall 401 utan session.
 
 Webbläsaren visar 0.25.0 med bibehållen inloggning, ny meny, manöverknappar och tidtabellsfält. Manuell inmatning, Excel-/CSV-import och båda mallänkarna är tillgängliga. Inga konsolfel observerades. Ingen provtidtabell lades in i webbdriften. AI-tolkning inväntar serverns OpenAI-nyckel; riktig TrainMeet-parkoppling och fysisk MGP-verifiering återstår. Den tidigare publiceringsblockeringen är därmed löst.
+
+## 24 september 2026 · 22:53 – fast panel, version 0.26.0 publicerad
+
+Release `ed27e49` är aktiv efter 174 godkända lokala enhetstester och visuell/manuell kontroll av fasta positioner. Serverns syntax och tre nya renderingsprov passerade. Byte-för-byte-jämförelse verifierade oförändrad backend, driftprofiler, källdata, simulatorfiler och beroenden jämfört med 0.25.0, vars fullständiga helhetsprov passerat samma kväll. Ingen förändring i signalauktoritet eller återrapporter.
+
+Förkontrollen visade noll lås och AIS av; det aktuella stoppläget bevarades. Endast TKL startades om. Simulatorn fortsatte köra med sitt aktuella tillstånd. Backup av beständiga driftdata, inloggning och driftskonfiguration: `/root/charlottendal-backups/network-ed27e49-20260924T205321Z`. Föregående release `/opt/charlottendal/releases/f2bbaef` finns kvar.
+
+Efterkontroll godkänd: tjänster anslutna, noll lås, oförändrade controls/inloggningsfiler, login 200 och API 401 utan session. Den inloggade webbfliken visar 0.26.0, färdig fast panel, ingen dokumentrullning och inga konsolfel. Faktisk fullskärmsövergång kunde inte verifieras i testverktyget; befintlig fullskärmsfunktion är oförändrad.
