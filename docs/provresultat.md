@@ -104,3 +104,7 @@ Tio riktade nummerföljningsprov och de tidigare sju informationsproven passerar
 UI: P815 kopplat till klar Cu → Spår 1c (källparet htvCu–htvSpIA), startat från simulatorn och följt från CuppIn via SU4B till sista gemensamma detektoravsnittets informationsfält SIA. Numret markerades för kontroll efter full passage. P816 följning pausades vid LocoNet-avbrott, återupptogs inte efter återanslutning, avslutades manuellt och provvägen återtogs. Båda provnummer tömda, noll lås och inga konsolfel. Informationsväljaren öppnar rätt plats från följningslistan.
 
 Slutpublicering 0.15: samtliga 124 enhetstester och sex processprov passerade även på servern. Efterkontroll av tjänster, nya autentiserade endpoints och extern HTTPS passerade. Den verkliga driftbackupen kunde därefter läsas av applikationens modeller i en separat tillfällig katalog utan fältorder; originalbackup och live-data bevarades.
+
+## 24 september 2026 – version 0.16
+
+124 enhetstester och sex processhelhetstester godkända lokalt och på publiceringsservern. Hela XML och deterministisk operationsimport godkända. Webbläsarprov av två samtidiga tåg, nummerföljning, låst växel, samma start/slut för återtagning, avbrott/återanslutning samt kompakt detaljruta och tre utseenden dokumenteras i [provrapporten för steg 1](provkorning-2026-09-24.md). Publicerad som `bf2a372`; extern HTTPS och skyddad åtkomst verifierade.

@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `e7542c7` · version 0.15.0 (23 september 2026, 07:54) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/e7542c7` |
+| Driftsatt kodversion | `bf2a372` · version 0.16.0 (24 september 2026, 03:01) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/bf2a372` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -183,3 +183,11 @@ Release e7542c7 publicerad 07:54. 124 enhetstester och sex processhelhetstester 
 Backupens faktiska driftkatalog har dessutom kopierats till en tillfällig isolerad katalog på servern och lästs av release e7542c7. Driftprofil, manöverspärrar, lås, visningsinställningar, tåginformation och modellklocka gick att återläsa. Noll fältorder skickades, klockan var pausad. Backupen innehöll noll lås och noll tågnummer; provet påstår därför inte att just den kopian testat återläsning av aktiva lås. Sådana scenarier ingår separat i de automatiska testerna. Provet ändrade inte live-data och den tillfälliga kopian togs bort. Detta är ett applikationsbackup-prov, inte återställning av hela DigitalOcean-maskinen.
 
 Tåginformationens format 2 kräver programversion 0.15 eller senare när det sparats. Publiceringen spärrar automatisk återgång till kod som inte kan läsa aktuellt format; data raderas aldrig som återställningsåtgärd. Se [nummerföljning](taginformation.md).
+
+### Version 0.16 – provkörd kompakt panel
+
+Release `bf2a372` publicerad 24 september 2026 kl. 03:01 svensk tid. Synliga signaluppgifter, anslutningsstatus och aktiva tågvägar i kompakt läge; avbrott rensar ofullständigt knappval. Reläpanelens passagevisning, smala fönster och lokala korslänkar rättade.
+
+124 enhetstester och sex helhetstester passerade både lokalt och på servern. XML, operationsimport och syntax godkända. Backup `/root/charlottendal-backups/network-bf2a372-20260924T010118Z`; föregående release `e7542c7`. Ingen ändring av driftdataformat, profiler, adresser eller autentisering. Tjänster anslutna, inga aktiva lås efter versionsbytet. Extern HTTPS-kontroll: inloggning 200, skyddat API 401 utan session.
+
+[Webbläsarprov och designavstämning](provkorning-2026-09-24.md). Den publika inloggningssidan öppnades efter versionsbytet; den inloggade panelen provades lokalt. Ingen användarsession skapades eller ändrades.

@@ -31,6 +31,7 @@ Prov genomfördes i webbläsaren mot TKL på 9030 och den separata anläggningss
 | Detaljer och tangentbord | Signal kunde öppnas i kompakt läge med Enter och stängas med Escape, med fokus tillbaka på samma signal. |
 | 390 px och 1440 px fönster | Ingen överbredd på dokumentet. Vid 390 px kan den 1000 px breda spårplanen bläddras separat och detaljrutan ryms. Även 1280 px panel provades. |
 | Lokala korslänkar | TKL pekar på 9031 och simulatorn på 9030 efter omstart. |
+| Avvisad knappkombination | `D → Spår 1c` avvisades enligt källregeln. Meddelandet kunde stängas utan att någon tågväg lades. |
 | Webbläsarfel | Inga konsolfel/varningar i slutkontrollen. |
 
 P921, G922 och P923 togs bort genom den vanliga editorn efter provet. Deras provhistorik behölls. Testvägarna frigavs normalt; ingen driftfil nollställdes.
@@ -45,3 +46,7 @@ P921, G922 och P923 togs bort genom den vanliga editorn efter provet. Deras prov
 ## Återstående avstämning
 
 Den körbara panelen behåller driftstatus, stopp och återtagning synliga även när designprototypen visar nästan enbart spårplanen. Detta är ett avsiktligt handhavandeval. Godkännande av känsla och slutligt utseende behöver fortfarande Caspers egen provkörning. Saknade originalskript, verifierade MGP-besked, faktisk LocoBuffer och riktig TrainMeet-parning är oförändrade beroenden; se [status](status.md).
+
+## Publicering och efterkontroll
+
+Version 0.16.0, commit `bf2a372`, publicerad på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app) efter samma 124+6 tester på servern. Backup `/root/charlottendal-backups/network-bf2a372-20260924T010118Z`. Tjänsterna är anslutna och inga lås finns kvar. Inloggningssidan gav HTTP 200 och skyddat API gav 401 utan session. Den publika inloggningssidan kontrollerades i webbläsaren; provkörningen av den inloggade panelen gjordes lokalt.

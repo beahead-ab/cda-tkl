@@ -306,3 +306,13 @@ Version 0.15.0, release e7542c7, publicerad 07:54. Samtliga 124 enhetstester och
 Backupens verkliga driftkatalog återläst i isolerad serverkopia. Profil, spärrar, visning, tåginformation och modellklocka läsbara; noll fältorder, klocka pausad. Aktuella backupen hade noll lås/nummer; omstart med aktiva sådana prövas separat i testsystemet. Originalbackup och live-data orörda.
 
 Samtliga U01–U54 och N01–N10 är avstämda i docs/acceptans-2026-09-23.md. Full fysisk ersättning återstår: råsensorernas sammansatta kedja/filtrering, full svenska signalbesked, ranger-/godsöverlämning, vändskivans L2-anslutning, källoklara tågvägar och riktig TrainMeet-parning/skrivning behöver verifierat underlag. Ingen sådan funktion har smugit in via gissade adresser eller gamla skriptanrop. Friställa spår och extra växelplupp förblir vilande. Lokala provnummer är tömda, anslutning återställd och noll provlås kvar.
+
+## 24 september 2026 · 03:01–03:03 · Godkänt steg 1 genomfört
+
+- Jämfört panelen med det befintliga Claude-projektet och sparat designunderlag. Reproducerat och rättat dolda signaluppgifter och dold anslutningsstatus i kompakt läge. Aktiva vägar/återtagning har en separat lista, ofullständigt knappval rensas vid avbrott och detaljer kan stängas med Escape.
+- Två samtidiga UI-styrda tågfärder med P921/G922 genom separata anläggningsprocessen; låst växel vägrade omläggning. Samma pluppar återtog vägen. P923 pausades vid förbindelseavbrott och återupptogs inte vid återanslutning. Alla egna provnummer tömdes genom editorn och provvägar frigavs normalt.
+- Reläpanelens passagevisning och fönsterbredder 390/1280/1440 kontrollerade. 198 signalbildlager behålls. Lokala länkar följer inställda portar. Webbklienten avslutade utan konsolfel/varningar.
+- Publicerat kodrelease `bf2a372` / version 0.16.0 till privat GitHub och befintlig server efter 124 enhetstester, sex helhetstester, XML/operations/syntax lokalt och på servern. Backup `/root/charlottendal-backups/network-bf2a372-20260924T010118Z`. Efterkontroll: anslutna tjänster, noll lås, HTTPS-login 200 och oskyddad API-begäran 401.
+- Nattautomationen är fortsatt pausad. Fysiska MGP/TrainMeet-beroenden och avsiktligt vilande funktioner är oförändrade. Caspers egen provkörning återstår som subjektiv acceptans av handhavande och utseende.
+
+Full provrapport: [Steg 1, 24 september](provkorning-2026-09-24.md).
