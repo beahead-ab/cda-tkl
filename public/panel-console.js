@@ -35,7 +35,7 @@ export function createPanelConsole({onOpen}) {
     onOpen();
     if(toggle&&active===id){close();return true;}
     active=id;trigger=root.querySelector(`[data-panel-tool="${id}"]`);
-    $('panel-drawer-title').textContent=({ 'panel-route-tools':'Tågvägar och återtagning','track-block-tools':'Spårspärrar','operating-controls':'Linjespärrar och programmeringsspår','train-information':'Tågnummer och nummerföljning','model-clock':'Modellklocka','trainmeet-timetable':'Tidtabell från TrainMeet' })[id];
+    $('panel-drawer-title').textContent=({ 'panel-route-tools':'Tågvägar och återtagning','track-block-tools':'Spårspärrar','operating-controls':'Linjespärrar och programmeringsspår','train-information':'Tågnummer och nummerföljning','model-clock':'Modellklocka','trainmeet-timetable':'Tidtabell' })[id];
     $('panel-drawer').hidden=false;
     for(const p of panes){p.hidden=p!==pane;if(p===pane&&p.tagName==='DETAILS')p.open=true;}
     for(const b of root.querySelectorAll('[data-panel-tool]'))b.setAttribute('aria-expanded',String(b===trigger));

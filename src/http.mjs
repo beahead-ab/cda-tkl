@@ -15,9 +15,10 @@ export function guard(req, port, publicOrigin = process.env.CHARLOTTENDAL_PUBLIC
     if (!req.headers['content-type']?.startsWith('application/json')) throw Error('JSON krävs');
   }
 }
-export async function body(req) {
-  let text = ''; for await (const chunk of req) { text += chunk; if (text.length > 65536) throw Error('För stor begäran'); }
-  return text ? JSON.parse(text) : {};
+export async function body(req,limit=65536) {
+  let size=0;const chunks=[];
+  for await (const chunk of req) {size+=chunk.length;if(size>limit)throw Object.assign(Error('För stor begäran'),{status:413});chunks.push(chunk);}
+  const text=Buffer.concat(chunks).toString('utf8');return text?JSON.parse(text):{};
 }
 export function staticFile(res, root, requested) {
   const file = path.resolve(root, '.' + (requested === '/' ? '/index.html' : requested));

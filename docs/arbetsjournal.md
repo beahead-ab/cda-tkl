@@ -393,3 +393,11 @@ Detaljer: [Kompisväxlar](kompisvaxlar.md).
 - Tidtabell som fysisk knapp under panelen. Ankomst, avgång, från/till, planerat/ändrat spår, genomfart, status och anmärkning. Träffklockan visas separat från TKL:s lokala modellklocka. Inga order, kvittenser eller beläggningar skapas av läsningen.
 - 151 enhetsprov och sex processhelhetsprov passerar. Testdata genererad av TrainMeet-serverns egen parser används som referens. UI-prov av anslutning, spårbyte, text-escaping, bibehållen tabell vid avbrott samt 390-pixlars vy utan sidöverflöde. Tillfällig provanslutning kopplas från och provserver avslutas; riktig server är fortfarande inte ansluten.
 - Ingen webbpublicering: tidigare fråga om Au → Spår 1a är fortfarande obesvarad. Ingen driftdata på servern eller natt-automation ändrad.
+
+## 24 september 2026 · Separat AI-tidtabellsimport, version 0.22.0
+
+- På Caspers begäran byggt flerfilsimport av PDF/PNG/JPEG/WebP och valt OpenAI enligt hans svar. Servern använder Responses med strikt svarsschema; ingen nyckel eller alternativ AI-adress exponeras i klienten. Underlagen behandlas som data, inte instruktioner.
+- Bakgrundstolkning med beständigt granskningsutkast, fil-/sidreferenser, osäkerheter, rättning, radurval och uttrycklig aktivering. Ofullständiga svar och fel lämnar befintlig tidtabell kvar. Omstart återförsöker aldrig ett kostnadsbärande anrop.
+- Ny stödsida i menyn och explicit källval under panelens Tidtabell-knapp. Inga fältorder, TrainMeet-skrivningar eller klockändringar. Separat begäran för AI så att panelmanövrer inte väntar på tolkningen.
+- 161 enhetsprov och sju processhelhetsprov passerar. Webbläsarprov med kontrollerad testtransport: två filer, osäker rad, rättning av spår, sparande, granskningsspärr, aktivering, källbyte och mobilbredd. Testsvaret är uttryckligen märkt och testkopplingen finns endast i testfiler; ingen verklig AI/OCR-kvalitet har verifierats.
+- Riktigt OpenAI-anrop inväntar säkert konfigurerad API-nyckel. Webbdriften ändras inte eftersom tidigare återtagningsfråga för Au → Spår 1a är obesvarad. Nattautomationen oförändrad.

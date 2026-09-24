@@ -2,7 +2,7 @@ import {createTrainMeetTimetable} from './trainmeet-timetable.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function createTrainMeet({api,onTimetable}) {
   const root=document.getElementById('trainmeet');
-  const timetable=createTrainMeetTimetable();
+  const timetable=createTrainMeetTimetable({selectSource:data=>api('timetable-import/select',data)});
   let state,online=false,lastContent='',shownOrigin;
   root.innerHTML=`<div class="card-heading"><h2>Anslutning</h2><span id="tm-status" role="status">Ej ansluten</span></div>
     <p id="tm-message" class="muted"></p>
@@ -28,9 +28,9 @@ export function createTrainMeet({api,onTimetable}) {
   $('pair').onsubmit=async e=>{e.preventDefault();if($('connect').disabled)return;const code=$('code').value;$('code').value='';await action('pair',{stationId:$('station').value.trim(),code});};
   $('refresh').onclick=()=>action('refresh');$('disconnect').onclick=()=>action('disconnect');
   $('show-timetable').onclick=onTimetable;
-  return {update(next,connected){
+  return {update(next,connected,imported){
     state=next;online=connected;if(!state)return;
-    timetable.update(state,online);
+    timetable.update(state,online,imported);
     if(shownOrigin!==state.origin){
       // Never submit a code typed for an earlier server to a newly selected one.
       shownOrigin=state.origin;$('server').value=state.origin;$('code').value='';$('station').value=state.stationId||'';

@@ -67,3 +67,7 @@ Version 0.17.0 (`bea8a85`) publicerad 24 september 2026 kl. 07:14 svensk tid på
 
 
 Version 0.17.1 (`97c6546`) med fullskärmsknappen publicerad 24 september 2026 kl. 07:27 svensk tid. Lokal webbläsarkontroll och syntax samt serverns 134 enhetstester, sex helhetstester och importkontroller godkända. Backup och extern efterkontroll godkända enligt driftuppgifterna.
+
+## Separat tidtabell (0.22.0)
+
+**Meny → Importera tidtabell** öppnar en egen sida för bilder och PDF-filer. AI skapar ett redigerbart utkast; användaren granskar originalen och godkänner innan tabellen tas i bruk. Under panelens **Tidtabell** finns ett källval mellan TrainMeet och den godkända importen. Källbytet bevarar båda och påverkar ingen tågväg, signal eller modellklocka. Se [handhavande och installation](tidtabellsimport.md).

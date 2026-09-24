@@ -13,6 +13,8 @@ import { Configuration } from './configuration.mjs';
 import { TrainInformation } from './train-information.mjs';
 import { PanelIndications } from './panel-indications.mjs';
 import { TrainMeet } from './trainmeet.mjs';
+import { TimetableImport, IMPORT_LIMITS } from './timetable-import.mjs';
+import { TimetableAI } from './timetable-ai.mjs';
 import { ModelClock } from './model-clock.mjs';
 import { TelegramRecorder } from './telegram-recorder.mjs';
 
@@ -48,6 +50,7 @@ function createRuntime(p){
 }
 const bindings=new BindingConfiguration(baseProfile,{storage,canActivate:activationStatus,prepare:p=>{const next=createRuntime(p);return ()=>installRuntime(next);}});
 const trainMeet=new TrainMeet({storage,origin:process.env.CHARLOTTENDAL_TRAINMEET_ORIGIN||''});
+const timetableImport=new TimetableImport({storage,reader:new TimetableAI()});let importUploading=false;
 const modelClock=new ModelClock(storage);let clockPublished=0;
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
 auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
@@ -65,8 +68,9 @@ function installRuntime(next,start=true){
   if(start)c.start();dirty=true;
 }
 trainMeet.on('change',()=>{dirty=true;});
+timetableImport.on('change',()=>{dirty=true;});
 installRuntime(createRuntime(bindings.profile()),false);
-const snapshot = () => {const state=engine.snapshot();return { ...state,bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
+const snapshot = () => {const state=engine.snapshot();return { ...state,bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),timetableImport:timetableImport.summary(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -74,6 +78,14 @@ const server = http.createServer(async (req, res) => {
     const expires = await auth.authenticate(req);
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
+      if(url.pathname==='/api/timetable-import')return json(res,timetableImport.view());
+      const sourceMatch=url.pathname.match(/^\/api\/timetable-import\/source\/([a-f0-9-]{36})\/(\d+)$/);
+      if(sourceMatch){
+        const file=timetableImport.sourceFile(sourceMatch[1],sourceMatch[2]);
+        const bytes=fs.readFileSync(file.path);
+        res.writeHead(200,{'Content-Type':file.mime,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"sandbox; default-src 'none'",'Content-Disposition':(file.mime==='application/pdf'?'attachment':'inline')+"; filename*=UTF-8''"+encodeURIComponent(file.name)});
+        return res.end(req.method==='HEAD'?undefined:bytes);
+      }
       if (url.pathname === '/api/config') return json(res, { ...profile,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null });
       if (url.pathname === '/api/train-information') return json(res, {...trainInformation.snapshot(),...trainInformation.catalog()});
       if(url.pathname==='/api/bindings')return json(res,bindings.view());
@@ -96,7 +108,14 @@ const server = http.createServer(async (req, res) => {
       if (url.pathname.startsWith('/api/')) return json(res, { error: 'Finns inte' }, 404);
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
-    const data = await body(req);
+    if(url.pathname==='/api/timetable-import/begin'){
+      if(importUploading)return json(res,{error:'En uppladdning pågår redan.'},409);
+      if(!timetableImport.reader.configured)return json(res,{error:'AI-tolkning är inte ansluten. Lägg till serverns API-nyckel först.'},503);
+      importUploading=true;
+      try{return json(res,timetableImport.begin(await body(req,IMPORT_LIMITS.requestBytes)),202);}finally{importUploading=false;}
+    }
+    const data = await body(req,url.pathname==='/api/timetable-import/save'?2*1024*1024:65536);
+    if(url.pathname.startsWith('/api/timetable-import/')){const command=url.pathname.slice('/api/timetable-import/'.length);if(!['save','activate','discard','select'].includes(command))return json(res,{error:'Okänd tidtabellsåtgärd'},404);return json(res,timetableImport[command](data));}
     if(url.pathname.startsWith('/api/bindings/')){const command=url.pathname.slice('/api/bindings/'.length);if(!['save','discard','restore','activate'].includes(command))return json(res,{error:'Okänd driftinställning'},404);const result=bindings[command](data);engine.log('bindings',command==='activate'?'Driftprofil version '+result.activeVersion+' aktiverad. AIS kvarstår, alla rapporter läses in på nytt.':'Driftinställningarnas utkast uppdaterat.');dirty=true;return json(res,result);}
     if(url.pathname.startsWith('/api/trainmeet/')){const command=url.pathname.slice('/api/trainmeet/'.length);if(!['configure','pair','refresh','disconnect'].includes(command))return json(res,{error:'Okänd TrainMeet-åtgärd'},404);return json(res,await trainMeet[command](data));}
     if(url.pathname==='/api/clock'){const result=modelClock.change(data);dirty=true;engine.log('clock','Modellklockan '+(result.running?'går':'är pausad')+' med hastighet '+result.rate+'×.');return json(res,result);}

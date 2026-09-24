@@ -1,3 +1,4 @@
+import {createTimetableImport} from './timetable-import.js';
 import { createManualFeedback } from './manual-feedback.js';
 import { createSourceRegister } from './source-register.js';
 import { panelLayout } from './panel-layout.js';
@@ -16,10 +17,10 @@ const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout, serverOffset = 0;
-let currentPage='panel',appMenu,contextDialog,panelConsole;
-const pageFromHash=()=>({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet'})[location.hash]||'panel';
+let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport;
+const pageFromHash=()=>({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet','#import':'import'})[location.hash]||'panel';
 function setPage(page,{historyMode='push'}={}) {
-  const hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet'}[page];
+  const hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet',import:'#import'}[page];
   if(!hash)return;
   if(historyMode!=='none'&&location.hash!==hash)history[historyMode==='replace'?'replaceState':'pushState'](null,'',hash);
   closeInspector(false);manualFeedback?.clear();
@@ -27,11 +28,11 @@ function setPage(page,{historyMode='push'}={}) {
   currentPage=page;document.body.dataset.page=page;
   appMenu?.close();
   (page==='panel'?document.querySelector('.panel-actions'):$('header-menu-slot')).append($('menu-toggle'));
-  for(const p of ['panel','tools','admin','trainmeet']) {
+  for(const p of ['panel','tools','admin','trainmeet','import']) {
     $(p+'-view').hidden=p!==page;$(p+'-tab').classList.toggle('selected',p===page);
     if(p===page)$(p+'-tab').setAttribute('aria-current','page');else $(p+'-tab').removeAttribute('aria-current');
   }
-  document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet'})[page]+' · Charlottendal TKL';
+  document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet',import:'Importera tidtabell'})[page]+' · Charlottendal TKL';
   window.scrollTo(0,0);paint();
   if(page==='admin')return sourceRegister.open().catch(e=>message(e.message));
 }
@@ -313,7 +314,8 @@ function paint() {
   telegramRecorder?.update(state,online);
   operatingControls?.update(state,online);
   if(state.clock)modelClock?.update(state.clock,online);
-  trainMeet?.update(state.trainMeet,online);
+  trainMeet?.update(state.trainMeet,online,state.timetableImport);
+  timetableImport?.update(state.timetableImport,online);
   if(chosen && (!usable() || state.controls?.mode==='remote')) clearChoice(false);
   const c = $('connection'); c.textContent = !online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad';
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
@@ -384,7 +386,7 @@ async function start() {
   const fullscreen = createFullscreen({button: $('toggle-fullscreen'), onError: message});
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
-  modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable')});feedback=createFeedback();
+  timetableImport=createTimetableImport();modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable')});feedback=createFeedback();
   panelConsole=createPanelConsole({onOpen:()=>{if(currentPage!=='panel')setPage('panel');}});
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
@@ -431,7 +433,7 @@ async function start() {
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}
     const link=e.target.closest('a[href^="#"]');
-    const page={'#panel':'panel','#tools':'tools','#register':'admin','#trainmeet':'trainmeet'}[link?.getAttribute('href')];
+    const page={'#panel':'panel','#tools':'tools','#register':'admin','#trainmeet':'trainmeet','#import':'import'}[link?.getAttribute('href')];
     if(page){e.preventDefault();setPage(page);}
   });
   window.addEventListener('hashchange',()=>setPage(pageFromHash(),{historyMode:'none'}));
