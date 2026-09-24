@@ -17,6 +17,8 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Färdig ändring som inväntar publicering
 
+Version 0.24.0 lägger till direkt manuell tidtabell utan AI-nyckel. Manuell inmatning, filimport och TrainMeet visas i samma kolumnfält. Egna manuella tabeller kan återöppnas som utkast, med aktiv version bevarad fram till nytt godkännande. Tolv riktade tidtabellsprov och två helhetsprov samt webbläsarflödet är godkända. Samma publiceringshinder kvarstår.
+
 Version 0.23.0 gör tidtabellen till ett fast, lågt kolumnfält under spårplanen. Kolumner och radantal anpassas till skärmen; bläddring håller höjden begränsad. Klick/högerklick öppnar fullständiga uppgifter nära tåget. Källval och import ligger i menyn. Provad med 37 importerade/TrainMeet-rörelser, alla tre skins, mobilbredd, fullskärm och levande klocka utan sidbyte. Syntaxkontroll godkänd; backend är oförändrad. [Handhavande](panel-och-verktyg.md). Samma publiceringshinder kvarstår.
 
 Version 0.22.0 lägger till separat [tidtabellsimport med OpenAI](tidtabellsimport.md). Flera bilder/PDF läses som ett utkast med källhänvisningar, rättningar och uttryckligt godkännande före användning. Import och TrainMeet väljs separat under panelens Tidtabell-knapp. 161 enhetsprov och sju helhetsprov passerar; uppladdning, rättning, aktivering, källbyte och mobilbredd är provade med kontrollerat testsvar. En riktig AI-tolkning inväntar serverns API-nyckel. Ingen webbpublicering eller ändring av den kvarhållna tågvägen har gjorts.

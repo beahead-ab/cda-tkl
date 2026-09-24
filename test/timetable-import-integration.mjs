@@ -11,7 +11,7 @@ async function freePort(){const s=net.createServer();await new Promise(r=>s.list
 async function until(fn){for(let i=0;i<150;i++){try{const v=await fn();if(v)return v;}catch{}await new Promise(r=>setTimeout(r,40));}throw Error('Import integration timed out');}
 test('process imports files, edits and activates reviewed rows, selects sources and restores state without field orders',{timeout:20000},async()=>{
   const port=await freePort(),wire=await freePort(),dir=fs.mkdtempSync(path.join(os.tmpdir(),'cda-import-test-'));let child,output='';
-  const launch=()=>{child=spawn(process.execPath,['--import','./test/fixtures/timetable-ai-mock.mjs','src/server.mjs'],{cwd,env:{...process.env,CHARLOTTENDAL_AUTH_MODE:'cloudflare',CHARLOTTENDAL_PUBLIC_ORIGIN:'',CHARLOTTENDAL_PORT:String(port),CHARLOTTENDAL_WIRE_PORT:String(wire),CHARLOTTENDAL_STATE_DIR:dir,OPENAI_API_KEY:'test-only',CHARLOTTENDAL_TRAINMEET_ORIGIN:''}});child.stderr.on('data',c=>{output+=c;});};
+  const launch=(key='test-only')=>{child=spawn(process.execPath,['--import','./test/fixtures/timetable-ai-mock.mjs','src/server.mjs'],{cwd,env:{...process.env,CHARLOTTENDAL_AUTH_MODE:'cloudflare',CHARLOTTENDAL_PUBLIC_ORIGIN:'',CHARLOTTENDAL_PORT:String(port),CHARLOTTENDAL_WIRE_PORT:String(wire),CHARLOTTENDAL_STATE_DIR:dir,OPENAI_API_KEY:key,CHARLOTTENDAL_TRAINMEET_ORIGIN:''}});child.stderr.on('data',c=>{output+=c;});};
   const request=(url,data)=>fetch('http://127.0.0.1:'+port+url,data?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}:undefined);
   const view=async()=>(await request('/api/timetable-import')).json();
   const stop=async()=>{const done=new Promise(r=>child.once('exit',r));child.kill('SIGTERM');await done;};
@@ -24,7 +24,16 @@ test('process imports files, edits and activates reviewed rows, selects sources 
     const rows=structuredClone(v.draft.rows);rows[1].track='2';let response=await request('/api/timetable-import/save',{sessionId:v.sessionId,revision:v.revision,title:'Granskad provtidtabell',rows});assert.equal(response.status,200);v=await response.json();
     response=await request('/api/timetable-import/activate',{sessionId:v.sessionId,revision:v.revision,reviewed:true});assert.equal(response.status,200);v=await response.json();assert.equal(v.source,'import');assert.equal(v.active.rows[1].track,'2');
     const state=await(await request('/api/state')).json();assert.equal(state.routes.length,0);assert.ok(Object.values(state.blocks).every(b=>b.occupied===null));assert.equal(state.trainMeet.status,'unconfigured');assert.equal(state.clock.authority,'local');
-    await stop();launch();v=await until(view);assert.equal(v.active.title,'Granskad provtidtabell');assert.equal(v.source,'import');
+    await stop();launch('');v=await until(view);assert.equal(v.active.title,'Granskad provtidtabell');assert.equal(v.source,'import');
     response=await request('/api/timetable-import/select',{sessionId:v.sessionId,revision:v.revision,source:'trainmeet'});assert.equal(response.status,200);v=await response.json();assert.equal(v.source,'trainmeet');assert.equal(v.active.rows.length,2);assert.equal(fs.statSync(path.join(dir,'timetable-import.json')).mode&0o777,0o600);assert.equal(output,'');
+    assert.equal(v.aiConfigured,false);
+    response=await request('/api/timetable-import/manual',{sessionId:v.sessionId,revision:v.revision});assert.equal(response.status,200);v=await response.json();
+    assert.equal(v.active.title,'Granskad provtidtabell');const manualRows=structuredClone(v.draft.rows);Object.assign(manualRows[0],{trainNumber:'M42',day:'Dagl',departure:'13:10',track:'1a'});
+    response=await request('/api/timetable-import/save',{sessionId:v.sessionId,revision:v.revision,title:'Manuellt skapad',rows:manualRows});assert.equal(response.status,200);v=await response.json();
+    response=await request('/api/timetable-import/activate',{sessionId:v.sessionId,revision:v.revision,reviewed:true});assert.equal(response.status,200);v=await response.json();assert.equal(v.active.kind,'manual');assert.equal(v.source,'import');
+    await stop();launch('');v=await until(view);assert.equal(v.active.rows[0].trainNumber,'M42');
+    response=await request('/api/timetable-import/edit',{sessionId:v.sessionId,revision:v.revision});assert.equal(response.status,200);v=await response.json();
+    response=await request('/api/timetable-import/append',{sessionId:v.sessionId,revision:v.revision});assert.equal(response.status,200);v=await response.json();assert.equal(v.draft.rows.length,2);assert.equal(v.active.rows.length,1);
+    const manualState=await(await request('/api/state')).json();assert.equal(manualState.routes.length,0);assert.ok(Object.values(manualState.blocks).every(b=>b.occupied===null));assert.equal(manualState.clock.authority,'local');assert.equal(manualState.trainMeet.status,'unconfigured');assert.equal(output,'');
   }finally{if(child?.exitCode===null)await stop();fs.rmSync(dir,{recursive:true,force:true});}
 });

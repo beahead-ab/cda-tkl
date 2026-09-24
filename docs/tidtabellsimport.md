@@ -1,8 +1,16 @@
-# Separat tidtabellsimport · 0.23.0
+# Egen tidtabell och import · 0.24.0
 
 TKL kan importera en tidtabell från flera bilder och PDF-filer utan TrainMeet. OpenAI läser underlagen tillsammans och skapar ett utkast. Ingenting används i panelen innan användaren har granskat och godkänt det.
 
-## Användning
+## Skriv in en tidtabell manuellt
+
+Öppna **Meny → Tidtabell och import → Skapa tidtabell manuellt**. Skriv namn och tågrörelser med station, trafikdag, tider, spår, från/till och anmärkning. **Lägg till tågrörelse** sparar nuvarande uppgifter och lägger till en tom rad med samma station/trafikdag som föregående rad. **Ta med rad** bestämmer vilka rörelser som ska användas; avmarkera sådant som ska utgå.
+
+Spara utkastet, markera att uppgifterna är kontrollerade och välj **Godkänn och använd tidtabellen**. Den visas direkt i samma fält under spårplanen som filimport och TrainMeet. Ingen AI-tjänst, API-nyckel eller fil krävs. Samma gräns på 300 rader och samma kontroll av obligatoriska uppgifter och dubbletter gäller.
+
+En tidigare manuellt skapad tidtabell kan öppnas med **Redigera tidtabellen**. Den aktiva tabellen ligger kvar under redigering och ersätts först vid nytt godkännande. Ett utkast kan kastas utan att den aktiva tabellen ändras. Aktiverad tidtabell och utkast överlever omstart. Det finns en egen tidtabell åt gången, skapad manuellt eller från filimport.
+
+## Importera bilder och PDF
 
 1. Öppna **Meny → Tidtabell och import**. Ange en station som ledtråd om underlaget innehåller flera stationer.
 2. Välj 1–8 filer: PDF, PNG, JPEG eller WebP. Högst 8 MB per fil och 16 MB tillsammans. Gränsen är 300 tågrörelser per import.
@@ -11,7 +19,7 @@ TKL kan importera en tidtabell från flera bilder och PDF-filer utan TrainMeet. 
 5. Rätta tågnummer, station, trafikdag, ankomst, avgång, spår, från/till, anmärkning och eventuell genomfart. Uteslut dubbletter eller felaktiga rader med **Ta med rad**. Spara rättningarna.
 6. Markera att granskningen är gjord och välj **Godkänn och använd tidtabellen**. Ändringar i utkastet återställer granskningsmarkeringen. Valda rader måste ha tågnummer, station, trafikdag och minst en tid; identiska tågrörelser måste först rättas eller uteslutas.
 
-Tidtabellen visas i ett lågt kolumnfält direkt under spårplanen. Bläddra mellan grupper av tågrörelser och öppna fullständiga uppgifter genom klick eller högerklick. Välj mellan **TrainMeet** och **Separat importerad** under **Meny → Tidtabell och import**. En ny godkänd import ersätter den tidigare separata tidtabellen. TrainMeet-anslutningen och dess tidtabell finns kvar. Den separata tabellen visar planerade uppgifter med station och trafikdag, utan levande klareringsstatus. Den ändrar inga växlar, signaler, beläggningar, tågnummersfält eller klockor.
+Tidtabellen visas i ett lågt kolumnfält direkt under spårplanen. Bläddra mellan grupper av tågrörelser och öppna fullständiga uppgifter genom klick eller högerklick. Välj mellan **TrainMeet** och **Egen tidtabell** under **Meny → Tidtabell och import**. En ny godkänd import ersätter den tidigare separata tidtabellen. TrainMeet-anslutningen och dess tidtabell finns kvar. Den separata tabellen visar planerade uppgifter med station och trafikdag, utan levande klareringsstatus. Den ändrar inga växlar, signaler, beläggningar, tågnummersfält eller klockor.
 
 ## OpenAI på servern
 
@@ -33,6 +41,9 @@ AI vägras lämna ett användbart utkast när svaret avbrutits, saknar källrefe
 
 ## Verifiering
 
+För 0.24.0 passerar tolv riktade tidtabellsprov samt två processhelhetsprov (import/manuell inmatning och inloggningsskydd). Proven omfattar manuell tabell utan AI-nyckel, tillägg, granskning, återöppning, bibehållen aktiv tabell, omstart, revisionskonflikt, radgräns och avsaknad av fältorder. Webbläsarprov: två manuella tåg, automatiskt sparande före ny rad, aktivering till panelens kolumner och ändrat spår som visas först efter godkännande.
+
+Tidigare importleverans:
 161 enhetstester och sju processhelhetstester godkända. Proven omfattar flerfilsöverföring, storleks-/typkontroll, dubbletter, sidreferenser, felaktiga och ofullständiga AI-svar, samtidighet, lagringsfel, inloggningsskydd, beständiga rättningar och källbyte. Integrationsprovet verifierar att inga fältorder eller klockändringar skapas.
 
 Webbläsarflödet har provats med en separat testserver och kontrollerat AI-testsvar: uppladdning av bild och PDF, osäker rad, rättning, sparande, granskningsspärr, aktivering samt byte till TrainMeet och tillbaka. Från 0.23.0 visas tidtabellen i kolumner med bläddring; vid 390 pixlar ryms en kolumn utan sidöverflöde. Testfixturernas filer provar transporten, inte verklig dokumenttolkning.

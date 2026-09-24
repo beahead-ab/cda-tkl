@@ -408,3 +408,10 @@ Detaljer: [Kompisväxlar](kompisvaxlar.md).
 - Panelens färger och typografi följs i alla tre skins. Tider, spår, sträcka och sammanfattning syns på varje rad. Komplett modal för klick/högerklick/Enter/Skift+F10, utan hover-popup. Ändrat spår visas separat från planerat. Källval och import flyttade till Meny → Tidtabell och import; den överflödiga öppningsknappen under panelen borttagen.
 - Provat med 37 rörelser i isolerad testinstallation, separat från normal förhandsvisning och webbdrift: all bläddring, sista rörelsen 25:10, skilda trafikdagar, tomma tider, långa anmärkningar, text-escaping, TrainMeet-spårbyte, klockuppdatering och bibehållen sida. Mobil 390, desktop 1280/1920, tre skins, fullskärm och modal/tangentbord kontrollerade. Syntax godkänd. Ingen ny backendlogik eller nya tester som bara speglar markup.
 - Ingen webbpublicering eller ändring av serverns lås. Tidigare återtagningsfråga för Au → Spår 1a kvarstår.
+
+## 24 september 2026 · Gemensam visning och manuell tidtabell, version 0.24.0
+
+- På Caspers förtydligande kompletterat egen tidtabell med direkt manuell inmatning. Samma beständiga modell och samma kolumnfält används för manuella/importerade uppgifter och TrainMeet; ingen alternativ runtime-vy. Källväljaren heter TrainMeet/Egen tidtabell och sidhuvudet anger Manuell/Importerad när relevant.
+- Skapa, lägga till rörelser, spara, välja inkluderade rader, godkänna och återöppna manuella tabeller. Aktiv tabell bevaras medan ett utkast redigeras. Ingen AI-nyckel eller AI-begäran krävs för manuell inmatning. Källreferenser för filimport kan inte skrivas om via manuell redigering.
+- Tolv riktade enhetsprov och två processhelhetsprov passerar. Verifierat omstart, aktiv tabell kvar under rättningar, versionskonflikter, 300-radersgräns, API-inloggning och inga fältorder/klockändringar. UI-prov med två manuella tåg utan AI-nyckel, sparande före tillägg, aktivering och rättat spår som blir synligt först efter godkännande. Inga konsolfel under detta prov.
+- Lokal förhandsvisning uppdaterad. Inga ändringar i webbdriftens tågvägslås och ingen webbpublicering; tidigare fråga om Au → Spår 1a kvarstår.

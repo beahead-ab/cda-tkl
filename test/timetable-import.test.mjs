@@ -76,3 +76,22 @@ test('HTTP body limits count bytes and preserve UTF8 across chunks',async()=>{
   const bytes=Buffer.from('{"name":"ÅÄÖ"}');assert.deepEqual(await body(Readable.from([bytes.subarray(0,10),bytes.subarray(10)])),{name:'ÅÄÖ'});
   await assert.rejects(()=>body(Readable.from([bytes]),bytes.length-1),e=>e.status===413);
 });
+test('manual timetable works without AI, shares the imported source, and edits never replace active rows before approval',async t=>{
+  let aiCalls=0;const r=rig(t,async()=>{aiCalls++;throw Error('Unexpected AI call');});r.reader.configured=false;const s=r.service;
+  s.manual(rev(s));assert.equal(s.view().draft.kind,'manual');assert.equal(s.view().draft.rows.length,1);assert.equal(s.view().source,'trainmeet');
+  assert.throws(()=>s.activate({...rev(s),reviewed:true}),/saknas/);
+  let d=structuredClone(s.view().draft);Object.assign(d.rows[0],{trainNumber:'M101',day:'Dagl',departure:'25:10',track:'2',note:'Manuellt prov',sources:[{file:99,page:1}]});
+  s.save({...rev(s),title:'Min tidtabell',rows:d.rows});assert.deepEqual(s.view().draft.rows[0].sources,[]);
+  s.append(rev(s));d=structuredClone(s.view().draft);assert.equal(d.rows[1].station,'Charlottendal');assert.equal(d.rows[1].day,'Dagl');assert.notEqual(d.rows[1].id,d.rows[0].id);d.rows[1].included=false;
+  s.save({...rev(s),title:d.title,rows:d.rows});s.activate({...rev(s),reviewed:true});assert.equal(s.view().source,'import');assert.equal(s.view().active.kind,'manual');assert.equal(s.view().active.rows.length,1);
+  const original=structuredClone(s.view().active);s.edit(rev(s));d=structuredClone(s.view().draft);d.rows[0].track='3';s.save({...rev(s),title:d.title,rows:d.rows});assert.deepEqual(s.view().active,original);
+  const restarted=new TimetableImport({storage:r.storage,reader:r.reader});assert.equal(restarted.view().draft.rows[0].track,'3');assert.equal(restarted.view().active.rows[0].track,'2');
+  restarted.activate({...rev(restarted),reviewed:true});assert.equal(restarted.view().active.rows[0].track,'3');restarted.select({...rev(restarted),source:'trainmeet'});assert.equal(restarted.view().active.rows[0].departure,'25:10');assert.equal(aiCalls,0);
+});
+test('manual editing respects existing drafts, row bounds, revisions and import provenance',async t=>{
+  const {service:s}=rig(t);await importDraft(s);assert.throws(()=>s.manual(rev(s)),/utkast/);assert.throws(()=>s.append(rev(s)),/manuell/);
+  s.activate({...rev(s),reviewed:true});assert.throws(()=>s.edit(rev(s)),/ingen manuellt/);
+  s.manual(rev(s));const before=rev(s);s.append(rev(s));assert.throws(()=>s.append(before),/ändrats/);assert.throws(()=>s.edit(rev(s)),/utkast/);
+  while(s.view().draft.rows.length<300)s.append(rev(s));assert.throws(()=>s.append(rev(s)),/300/);assert.equal(new Set(s.view().draft.rows.map(r=>r.id)).size,300);
+  const previous=structuredClone(s.view().active);s.discard(rev(s));assert.deepEqual(s.view().active,previous);
+});

@@ -8,6 +8,7 @@ const object=v=>v&&typeof v==='object'&&!Array.isArray(v);
 const text=(v,max=200)=>typeof v==='string'&&v.length<=max&&!/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(v);
 const uuid=v=>typeof v==='string'&&/^[a-f0-9-]{36}$/.test(v);
 export const ROW_FIELDS=['trainNumber','station','day','arrival','departure','track','from','to','note'];
+const blankRow=(station='Charlottendal',day='')=>({id:randomUUID(),...Object.fromEntries(ROW_FIELDS.map(k=>[k,''])),station,day,noStop:false,included:true,sources:[],uncertainties:[]});
 function rowValues(row){
   if(!object(row)||ROW_FIELDS.some(k=>!text(row[k],k==='note'?2000:160))||typeof row.noStop!=='boolean')fail('En tidtabellsrad har ogiltiga uppgifter.');
   return Object.fromEntries([...ROW_FIELDS.map(k=>[k,row[k].trim()]),['noStop',row.noStop]]);
@@ -62,12 +63,28 @@ export class TimetableImport extends EventEmitter {
   check(data){if(data.sessionId!==this.sessionId||data.revision!==this.data.revision)fail('Tidtabellen har ändrats. Läs in senaste versionen innan du sparar.',409);}
   commit(next){next.revision=this.data.revision+1;try{this.storage.save('timetable-import.json',next);}catch{fail('Tidtabellen kunde inte sparas. Tidigare sparade uppgifter är kvar.',507);}this.data=next;this.error='';this.emit('change');return this.view();}
   directory(id){return path.join(this.storage.directory,'timetable-imports',id);}
+  manual(data){
+    this.check(data);if(this.data.draft)fail('Slutför eller kasta det befintliga utkastet först.',409);
+    return this.commit({...this.data,draft:{id:randomUUID(),kind:'manual',title:'Egen tidtabell',createdAt:this.now(),status:'review',error:'',rows:[blankRow()],warnings:[],coverage:[],files:[]}});
+  }
+  edit(data){
+    this.check(data);if(this.data.draft)fail('Slutför eller kasta det befintliga utkastet först.',409);
+    if(this.data.active?.kind!=='manual')fail('Det finns ingen manuellt skapad tidtabell att redigera.',409);
+    return this.commit({...this.data,draft:{...structuredClone(this.data.active),status:'review',error:'',warnings:[],coverage:[]}});
+  }
+  append(data){
+    this.check(data);const d=this.data.draft;
+    if(d?.status!=='review'||d.kind!=='manual')fail('Skapa eller öppna en manuell tidtabell först.',409);
+    if(d.rows.length>=IMPORT_LIMITS.rows)fail('Tidtabellen får innehålla högst 300 rader.');
+    const previous=d.rows.at(-1);
+    return this.commit({...this.data,draft:{...d,rows:[...d.rows,blankRow(previous?.station,previous?.day)]}});
+  }
   begin(data){
     this.check(data);if(this.data.draft)fail('Slutför eller kasta det befintliga utkastet före en ny import.',409);
     if(!this.reader.configured)fail('AI-tolkning är inte ansluten. Lägg till serverns API-nyckel först.',503);
     if(!text(data.stationHint,160))fail('Ange stationens namn, högst 160 tecken.');
     const files=validateUploads(data.files),id=randomUUID(),directory=this.directory(id);
-    const draft={id,title:'Ny tidtabell',stationHint:data.stationHint,createdAt:this.now(),status:'reading',error:'',rows:[],warnings:[],coverage:[],files:files.map(({bytes,...f})=>f)};
+    const draft={id,kind:'ai',title:'Ny tidtabell',stationHint:data.stationHint,createdAt:this.now(),status:'reading',error:'',rows:[],warnings:[],coverage:[],files:files.map(({bytes,...f})=>f)};
     try{fs.mkdirSync(directory,{recursive:true,mode:0o700});for(const f of files)fs.writeFileSync(path.join(directory,f.id),f.bytes,{mode:0o600,flag:'wx'});this.commit({...this.data,draft});}
     catch(e){fs.rmSync(directory,{recursive:true,force:true});throw e.status?e:Object.assign(Error('Underlagen kunde inte sparas.'),{status:507});}
     this.task=Promise.resolve().then(()=>this.finish(id,files,data.stationHint));return this.view();
@@ -94,7 +111,7 @@ export class TimetableImport extends EventEmitter {
     this.check(data);const d=this.data.draft;
     if(!d||d.status!=='review'||data.reviewed!==true)fail('Granska och spara utkastet innan det används.',409);
     const rows=d.rows.filter(r=>r.included);if(!rows.length)fail('Välj minst en tågrörelse.');const warnings=reviewWarnings(rows);if(warnings.length)fail(warnings.join(' '));
-    const result=this.commit({...this.data,source:'import',active:{id:d.id,title:d.title,files:d.files,rows,activatedAt:this.now()},draft:null});
+    const result=this.commit({...this.data,source:'import',active:{id:d.id,kind:d.kind||'ai',title:d.title,files:d.files,rows,activatedAt:this.now()},draft:null});
     // Previous source files remain on disk for backup; only the active/draft files are served.
     return result;
   }
