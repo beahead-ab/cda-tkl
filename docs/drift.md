@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `bf2a372` · version 0.16.0 (24 september 2026, 03:01) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/bf2a372` |
+| Driftsatt kodversion | `7dd7f71` · version 0.16.1 (24 september 2026, 03:27) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/7dd7f71` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -191,3 +191,12 @@ Release `bf2a372` publicerad 24 september 2026 kl. 03:01 svensk tid. Synliga sig
 124 enhetstester och sex helhetstester passerade både lokalt och på servern. XML, operationsimport och syntax godkända. Backup `/root/charlottendal-backups/network-bf2a372-20260924T010118Z`; föregående release `e7542c7`. Ingen ändring av driftdataformat, profiler, adresser eller autentisering. Tjänster anslutna, inga aktiva lås efter versionsbytet. Extern HTTPS-kontroll: inloggning 200, skyddat API 401 utan session.
 
 [Webbläsarprov och designavstämning](provkorning-2026-09-24.md). Den publika inloggningssidan öppnades efter versionsbytet; den inloggade panelen provades lokalt. Ingen användarsession skapades eller ändrades.
+
+
+### Version 0.16.1 – skydd för kompisväxel utanför färdvägen
+
+Release `7dd7f71` publicerad 24 september 2026 kl. 03:27 svensk tid. Omläggning av en kompisväxel kontrollerar dess eget spår även när tåget inte passerar där. En belagd, okänd eller spärrad kompis som behöver ändras avvisar hela tågvägsbegäran före order. Redan bekräftade kompisar utanför färdvägen får ingen onödig order. [Felbild och verifiering](kompisvaxlar.md).
+
+134 enhetstester och sex processhelhetstester godkända både lokalt och på servern före versionsbytet. Full XML-, operations- och syntaxkontroll passerade. Backup `/root/charlottendal-backups/network-7dd7f71-20260924T012756Z`; tidigare release `bf2a372` finns kvar. Tjänsterna är anslutna och inga aktiva lås fanns vid efterkontrollen. Extern HTTPS-kontroll: login 200, skyddat API 401 utan session.
+
+Ingen ändring av driftdataformat, den publicerade nätprofilens adresser eller autentisering. Den äldre provprofilen har fått explicita växel–detektorkopplingar för samma skydd. Webbläsarprovet kördes lokalt mot separat simulator; fysisk elektrisk polarisering och kortslutningsskydd är inte verifierade.

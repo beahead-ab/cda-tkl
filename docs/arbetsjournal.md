@@ -316,3 +316,15 @@ Samtliga U01–U54 och N01–N10 är avstämda i docs/acceptans-2026-09-23.md. F
 - Nattautomationen är fortsatt pausad. Fysiska MGP/TrainMeet-beroenden och avsiktligt vilande funktioner är oförändrade. Caspers egen provkörning återstår som subjektiv acceptans av handhavande och utseende.
 
 Full provrapport: [Steg 1, 24 september](provkorning-2026-09-24.md).
+
+
+## 24 september 2026 · 03:27 · Kompisväxlar kontrollerade och rättade
+
+- Caspers markerade övergång identifierad som Vx100/Vx101. Ömsesidig koppling, S100/S101 och manöverregel IX:AUTO:0007C1 verifierade i originalets Cda60.xml. Båda plupparna provade i webbläsaren; båda växelbilderna följer fältets individuella återrapporter.
+- Reproducerat ett verkligt fel: Cu → Spår 1c kunde flytta den avvikande kompisen Vx101 trots beläggning på S101 utanför tågets färdväg. Nytt regressionstest misslyckades före rättningen. Nu kontrolleras varje växels eget spår före första order och under etablering. En redan rätt bekräftad kompis utanför färdvägen beställs inte om. Förenliga vägar delar en pågående beställning utan dubbla order.
+- Tio nya riktade prov för manöver från båda sidor, fullständiga par i alla 340 vägar, lås, uteblivna/oväntade rapporter, beläggning/okänt/spärrat sidospår och samtidiga förenliga vägar. Samtliga 134 enhetstester och sex helhetstester passerade lokalt och på servern. Full XML/operations/syntax oförändrat godkända.
+- UI-provet med S101 belagt avvisade Cu → Spår 1c före order och utan nya lås. Avslutat med S101 fritt, båda växlar rakt och inga provvägar. Ingen fysisk utrustning manövrerad.
+- Kodrelease `7dd7f71` / version 0.16.1 pushad till privat GitHub och publicerad med backup `/root/charlottendal-backups/network-7dd7f71-20260924T012756Z`. Föregående release `bf2a372`. Efterkontroll: anslutna tjänster, noll lås, HTTPS-login 200 och skyddat API 401 utan inloggning. Driftformat, nätprofil och autentisering bevarade.
+- Nattautomationen är fortsatt pausad. Elektrisk polarisering och fysiskt kortslutningsskydd återstår till hårdvaruprovet. Den extra låspluppen och Friställa spår är fortsatt vilande.
+
+Detaljer: [Kompisväxlar](kompisvaxlar.md).

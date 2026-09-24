@@ -31,8 +31,13 @@ Tio riktade regressionstester kontrollerar:
 - Okänd eller administrativt spärrad kompisdetektor: inga order.
 - Två förenliga tågvägar under samma pågående omläggning: en order per växel, båda kan senare bli klara.
 
-Lokalt: 134 enhetstester och sex processhelhetstester godkända. Även den äldre, avgränsade provprofilen har fått explicita växeldetektorer så samma kontroll används där; den publicerade nätprofilens adresser är oförändrade.
+Lokalt och på publiceringsservern: 134 enhetstester och sex processhelhetstester godkända. Även den äldre, avgränsade provprofilen har fått explicita växeldetektorer så samma kontroll används där; den publicerade nätprofilens adresser är oförändrade.
 
 I webbläsaren provades båda plupparna: båda växelbildernas aktiva ben följde med till avvikande och tillbaka till rakt. Med båda avvikande och S101 belagt i den separata simulatorn avvisades Cu → Spår 1c med ”Vx101 kan inte läggas om: S101 är belagt eller saknar aktuell återrapport.” Inga tågvägslås skapades och växlarna låg kvar avvikande. Provet avslutades med S101 fritt och båda växlarna rakt.
 
 Detta verifierar manöverlogik, förregling och återrapport i simulatorn. Banans elektriska polarisering, växeldrivens fysiska funktion och faktiska kortslutningsskydd måste verifieras vid hårdvaruprovet.
+
+
+## Publicering
+
+Version 0.16.1 (`7dd7f71`) publicerad på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app) den 24 september 2026 kl. 03:27 svensk tid. Backup och tidigare release finns kvar enligt [driftuppgifterna](drift.md). Efterkontrollen visade anslutna tjänster, inga aktiva lås och fortsatt inloggningsskydd.

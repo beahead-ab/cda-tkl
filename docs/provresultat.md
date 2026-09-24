@@ -108,3 +108,10 @@ Slutpublicering 0.15: samtliga 124 enhetstester och sex processprov passerade ä
 ## 24 september 2026 – version 0.16
 
 124 enhetstester och sex processhelhetstester godkända lokalt och på publiceringsservern. Hela XML och deterministisk operationsimport godkända. Webbläsarprov av två samtidiga tåg, nummerföljning, låst växel, samma start/slut för återtagning, avbrott/återanslutning samt kompakt detaljruta och tre utseenden dokumenteras i [provrapporten för steg 1](provkorning-2026-09-24.md). Publicerad som `bf2a372`; extern HTTPS och skyddad åtkomst verifierade.
+
+
+## 24 september 2026 – version 0.16.1
+
+134 enhetstester och sex processhelhetstester godkända lokalt och på servern. Tio nya regressionstester granskar kompisväxlarnas manöver, återrapporter, lås och skydd för sidospåret. Ett test reproducerade före rättningen att Cu → Spår 1c kunde lägga om Vx101 under belagt S101. Den nya kontrollen avvisar detta före order; redan korrekt bekräftade kompisar lämnas orörda, och förenliga vägar kan dela samma pågående omläggning.
+
+Webbläsarprov från båda växelplupparna visade att båda bilderna följer med. Belagt S101 i den separata simulatorn avvisade tågvägen utan nya lås. S101 och växelparet återställdes efter provet. Full XML och deterministisk operationsimport godkända. Release `7dd7f71` publicerad med backup och godkänd efterkontroll av anslutning, lås och HTTPS/inloggningsskydd. [Fullständig provbeskrivning och avgränsning mot hårdvara](kompisvaxlar.md).
