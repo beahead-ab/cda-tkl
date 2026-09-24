@@ -8,25 +8,28 @@ import { createModelClock } from './model-clock.js';
 import { createFeedback } from './feedback.js';
 import { createOperatingControls } from './operating-controls.js';
 import { createFullscreen } from './fullscreen.js';
+import { createAppMenu } from './app-menu.js';
 const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout, serverOffset = 0;
-let currentPage='panel';
-const pageFromHash=()=>location.hash==='#register'?'admin':location.hash==='#tools'?'tools':'panel';
+let currentPage='panel',appMenu;
+const pageFromHash=()=>({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet'})[location.hash]||'panel';
 function setPage(page,{historyMode='push'}={}) {
-  const hash={panel:'#panel',tools:'#tools',admin:'#register'}[page];
+  const hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet'}[page];
   if(!hash)return;
   if(historyMode!=='none'&&location.hash!==hash)history[historyMode==='replace'?'replaceState':'pushState'](null,'',hash);
   closeInspector(false);manualFeedback?.clear();
   if(currentPage!==page)clearChoice(false);
   currentPage=page;document.body.dataset.page=page;
-  for(const p of ['panel','tools','admin']) {
+  appMenu?.close();
+  (page==='panel'?document.querySelector('.panel-actions'):$('header-menu-slot')).append($('menu-toggle'));
+  for(const p of ['panel','tools','admin','trainmeet']) {
     $(p+'-view').hidden=p!==page;$(p+'-tab').classList.toggle('selected',p===page);
     if(p===page)$(p+'-tab').setAttribute('aria-current','page');else $(p+'-tab').removeAttribute('aria-current');
   }
-  document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister'})[page]+' · Charlottendal TKL';
+  document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet'})[page]+' · Charlottendal TKL';
   window.scrollTo(0,0);paint();
   if(page==='admin')return sourceRegister.open().catch(e=>message(e.message));
 }
@@ -369,6 +372,7 @@ function paintIndication(name) {
   html('inspector',`<h2>${esc(name)} · panelindikering</h2><dl><dt>Beräknat läge</dt><dd>${value===true?'Aktivt underlag · grön lampa':value===false?'Inaktivt underlag · röd lampa':'Okänt underlag · inget fastställt läge'}</dd><dt>Kända villkor</dt><dd>${fresh?s?.known||0:0} av ${s?.total||def.conditions.length}</dd></dl><p class="muted">Indikering från tågvägar och sensorrapporter. Ingen fysisk bomkvittens eller bommanöver.</p><p class="muted">Ett aktivt villkor räcker för grön indikering. Röd kräver att alla villkor är kända och inaktiva. Tågväg som läggs, återtas eller hålls kvar ger okänt NX-villkor.</p>${important.length?`<ul class="indication-causes">${important.map(c=>`<li><strong>${esc(c.label)}</strong> · ${esc(c.reason)}</li>`).join('')}</ul>`:''}<button class="source-inspect" data-source-kind="conditionals" data-source-name="${esc(def.name)}">Visa källregeln och alla villkor →</button>`);
 }
 async function start() {
+  appMenu=createAppMenu({button:$('menu-toggle'),popup:$('app-menu')});
   const fullscreen = createFullscreen({button: $('toggle-fullscreen'), onError: message});
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
@@ -417,7 +421,7 @@ async function start() {
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}
     const link=e.target.closest('a[href^="#"]');
-    const page={'#panel':'panel','#tools':'tools','#register':'admin'}[link?.getAttribute('href')];
+    const page={'#panel':'panel','#tools':'tools','#register':'admin','#trainmeet':'trainmeet'}[link?.getAttribute('href')];
     if(page){e.preventDefault();setPage(page);}
   });
   window.addEventListener('hashchange',()=>setPage(pageFromHash(),{historyMode:'none'}));

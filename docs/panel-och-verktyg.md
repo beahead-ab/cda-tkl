@@ -1,10 +1,16 @@
 # Ren panel och separat verktygssida
 
-Version 0.17.0 öppnar ett renodlat ställverk på `/#panel`. Spårplan, signaler, växelpluppar och tågnummer finns kvar på sina platser. Den lilla överkanten innehåller namn, anslutningsstatus, tågvägstyp, Alla signaler i stopp och länken Verktyg. Hjälpen för start/slut visas bara under ett pågående val.
+Ställverket öppnas på `/#panel`. Spårplan, signaler, växelpluppar och tågnummer finns kvar på sina platser. Från version 0.19.0 innehåller den lilla överkanten namn, anslutningsstatus, tågvägstyp, Alla signaler i stopp och en hamburgerknapp. Hjälpen för start/slut visas bara under ett pågående val.
+
+## Gemensam meny (0.19.0, lokalt färdig)
+
+Hamburgerknappen samlar Ställverk, TrainMeet, Trafik och tågnummer, Manövrer och spärrar, Utseende och ljud, Anslutningar, Anläggningsregister, Händelser och loggar samt Fullskärm. Simulator och Byt lösenord visas där när installationen erbjuder dem. TrainMeet har en egen sida på `/#trainmeet` med serveradress, parkoppling och tåginformation.
+
+Samma meny finns i sidhuvudet på stödsidorna. Den kan öppnas med tangentbord; pilknappar flyttar fokus. Escape stänger menyn före fullskärm eller startval, och klick utanför stänger den. Att bara öppna/stänga menyn bevarar panelens pågående startval. Menyn ryms även vid 390 pixlars bredd; längre menyer kan rullas.
 
 ## Fullskärm (0.17.1)
 
-Knappen **Fullskärm** bredvid Verktyg använder webbläsarens fullskärmsläge. Samma knapp byter till **Avsluta fullskärm**. Escape lämnar fullskärmen; pågående startval och öppna uppgifter bevaras när fullskärmsläget växlas. Webbläsarens egna ändringar uppdaterar knappens text, ikon och tillgängliga läge.
+Knappen **Fullskärm**, från 0.19.0 placerad i menyn, använder webbläsarens fullskärmsläge. Samma knapp byter till **Avsluta fullskärm**. Escape lämnar fullskärmen när menyn är stängd; pågående startval och öppna uppgifter bevaras när fullskärmsläget växlas. Webbläsarens egna ändringar uppdaterar knappens text, ikon och tillgängliga läge.
 
 Hela appdokumentet visas i fullskärm, så stopp, felmeddelanden och tillfälliga informationsrutor finns kvar. Verktyg och anläggningsregister går att använda i samma läge. Ingen spårplan eller signalbild laddas om och inga manöverorder skickas av knappen. Om webbläsaren inte stöder eller tillåter funktionen visas ett meddelande.
 
@@ -17,7 +23,7 @@ Webbläsarprov: in/ut via knapp, Enter, Escape, signaluppgifter, Verktyg och til
 - **Trafik:** aktiva tågvägar och återtagning, tågvägslistor, objektinformation samt inkommande tåg, nummerregistrering och nummerföljning.
 - **Manövrer:** lokal-/fjärrläge, nödåtertagning, spår- och linjespärrar, programmeringsspår och modellklocka.
 - **Utseende:** panelutseende, zoom, ljud och teckenförklaring.
-- **Anslutningar:** anläggningssimulator, TrainMeet och befintligt kontolänkval.
+- **Anslutningar:** installationsöversikt samt länkar till TrainMeet och anläggningsregistret. Simulator och kontolänk finns i menyn.
 - **Händelser:** journal, protokolltrafik och telegraminspelning.
 
 Anläggningsregistret finns kvar på `/#register`. Sidnavigationen och Tillbaka till ställverket återför till panelen. Webbläsarens bakåt/framåt och direktöppning av sidans adress fungerar. Funktionen Visa/Dölj verktyg på själva panelsidan är ersatt av sidbytet; profilpresentation, permanent instruktionstext, teckenförklaring och versionsfot visas inte på panelsidan.

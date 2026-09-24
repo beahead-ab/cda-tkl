@@ -143,3 +143,11 @@ Lokal syntax godkänd. Serverns 134 enhetstester och sex processhelhetstester pa
 V1–V3:s geometri, reservationsfaser, individuella block, flera orsaker, polaritet och okända rapporter täcks av sju nya tester. De sex äldre indikeringsproven passerar. Sex processhelhetstester godkända lokalt; det utökade nätprovet belägger/frigör S100, S121 och S165a genom simulatorns telegram. [Webbläsarproven](vagindikeringar.md) visar släckt viloläge, korrekt växelblinkning, genomgående tågväg, återtagning, avbrott/återanslutning, alla tre utseenden och fullskärm. Provdata och fönsterläge återställda; inga konsolfel.
 
 Serverns hela kontroll passerade med 141 enhetstester och sex helhetstester samt XML/operations/syntax. Publicering av `92bc576` avbröts av befintliga tågvägslås; 0.17.1 (`97c6546`) är fortfarande den publicerade versionen. Återställda tjänster och kontakt verifierade. Provvägen Au → Spår 1a har bevarats och inväntar Caspers besked.
+
+## 24 september 2026 – version 0.19.0, lokal meny och TrainMeet-inställning
+
+146 enhetstester, sex processhelhetstester och syntaxkontroll passerade lokalt. Fem nya TrainMeet-prov täcker beständig serveradress, frånkoppling före serverbyte, revisions-/sessionskontroll, pågående begäran, låst installationsadress, otillåtna URL:er och misslyckad lagring. Processprovet konfigurerar adressen via API före parkoppling och verifierar återanslutning efter omstart. Inloggningsprovet omfattar det nya konfigurationsanropet.
+
+Webbläsarprov: hamburger-meny på panel och stödsida, pilknappsfokus och Escape, avsnittslänk till utseende, tillbaka med bevarat stationsutkast, direkt omladdning av TrainMeet-sidan, avvisad HTTP-adress på nätverket, sparad loopbackadress samt återställd tidigare provadress. Ingen anslutningskod skickades till en riktig server. Menyn och formuläret granskade i 1280/390 pixlar. Fullskärm från menyn bevarade Cu-startvalet, och Escape i öppen meny stängde bara menyn. Provvalet avbrutet och normal fönsterstorlek återställd; inga konsolfel eller varningar.
+
+Den riktiga TrainMeet-serverns adress och placering är fortfarande efterfrågade. Webbpublicering inväntar tidigare besked om Au → Spår 1a; ingen serverväg har raderats eller återtagits för detta arbete.

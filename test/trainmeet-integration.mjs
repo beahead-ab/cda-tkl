@@ -19,11 +19,13 @@ test('TKL process pairs and reads TrainMeet, keeps tokens private, survives rest
     if(req.url==='/v1/display')return res.end(JSON.stringify({...common,revision:1,clock:{configured:true,time:'12:00:00',running:true,speed:4},trains:[{id:'m1',station_id:'cda',train_number:'P123',track:'1'}]}));
     res.writeHead(404);res.end('{}');});
   await new Promise(r=>gateway.listen(0,'127.0.0.1',r));const port=await freePort(),wire=await freePort(),dir=fs.mkdtempSync(path.join(os.tmpdir(),'cda-trainmeet-'));let child,output='';
-  const launch=()=>{child=spawn(process.execPath,['src/server.mjs'],{cwd,env:{...process.env,CHARLOTTENDAL_AUTH_MODE:'cloudflare',CHARLOTTENDAL_PUBLIC_ORIGIN:'',CHARLOTTENDAL_PORT:String(port),CHARLOTTENDAL_WIRE_PORT:String(wire),CHARLOTTENDAL_STATE_DIR:dir,CHARLOTTENDAL_TRAINMEET_ORIGIN:'http://127.0.0.1:'+gateway.address().port}});child.stderr.on('data',c=>{output+=c;});};
+  const launch=()=>{child=spawn(process.execPath,['src/server.mjs'],{cwd,env:{...process.env,CHARLOTTENDAL_AUTH_MODE:'cloudflare',CHARLOTTENDAL_PUBLIC_ORIGIN:'',CHARLOTTENDAL_PORT:String(port),CHARLOTTENDAL_WIRE_PORT:String(wire),CHARLOTTENDAL_STATE_DIR:dir,CHARLOTTENDAL_TRAINMEET_ORIGIN:''}});child.stderr.on('data',c=>{output+=c;});};
   const state=async()=>(await fetch('http://127.0.0.1:'+port+'/api/state')).json();
   const stop=async()=>{const exited=new Promise(r=>child.once('exit',r));child.kill('SIGTERM');await exited;};
-  try{launch();const initial=await until(state);assert.equal(initial.trainMeet.status,'unpaired');
-    const response=await fetch('http://127.0.0.1:'+port+'/api/trainmeet/pair',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...initial.trainMeet,stationId:'cda',code:'test-code'})});assert.equal(response.status,200);assert.ok(!(await response.text()).includes('integration-private-token'));
+  try{launch();const initial=await until(state);assert.equal(initial.trainMeet.status,'unconfigured');
+    const configure=await fetch('http://127.0.0.1:'+port+'/api/trainmeet/configure',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...initial.trainMeet,origin:'http://127.0.0.1:'+gateway.address().port})});assert.equal(configure.status,200);
+    const configured=await configure.json();assert.equal(configured.status,'unpaired');assert.equal(requests.length,0);
+    const response=await fetch('http://127.0.0.1:'+port+'/api/trainmeet/pair',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...configured,stationId:'cda',code:'test-code'})});assert.equal(response.status,200);assert.ok(!(await response.text()).includes('integration-private-token'));
     let s=await state();assert.equal(s.trainMeet.context.trains[0].train_number,'P123');assert.equal(s.routes.length,0);assert.ok(Object.values(s.blocks).every(b=>b.occupied===null));assert.equal(s.clock.authority,'local');
     await stop();launch();s=await until(async()=>{const v=await state();return v.trainMeet.status==='connected'?v:null;});assert.equal(s.trainMeet.context.movements.length,1);assert.equal(pairs,1);assert.ok(requests.filter(r=>r.startsWith('POST')).every(r=>r==='POST /v1/pair'));assert.equal(output,'');
     assert.equal(fs.statSync(path.join(dir,'trainmeet.json')).mode&0o777,0o600);

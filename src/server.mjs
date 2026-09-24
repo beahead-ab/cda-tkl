@@ -98,7 +98,7 @@ const server = http.createServer(async (req, res) => {
     }
     const data = await body(req);
     if(url.pathname.startsWith('/api/bindings/')){const command=url.pathname.slice('/api/bindings/'.length);if(!['save','discard','restore','activate'].includes(command))return json(res,{error:'Okänd driftinställning'},404);const result=bindings[command](data);engine.log('bindings',command==='activate'?'Driftprofil version '+result.activeVersion+' aktiverad. AIS kvarstår, alla rapporter läses in på nytt.':'Driftinställningarnas utkast uppdaterat.');dirty=true;return json(res,result);}
-    if(url.pathname.startsWith('/api/trainmeet/')){const command=url.pathname.slice('/api/trainmeet/'.length);if(!['pair','refresh','disconnect'].includes(command))return json(res,{error:'Okänd TrainMeet-åtgärd'},404);return json(res,await trainMeet[command](data));}
+    if(url.pathname.startsWith('/api/trainmeet/')){const command=url.pathname.slice('/api/trainmeet/'.length);if(!['configure','pair','refresh','disconnect'].includes(command))return json(res,{error:'Okänd TrainMeet-åtgärd'},404);return json(res,await trainMeet[command](data));}
     if(url.pathname==='/api/clock'){const result=modelClock.change(data);dirty=true;engine.log('clock','Modellklockan '+(result.running?'går':'är pausad')+' med hastighet '+result.rate+'×.');return json(res,result);}
     if(url.pathname==='/api/recordings/start'){recorder.start(data,engine.connected?'connected':'disconnected');return json(res,recorder.view());}
     if(url.pathname==='/api/recordings/stop'){await recorder.stop(data);return json(res,recorder.view());}

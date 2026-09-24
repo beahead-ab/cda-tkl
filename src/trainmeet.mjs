@@ -4,20 +4,36 @@ const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});}
 const text=(v,max=200)=>typeof v==='string'&&v.length<=max&&!/[\u0000-\u001f]/.test(v);
 const record=v=>v&&typeof v==='object'&&!Array.isArray(v);
 const identity=(v)=>text(v,128)&&v.length>0;
+function serverOrigin(value) {
+  if(value==='')return '';
+  if(!text(value,512))fail('Ange en giltig TrainMeet-adress.');
+  let u;try{u=new URL(value.trim());}catch{fail('Ange hela serveradressen, till exempel https://trainmeet.example.');}
+  if(u.username||u.password||u.pathname!=='/'||u.search||u.hash||u.protocol!=='https:'&&!(u.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(u.hostname)))fail('TrainMeet kräver HTTPS eller en lokal tunneladress.');
+  return u.origin;
+}
 
 // Read-only HTTP-v1 adapter for the locally reviewed TrainMeet contract.
 // It deliberately has no reference to Engine, Field or detector state.
 export class TrainMeet extends EventEmitter {
   constructor({storage,origin='',fetcher=fetch,now=Date.now}) {
     super();this.storage=storage;this.fetcher=fetcher;this.now=now;this.sessionId=randomUUID();this.revision=0;this.busy=false;this.lastAttempt=0;this.context=null;this.status='unconfigured';this.error='';this.updatedAt=0;
-    if(origin){const u=new URL(origin);if(u.username||u.password||u.pathname!=='/'||u.search||u.hash||u.protocol!=='https:'&&!(u.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(u.hostname)))throw Error('TrainMeet kräver HTTPS eller en lokal tunneladress.');this.origin=u.origin;}else this.origin='';
+    this.origin=serverOrigin(origin);this.originLocked=!!origin;
     this.data=storage.load('trainmeet.json',{version:1,clientId:'cda-tkl-'+randomUUID(),stationId:'',token:'',origin:this.origin});
     if(this.data.version!==1||!identity(this.data.clientId)||!text(this.data.stationId,128)||!text(this.data.token,4096)||!text(this.data.origin,512))throw Error('Ogiltig sparad TrainMeet-anslutning.');
     if(this.origin&&this.data.token&&this.data.origin!==this.origin)throw Error('TrainMeet-adressen har ändrats. Flytta inte en gammal parkopplingsnyckel till en annan server.');
+    if(!this.origin)this.origin=serverOrigin(this.data.origin);
     if(this.origin)this.status=this.data.token?'disconnected':'unpaired';
   }
-  view(){return {sessionId:this.sessionId,revision:this.revision,origin:this.origin,status:this.status,busy:this.busy,paired:!!this.data.token,stationId:this.data.stationId,error:this.error,updatedAt:this.updatedAt,stale:this.status!=='connected'||this.now()-this.updatedAt>15000,contract:'TrainMeet HTTP v1 · läsande',context:this.context};}
+  view(){return {sessionId:this.sessionId,revision:this.revision,origin:this.origin,originLocked:this.originLocked,status:this.status,busy:this.busy,paired:!!this.data.token,stationId:this.data.stationId,error:this.error,updatedAt:this.updatedAt,stale:this.status!=='connected'||this.now()-this.updatedAt>15000,contract:'TrainMeet HTTP v1 · läsande',context:this.context};}
   check(data){if(data.sessionId!==this.sessionId||data.revision!==this.revision)fail('TrainMeet-anslutningen har ändrats. Läs in senaste läget.',409);if(this.busy)fail('En TrainMeet-begäran pågår.',409);}
+  configure(data){
+    this.check(data);
+    if(this.originLocked)fail('Den här installationen använder en fast TrainMeet-adress.',409);
+    if(this.data.token)fail('Koppla från TrainMeet innan serveradressen ändras.',409);
+    const origin=serverOrigin(data.origin),next={...this.data,origin,stationId:'',token:''};
+    try{this.storage.save('trainmeet.json',next);}catch{fail('Serveradressen kunde inte sparas. Den tidigare inställningen är kvar.',507);}
+    this.data=next;this.origin=origin;this.context=null;this.updatedAt=0;this.status=origin?'unpaired':'unconfigured';this.error='';this.revision++;this.emit('change');return this.view();
+  }
   async request(path,{token='',payload}={}) {
     if(!this.origin)fail('TrainMeet-server är inte angiven för den här installationen.');
     const response=await this.fetcher(this.origin+path,{method:payload?'POST':'GET',headers:{Accept:'application/json',...(token?{Authorization:'Bearer '+token}:{}),...(payload?{'Content-Type':'application/json'}:{})},body:payload?JSON.stringify(payload):undefined,redirect:'error',signal:AbortSignal.timeout(8000)});

@@ -39,3 +39,16 @@ body[data-page]:not([data-page=panel])>.app-header{position:sticky;top:0;z-index
 #derived-indications [data-crossing=true] i{background:#2c2a25;border-color:#6b6663}
 #derived-indications [data-crossing=true][data-value=active] i{background:#ef382d;border-color:#ffc4b7}
 #derived-indications [data-crossing=true][data-value=unknown] i{background:transparent;border-color:#c5a063;border-style:dashed}
+#menu-toggle{display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:32px;padding:6px;border-radius:4px;background:transparent}
+#menu-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+#menu-toggle:hover,#menu-toggle[aria-expanded=true]{background:#2a393b;border-color:#77918f}
+.app-menu{position:fixed;z-index:100;width:270px;max-width:calc(100vw - 16px);max-height:calc(100dvh - 80px);overflow:auto;background:#172025;border:1px solid #4a6064;border-radius:8px;padding:6px;box-shadow:0 10px 36px #0009}
+.app-menu a,.app-menu button{display:flex;align-items:center;gap:8px;width:100%;min-height:38px;padding:9px 12px;border:0;border-radius:4px;background:transparent;color:var(--text);text-decoration:none;text-align:left;font-size:12px;line-height:1.4}
+.app-menu a:hover,.app-menu button:hover{background:#2c3c3f}.app-menu a.selected{background:#293931}
+.app-menu hr{margin:6px;border:0;border-top:1px solid #34474a}.app-menu #toggle-fullscreen{padding:9px 12px;min-height:38px}
+#menu-trainmeet-status{margin-left:auto;font-size:10px;color:var(--muted)}
+#header-menu-slot{display:flex}.app-header .connection{margin-left:auto}
+#trainmeet-view{max-width:1150px;margin:auto;padding:24px 20px}#trainmeet-view #trainmeet{margin-top:18px}
+@media(max-width:700px){#trainmeet-view{padding:18px 12px}#panel-view .panel-actions #menu-toggle{margin-left:auto}}
+#trainmeet .catalog{align-items:end}#trainmeet label{display:flex;flex-direction:column;gap:7px;font-size:12px}#trainmeet input{padding:9px 10px;max-width:100%;min-width:0}#trainmeet .tm-server-label{flex:1;min-width:180px}#trainmeet .actions{margin:18px 0}#trainmeet .trainmeet-heading{margin-top:24px}
+@media(max-width:700px){#trainmeet{padding:16px 12px}#trainmeet label{flex:1 1 100%}#trainmeet input{width:100%}}

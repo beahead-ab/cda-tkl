@@ -228,3 +228,9 @@ Lokal syntaxkontroll och webbläsarprov godkända. Serverns 134 enhetstester, se
 Kodrelease `92bc576` med V1–V3:s nya vägövergångsvisning finns i privat GitHub. Före byte passerade syntax, hela XML, operationsimport, 141 enhetstester och sex helhetstester på servern. Publiceringsskyddet hittade kvarvarande tågväg Au → Spår 1a och avbröt utan att radera tillstånd. Föregående kodrelease `97c6546` återställdes och båda tjänsterna startades. Låset finns kvar som `held`; Casper har tillfrågats om normal återtagning före nytt publiceringsförsök. Ännu inget svar eller återtagning.
 
 Efterkontroll av föregående version: båda tjänster aktiva, LocoNet ansluten, inga fel efter start och extern HTTPS-login 200. Ingen ny releasebackup hann tas före låskontrollen; senaste fullständiga releasebackup är fortsatt `network-97c6546-20260924T052720Z`. Utrullningslogg finns lokalt i `work/deploy-network-92bc576.log`.
+
+## 24 september 2026 – 0.19.0 lokalt färdig, oförändrad webbdrift
+
+Hamburger-meny och särskild TrainMeet-sida med sparbar serveradress är färdiga lokalt. 146 enhetstester, sex helhetstester, syntax och webbläsarprov passerade. Adressinställningen använder befintlig `trainmeet.json`; det sparade formatet är fortsatt version 1. `CHARLOTTENDAL_TRAINMEET_ORIGIN` låser adressen om den är satt. Läs [anslutningsanvisningen](trainmeet-adapter.md) före riktig parkoppling.
+
+Ny läsande kontroll bekräftade att `/opt/charlottendal/current` fortfarande pekar på `97c6546` och att Au → Spår 1a är kvar i `held` med `cancelRequested: false`. Ingen ny publicering eller tjänsteomstart har gjorts. Tidigare återtagningsfråga inväntar svar; den riktiga TrainMeet-adressen och serverns placering är också efterfrågade. Lokalt finns förhandsvisningen på `http://127.0.0.1:9030/`.
