@@ -151,3 +151,9 @@ Serverns hela kontroll passerade med 141 enhetstester och sex helhetstester samt
 Webbläsarprov: hamburger-meny på panel och stödsida, pilknappsfokus och Escape, avsnittslänk till utseende, tillbaka med bevarat stationsutkast, direkt omladdning av TrainMeet-sidan, avvisad HTTP-adress på nätverket, sparad loopbackadress samt återställd tidigare provadress. Ingen anslutningskod skickades till en riktig server. Menyn och formuläret granskade i 1280/390 pixlar. Fullskärm från menyn bevarade Cu-startvalet, och Escape i öppen meny stängde bara menyn. Provvalet avbrutet och normal fönsterstorlek återställd; inga konsolfel eller varningar.
 
 Den riktiga TrainMeet-serverns adress och placering är fortfarande efterfrågade. Webbpublicering inväntar tidigare besked om Au → Spår 1a; ingen serverväg har raderats eller återtagits för detta arbete.
+
+## 24 september 2026 – version 0.19.1, objektinformation med högerklick
+
+Webbläsarprov av Vx100/Vx101: högerklick öppnade en riktig modal intill växeln med båda lägena och spårstatus. Efter Escape låg muspekare och fokus kvar på växeln utan att information öppnades. Vänsterklick lade paret avvikande utan informationsruta. Högerklick visade återrapporten och Lägg rakt återställde båda genom ordinarie manöver. Klick på växeln bakom modalens bakgrund stängde bara rutan; efterföljande Skift+F10 visade fortsatt rakt läge.
+
+Signal 1/12 och V1 öppnades med högerklick. Vx171 vid högerkanten placerade rutan till vänster om klicket. Native dialog verifierad modal; hela rutan rymdes i 390 × 760. Escape i V1-rutan behöll fullskärm och Cu-startval. Provvalet avbrutet, växelparet rakt, normal fönsterstorlek återställd. Ett upptäckt klientfel efter borttagen hover-titel rättades; inga nya konsolfel efter omladdning. Syntaxkontroll godkänd. Ändringen rör presentation och händelsehantering; kärna och driftdataformat är oförändrade.

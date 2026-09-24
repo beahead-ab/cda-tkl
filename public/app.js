@@ -9,12 +9,13 @@ import { createFeedback } from './feedback.js';
 import { createOperatingControls } from './operating-controls.js';
 import { createFullscreen } from './fullscreen.js';
 import { createAppMenu } from './app-menu.js';
+import { createContextDialog } from './context-dialog.js';
 const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout, serverOffset = 0;
-let currentPage='panel',appMenu;
+let currentPage='panel',appMenu,contextDialog;
 const pageFromHash=()=>({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet'})[location.hash]||'panel';
 function setPage(page,{historyMode='push'}={}) {
   const hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet'}[page];
@@ -57,7 +58,15 @@ function svg(tag, attrs, parent, text) {
 function accessible(g, name, action) {
   g.setAttribute('role', 'button'); g.setAttribute('tabindex', '0'); g.setAttribute('aria-label', name);
   svg('title', {}, g, name); g.addEventListener('click', action);
-  g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); action(); } });
+  g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); action(e); } });
+}
+function objectDetails(node,kind,name) {
+  node.querySelector('title')?.remove();
+  node.setAttribute('aria-description','Högerklicka eller tryck Skift+F10 för information.');
+  node.addEventListener('contextmenu',e=>{e.preventDefault();showInspector(kind,name,e);});
+  node.addEventListener('keydown',e=>{
+    if(e.key==='ContextMenu'||e.key==='F10'&&e.shiftKey){e.preventDefault();showInspector(kind,name,e);}
+  });
 }
 function message(text) { if(text)feedback?.error(); $('message-text').textContent = text; $('message').hidden = !text; }
 async function api(path, data) {
@@ -145,7 +154,8 @@ function buildPlan() {
     svg('rect', { x: -rw / 2 - 5, y: -rh / 2 - 6, width: rw + 10, height: rh + 12, class: 'hit' }, g);
     const images=type.slice(0,3).map((file,i)=>svg('image',{x:-w/2,y:-h/2,width:w,height:h,transform:`rotate(${m.deg})`,href:icon(file),visibility:i===2?'visible':'hidden','pointer-events':'none'},g));
     const unknown = svg('text', { x: rw / 2 + 1, y: 3, class: 'signal-unknown' }, g, '?');
-    accessible(g, `Signal ${m.mast}`, () => showInspector('signal',m.mast));
+    accessible(g, `Signal ${m.mast}`, e => {if(e.type==='keydown')showInspector('signal',m.mast,e);});
+    objectDetails(g,'signal',m.mast);
     signals.push({ ...m, g, images, unknown, type });
   }
   const used = new Set(config.routes.flatMap(r => [r.from, r.to]));
@@ -172,19 +182,18 @@ function buildPlan() {
       }
     }
     let manualName=names[0];
-    accessible(g,isRoute?`${label(b.sensor)} · ${isShunt?'växeltågväg':'tågvägsknapp'}`:names.length?`Manövrera växel ${names.join(' / ')}`:b.sensor,()=>{
+    accessible(g,isRoute?`${label(b.sensor)} · ${isShunt?'växeltågväg':'tågvägsknapp'}`:names.length?`Manövrera växel ${names.join(' / ')}`:b.sensor,e=>{
       if(isRoute) return choose(b.sensor);
       const indication=sourceLamps.find(l=>l.g===g);
-      if(indication)return inspectIndication(indication.name);
+      if(indication){if(e.type==='keydown')showInspector('indication',indication.name,e);return;}
       if(names.length){
-        manualFeedback.select(manualName);
         if(!available) return message('Växelgruppen finns i källan men är ännu inte ansluten till driftprofilen.');
-        const name=manualName; inspected={kind:'turnout',name}; paintInspector();
-        return manualTurnout(name,state?.turnouts[name]?.position==='C'?'T':'C');
+        return manualTurnout(manualName,state?.turnouts[manualName]?.position==='C'?'T':'C');
       }
       openSource('sensors',b.sensor);
     });
-    if(names.length)manualName=manualFeedback.addControl(g,names,b.centerX,b.centerY);
+    if(names.length){manualName=manualFeedback.addControl(g,names,b.centerX,b.centerY);objectDetails(g,'turnout',manualName);}
+    const indication=sourceLamps.find(l=>l.g===g);if(indication)objectDetails(g,'indication',indication.name);
     if(isButton) buttons.push({id:b.sensor,g,hit,hitCap:b.hitCap,available,names});
   }
   new ResizeObserver(()=>{
@@ -195,27 +204,24 @@ function buildPlan() {
   $('derived-indications').onclick=e=>{const name=e.target.closest('button')?.dataset.indication;if(name)inspectIndication(name);};
 }
 async function manualTurnout(name,position) {
-  manualFeedback.select(name);
   if(!usable())return message('Panelen saknar aktuell kontakt med anläggningen.');
   if(state.manual?.[name]?.allowed!==true)return message(state.manual?.[name]?.reason||'Ingen verifierad manöverregel är ansluten.');
   if(pending)return;
   manualFeedback.order(name,position);
   if(!await api('turnout',{name,position}))manualFeedback.failed($('message-text').textContent);
 }
-let inspectorOrigin;
-function showInspector(kind,name) {
+function showInspector(kind,name,event) {
+  appMenu?.close();
   if(kind==='turnout')manualFeedback.select(name);else manualFeedback.clear();
-  inspectorOrigin=document.activeElement;
   inspected={kind,name};paintInspector();
+  $('inspector-heading').textContent=({turnout:'Växel',signal:'Signal',indication:'Indikering'})[kind]+' '+name;
   if(currentPage==='panel') {
-    $('inspector-host').append($('inspector-card'));$('inspector-host').hidden=false;
-    $('inspector-card').focus({preventScroll:true});
+    $('inspector-host').append($('inspector-card'));
+    contextDialog.open(event);
   } else $('inspector-card').scrollIntoView({block:'nearest'});
 }
 function closeInspector(restoreFocus=true) {
-  if($('inspector-host').hidden)return;
-  $('inspector-host').hidden=true;$('inspector-home').append($('inspector-card'));
-  if(restoreFocus&&inspectorOrigin?.isConnected)inspectorOrigin.focus({preventScroll:true});
+  contextDialog?.close(restoreFocus);
 }
 function inspectIndication(name){showInspector('indication',name);}
 function isBlocked(name) { const address=config.blocks[name]?.address;return address!=null && (state?.controls?.blocked || []).some(n=>config.blocks[n]?.address===address); }
@@ -249,7 +255,7 @@ function paintPlan() {
     lamp.lens.setAttribute('class','indicator-off '+(value==null?'derived-missing':!lamp.crossing&&value===(lamp.color==='g')?'derived-on-'+lamp.color:''));
     lamp.unknown.style.display=value==null&&lamp.color==='g'?'':'none';
     const text=lamp.name+' · '+(lamp.crossing?'vägövergång · '+(value===true?'röd växelblinkning':value===false?'släckta lampor':'okänt underlag'): 'beräknad panelindikering · '+(value===true?'aktivt underlag':value===false?'inaktivt underlag':'okänt underlag'));
-    lamp.g.setAttribute('aria-label',text+' · '+(lamp.crossing?(lamp.color==='g'?'vänster':'höger'):lamp.color));lamp.g.querySelector('title').textContent=text;
+    lamp.g.setAttribute('aria-label',text+' · '+(lamp.crossing?(lamp.color==='g'?'vänster':'höger'):lamp.color));
   }
   for(const button of $('derived-indications').querySelectorAll('button')) {
     const crossing=button.dataset.crossing==='true',indication=state.panelIndications?.[button.dataset.indication];
@@ -373,6 +379,7 @@ function paintIndication(name) {
 }
 async function start() {
   appMenu=createAppMenu({button:$('menu-toggle'),popup:$('app-menu')});
+  contextDialog=createContextDialog({dialog:$('inspector-host'),onClose:()=>{$('inspector-home').append($('inspector-card'));manualFeedback?.clear();}});
   const fullscreen = createFullscreen({button: $('toggle-fullscreen'), onError: message});
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
@@ -386,13 +393,13 @@ async function start() {
   sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   buildPlan();
   trainInformation=createTrainInformation({catalog:config.trainFields,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
-  $('close-inspector').onclick=closeInspector;
+  $('close-inspector').onclick=()=>closeInspector();
   $('dismiss-message').onclick=()=>message('');
 
   $('block-choice').innerHTML=Object.keys(config.blocks).sort((a,b)=>a.localeCompare(b,'sv',{numeric:true})).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
   $('block-choice').onchange=paint;
   $('inspect-turnout').innerHTML='<option value="">Välj växel för information…</option>'+[...new Set(Object.values(panel.turnouts).map(t=>t.name))].sort((a,b)=>a.localeCompare(b,'sv',{numeric:true})).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
-  $('inspect-turnout').onchange=()=>{const name=$('inspect-turnout').value;if(name){manualFeedback.select(name);inspected={kind:'turnout',name};paintInspector();}};
+  $('inspect-turnout').onchange=()=>{const name=$('inspect-turnout').value;if(name)showInspector('turnout',name);else manualFeedback.clear();};
   $('toggle-block').onclick=()=>api('track-block',{name:$('block-choice').value,blocked:!isBlocked($('block-choice').value)});
   $('all-stop').onclick=()=>api('all-stop',{enabled:true});
   $('emergency-cancel').onclick=()=>api('emergency-cancel',{});
@@ -412,7 +419,7 @@ async function start() {
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };
   $('clear-selection').onclick = ()=>clearChoice();
-  document.addEventListener('keydown', e => { if(e.key==='Escape'){if(fullscreen.active()){fullscreen.exit();return;}manualFeedback.clear();if(!$('inspector-host').hidden)closeInspector();else clearChoice();} });
+  document.addEventListener('keydown', e => { if(e.key==='Escape'){if($('inspector-host').open){e.preventDefault();closeInspector();return;}if(fullscreen.active()){fullscreen.exit();return;}manualFeedback.clear();clearChoice();} });
   for (const b of document.querySelectorAll('.skin-picker button')) b.onclick = () => setSkin(b.dataset.skin);
   function setSkin(value) { document.body.dataset.skin = value; localStorage.setItem('charlottendal-skin', value); for (const b of document.querySelectorAll('.skin-picker button')) b.classList.toggle('selected', b.dataset.skin === value); }
   setSkin(localStorage.getItem('charlottendal-skin') || 'relay');

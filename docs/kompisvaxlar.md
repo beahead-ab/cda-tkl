@@ -44,6 +44,8 @@ Version 0.16.1 (`7dd7f71`) publicerad på [cda-tkl.trainmeet.app](https://cda-tk
 
 ## Tydlig manuell återkoppling i version 0.16.2
 
+**Ändrat i 0.19.1, lokalt färdigt:** Informationen öppnas numera med högerklick på växelpluppen, eller Skift+F10. Muspekning/fokus och vänsterklick öppnar ingen informationsruta. Uppgifterna om kompisväxlarna visas tillsammans med övriga växeluppgifter i en modal nära klickpunkten. Stäng, Escape eller klick utanför stänger den; klicket faller inte igenom till panelen. Beskrivningen nedan redovisar införandet i 0.16.2 och dess dåvarande prov. Serverns manöver- och skyddsvillkor är fortsatt oförändrade.
+
 När en växelplupp pekas ut med musen eller får tangentbordsfokus markeras den och samtliga kopplade växlar med tillfälliga blå ringar. En informationsruta visar vilka växlar som påverkas, deras faktiska återrapporterade lägen, berörda spårs beläggning och lås/spärrar. Den klickade pluppens närmaste växel namnges som vald; manövern går fortfarande till den verifierade gruppen i servern.
 
 Efter en manöver ligger informationen kvar. Begärt läge skiljs från återrapporterat läge. Vid utebliven eller okänd spårrapport för kompisen visas att det inte går att bekräfta fritt spår. Rutan ändrar inte serverns villkor: belagda, okända, spärrade eller låsta berörda resurser tillåter ingen manuell omläggning. En misslyckad begäran visas också i rutan. Ingen extra bekräftelseruta eller påstådd elektrisk kortslutningsdetektering har införts.

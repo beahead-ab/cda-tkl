@@ -2,20 +2,19 @@
 export function createManualFeedback({config, plan, scroll, panelView, stateOf, online, isBlocked, esc, revealPlan=()=>{}}) {
   const box=document.createElement('aside');
   box.className='manual-feedback';box.hidden=true;box.setAttribute('aria-label','Manuell växelmanöver');
-  box.innerHTML='<button class="manual-feedback-close" type="button" aria-label="Stäng växelinformation">×</button><div id="manual-feedback-body" role="status" aria-live="polite" aria-atomic="true"></div>';
+  box.innerHTML='<div id="manual-feedback-body" role="status" aria-live="polite" aria-atomic="true"></div>';
   panelView.append(box);
   const body=box.querySelector('#manual-feedback-body');
   const layer=document.createElementNS(plan.namespaceURI,'g');layer.setAttribute('pointer-events','none');layer.setAttribute('aria-hidden','true');plan.append(layer);
   const markers=new Map(),positions=new Map(),controls=[];
-  let hovered=null,focused=null,selected=null,requested=null,failure=null,rendered='';
+  let selected=null,requested=null,failure=null,rendered='';
   const namesFor=name=>[name,...(config.coupled?.[name]||[]).filter(n=>n!==name)];
-  const active=()=>hovered||focused||selected;
-  function clear() {hovered=focused=selected=requested=failure=null;update();}
-  box.querySelector('button').onclick=clear;
+  const active=()=>selected;
+  function clear() {selected=requested=failure=null;update();}
   body.onclick=e=>{
     const name=e.target.closest('[data-show-turnout]')?.dataset.showTurnout;
     const marker=markers.get(name);if(!marker)return;
-    const nameBeforeNavigation=active();revealPlan();selected=nameBeforeNavigation;hovered=focused=null;update();
+    const nameBeforeNavigation=active();revealPlan();selected=nameBeforeNavigation;update();
     marker.scrollIntoView({block:'center',inline:'center',behavior:'instant'});update();
   };
   function visible(name) {
@@ -63,19 +62,15 @@ export function createManualFeedback({config, plan, scroll, panelView, stateOf, 
     const nearest=names.filter(n=>positions.has(n)).sort((a,b)=>Math.hypot(positions.get(a).cx-x,positions.get(a).cy-y)-Math.hypot(positions.get(b).cx-x,positions.get(b).cy-y))[0]||names[0];
     const group=namesFor(nearest),peers=group.filter(n=>n!==nearest);
     const label=`Manövrera växel ${nearest}${peers.length?' · påverkar även '+peers.join(', '):''}`;
-    node.setAttribute('aria-label',label);node.querySelector('title').textContent=label;node.setAttribute('aria-describedby','manual-feedback-body');
-    node.addEventListener('pointerenter',()=>{hovered=nearest;update();});
-    node.addEventListener('pointerleave',()=>{if(hovered===nearest)hovered=null;update();});
-    node.addEventListener('focus',()=>{focused=nearest;update();});
-    node.addEventListener('blur',()=>{if(focused===nearest)focused=null;update();});
+    node.setAttribute('aria-label',label);
     controls.push({node,names:group});return nearest;
   }
   scroll.addEventListener('scroll',update,{passive:true});
   window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);
   new ResizeObserver(update).observe(box);
   return {addTurnout,addControl,update,clear,
-    select(name){selected=name;hovered=focused=null;requested=failure=null;update();},
-    order(name,position){selected=name;hovered=focused=null;requested=position;failure=null;update();},
+    select(name){selected=name;requested=failure=null;update();},
+    order(name,position){if(selected!==name)return;requested=position;failure=null;update();},
     failed(reason){requested=null;failure=reason||'Kontrollera kontakten och återrapporterna.';update();}
   };
 }

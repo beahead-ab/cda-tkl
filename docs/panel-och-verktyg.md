@@ -30,7 +30,11 @@ Anläggningsregistret finns kvar på `/#register`. Sidnavigationen och Tillbaka 
 
 ## Kontext och bevarat tillstånd
 
-Signaluppgifter öppnas vid klick i en tillfällig detaljruta på panelen. Kompisväxelmarkering och dess informationsruta visas vid manöver/fokus. Visa Vx… från Verktyg återgår till panelen och rullar fram växeln utan order. Klick på ett registrerat tågnummer i spårplanen öppnar motsvarande fält på Verktyg.
+Från 0.19.1 öppnas information för växlar, signaler och vägövergångar med **högerklick**. En modalruta placeras intill klickpunkten och flyttas inåt vid skärmkanten. Muspekning och vanligt fokus öppnar ingen information. Vänsterklick på växelpluppen manövrerar fortfarande växeln, utan att öppna en ruta. Skift+F10 eller tangentbordets menyknapp öppnar samma information för fokuserat objekt; signaler och vägövergångar kan också öppnas med Enter.
+
+Rutan samlar objektets uppgifter och, för växlar, kompisarnas återrapporter, spårstatus och spärrorsaker. Den uppdateras medan den är öppen. Stäng, Escape eller klick utanför stänger rutan och tar bort kompisringen. Bakgrunden kan inte manövreras medan rutan är öppen; klicket som stänger den skickas inte vidare till växelpluppen bakom. Escape stänger rutan före fullskärm och bevarar ett påbörjat startval. Rutan ryms i 390 pixlars bredd och rullar internt om höjden inte räcker.
+
+Växelväljaren på Verktyg ger fortfarande uttrycklig detaljvisning där. Visa Vx… från Verktyg återgår till panelen och rullar fram växeln utan order. Klick på ett registrerat tågnummer i spårplanen öppnar motsvarande fält på Verktyg.
 
 Aktiva stopp, fjärrläge och felmeddelanden visas även när panelen är renodlad. Befintliga spärrvillkor och driftdataformat är oförändrade. En sidväxling skickar inga fältorder och bygger inte om spårplanen eller de förladdade signalbilderna. Pågående tågvägar och inmatningsutkast bevaras; ett halvfärdigt start-/slutval avbryts vid sidbyte. Väljaren för huvud-/växeltågväg är synkroniserad mellan panelen och tågvägslistan.
 

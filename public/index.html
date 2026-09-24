@@ -53,7 +53,7 @@
     <h2 id="traffic-heading">Trafik</h2>
     <details id="route-activity" class="route-activity" hidden open><summary id="route-summary">Aktiva tågvägar</summary><div id="active-routes"></div></details>
     <div class="work-grid"><section class="card"><div class="card-heading"><h3>Tågvägar</h3><select id="catalog-mode" aria-label="Typ av tågväg i listan"><option value="main">Huvudtågväg</option><option value="shunt">Växeltågväg</option></select></div><div id="route-catalog" class="catalog"></div></section><div id="inspector-home">
-      <section id="inspector-card" class="card inspector" aria-label="Detaljer för valt objekt" tabindex="-1"><div class="card-heading"><h3>Detaljer</h3><button id="close-inspector" aria-label="Stäng detaljer">Stäng</button></div><label>Visa växel<select id="inspect-turnout" aria-label="Visa växel"></select></label><div id="inspector"><p class="muted">Välj en växel här eller klicka på en signal i spårplanen.</p></div></section>
+      <section id="inspector-card" class="card inspector" aria-label="Detaljer för valt objekt" tabindex="-1"><div class="card-heading"><h3 id="inspector-heading">Detaljer</h3><button id="close-inspector" aria-label="Stäng detaljer" autofocus>Stäng</button></div><label class="inspector-picker">Visa växel<select id="inspect-turnout" aria-label="Visa växel"></select></label><div id="inspector"><p class="muted">Välj en växel här eller högerklicka på ett objekt i spårplanen.</p></div><div id="manual-feedback-host"></div></section>
     </div></div>
     <section id="train-information" aria-label="Tågnummer och inkommande tåg"></section>
   </section>
@@ -77,6 +77,6 @@
 </main>
 <main id="trainmeet-view" hidden><div class="tools-heading"><h1 tabindex="-1">TrainMeet</h1><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div><p class="muted">Anslut till träffen och läs Charlottendals tågrörelser.</p><section id="trainmeet" class="card"></section></main>
 <main id="admin-view" hidden><p class="muted">Läser det kompletta källregistret…</p></main>
-<div id="inspector-host" class="inspector-host" hidden></div><div id="manual-feedback-host"></div>
-<footer>Charlottendal TKL · version 0.19.0</footer>
+<dialog id="inspector-host" class="inspector-host" aria-labelledby="inspector-heading"></dialog>
+<footer>Charlottendal TKL · version 0.19.1</footer>
 </body></html>
