@@ -384,3 +384,12 @@ Detaljer: [Kompisväxlar](kompisvaxlar.md).
 - Spårtexter ändrade från importerad fetstil till normalvikt 400; destinationer 500. JMRI-originalet är fetare, men de fysiska referensernas smalare text motiverar valet. Samma familjer, koordinater, storlekar och orörda XML/JSON-källor. Inga nya nätladdade typsnitt.
 - Befintliga kontroller flyttas med sina tillstånd och anropsvägar; inga nya frigivnings- eller nollställningsregler. Återställ stopp är bara aktiv när AIS är aktiv och servern tillåter återställningen. Normal återtagning, AIS/återställning, lokal/fjärr, nödåtertagning, paneltyp och utkast provade lokalt. Tre skins och 390 pixlar granskade. Original, lokalt läge, huvudtågväg, AIS av, noll provvägar och normal viewport vid avslut. Inga konsolfel.
 - Syntax och sex helhetstester godkända; första portblockerade teststarten omkörd med behörig teståtkomst. Webbdrift oförändrad eftersom Au → Spår 1a fortfarande inväntar tidigare besked om återtagning. Ingen fysisk utrustning manövrerad och natt-automationen förblir pausad.
+
+
+## 24 september 2026 · Stationstidtabell från TrainMeet, version 0.21.0
+
+- Följt Caspers riktning att TKL blir en stationsklient likt TMBox. Kontrollerat serverns HTTP- och TMBox v2-kontrakt i 63f3fd1. Behållit ordinarie tkl_terminal-behörighet; ingen adminutökning eller påstådd v2/MQTT-implementation.
+- Lagt till /v1/timetable för schema 3 efter verifierad stationskontext. Cache per publikation/dag/station i minnet, atomärt byte tillsammans med driftdata och uttrycklig omläsning. Verifierad spårkatalog/driftplatskoppling; tidssträngar och serverns ordning bevaras. Endast utvalda visningsfält går till klienten.
+- Tidtabell som fysisk knapp under panelen. Ankomst, avgång, från/till, planerat/ändrat spår, genomfart, status och anmärkning. Träffklockan visas separat från TKL:s lokala modellklocka. Inga order, kvittenser eller beläggningar skapas av läsningen.
+- 151 enhetsprov och sex processhelhetsprov passerar. Testdata genererad av TrainMeet-serverns egen parser används som referens. UI-prov av anslutning, spårbyte, text-escaping, bibehållen tabell vid avbrott samt 390-pixlars vy utan sidöverflöde. Tillfällig provanslutning kopplas från och provserver avslutas; riktig server är fortfarande inte ansluten.
+- Ingen webbpublicering: tidigare fråga om Au → Spår 1a är fortfarande obesvarad. Ingen driftdata på servern eller natt-automation ändrad.

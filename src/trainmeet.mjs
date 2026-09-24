@@ -1,5 +1,6 @@
 import {EventEmitter} from 'node:events';
 import {randomUUID} from 'node:crypto';
+import {readTimetable} from './trainmeet-timetable.mjs';
 const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});};
 const text=(v,max=200)=>typeof v==='string'&&v.length<=max&&!/[\u0000-\u001f]/.test(v);
 const record=v=>v&&typeof v==='object'&&!Array.isArray(v);
@@ -42,7 +43,7 @@ export class TrainMeet extends EventEmitter {
     let total=0,chunks=[];for await(const part of response.body){total+=part.length;if(total>2000000)fail('TrainMeet-svaret är för stort.',502);chunks.push(part);}
     return JSON.parse(Buffer.concat(chunks).toString());
   }
-  async read(token=this.data.token,station=this.data.stationId,allowReset=false) {
+  async read(token=this.data.token,station=this.data.stationId,allowReset=false,reloadTimetable=false) {
     const context=await this.request('/v1/tkl/context?station_id='+encodeURIComponent(station),{token});
     const display=await this.request('/v1/display',{token});
     if(context?.protocol_version!==1||display?.protocol_version!==1||!identity(context.publication_id)||context.publication_id!==display.publication_id||!identity(context.active_day)||context.active_day!==display.active_day||context.station?.id!==station||!Number.isSafeInteger(display.revision)||display.revision<0||!Array.isArray(display.trains)||display.trains.length>5000||!record(context.movements)||Object.keys(context.movements).length>5000||!Array.isArray(context.connection_states))fail('TrainMeet-svaret matchar inte det granskade stationskontraktet.',502);
@@ -54,7 +55,13 @@ export class TrainMeet extends EventEmitter {
     const movements=Object.entries(context.movements).map(([id,m])=>{if(!identity(id)||!record(m)||!Number.isSafeInteger(m.revision)||m.revision<0)fail('Driftpost saknar identitet eller revision.',502);return {id,revision:m.revision,arrival:text(m.arrival)?m.arrival:'',departure:text(m.departure)?m.departure:'',track:text(m.actualTrack)?m.actualTrack:''};});
     if(!allowReset&&this.context?.publicationId===display.publication_id&&this.context.day===display.active_day)for(const m of movements){const previous=this.context.movements.find(p=>p.id===m.id);if(previous&&m.revision<previous.revision)fail('TrainMeet skickade en äldre tågrörelse.',502);}
     const connections=context.connection_states.map(c=>{if(!identity(c.id)||!text(c.state))fail('Ogiltigt förbindelseläge.',502);return {id:c.id,state:c.state,trainNumber:text(c.train_number)?c.train_number:''};});
-    return {publicationId:display.publication_id,revision:display.revision,day:display.active_day,meet:text(display.meet?.name)?display.meet.name:'',station:{id:station,name:text(context.station.name)?context.station.name:station},clock:{time:clock.time,rate:clock.speed,running:clock.running,configured:clock.configured},trains,movements,connections};
+    // Publications are immutable. Refresh dynamic data every poll and reload the
+    // timetable on publication/day/station changes or an explicit refresh.
+    const previous=this.context;
+    const cached=!allowReset&&!reloadTimetable&&previous?.timetable&&previous.publicationId===display.publication_id&&previous.day===display.active_day&&previous.station.id===station;
+    const timetable=cached?{trains:previous.trains,tracks:previous.tracks,operatingPoints:previous.operatingPoints,timetable:previous.timetable}
+      :readTimetable(await this.request('/v1/timetable?station_id='+encodeURIComponent(station),{token}),{stationId:station,publicationId:display.publication_id,day:display.active_day,loadedAt:this.now()});
+    return {publicationId:display.publication_id,revision:display.revision,day:display.active_day,meet:text(display.meet?.name)?display.meet.name:'',station:{id:station,name:text(context.station.name)?context.station.name:station},clock:{time:clock.time,rate:clock.speed,running:clock.running,configured:clock.configured},...timetable,movements,connections};
   }
   async pair(data) {
     this.check(data);if(!identity(data.stationId)||!text(data.code,128)||!data.code.trim())fail('Ange stations-id och giltig anslutningskod.');
@@ -71,7 +78,7 @@ export class TrainMeet extends EventEmitter {
   }
   async refresh(data) {
     if(data)this.check(data);if(this.busy||!this.origin||!this.data.token)return this.view();this.busy=true;this.lastAttempt=this.now();
-    try{const next=await this.read();this.context=next;this.updatedAt=this.now();this.status='connected';this.error='';}
+    try{const next=await this.read(this.data.token,this.data.stationId,false,!!data);this.context=next;this.updatedAt=this.now();this.status='connected';this.error='';}
     catch(e){this.status='disconnected';this.error=e.status?e.message:'TrainMeet svarar inte. Senaste uppgifter visas som gamla.';}
     finally{this.busy=false;this.emit('change');}return this.view();
   }

@@ -4,7 +4,7 @@ export function createPanelConsole({onOpen}) {
   root.innerHTML = `<div class="panel-keyboard" aria-label="Ställverkets manöverknappar">
     <div class="panel-key-group" id="signal-keys"><h2>Signaler</h2></div>
     <div class="panel-key-group" id="route-keys"><h2>Tågvägar</h2><button type="button" class="panel-key" data-route-mode="main" aria-pressed="true">Huvudtågväg</button><button type="button" class="panel-key" data-route-mode="shunt" aria-pressed="false">Växeltågväg</button><button type="button" class="panel-key" data-panel-tool="panel-route-tools" aria-expanded="false" aria-controls="panel-route-tools">Tågvägar</button></div>
-    <div class="panel-key-group" id="operation-keys"><h2>Drift</h2><button type="button" class="panel-key" data-panel-tool="track-block-tools" aria-expanded="false" aria-controls="track-block-tools">Spårspärrar</button><button type="button" class="panel-key" data-panel-tool="operating-controls" aria-expanded="false" aria-controls="operating-controls">Linjer / prog.</button><button type="button" class="panel-key" data-panel-tool="train-information" aria-expanded="false" aria-controls="train-information">Tågnummer</button><button type="button" class="panel-key" data-panel-tool="model-clock" aria-expanded="false" aria-controls="model-clock">Modellklocka</button></div>
+    <div class="panel-key-group" id="operation-keys"><h2>Drift</h2><button type="button" class="panel-key" data-panel-tool="track-block-tools" aria-expanded="false" aria-controls="track-block-tools">Spårspärrar</button><button type="button" class="panel-key" data-panel-tool="operating-controls" aria-expanded="false" aria-controls="operating-controls">Linjer / prog.</button><button type="button" class="panel-key" data-panel-tool="train-information" aria-expanded="false" aria-controls="train-information">Tågnummer</button><button type="button" class="panel-key" data-panel-tool="trainmeet-timetable" aria-expanded="false" aria-controls="trainmeet-timetable">Tidtabell</button><button type="button" class="panel-key" data-panel-tool="model-clock" aria-expanded="false" aria-controls="model-clock">Modellklocka</button></div>
     </div><div class="panel-control-status"><span id="panel-mode-status"></span><span id="panel-selection-slot"></span><span id="panel-mode-reason" class="muted"></span></div>
     <section id="panel-drawer" hidden><div class="panel-drawer-heading"><h2 id="panel-drawer-title"></h2><button type="button" id="close-panel-drawer" aria-label="Stäng manöverfält">Stäng</button></div><div id="panel-drawer-content"></div></section>`;
   for (const [target, ids] of [['signal-keys',['all-stop','reset-ais']],['route-keys',['clear-selection','emergency-cancel']],['operation-keys',['toggle-authority']]]) {
@@ -19,7 +19,7 @@ export function createPanelConsole({onOpen}) {
   const routes=document.createElement('section');routes.id='panel-route-tools';
   routes.append($('route-activity'),$('route-catalog').closest('.card'));
   const blocks=$('toggle-block').closest('details');blocks.id='track-block-tools';
-  const panes=[routes,blocks,$('operating-controls'),$('train-information'),$('model-clock')];
+  const panes=[routes,blocks,$('operating-controls'),$('train-information'),$('trainmeet-timetable'),$('model-clock')];
   for (const pane of panes) {pane.hidden=true;$('panel-drawer-content').append(pane);}
   // The same object card is moved into the right-click modal when requested.
   $('inspector-home').hidden=true;document.body.append($('inspector-home'));
@@ -35,7 +35,7 @@ export function createPanelConsole({onOpen}) {
     onOpen();
     if(toggle&&active===id){close();return true;}
     active=id;trigger=root.querySelector(`[data-panel-tool="${id}"]`);
-    $('panel-drawer-title').textContent=({ 'panel-route-tools':'Tågvägar och återtagning','track-block-tools':'Spårspärrar','operating-controls':'Linjespärrar och programmeringsspår','train-information':'Tågnummer och nummerföljning','model-clock':'Modellklocka' })[id];
+    $('panel-drawer-title').textContent=({ 'panel-route-tools':'Tågvägar och återtagning','track-block-tools':'Spårspärrar','operating-controls':'Linjespärrar och programmeringsspår','train-information':'Tågnummer och nummerföljning','model-clock':'Modellklocka','trainmeet-timetable':'Tidtabell från TrainMeet' })[id];
     $('panel-drawer').hidden=false;
     for(const p of panes){p.hidden=p!==pane;if(p===pane&&p.tagName==='DETAILS')p.open=true;}
     for(const b of root.querySelectorAll('[data-panel-tool]'))b.setAttribute('aria-expanded',String(b===trigger));

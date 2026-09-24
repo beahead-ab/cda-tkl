@@ -17,6 +17,8 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Färdig ändring som inväntar publicering
 
+Version 0.21.0 lägger till stationens tidtabell via TrainMeets befintliga HTTP-gränssnitt och en Tidtabell-knapp under panelen. Spårkatalog, driftplatser, trafikdag, tider och anmärkningar samt levande driftstatus visas. Cache byts vid ny publikation/dag/station; tappad kontakt märker senaste data som gamla. Detta är läsande stöd, inte TMBox v2/MQTT eller skrivande klarering. 151 enhetsprov och sex helhetsprov passerar; referensfixtur från serverkoden och UI med spårbyte, avbrott och mobilbredd verifierade. Riktig anslutning inväntar serveradressen. Webbpublicering inväntar fortsatt tidigare återtagningsbesked.
+
 Version 0.20.0 samlar panelmanövrerna under spårplanen som ställverksknappar: signalstopp/återställning, tågvägstyp, tågvägar/återtagning, avbryt val, nödåtertagning, spärrar, programmeringsspår, tågnummer, modellklocka och driftläge. Menyn innehåller stödsidorna. Spårtexterna använder normalvikt 400 med oförändrad storlek och källdata. Tre utseenden, mobilbredd och manövrer är provade i webbläsaren; sex helhetstester och syntax passerar. [Handhavande](panel-och-verktyg.md). Tidigare publiceringshinder nedan kvarstår.
 
 Version 0.19.1 flyttar objektinformation till högerklick och en modal nära klickpunkten. Vänsterklick manövrerar fortsatt växeln, medan muspekning/fokus inte öppnar detaljer. Kompisuppgifter ingår i samma ruta. Tangentbord, fullskärm, skärmkant, mobilbredd, levande återrapport samt stängning utan genomsläppt växelmanöver är provade lokalt. Publiceringshindret nedan kvarstår.

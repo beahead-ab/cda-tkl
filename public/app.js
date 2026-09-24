@@ -384,7 +384,7 @@ async function start() {
   const fullscreen = createFullscreen({button: $('toggle-fullscreen'), onError: message});
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
-  modelClock=createModelClock({api});trainMeet=createTrainMeet({api});feedback=createFeedback();
+  modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable')});feedback=createFeedback();
   panelConsole=createPanelConsole({onOpen:()=>{if(currentPage!=='panel')setPage('panel');}});
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];

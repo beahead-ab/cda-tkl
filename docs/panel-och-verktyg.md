@@ -8,7 +8,7 @@ Runda knappar med text ovanför följer JMRI-referensens nedre manöverfält; Tr
 
 - **Signaler:** Alla signaler i stopp och Återställ stopp. Återställning är bara tillgänglig när AIS är aktiv och servern tillåter den; gamla tågvägar återupptas inte automatiskt.
 - **Tågvägar:** Huvudtågväg, Växeltågväg, Tågvägar, Avbryt val och Nödåterta alla. Tågvägar öppnar listval och aktiva vägars normala återtagning direkt nedanför knapparna. Antalet kvarvarande vägar syns på knappen.
-- **Drift:** Spårspärrar, Linjer / prog., Tågnummer, Modellklocka och Fjärrmanövrering. De fyra första öppnar respektive befintligt manöverfält under raden; fjärrknappen byter driftläge enligt befintliga villkor. Ett tryckt fjärrval betyder fortfarande inte att ett fjärrsystem är anslutet.
+- **Drift:** Spårspärrar, Linjer / prog., Tågnummer, Tidtabell (från 0.21.0), Modellklocka och Fjärrmanövrering. De fem första öppnar respektive befintligt manöverfält under raden; fjärrknappen byter driftläge enligt befintliga villkor. Ett tryckt fjärrval betyder fortfarande inte att ett fjärrsystem är anslutet.
 
 Ett manöverfält visas åt gången och kan stängas med samma knapp, Stäng eller Escape inne i fältet. Formulärutkast bevaras vid fältbyte. Fälten återanvänder samma kontroller och serveranrop som tidigare; inga lås eller återrapportkrav nollställs när visningen öppnas, stängs eller byts. Nödåtertagning är fortsatt en stopp-/frigivningsbegäran och raderar inte lås.
 

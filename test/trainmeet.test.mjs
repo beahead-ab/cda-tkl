@@ -1,14 +1,67 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {TrainMeet} from '../src/trainmeet.mjs';
+import fs from 'node:fs';
+import {readTimetable} from '../src/trainmeet-timetable.mjs';
+test('accepts timetable emitted by the reviewed TrainMeet server itself',()=>{
+  const data=JSON.parse(fs.readFileSync(new URL('./fixtures/trainmeet-timetable-v3.json',import.meta.url)));
+  const result=readTimetable(data,{stationId:'station-a',publicationId:'publication-2026-08-11-a',day:'Lör',loadedAt:123});
+  assert.deepEqual(result.trains.map(t=>t.train_number),['101']);
+  assert.equal(result.trains[0].departure_time,'09:20');
+  assert.deepEqual(result.tracks.map(t=>t.label),['1','2']);
+  assert.equal(result.timetable.schemaVersion,3);
+  assert.equal(result.timetable.loadedAt,123);
+});
 function rig(){let saved,now=100000;const calls=[],storage={load:(n,d)=>structuredClone(saved??d),save:(n,d)=>{saved=structuredClone(d);}};
   const context={protocol_version:1,publication_id:'meet-v1',active_day:'Dagl',station:{id:'cda',name:'Charlottendal'},movements:{m1:{revision:1,arrival:'WAITING',departure:'READY',actualTrack:'track1'}},connection_states:[{id:'line1',state:'free'}]};
   const display={protocol_version:1,publication_id:'meet-v1',active_day:'Dagl',revision:10,meet:{name:'Höstträffen'},clock:{time:'12:15:00',speed:4,running:true,configured:true},trains:[{id:'m1',station_id:'cda',train_number:'P123',track:'1',arrival_time:'12:20',departure_time:'12:22'},{id:'m2',station_id:'other',train_number:'P124'}],connection:{pairing_code:'NEVER EXPOSE'}};
-  let error=false;const fetcher=async(url,options)=>{calls.push({url,options});if(error)throw Error('Network failure with secret metadata');const data=url.endsWith('/v1/pair')?{protocol_version:1,client_id:JSON.parse(options.body).client_id,access_token:'PRIVATE-TOKEN'}:url.includes('/v1/tkl/context?')?context:display;return new Response(JSON.stringify(data),{status:200});};
+  const timetable={schema_version:3,publication_id:'meet-v1',active_day:'Dagl',stations:[{id:'cda',name:'Charlottendal'}],tracks:[{id:'track1',station_id:'cda',display_label:'1',operating_point_id:null}],trains:[{...display.trains[0],track_id:'track1',note:'Kontrollera tågmöte',no_stop:false}],connection:{pairing_code:'NEVER EXPOSE'}};
+  let error=false;const fetcher=async(url,options)=>{calls.push({url,options});if(error)throw Error('Network failure with secret metadata');const data=url.endsWith('/v1/pair')?{protocol_version:1,client_id:JSON.parse(options.body).client_id,access_token:'PRIVATE-TOKEN'}:url.includes('/v1/tkl/context?')?context:url.includes('/v1/timetable?')?timetable:display;return new Response(JSON.stringify(data),{status:200});};
   const service=new TrainMeet({origin:'https://trainmeet.example',storage,fetcher,now:()=>now});
-  return {service,storage,calls,context,display,now:n=>{now=n;},fail:()=>{error=true;},saved:()=>saved,fetcher};
+  return {service,storage,calls,context,display,timetable,now:n=>{now=n;},fail:()=>{error=true;},saved:()=>saved,fetcher};
 }
 const pair=r=>r.service.pair({...r.service.view(),stationId:'cda',code:'PAIRING'});
+test('station timetable is authoritative, cached between polls and reloaded on explicit refresh',async()=>{
+  const r=rig();await pair(r);
+  const reads=()=>r.calls.filter(c=>c.url.includes('/v1/timetable?')).length;
+  assert.equal(reads(),1);assert.equal(r.service.view().context.trains[0].note,'Kontrollera tågmöte');
+  r.timetable.trains[0].departure_time='25:10';
+  await r.service.refresh();assert.equal(reads(),1);assert.equal(r.service.view().context.trains[0].departure_time,'12:22');
+  await r.service.refresh(r.service.view());assert.equal(reads(),2);assert.equal(r.service.view().context.trains[0].departure_time,'25:10');
+  assert.deepEqual(r.service.view().context.tracks,[{id:'track1',label:'1',operatingPointId:''}]);
+  assert.equal(r.service.view().context.trains[0].train_number,'P123');
+});
+test('day/publication changes fetch a complete new timetable without mixing old rows and new live state',async()=>{
+  const r=rig();await pair(r);const before=structuredClone(r.service.view().context);
+  r.context.active_day=r.display.active_day='Sön';
+  await r.service.refresh();assert.equal(r.service.view().stale,true);assert.deepEqual(r.service.view().context,before);
+  r.timetable.active_day='Sön';r.timetable.trains=[];
+  await r.service.refresh();assert.equal(r.service.view().stale,false);assert.equal(r.service.view().context.day,'Sön');assert.deepEqual(r.service.view().context.trains,[]);
+  r.context.publication_id=r.display.publication_id=r.timetable.publication_id='meet-v2';
+  r.display.revision=0;r.timetable.trains=[{id:'new',station_id:'cda',train_number:'P123',track_id:'track1'}];r.context.movements={};
+  await r.service.refresh();assert.equal(r.service.view().stale,false);assert.equal(r.service.view().context.trains[0].id,'new');assert.deepEqual(r.service.view().context.movements,[]);
+});
+test('bad timetable never replaces last good context or accepts credentials on initial pairing',async()=>{
+  for(const corrupt of [
+    t=>{t.schema_version=2;},t=>{t.publication_id='other';},t=>{t.active_day='other';},t=>{t.stations=[];},
+    t=>{t.trains[0].station_id='other';},t=>{t.trains.push({...t.trains[0]});},t=>{t.trains[0].arrival_time={invalid:true};},
+    t=>{t.trains[0].track_id='missing';},t=>{t.tracks[0].station_id='other';},t=>{t.trains[0].no_stop='true';},
+    t=>{t.trains[0].note={unsafe:true};},t=>{t.trains.push(null);},t=>{t.trains[0].operating_point_id='missing';},
+    t=>{t.tracks.push({...t.tracks[0]});},t=>{t.trains=Array(5001).fill(t.trains[0]);}
+  ]){
+    const r=rig();await pair(r);const before=structuredClone(r.service.view().context);
+    corrupt(r.timetable);await r.service.refresh(r.service.view());assert.equal(r.service.view().stale,true);assert.deepEqual(r.service.view().context,before);
+    const initial=rig();corrupt(initial.timetable);await assert.rejects(()=>pair(initial),/tidtabell/);assert.equal(initial.saved(),undefined);
+  }
+});
+test('multiple operating points keep track identities and repeated train numbers distinct',async()=>{
+  const r=rig();r.timetable.stations[0].operating_points=[{id:'c',name:'Charlottendal',code:'C'},{id:'rbg',name:'Rangeringen',code:'RBG'}];
+  r.timetable.tracks[0].operating_point_id='c';r.timetable.trains[0].operating_point_id='c';
+  r.timetable.tracks.push({id:'yard1',station_id:'cda',display_label:'1',operating_point_id:'rbg'});
+  r.timetable.trains.push({...r.timetable.trains[0],id:'yard-m1',track_id:'yard1',operating_point_id:'rbg',no_stop:true,note:'Rad ett\nRad två'});
+  await pair(r);assert.equal(r.service.view().context.trains.length,2);assert.equal(r.service.view().context.trains[1].track,'1');assert.equal(r.service.view().context.operatingPoints[1].code,'RBG');
+  r.timetable.trains[0].track_id='yard1';await r.service.refresh(r.service.view());assert.equal(r.service.view().stale,true);
+});
 test('normal v1 pairing keeps credentials server-side and reads exact station contract without writing movements',async()=>{const r=rig();await pair(r);assert.equal(r.service.view().status,'connected');assert.equal(r.service.view().context.trains.length,1);assert.equal(r.service.view().context.movements[0].track,'track1');assert.equal(r.saved().token,'PRIVATE-TOKEN');assert.ok(!JSON.stringify(r.service.view()).includes('PRIVATE'));assert.ok(!JSON.stringify(r.service.view()).includes('NEVER'));assert.ok(!JSON.stringify(r.saved()).includes('PAIRING'));assert.equal(r.calls[0].options.method,'POST');assert.ok(r.calls.slice(1).every(c=>c.options.method==='GET'));assert.ok(r.calls.every(c=>c.options.redirect==='error'));assert.equal(r.calls[1].options.headers.Authorization,'Bearer PRIVATE-TOKEN');});
 test('duplicate snapshots replace by identity; reconnect never accumulates movements or fabricates field reports',async()=>{const r=rig();await pair(r);await r.service.refresh();await r.service.refresh();assert.equal(r.service.view().context.trains.length,1);assert.equal(r.service.view().context.movements.length,1);assert.ok(r.calls.filter(c=>c.options.method==='POST').every(c=>c.url.endsWith('/v1/pair')));assert.ok(!Object.hasOwn(r.service.view(),'blocks'));assert.ok(!Object.hasOwn(r.service.view(),'signals'));});
 test('old revisions, wrong station/publication/day and invalid clocks preserve last good context as stale',async()=>{for(const corrupt of [r=>{r.display.revision=9;},r=>{r.context.station.id='other';},r=>{r.display.active_day='Dag2';},r=>{r.display.publication_id='other';},r=>{r.display.clock.time='99:00:00';},r=>{r.context.movements.m1.revision=0;},r=>{r.display.trains.push({...r.display.trains[0]});}]){const r=rig();await pair(r);const previous=structuredClone(r.service.view().context);corrupt(r);await r.service.refresh();assert.equal(r.service.view().stale,true);assert.deepEqual(r.service.view().context,previous);}});
