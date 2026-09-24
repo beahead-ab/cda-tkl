@@ -1,4 +1,4 @@
-# Charlottendal TKL · version 0.22.0
+# Charlottendal TKL · version 0.23.0
 
 En första körbar lokal applikation med egen TKL-kärna och en separat anläggningssimulator. Den använder Charlottendals exporterade geometri och JMRI mod59-signalbilder. Claude Design behövs inte för att köra den.
 
@@ -26,6 +26,7 @@ Om appen redan är igång öppnar du länkarna direkt. Avsluta med Ctrl+C i dess
 
 ## Det som fungerar
 
+- Lågt tidtabellsfält direkt under spårplanen, med flera kolumner, bläddring och fullständiga tåguppgifter vid klick eller högerklick. Utseendet följer valt panelskin.
 - Separat [tidtabellsimport från bilder/PDF med OpenAI](docs/tidtabellsimport.md), redigerbart granskningsutkast och uttryckligt källval mellan import och TrainMeet. Kräver API-nyckel på servern; verklig AI-tolkning återstår att verifiera.
 - Lokal kärna som ensam avgör tågvägar, lås, växelorder och signalmedgivanden.
 - 210 huvudtågvägar och 130 växeltågvägar, 49 växlar, 197 körbara layoutblock och 66 signaler. Spår 6 väljs i tågvägslistan; källan saknar en panelikon för dess huvudtågvägsknapp.

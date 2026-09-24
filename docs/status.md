@@ -17,6 +17,8 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Färdig ändring som inväntar publicering
 
+Version 0.23.0 gör tidtabellen till ett fast, lågt kolumnfält under spårplanen. Kolumner och radantal anpassas till skärmen; bläddring håller höjden begränsad. Klick/högerklick öppnar fullständiga uppgifter nära tåget. Källval och import ligger i menyn. Provad med 37 importerade/TrainMeet-rörelser, alla tre skins, mobilbredd, fullskärm och levande klocka utan sidbyte. Syntaxkontroll godkänd; backend är oförändrad. [Handhavande](panel-och-verktyg.md). Samma publiceringshinder kvarstår.
+
 Version 0.22.0 lägger till separat [tidtabellsimport med OpenAI](tidtabellsimport.md). Flera bilder/PDF läses som ett utkast med källhänvisningar, rättningar och uttryckligt godkännande före användning. Import och TrainMeet väljs separat under panelens Tidtabell-knapp. 161 enhetsprov och sju helhetsprov passerar; uppladdning, rättning, aktivering, källbyte och mobilbredd är provade med kontrollerat testsvar. En riktig AI-tolkning inväntar serverns API-nyckel. Ingen webbpublicering eller ändring av den kvarhållna tågvägen har gjorts.
 
 Version 0.21.0 lägger till stationens tidtabell via TrainMeets befintliga HTTP-gränssnitt och en Tidtabell-knapp under panelen. Spårkatalog, driftplatser, trafikdag, tider och anmärkningar samt levande driftstatus visas. Cache byts vid ny publikation/dag/station; tappad kontakt märker senaste data som gamla. Detta är läsande stöd, inte TMBox v2/MQTT eller skrivande klarering. 151 enhetsprov och sex helhetsprov passerar; referensfixtur från serverkoden och UI med spårbyte, avbrott och mobilbredd verifierade. Riktig anslutning inväntar serveradressen. Webbpublicering inväntar fortsatt tidigare återtagningsbesked.

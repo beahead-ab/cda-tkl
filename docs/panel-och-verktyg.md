@@ -8,7 +8,7 @@ Runda knappar med text ovanför följer JMRI-referensens nedre manöverfält; Tr
 
 - **Signaler:** Alla signaler i stopp och Återställ stopp. Återställning är bara tillgänglig när AIS är aktiv och servern tillåter den; gamla tågvägar återupptas inte automatiskt.
 - **Tågvägar:** Huvudtågväg, Växeltågväg, Tågvägar, Avbryt val och Nödåterta alla. Tågvägar öppnar listval och aktiva vägars normala återtagning direkt nedanför knapparna. Antalet kvarvarande vägar syns på knappen.
-- **Drift:** Spårspärrar, Linjer / prog., Tågnummer, Tidtabell (från 0.21.0), Modellklocka och Fjärrmanövrering. De fem första öppnar respektive befintligt manöverfält under raden; fjärrknappen byter driftläge enligt befintliga villkor. Ett tryckt fjärrval betyder fortfarande inte att ett fjärrsystem är anslutet.
+- **Drift:** Spårspärrar, Linjer / prog., Tågnummer, Modellklocka och Fjärrmanövrering. De fyra första öppnar respektive befintligt manöverfält under raden; fjärrknappen byter driftläge enligt befintliga villkor. Ett tryckt fjärrval betyder fortfarande inte att ett fjärrsystem är anslutet.
 
 Ett manöverfält visas åt gången och kan stängas med samma knapp, Stäng eller Escape inne i fältet. Formulärutkast bevaras vid fältbyte. Fälten återanvänder samma kontroller och serveranrop som tidigare; inga lås eller återrapportkrav nollställs när visningen öppnas, stängs eller byts. Nödåtertagning är fortsatt en stopp-/frigivningsbegäran och raderar inte lås.
 
@@ -68,6 +68,14 @@ Version 0.17.0 (`bea8a85`) publicerad 24 september 2026 kl. 07:14 svensk tid på
 
 Version 0.17.1 (`97c6546`) med fullskärmsknappen publicerad 24 september 2026 kl. 07:27 svensk tid. Lokal webbläsarkontroll och syntax samt serverns 134 enhetstester, sex helhetstester och importkontroller godkända. Backup och extern efterkontroll godkända enligt driftuppgifterna.
 
-## Separat tidtabell (0.22.0)
+## Tidtabell som en del av ställverket (0.23.0)
 
-**Meny → Importera tidtabell** öppnar en egen sida för bilder och PDF-filer. AI skapar ett redigerbart utkast; användaren granskar originalen och godkänner innan tabellen tas i bruk. Under panelens **Tidtabell** finns ett källval mellan TrainMeet och den godkända importen. Källbytet bevarar båda och påverkar ingen tågväg, signal eller modellklocka. Se [handhavande och installation](tidtabellsimport.md).
+Tidtabellen visas alltid direkt under spårplanen, före manöverknapparna. Den separata Tidtabell-knappen behövs därför inte längre. Fältet följer Original, Reläpanel och Trafikskärm och behåller en begränsad höjd: antalet kolumner anpassas till bredden och varje kolumn innehåller 2–4 tågrörelser beroende på fönstrets höjd.
+
+Läs uppifrån och ned i en kolumn, sedan nästa till höger. Källans radordning bevaras. Vid 1280×720 ryms fyra kolumner med två rörelser vardera; vid 1920×1080 sex kolumner med tre. Nästa/Föregående visar resterande rörelser med ett tydligt intervall och totalantal. Sidans plats bevaras vid klock-/statusuppdatering. Vid storleksbyte behålls den första tidigare synliga rörelsen på den nya sidan. Fältet växer inte till en lång lista på en smal skärm.
+
+Tågnummer, ankomst, avgång, spår och från/till syns direkt. Anmärkningar och extra uppgifter sammanfattas på en tredje rad; lång text kortas visuellt. Klick, högerklick, Enter eller Skift+F10 öppnar samtliga uppgifter i en modal nära tåget. Muspekning öppnar inget. Ändrat spår markeras med en stjärna; detaljrutan visar både aktuellt och planerat spår. Kontaktbortfall markerar hela tidtabellen som gamla uppgifter. Tidtabellen skickar inga manöverorder.
+
+**Meny → Tidtabell och import** samlar källval och uppladdning. Välj mellan TrainMeet och den godkända separata importen. Källbytet bevarar båda och påverkar inga signaler, tågvägar eller klockor. Se [handhavande och installation](tidtabellsimport.md).
+
+Kolumnlayouten är provad med 37 tydligt märkta provrörelser: samtliga sidor, tom ankomst, tid över 24:00, flera trafikdagar, lång anmärkning, text som innehåller HTML-tecken, TrainMeet-spårbyte och levande klocka. Tre skins, fullskärm, detaljmodal, tangentbord och 390-pixlars vy utan horisontellt sidöverflöde är granskade i webbläsaren. Backend och importformat är oförändrade.

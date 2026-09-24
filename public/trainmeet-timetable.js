@@ -1,32 +1,87 @@
+import {createContextDialog} from './context-dialog.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const status=value=>({none:'',approaching:'Närmar sig',arrived:'Ankommet',positioned:'Uppställt',ready:'Redo',departed:'Avgått'})[value]??value;
+const status=value=>({none:'',approaching:'Närmar sig',arrived:'Ankommet',positioned:'Uppställt',ready:'Redo',waiting:'Väntar',departed:'Avgått'})[value]??value;
 
 export function createTrainMeetTimetable({selectSource}) {
-  const root=document.getElementById('trainmeet-timetable');
-  root.innerHTML='<div class="timetable-choice"><label>Tidtabellskälla <select id="tt-source"><option value="trainmeet">TrainMeet</option><option value="import">Separat importerad</option></select></label><a href="#import">Importera tidtabell →</a></div><div class="trainmeet-heading"><strong id="tt-station">Tidtabell från TrainMeet</strong><span id="tt-clock"></span></div><p id="tt-status" role="status"></p><div id="tt-content"></div>';
-  let last='',importState;
-  document.getElementById('tt-source').onchange=e=>selectSource({sessionId:importState.sessionId,revision:importState.revision,source:e.target.value});
+  const root=document.getElementById('trainmeet-timetable'),$=id=>document.getElementById('tt-'+id);
+  root.innerHTML='<header class="tt-heading"><h2>Tidtabell</h2><span id="tt-station"></span><span id="tt-clock"></span><nav class="tt-pagination" aria-label="Bläddra i tidtabellen"><button id="tt-prev" type="button" aria-label="Föregående tågrörelser">‹</button><span id="tt-range" role="status"></span><button id="tt-next" type="button" aria-label="Nästa tågrörelser">›</button></nav></header><p id="tt-status" role="status" hidden></p><div id="tt-content"></div>';
+  document.getElementById('timetable-settings').innerHTML='<h2>Tidtabellskälla</h2><div class="timetable-choice"><label>Visa i ställverket <select id="tt-source"><option value="trainmeet">TrainMeet</option><option value="import">Separat importerad</option></select></label><a href="#panel">Till ställverket →</a></div><p class="muted">Den valda tidtabellen visas i kolumner under spårplanen. Båda källorna behålls när du byter.</p>';
+  const dialog=document.createElement('dialog');dialog.className='inspector-host timetable-details';dialog.setAttribute('aria-labelledby','tt-detail-title');
+  dialog.innerHTML='<div class="card"><div class="card-heading"><h3 id="tt-detail-title"></h3><button type="button" id="tt-close-detail" aria-label="Stäng tidtabellsuppgifter" autofocus>Stäng</button></div><div id="tt-detail-content"></div></div>';document.body.append(dialog);
+  let importState,rows=[],page=0,columns=1,perColumn=3,last='',identity='',selected=null,detailHTML='',frame=0,emptyText='Ingen tidtabell hämtad.';
+  const details=createContextDialog({dialog,onClose:()=>{selected=null;}});
+  $('close-detail').onclick=()=>details.close();
+  $('source').onchange=e=>selectSource({sessionId:importState.sessionId,revision:importState.revision,source:e.target.value});
+  function drawDetails(){
+    if(!selected)return;const row=rows.find(r=>r.id===selected);if(!row){details.close();return;}
+    $('detail-title').textContent='Tåg '+row.number;
+    const values={'Station / driftplats':row.station,'Trafikdag':row.day,'Ankomst':row.arrival,'Avgång':row.departure,'Från':row.from,'Till':row.to,'Spår':row.track,...(row.changed?{'Planerat spår':row.planned}:{}),'Driftläge':row.state,'Uppehåll':row.noStop?'Passerar utan uppehåll':'Genomfart är inte angiven','Anmärkning':row.note};
+    const html=($('status').hidden?'':'<p class="import-warning">'+esc($('status').textContent)+'</p>')+'<dl>'+Object.entries(values).map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v||'—')+'</dd>').join('')+'</dl>';
+    if(html!==detailHTML){detailHTML=html;$('detail-content').innerHTML=html;}
+  }
+  function showDetails(e){
+    const button=e.target.closest('[data-timetable-row]');if(!button)return;
+    e.preventDefault();selected=rows[Number(button.dataset.timetableRow)]?.id;if(!selected)return;drawDetails();
+    details.open({currentTarget:button,clientX:e.clientX,clientY:e.clientY},button);
+  }
+  $('content').addEventListener('click',showDetails);
+  $('content').addEventListener('contextmenu',showDetails);
+  $('content').addEventListener('keydown',e=>{if(e.key==='ContextMenu'||e.shiftKey&&e.key==='F10')showDetails(e);});
+  function rowHTML(row,index){
+    const meta=[row.context,row.noStop?'Passerar':'',row.state,row.note].filter(Boolean).join(' · ');
+    return '<li><button type="button" class="tt-entry" data-timetable-row="'+index+'" aria-haspopup="dialog" aria-label="Visa tidtabellsuppgifter för tåg '+esc(row.number)+'"><span class="tt-values"><strong>'+esc(row.number)+(row.note?'<span class="tt-note-flag" aria-label="Anmärkning finns"> ·</span>':'')+'</strong><span>'+esc(row.arrival||'—')+'</span><span>'+esc(row.departure||'—')+'</span><span class="tt-track'+(row.changed?' tt-track-changed':'')+'">'+esc(row.track)+(row.changed?' *':'')+'</span></span><span class="tt-route">'+esc(row.from||'—')+' → '+esc(row.to||'—')+'</span><span class="tt-meta">'+esc(meta||'—')+'</span></button></li>';
+  }
+  function render(){
+    const capacity=columns*perColumn;page=Math.min(page,Math.max(0,Math.ceil(rows.length/capacity)-1));
+    const start=page*capacity,end=Math.min(start+capacity,rows.length);
+    $('prev').disabled=page===0;$('next').disabled=end>=rows.length;
+    $('range').textContent=rows.length?(start+1)+'–'+end+' / '+rows.length:'0 tåg';
+    let html='<p class="tt-empty">'+esc(emptyText)+' <a href="#import">Välj tidtabell</a></p>';
+    if(rows.length){
+      html='<div class="tt-columns" style="--tt-columns:'+columns+';--tt-rows:'+perColumn+'">';
+      for(let col=0;col<columns;col++){
+        const a=start+col*perColumn,b=Math.min(a+perColumn,end);if(a>=end)break;
+        html+='<section class="tt-column" aria-label="Tågrörelser '+(a+1)+'–'+b+'"><div class="tt-labels" aria-hidden="true"><span>Tåg</span><span>Ank.</span><span>Avg.</span><span>Spår</span></div><ol start="'+(a+1)+'">'+rows.slice(a,b).map((r,i)=>rowHTML(r,a+i)).join('')+'</ol></section>';
+      }
+      html+='</div>';
+    }
+    if(html!==last){
+      const focused=$('content').contains(document.activeElement)?document.activeElement.dataset.timetableRow:null;
+      last=html;$('content').innerHTML=html;
+      if(focused!=null)$('content').querySelector('[data-timetable-row="'+Number(focused)+'"]')?.focus({preventScroll:true});
+    }
+    drawDetails();
+  }
+  function layout(){
+    frame=0;const width=$('content').clientWidth;if(!width)return;
+    const nextColumns=Math.max(1,Math.floor((width+12)/300));
+    const budget=Math.max(170,Math.min(270,innerHeight*.28));
+    const nextRows=Math.max(2,Math.min(4,Math.floor((budget-root.querySelector('.tt-heading').offsetHeight-32)/56)));
+    if(nextColumns!==columns||nextRows!==perColumn){const first=page*columns*perColumn;columns=nextColumns;perColumn=nextRows;page=Math.floor(first/(columns*perColumn));render();}
+  }
+  const schedule=()=>{if(!frame)frame=requestAnimationFrame(layout);};
+  new ResizeObserver(schedule).observe(root);window.addEventListener('resize',schedule);
+  $('prev').onclick=()=>{page=Math.max(0,page-1);render();};$('next').onclick=()=>{page++;render();};
   return {update(state,online,imported){
     importState=imported;
     const local=imported?.source==='import',active=local?imported.active:null;
-    const source=document.getElementById('tt-source');source.value=local?'import':'trainmeet';source.disabled=!online||!imported;source.options[1].disabled=!imported?.active;
-    const c=local?(active?{station:{name:'Importerad tidtabell'},meet:active.title,day:'',tracks:[],operatingPoints:[],movements:[],trains:active.rows.map(r=>({id:r.id,train_number:r.trainNumber,station_name:r.station,day_label:r.day,arrival_time:r.arrival,departure_time:r.departure,arrival_from:r.from,departure_to:r.to,track:r.track,no_stop:r.noStop,note:r.note}))}:null):state?.context,stale=!online||!local&&state?.stale;
-    root.classList.toggle('timetable-stale',!!c&&stale);
-    document.getElementById('tt-station').textContent=c?[c.station.name,c.meet,c.day].filter(Boolean).join(' · '):(local?'Importerad tidtabell':'Tidtabell från TrainMeet');
-    document.getElementById('tt-clock').textContent=c&&!local?'Träffklocka '+c.clock.time+' · '+(c.clock.running?'går':'pausad')+' · '+c.clock.rate+'×':'';
-    document.getElementById('tt-status').textContent=c?(stale?'Kontakt saknas – senaste mottagna uppgifter.':(local?'Granskad separat tidtabell · ':'Hämtad från TrainMeet · ')+c.trains.length+(c.trains.length===1?' tågrörelse.':' tågrörelser.')): 'Ingen tidtabell hämtad.';
-    let html='<p class="muted">Anslut stationen under <a href="#trainmeet">Meny → TrainMeet</a> för att hämta tidtabellen.</p>';
+    const source=$('source');source.value=local?'import':'trainmeet';source.disabled=!online||!imported;source.options[1].disabled=!imported?.active;
+    const c=local?(active?{station:{name:'Importerad tidtabell'},meet:active.title,day:'',tracks:[],operatingPoints:[],movements:[],trains:active.rows.map(r=>({id:r.id,train_number:r.trainNumber,station_name:r.station,day_label:r.day,arrival_time:r.arrival,departure_time:r.departure,arrival_from:r.from,departure_to:r.to,track:r.track,no_stop:r.noStop,note:r.note}))}:null):state?.context;
+    const stale=!!c&&(!online||!local&&state?.stale);
+    root.classList.toggle('timetable-stale',stale);
+    $('station').textContent=c?[local?'Importerad':c.station.name,c.meet,c.day].filter(Boolean).join(' · '):'Ingen vald tidtabell';
+    $('clock').textContent=c&&!local?'Träffklocka '+c.clock.time+' · '+(c.clock.running?'går':'pausad')+' · '+c.clock.rate+'×':'';
+    $('status').textContent=stale?'Kontakt saknas – senaste mottagna uppgifter.':'';$('status').hidden=!stale;
+    const nextIdentity=JSON.stringify([local,active?.id,c?.station.id,c?.day,c?.trains.map(t=>t.id)]);if(nextIdentity!==identity){identity=nextIdentity;page=0;details.close();}
+    rows=[];emptyText=c?'Inga tågrörelser i den valda tidtabellen.':'Ingen tidtabell hämtad.';
     if(c){
       const tracks=new Map(c.tracks.map(t=>[t.id,t])),points=new Map(c.operatingPoints.map(p=>[p.id,p.code])),movements=new Map(c.movements.map(m=>[m.id,m]));
       const trackName=id=>{const t=tracks.get(id);return t?[points.get(t.operatingPointId),t.label].filter(Boolean).join(' · '):'Okänt spår ('+id+')';};
-      const rows=c.trains.map(t=>{
-        const m=movements.get(t.id),changed=!!m?.track&&m.track!==t.track_id;
-        const planned=t.track_id?trackName(t.track_id):(t.track||'—'),current=changed?trackName(m.track):planned;
-        const stateLabel=local?'Planerad':[m?.arrival,m?.departure].filter(Boolean).map(status).filter(Boolean).join(' · ')||'—';
-        return '<tr><th scope="row">'+esc(t.train_number)+(points.has(t.operating_point_id)?'<small>'+esc(points.get(t.operating_point_id))+'</small>':'')+(t.no_stop?'<small>Passerar</small>':'')+'</th>'+(local?'<td>'+esc(t.station_name)+'</td><td>'+esc(t.day_label)+'</td>':'')+'<td>'+esc(t.arrival_time||'—')+'</td><td>'+esc(t.departure_time||'—')+'</td><td>'+esc(t.arrival_from||'—')+'</td><td>'+esc(t.departure_to||'—')+'</td><td>'+esc(current)+(changed?'<small>Planerat: '+esc(planned)+'</small>':'')+'</td><td>'+esc(stateLabel)+'</td><td class="tt-note">'+esc(t.note||'—')+'</td></tr>';
-      }).join('');
-      html='<div class="timetable-scroll" tabindex="0" role="region" aria-label="Stationens tidtabell"><table class="timetable-table"><caption>'+esc(local?c.meet:'Tidtabell för '+c.day)+'</caption><thead><tr><th scope="col">Tåg</th>'+(local?'<th scope="col">Station</th><th scope="col">Trafikdag</th>':'')+'<th scope="col">Ankomst</th><th scope="col">Avgång</th><th scope="col">Från</th><th scope="col">Till</th><th scope="col">Spår</th><th scope="col">Driftläge</th><th scope="col">Anmärkning</th></tr></thead><tbody>'+(rows||'<tr><td colspan="8">Inga tågrörelser för stationen denna trafikdag.</td></tr>')+'</tbody></table></div>';
+      rows=c.trains.map(t=>{
+        const m=movements.get(t.id),changed=!!m?.track&&m.track!==t.track_id,planned=t.track_id?trackName(t.track_id):(t.track||'—');
+        return {id:t.id,number:t.train_number,station:local?t.station_name:[c.station.name,points.get(t.operating_point_id)].filter(Boolean).join(' · '),day:local?t.day_label:(t.days||c.day),arrival:t.arrival_time,departure:t.departure_time,from:t.arrival_from,to:t.departure_to,track:changed?trackName(m.track):planned,planned,changed,noStop:t.no_stop,note:t.note,state:local?'Planerad':[m?.arrival,m?.departure].filter(Boolean).map(status).filter(Boolean).join(' · '),context:local?[t.station_name,t.day_label].filter(Boolean).join(' · '):points.get(t.operating_point_id)};
+      });
     }
-    if(html!==last){last=html;document.getElementById('tt-content').innerHTML=html;}
+    render();schedule();
   }};
 }

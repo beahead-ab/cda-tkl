@@ -401,3 +401,10 @@ Detaljer: [Kompisväxlar](kompisvaxlar.md).
 - Ny stödsida i menyn och explicit källval under panelens Tidtabell-knapp. Inga fältorder, TrainMeet-skrivningar eller klockändringar. Separat begäran för AI så att panelmanövrer inte väntar på tolkningen.
 - 161 enhetsprov och sju processhelhetsprov passerar. Webbläsarprov med kontrollerad testtransport: två filer, osäker rad, rättning av spår, sparande, granskningsspärr, aktivering, källbyte och mobilbredd. Testsvaret är uttryckligen märkt och testkopplingen finns endast i testfiler; ingen verklig AI/OCR-kvalitet har verifierats.
 - Riktigt OpenAI-anrop inväntar säkert konfigurerad API-nyckel. Webbdriften ändras inte eftersom tidigare återtagningsfråga för Au → Spår 1a är obesvarad. Nattautomationen oförändrad.
+
+## 24 september 2026 · Tidtabell i kolumner under spårplanen, version 0.23.0
+
+- På Caspers begäran ersatt tidtabellens öppningsbara breda tabell med ett fast fält under spårplanen. Fyra kolumner × två rörelser vid 1280×720, sex × tre vid 1920×1080 och en kolumn på mobilbredd. Bläddring och intervallangivelse ger tillgång till hela tidtabellen utan växande höjd. Källans ordning bevaras; klockan byter inte visad sida.
+- Panelens färger och typografi följs i alla tre skins. Tider, spår, sträcka och sammanfattning syns på varje rad. Komplett modal för klick/högerklick/Enter/Skift+F10, utan hover-popup. Ändrat spår visas separat från planerat. Källval och import flyttade till Meny → Tidtabell och import; den överflödiga öppningsknappen under panelen borttagen.
+- Provat med 37 rörelser i isolerad testinstallation, separat från normal förhandsvisning och webbdrift: all bläddring, sista rörelsen 25:10, skilda trafikdagar, tomma tider, långa anmärkningar, text-escaping, TrainMeet-spårbyte, klockuppdatering och bibehållen sida. Mobil 390, desktop 1280/1920, tre skins, fullskärm och modal/tangentbord kontrollerade. Syntax godkänd. Ingen ny backendlogik eller nya tester som bara speglar markup.
+- Ingen webbpublicering eller ändring av serverns lås. Tidigare återtagningsfråga för Au → Spår 1a kvarstår.

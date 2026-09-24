@@ -32,7 +32,7 @@ function setPage(page,{historyMode='push'}={}) {
     $(p+'-view').hidden=p!==page;$(p+'-tab').classList.toggle('selected',p===page);
     if(p===page)$(p+'-tab').setAttribute('aria-current','page');else $(p+'-tab').removeAttribute('aria-current');
   }
-  document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet',import:'Importera tidtabell'})[page]+' · Charlottendal TKL';
+  document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet',import:'Tidtabell och import'})[page]+' · Charlottendal TKL';
   window.scrollTo(0,0);paint();
   if(page==='admin')return sourceRegister.open().catch(e=>message(e.message));
 }
