@@ -1,7 +1,9 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import {crossingGeometry} from '../src/crossing-indications.mjs';
 const read=file=>JSON.parse(fs.readFileSync(new URL('../'+file,import.meta.url)));
 const source=read('public/data/operations-source.json'),index=read('public/data/source/index.json');
+const panel=read('public/data/panel.json');
 assert.equal(source.sourceHash,index.meta.sha256);
 const group=source.groups.find(g=>g.id==='IX:AUTO:0012');
 assert.equal(group.enabled,true);assert.equal(group.rules.length,4);
@@ -24,7 +26,8 @@ const indicators=group.rules.map((id,i)=>{
   assert.deepEqual(rule.actions,expected);
   const lamps=Object.fromEntries(['g','r'].map(color=>{const sensor=source.sensors.find(s=>s.name===name+color);assert.ok(/^IS\d+$/.test(sensor.system));return [color,{name:sensor.name,sourceSystem:sensor.system}];}));
   const record=index.records.find(r=>r.system===id&&r.category==='conditionals');assert.ok(record);
-  return {name,rule:id,sourceKey:record.key,logic:'any',conditions,lamps};
+  const crossing=crossingGeometry(panel,name);
+  return {name,rule:id,sourceKey:record.key,logic:'any',conditions,lamps,...(crossing?{crossing}:{})};
 });
 const catalog={sourceHash:source.sourceHash,group:group.id,indicators,note:'Beräknade panelindikeringar. Ingen fysisk bomstyrning eller bomkvittens.'};
 const file=new URL('../public/data/indications.json',import.meta.url),content=JSON.stringify(catalog,null,2)+'\n';

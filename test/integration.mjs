@@ -32,6 +32,13 @@ test('network profile runs parallel trains across separate processes and release
     await post(httpPort,'clock',{...(await get(httpPort)).clock,running:false});
     const initialIndications=(await get(httpPort)).panelIndications;
     assert.equal(initialIndications.V1.value,false);assert.equal(initialIndications.V4.value,null);
+    assert.deepEqual(['V1','V2','V3'].map(n=>initialIndications[n].warning.value),[false,false,false]);
+    for(const [block,crossing] of [['S100','V1'],['S121','V2'],['S165a','V3']]) {
+      await post(simPort,'block',{name:block,occupied:true});
+      await until(async()=>(await get(httpPort)).panelIndications[crossing].warning.value===true);
+      await post(simPort,'block',{name:block,occupied:false});
+      await until(async()=>(await get(httpPort)).panelIndications[crossing].warning.value===false);
+    }
     const recordingSession=(await get(httpPort)).recordings.sessionId;
     const recording=await post(httpPort,'recordings/start',{sessionId:recordingSession,label:'Två parallella tåg'});
     await post(httpPort,'recordings/start',{sessionId:recordingSession,label:'Konkurrerande panel'},409);
@@ -62,6 +69,7 @@ test('network profile runs parallel trains across separate processes and release
     await post(httpPort, 'route', { from:'htvAn', to:'htvSpIA' }, 400);
     const ready = await get(httpPort);
     assert.equal(ready.panelIndications.V1.value,true);assert.equal(ready.panelIndications.V1.derived,true);
+    assert.equal(ready.panelIndications.V1.warning.value,true);
     const followRequest=(info,keys)=>({sessionId:info.sessionId,revision:info.revision,epochs:Object.fromEntries(keys.map(k=>[k,info.epochs[k]||0]))});
     for(const r of ready.routes){const key=r.from==='htvCu'?'incoming:CuppIn':'incoming:AnedIn',value=r.from==='htvCu'?'P101':'P102';let info=(await get(httpPort)).trainInformation;
       info=await post(httpPort,'train-information/save',{...followRequest(info,[key]),key,value});
@@ -76,6 +84,7 @@ test('network profile runs parallel trains across separate processes and release
     for(const f of followed.follows){assert.equal(followed.entries[f.key].value,f.value);assert.equal(followed.entries[f.key].needsReview,true);assert.equal(f.index,f.path.length-1);const latest=(await get(httpPort)).trainInformation;await post(httpPort,'train-information/save',{...followRequest(latest,[f.key]),key:f.key,value:''});}
 
     assert.equal((await get(httpPort)).panelIndications.V1.value,false);
+    assert.equal((await get(httpPort)).panelIndications.V1.warning.value,false);
     const saved=await post(httpPort,'recordings/stop',{sessionId:recordingSession,id:recording.active.id});
     assert.equal(saved.active,null);assert.equal(saved.history.length,1);
     const captureResponse=await fetch(`http://127.0.0.1:${httpPort}/api/recordings/${recording.active.id}/download`);

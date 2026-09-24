@@ -1,10 +1,11 @@
 // Read-only projection. This module cannot order equipment or release reservations.
+import {prepareCrossing, crossingWarning} from './crossing-indications.mjs';
 export class PanelIndications {
   constructor(catalog,profile) {
     if(profile.sourceHash&&profile.sourceHash!==catalog.sourceHash)throw Error('Indikeringarnas källa stämmer inte med driftprofilen.');
     this.source=catalog;this.profile=profile;
     this.coveredNX=new Set(profile.routes.flatMap(r=>r.nxIds||[]));
-    this.definitions=catalog.indicators.map(indicator=>({...indicator,conditions:indicator.conditions.map(condition=>({...condition,
+    this.definitions=catalog.indicators.map(indicator=>({...indicator,...(indicator.crossing?{crossing:prepareCrossing(indicator.crossing,profile)}:{}),conditions:indicator.conditions.map(condition=>({...condition,
       blocks:condition.kind==='sensor'?Object.entries(profile.blocks).filter(([,b])=>[condition.id,condition.sourceSystem].includes(b.sourceSensor)).map(([name])=>name):[],
       connected:condition.kind==='nx'?this.coveredNX.has(condition.id):Object.values(profile.blocks).some(b=>[condition.id,condition.sourceSystem].includes(b.sourceSensor))
     }))}));
@@ -32,7 +33,8 @@ export class PanelIndications {
         return {kind:condition.kind,id:condition.id,label:condition.label,value,reason};
       });
       const value=conditions.some(c=>c.value===true)?true:conditions.every(c=>c.value===false)?false:null;
-      return [def.name,{value,derived:true,complete:conditions.every(c=>c.value!==null),known:conditions.filter(c=>c.value!==null).length,total:conditions.length,conditions}];
+      return [def.name,{value,derived:true,complete:conditions.every(c=>c.value!==null),known:conditions.filter(c=>c.value!==null).length,total:conditions.length,conditions,
+        ...(def.crossing?{warning:crossingWarning(def.crossing,state,this.profile)}:{})}];
     }));
   }
 }

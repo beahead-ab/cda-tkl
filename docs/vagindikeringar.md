@@ -1,5 +1,33 @@
 # V1–V4 · beräknade panelindikeringar
 
+## V1–V3 från version 0.18.0
+
+På Caspers begäran visas V1, V2 och V3 som vägövergångar: båda lamporna är släckta när ingen korsande tågväg är reserverad och samtliga korsande block är bekräftat fria. Vid reservation eller beläggning blinkar lamporna växelvis rött. Ingen grön lampa eller röd vilolampa används för dessa tre övergångar. V4 har kvar sin tidigare visning.
+
+Blinkningen följer 80 blinkningar per minut per lampa, mitt i intervallet 75–85, med 40 procent tänd och 60 procent släckt tid enligt [TSFS 2014:30, 11 kap. 4 §](https://www.transportstyrelsen.se/tsfs/TSFS%202014_30.pdf). Perioden är 750 ms, tänd tid 300 ms och fasförskjutningen mellan lamporna 375 ms. Det ger 75 ms mörker mellan vänster och höger lampa. Rytmen använder verklig tid och påverkas inte av modellklockans hastighet. Befintliga SVG-lampor animeras utan bildbyte eller omladdning.
+
+| Övergång | Streck i panelkällan | Korsande block | Korsande körbara tågvägar |
+|---|---|---|---|
+| V1 | T152 | S100, S101, S103 | 147 |
+| V2 | T166 | S120, S121, S125, S126, S130 | 166 |
+| V3 | T172 | S165a, S166a, SIIID | 100 |
+
+Listorna genereras från streckens skärningar med spårsegment och växelben. Dekorativa ändstreck räknas inte som spår. Tågvägar avgörs av den faktiska färdvägens geometri; även korsande växeltågvägar ingår. Detta är en uttrycklig ny visningsregel och skiljer sig från XML:s äldre NX/sensor-OR: exempelvis S121, S165a och S166a saknades som direkta sensorvillkor i respektive äldre regel. Originalreglerna och deras beräknade värde bevaras för spårbarhet; nya visningen använder det separata fältet `warning`.
+
+En accepterad reservation räcker från etablering till dess att låsen har frigivits. Återtagning eller kvarvarande lås släcker inte lamporna i förtid. Ett känt aktivt villkor räcker för blinkning även om ett annat är okänt. Saknas beläggningsrapport, eller är den gammal, får övergången frågetecken i stället för att visas som bekräftat inaktiv. Vid bruten kontakt eller lagringsfel visas också okänt underlag. Klick på lamporna visar korsande block och aktuella orsaker.
+
+Ändringen är läsande panelvisning och skickar inga bomorder eller nya fältorder. Den implementerar inte fysisk bomåterrapport, förringningstid eller en fysisk vägskyddsanläggning.
+
+### Prov för den nya visningen
+
+- Sju nya tester täcker geometri, samtliga 197 blocks påverkan, alla korsande körbara tågvägar i sju reservationsfaser, flera samtidiga orsaker, sena/saknade rapporter, avbrott och polaritet. De sex tidigare indikeringsproven passerar, inklusive verklig Engine/Field över telegramkö med etablering, hållet lås och återtagning.
+- Processhelhetsprovet belägger och frigör S100, S121 och S165a i den separata simulatorn och kontrollerar TKL:s varningar över HTTP; pågående tågväg och släckning efter passage ingår. Alla sex helhetstester passerade lokalt.
+- Webbläsarprov: viloläge släckt, separat beläggning för V1/V2/V3, korrekt orsak för S121, genomgående Cu → Bu med alla tre blinkande, återtagning till släckt samt kontaktavbrott till frågetecken och återanslutning till släckt. Alla tre panelutseenden och fullskärm kontrollerade. Webbläsarens faktiska animationsperiod var 0,75 s och höger lamps fasförskjutning −0,375 s; både vänster/höger tändning och mörkerpaus observerade. Inga konsolfel eller varningar.
+- Provblock fria, inga provvägar kvar, Original-utseende och normalt fönsterläge återställda efter provet. V4 oförändrad.
+
+## Tidigare visning och bevarad XML-projektion
+
+
 Version 0.10 visar källans åtta lampor V1g/r–V4g/r på sina ursprungliga platser i alla tre panelutseendena. Samma lägen finns som fyra små val under spårplanen, märkta **Beräknat**. Klick öppnar underlaget, kända villkor och en länk till hela XML-regeln. Från kompaktläge öppnas verktygen så att detaljerna kan läsas.
 
 Detta är läsande panelindikering. Den skickar inga order, styr inga bommar, ändrar ingen sensor och påverkar inga tågvägslås. TKL använder endast sina egna reservationer och återrapporter genom det ordinarie LocoNet-gränssnittet; inga interna simulatoruppgifter läses. Varken grön eller röd lampa är en verifierad fysisk bomkvittens.

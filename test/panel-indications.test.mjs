@@ -64,10 +64,10 @@ test('indications follow an actual wire-driven route without issuing commands or
   const drain=()=>{let remaining=20000;while(queue.length&&remaining--){const [dir,b]=queue.shift();if(dir==='out')field.accept(b);else engine.receive(b);}assert.ok(remaining>0);};
   const advance=ms=>{for(let i=0;i<ms;i+=50){now+=50;field.tick();if(now%1000===0)field.allReports();drain();engine.tick();drain();}};
   engine.connection(true);field.allReports();drain();
-  const route=engine.request('htvCu','htvSpIA');advance(6500);assert.equal(route.state,'active');
+  const route=engine.request('htvCu','htvSpIA');assert.equal(model.snapshot(engine.snapshot()).V1.warning.value,true);advance(6500);assert.equal(route.state,'active');
   const output=model.snapshot(engine.snapshot());assert.equal(output.V1.value,true);
   engine.hold(route,'test held');const before=commands.length;
-  assert.equal(model.snapshot(engine.snapshot()).V1.value,null);assert.equal(commands.length,before);assert.equal(engine.routes.length,1);
-  engine.cancel(route.id);drain();advance(100);assert.equal(engine.routes.length,0);assert.equal(model.snapshot(engine.snapshot()).V1.value,false);
+  assert.equal(model.snapshot(engine.snapshot()).V1.value,null);assert.equal(model.snapshot(engine.snapshot()).V1.warning.value,true);assert.equal(commands.length,before);assert.equal(engine.routes.length,1);
+  engine.cancel(route.id);drain();advance(100);assert.equal(engine.routes.length,0);assert.equal(model.snapshot(engine.snapshot()).V1.value,false);assert.equal(model.snapshot(engine.snapshot()).V1.warning.value,false);
   engine.connection(false);assert.ok(Object.values(model.snapshot(engine.snapshot())).every(s=>s.value===null));
 });

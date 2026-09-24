@@ -163,7 +163,9 @@ function buildPlan() {
       const indication=config.panelIndications?.indicators.find(i=>Object.values(i.lamps).some(l=>l.name===b.sensor));
       if(indication) {
         const unknown=svg('text',{x:10,y:4,class:'derived-unknown','pointer-events':'none'},g,'?');
-        sourceLamps.push({g,lens,unknown,name:indication.name,color:indication.lamps.g.name===b.sensor?'g':'r'});
+        const color=indication.lamps.g.name===b.sensor?'g':'r';
+        if(indication.crossing)g.classList.add('crossing-lamp',color==='g'?'crossing-left':'crossing-right');
+        sourceLamps.push({g,lens,unknown,name:indication.name,color,crossing:!!indication.crossing});
       }
     }
     let manualName=names[0];
@@ -186,7 +188,7 @@ function buildPlan() {
     const scale=root.getBoundingClientRect().width/layout.crop.width;
     for(const b of buttons) b.hit.setAttribute('r',Math.min(b.hitCap,32*Math.min(1.6,1/Math.max(.1,scale)))/2);
   }).observe(root);
-  $('derived-indications').innerHTML='<span>Beräknat:</span>'+(config.panelIndications?.indicators||[]).map(i=>`<button type="button" data-indication="${esc(i.name)}"><i></i>${esc(i.name)} <span>?</span></button>`).join('');
+  $('derived-indications').innerHTML='<span>Beräknat:</span>'+(config.panelIndications?.indicators||[]).map(i=>`<button type="button" data-indication="${esc(i.name)}"${i.crossing?' data-crossing="true"':''}><i></i>${esc(i.name)} <span>?</span></button>`).join('');
   $('derived-indications').onclick=e=>{const name=e.target.closest('button')?.dataset.indication;if(name)inspectIndication(name);};
 }
 async function manualTurnout(name,position) {
@@ -237,18 +239,22 @@ function paintPlan() {
   }
   for(const lamp of indicatorLamps) lamp.node.classList.toggle('occupied',fresh&&state.blocks[lamp.block]?.occupied===true);
   for(const lamp of sourceLamps) {
-    const value=fresh?state.panelIndications?.[lamp.name]?.value:null;
-    lamp.lens.setAttribute('class','indicator-off '+(value===null||value===undefined?'derived-missing':(value===(lamp.color==='g')?'derived-on-'+lamp.color:'')));
+    const indication=state.panelIndications?.[lamp.name];
+    const value=fresh?(lamp.crossing?indication?.warning?.value:indication?.value):null;
+    lamp.g.classList.toggle('crossing-active',lamp.crossing&&value===true);
+    lamp.g.dataset.value=value===true?'active':value===false?'inactive':'unknown';
+    lamp.lens.setAttribute('class','indicator-off '+(value==null?'derived-missing':!lamp.crossing&&value===(lamp.color==='g')?'derived-on-'+lamp.color:''));
     lamp.unknown.style.display=value==null&&lamp.color==='g'?'':'none';
-    const text=lamp.name+' · beräknad panelindikering · '+(value===true?'aktivt underlag':value===false?'inaktivt underlag':'okänt underlag');
-    lamp.g.setAttribute('aria-label',text+' · '+lamp.color);lamp.g.querySelector('title').textContent=text;
+    const text=lamp.name+' · '+(lamp.crossing?'vägövergång · '+(value===true?'röd växelblinkning':value===false?'släckta lampor':'okänt underlag'): 'beräknad panelindikering · '+(value===true?'aktivt underlag':value===false?'inaktivt underlag':'okänt underlag'));
+    lamp.g.setAttribute('aria-label',text+' · '+(lamp.crossing?(lamp.color==='g'?'vänster':'höger'):lamp.color));lamp.g.querySelector('title').textContent=text;
   }
   for(const button of $('derived-indications').querySelectorAll('button')) {
-    const value=fresh?state.panelIndications?.[button.dataset.indication]?.value:null;
+    const crossing=button.dataset.crossing==='true',indication=state.panelIndications?.[button.dataset.indication];
+    const value=fresh?(crossing?indication?.warning?.value:indication?.value):null;
     button.dataset.value=value===true?'active':value===false?'inactive':'unknown';
-    button.querySelector('span').textContent=value==null?'?':'';
+    button.querySelector('span').textContent=value==null?'?':crossing?(value?'Varnar':'Släckt'):'';
     button.title=button.dataset.indication+' · Beräknad panelindikering, ingen bomkvittens';
-    button.setAttribute('aria-label',button.dataset.indication+' · '+(value===true?'aktivt':value===false?'inaktivt':'okänt')+' underlag · detaljer');
+    button.setAttribute('aria-label',button.dataset.indication+' · '+(crossing?(value===true?'röd växelblinkning':value===false?'släckta lampor':'okänt underlag'):(value===true?'aktivt':value===false?'inaktivt':'okänt')+' underlag')+' · detaljer');
   }
   for (const b of buttons) {
     b.g.classList.toggle('chosen', b.id === chosen); b.g.classList.toggle('unavailable', !b.available || (b.names.length && state.manual?.[b.names[0]]?.allowed===false));
@@ -352,6 +358,12 @@ function paintInspector() {
 }
 function paintIndication(name) {
   const def=config.panelIndications.indicators.find(i=>i.name===name),s=state.panelIndications?.[name];
+  if(def.crossing) {
+    const warning=s?.warning,fresh=online&&state.connection==='connected'&&!state.storageFault,value=fresh?warning?.value:null;
+    const causes=fresh?(warning?.conditions||[]).filter(c=>c.value!==false):[];
+    html('inspector',`<h2>${esc(name)} · vägövergång</h2><dl><dt>Lampor</dt><dd>${value===true?'Röd växelblinkning':value===false?'Släckta':'Okänt underlag · frågetecken'}</dd><dt>Korsande block</dt><dd>${def.crossing.blocks.map(n=>esc(displayName('blocks',n))).join(', ')}</dd><dt>Kända villkor</dt><dd>${fresh?warning?.known||0:0} av ${warning?.total||def.crossing.blocks.length+1}</dd></dl><p class="muted">Varnar så länge en tågväg över strecket är reserverad eller ett korsande block är belagt. Lamporna släcks när reservationerna är frigivna och alla korsande block är bekräftat fria.</p><p class="muted">Två röda lampor, växelvis med 80 blinkningar per minut per lampa. Beräknad panelvisning; ingen fysisk bomkvittens.</p>${causes.length?`<ul class="indication-causes">${causes.map(c=>`<li><strong>${esc(c.label)}</strong> · ${esc(c.reason)}</li>`).join('')}</ul>`:''}<button class="source-inspect" data-source-kind="conditionals" data-source-name="${esc(def.name)}">Visa ursprunglig XML-regel →</button>`);
+    return;
+  }
   const fresh=online&&state.connection==='connected'&&!state.storageFault,value=fresh?s?.value:null;
   const important=fresh?(s?.conditions||[]).filter(c=>c.value!==false):[];
   html('inspector',`<h2>${esc(name)} · panelindikering</h2><dl><dt>Beräknat läge</dt><dd>${value===true?'Aktivt underlag · grön lampa':value===false?'Inaktivt underlag · röd lampa':'Okänt underlag · inget fastställt läge'}</dd><dt>Kända villkor</dt><dd>${fresh?s?.known||0:0} av ${s?.total||def.conditions.length}</dd></dl><p class="muted">Indikering från tågvägar och sensorrapporter. Ingen fysisk bomkvittens eller bommanöver.</p><p class="muted">Ett aktivt villkor räcker för grön indikering. Röd kräver att alla villkor är kända och inaktiva. Tågväg som läggs, återtas eller hålls kvar ger okänt NX-villkor.</p>${important.length?`<ul class="indication-causes">${important.map(c=>`<li><strong>${esc(c.label)}</strong> · ${esc(c.reason)}</li>`).join('')}</ul>`:''}<button class="source-inspect" data-source-kind="conditionals" data-source-name="${esc(def.name)}">Visa källregeln och alla villkor →</button>`);
