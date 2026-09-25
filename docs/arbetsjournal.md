@@ -538,3 +538,11 @@ Livewebbläsaren visar 0.30.0, LocoNet ansluten och en aktiverad Återställ pan
 - Backup: `/root/charlottendal-backups/ui-ae4c083-20260925T223027Z`. Vid rollback till c605c16 måste även `public/app.js` och `public/index.html` återställas från backupens `public/`; det räcker inte att byta current-länken. Återställ inga driftfiler.
 - Båda tjänsternas process-id behölls. En befintlig tågväg låg kvar, och routes, controls, TrainMeet, tidtabell och konfiguration var oförändrade. Skyddade API:er kräver fortsatt inloggning.
 - Lokalt verifierat med två paneler: startval, shuntläge och växel-/kompismarkeringar rensas i båda vid återställning; nya startval överlever följande tillståndsuppdateringar. En aktiv Cu → Spår 1c återställdes med belagt S100: noll vägar/lås, alla signaler i stopp, fortsatt S100-beläggning och V1-varning. Inga konsolfel. Syntax och fyra renderingsprov godkända lokalt och på servern. Inga nya detektor- eller växelorder har lagts till.
+
+## 26 september 2026 · 0.30.2 · endast Original
+
+Release `e91f4da` publicerad kl. 00:36 svensk tid utan omstart. Original är enda panelutseendet; tidigare sparat Trafikskärm-/Reläpanel-val ignoreras och rensas. Ingen zoomändring är genomförd; förslag lämnat separat. Verifierat lokalt med spara/avbryt och visuellt på panelen, samt i produktion där Trafikskärm ersattes av Original och version 0.30.2 bekräftades. Syntaxkontroll godkänd lokalt och på servern.
+
+Backup: `/root/charlottendal-backups/ui-e91f4da-20260925T223612Z`. `current` pekar på `/opt/charlottendal/releases/e91f4da`. Backendprocessen kör fortsatt från `c605c16` med byte-identisk backend. Dess tre statiska filer `public/app.js`, `public/index.html` och `public/admin-appearance.js` uppdaterades också atomiskt på plats. Vid återgång till 0.30.1 utan omstart: återställ dessa tre filer på `c605c16/public` från backupens `public/` och peka current mot `ae4c083`. Rör inga driftfiler. Nästa vanliga omstart använder hela e91f4da-releasen.
+
+Båda process-id oförändrade. Tågvägar, driftkontroller, TrainMeet, tidtabell och konfiguration oförändrade efter publiceringen. API-skyddet verifierat.
