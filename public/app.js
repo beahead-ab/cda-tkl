@@ -1,4 +1,5 @@
 import {createAdminAppearance} from './admin-appearance.js';
+import {createPanelZoom,createZoomDialog,zoomLabel} from './panel-zoom.js';
 import {syncAdminWorkspaces,registerAdminWorkspace} from './admin-ui.js';
 import {attribute,style,text as setText,flowProgress,createPanelFrames,preparingEndpoints} from './panel-rendering.js';
 import {createTimetableImport} from './timetable-import.js';
@@ -488,8 +489,11 @@ async function start() {
   document.addEventListener('keydown', e => { if(e.key==='Escape'){if(document.querySelector('.admin-dialog[open]'))return;if($('inspector-host').open){e.preventDefault();closeInspector();return;}if(fullscreen.active()){fullscreen.exit();return;}manualFeedback.clear();clearChoice();} });
   // Original is the only active panel. Retired skin preferences must not restore it differently.
   try{localStorage.removeItem('charlottendal-skin');}catch{}
-  $('zoom').onchange = () => { const value=$('zoom').value+'%';$('track-plan').style.width=value;$('track-plan').style.height=value; };
-  createAdminAppearance();
+  const panelZoom=createPanelZoom({plan:$('track-plan'),viewport:document.querySelector('.panel-scroll'),stage:$('plan-stage')});
+  const zoomDialog=createZoomDialog(panelZoom);
+  panelZoom.subscribe(value=>{$('menu-zoom-value').textContent=zoomLabel(value);});
+  $('open-panel-zoom').onclick=e=>{e.preventDefault();e.stopPropagation();appMenu.close();if(currentPage!=='panel')setPage('panel');zoomDialog.open();};
+  createAdminAppearance({zoom:panelZoom});
   for(const id of ['appearance','journal'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   for(const id of ['xml','migration','protocol'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
   document.addEventListener('click',e=>{

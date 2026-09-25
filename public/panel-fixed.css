@@ -51,8 +51,21 @@ body[data-page=panel] .tt-values{font-size:13px;line-height:24px;color:inherit}b
 @media(max-width:700px){body[data-page=panel]{--panel-bottom-height:220px}#panel-bottom{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) 36px;gap:4px;padding-inline:8px}body[data-page=panel] #panel-console{padding:0;display:flex;align-items:center;gap:8px}#panel-quick-actions{flex-wrap:nowrap}#panel-quick-actions button{min-height:30px;padding:5px 8px;font-size:11px;white-space:nowrap}.panel-runtime-info{margin:0;min-width:0;font-size:10px;gap:0;overflow:hidden}#panel-console #selection-hint{font-size:10px}.operation-overview{grid-template-columns:1fr}#panel-view .panel-actions{flex:none}#tt-station{flex:1 1 auto}.tt-heading{gap:6px}.tt-heading h2{font-size:10px;letter-spacing:.5px}.tt-pagination #tt-range{width:70px;min-width:70px}#panel-drawer{width:calc(100vw - 16px);padding:12px 8px}}
 @media(max-height:600px){body[data-page=panel]{--panel-bottom-height:148px}}
 @media(prefers-reduced-motion:reduce){.touch-target .hit,.touch-target .dot,.panel-key{transition:none}}
-/* On a phone, retain readable symbols with deliberate panning inside the plan. */
-@media(max-width:700px){#panel-view #track-plan{min-width:1000px}}
+/* One fitted image plane; manual zoom expands only this scrollable area. */
+#plan-stage{display:grid;place-items:center;width:100%;height:100%;min-width:0;min-height:0}
+#panel-view #track-plan{max-width:none;flex:none}
+#menu-zoom-value{margin-left:auto;font-size:11px;color:var(--muted)}
+.panel-zoom-control{display:block;min-width:0}
+.zoom-value-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.zoom-value-row output{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.admin-dialog .panel-zoom-control input[type=range]{width:100%;height:30px;padding:0;margin:0;accent-color:#adc7b2;display:block}
+.zoom-scale{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin:2px 0 12px}
+.zoom-fit{font-size:12px;padding:7px 12px}
+.panel-zoom-control .muted{margin:10px 0 0}
+.admin-dialog.panel-zoom-dialog{inset:auto 16px 18px auto;margin:0;width:min(380px,calc(100vw - 32px));max-height:calc(100dvh - 36px)}
+.admin-dialog.panel-zoom-dialog::backdrop{background:#0001}
+#panel-zoom-form>p{margin:0}
+@media(max-width:700px){.admin-dialog.panel-zoom-dialog{right:8px;bottom:8px;width:calc(100vw - 16px);max-width:calc(100vw - 16px)}}
 
 /* Two fixed lenses alternate gently while the server prepares the route. */
 @keyframes route-endpoint-wait{0%,35%,100%{fill:#cbb876;stroke:#cbb876}50%,85%{fill:#394039;stroke:#8b917f}}

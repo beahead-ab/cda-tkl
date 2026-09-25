@@ -41,3 +41,15 @@ export function panelLayout(panel) {
   for (const b of panel.bicons) if (b.y < 840) include(b.x, b.y, b.x+44, b.y+16);
   return { controls, crop: { x: Math.floor(x0-16), y: Math.floor(y0-16), width: Math.ceil(x1-x0)+32, height: Math.ceil(y1-y0)+32 } };
 }
+
+// Zoom is relative to fitting the complete plan in the available viewport.
+export function normalizeZoom(value){
+  const n=(typeof value==='number'||typeof value==='string'&&value.trim())?Number(value):NaN;
+  return Number.isFinite(n)?Math.min(300,Math.max(50,Math.round(n/5)*5)):100;
+}
+export function zoomGeometry(width,height,planWidth,planHeight,percent){
+  if(![width,height,planWidth,planHeight].every(n=>Number.isFinite(n)&&n>0))return null;
+  const scale=Math.min(width/planWidth,height/planHeight)*normalizeZoom(percent)/100;
+  const w=planWidth*scale,h=planHeight*scale;
+  return {width:w,height:h,stageWidth:Math.max(width,w),stageHeight:Math.max(height,h)};
+}

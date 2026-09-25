@@ -167,3 +167,13 @@ När vägen är klar återgår plupparna till fast tågvägssken. Återtagning, 
 Den tomma raden ”DRIFTMEDDELANDEN · Inga aktiva meddelanden” är borttagen. Panelen börjar vid skärmens överkant och får tillbaka de 48 pixlar som tidigare reserverades (32 på låga skärmar). Meddelanden visas i en stapel uppe till höger, under menyknappen. Bara meddelandekorten fångar pekarklick; omgivande yta förblir manövrerbar.
 
 Tillfälliga manöver-/felbesked kan stängas direkt och tonas annars bort efter åtta sekunder. Muspekare eller tangentbordsfokus i meddelandet pausar tiden; efteråt ges åtta sekunders lästid igen. Aktiva AIS-, fjärr- och nödåtertagningsbesked följer fortfarande driftläget och försvinner när villkoret upphör. De ligger också ovanpå och flyttar aldrig panelen. Reducerad rörelse stänger av toningen. Samma meddelandehantering används på adminsidorna under deras sidhuvud.
+
+## Version 0.31 – zoom per enhet
+
+Meny → Zoom öppnar ett reglage från 50 till 300 procent i steg om fem, med direkt förhandsvisning ovanpå ställverket. Visa hela återgår till 100 procent: hela originalbilden ryms i det tillgängliga panelfältet, även på en smal skärm. Vid förstoring rullas spårplanen inom sitt eget fält. Tidtabellen, meddelanden och driftknapparna ändrar inte storlek. Samma reglage finns under Utseende och ljud → Redigera.
+
+Spara lagrar valet i den aktuella webbläsarens lokala lagring för appens adress. Det följer inte användarkontot till andra enheter eller webbläsare; rensad webbplatsdata återställer till Visa hela. Andra öppna flikar på samma adress uppdateras till det sparade valet. Avbryt/kasta ändringarna återställer både föregående zoom och panelens rullposition. Blockerad lokal lagring ger ett tydligt fel och lämnar formuläret öppet.
+
+Skalningen behåller proportioner och utgår från panelens aktuella bildyta. Bara ändrad zoom eller fönsterstorlek beräknar om geometrin. Signalbilder, pluppar och spårlinjer behåller sina befintliga element; zoom skickar inga driftorder.
+
+Syntaxkontroll och sju riktade prov godkända: passning på telefon/kort skärm, proportioner, rullyta, felaktiga sparade värden samt befintlig stabil rendering. Webbläsarprov omfattar förhandsvisning, Spara, Avbryt, återställd panorering, omladdning, synkronisering mellan flikar samt separat inställningsdialog. Visuell kontroll i 1280 och 390 pixlars bredd.
