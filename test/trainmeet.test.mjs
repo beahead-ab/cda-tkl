@@ -107,3 +107,38 @@ test('failed origin save preserves the old connection settings and revision',()=
   assert.throws(()=>service.configure({...service.view(),origin:'https://different.example'}),/tidigare inställningen/);
   assert.deepEqual(service.view(),old);assert.equal(r.saved().origin,old.origin);
 });
+
+test('readable client id is presented on pairing and persists through disconnect and restart',async()=>{
+  const r=rig(),service=new TrainMeet({storage:r.storage,fetcher:r.fetcher});
+  assert.equal(service.view().clientId,'cda-tkl');
+  service.configure({...service.view(),origin:'https://trainmeet.example',clientId:'  cda-tkl-demo  '});
+  assert.equal(service.view().clientId,'cda-tkl-demo');assert.equal(r.calls.length,0);
+  await service.pair({...service.view(),stationId:'cda',code:'PAIRING'});
+  const sent=JSON.parse(r.calls[0].options.body);
+  assert.equal(sent.client_id,'cda-tkl-demo');assert.equal(sent.display_name,'cda-tkl-demo');assert.equal(sent.device_kind,'tkl_terminal');
+  assert.throws(()=>service.configure({...service.view(),clientId:'other-tkl'}),/Koppla från/);
+  assert.equal(new TrainMeet({storage:r.storage}).view().clientId,'cda-tkl-demo');
+  service.disconnect(service.view());assert.equal(service.view().clientId,'cda-tkl-demo');
+  const next=new TrainMeet({storage:r.storage});assert.equal(next.view().clientId,'cda-tkl-demo');assert.equal(next.view().paired,false);
+});
+test('invalid or unsaved client ids never alter the previous identity or revision',()=>{
+  const r=rig(),service=new TrainMeet({storage:r.storage});
+  service.configure({...service.view(),origin:'https://trainmeet.example',clientId:'cda-tkl'});
+  const previous=service.view();
+  for(const clientId of ['',null,{},'ab','a'.repeat(65),'cda tkl','cda/tkl','cda@tkl','cda<tkl>','åäö']) {
+    assert.throws(()=>service.configure({...service.view(),clientId}),/TKL-id/);
+    assert.deepEqual(service.view(),previous);
+  }
+  service.configure({...service.view(),clientId:'Cda_tkl.demo:1-2'});
+  const beforeFailure=service.view();r.storage.save=()=>{throw Error('disk');};
+  assert.throws(()=>service.configure({...service.view(),clientId:'new-id'}),/tidigare inställningen/);
+  assert.deepEqual(service.view(),beforeFailure);
+});
+test('installation-locked origin allows an unpaired id change; existing legacy identity is not silently renamed',()=>{
+  const r=rig();r.service.configure({...r.service.view(),clientId:'cda-tkl-lab'});
+  assert.equal(r.service.view().clientId,'cda-tkl-lab');
+  const legacy={version:1,origin:'https://trainmeet.example',stationId:'cda',clientId:'cda-tkl-01234567-89ab-cdef-0123-456789abcdef',token:'saved-token'};
+  const service=new TrainMeet({storage:{load:()=>structuredClone(legacy)}});
+  assert.equal(service.view().clientId,legacy.clientId);assert.equal(service.view().paired,true);
+  assert.equal(JSON.stringify(service.view()).includes('saved-token'),false);
+});

@@ -1,12 +1,25 @@
 # Läsande TrainMeet-anslutning
 
-En separat adapter implementerar det lokalt granskade HTTP-v1-kontraktet i TrainMeet-serverns commit63f3fd1 (18september). Detta bevisar inte vilken version som kör i Caspers drift. Ingen befintlig TrainMeet-installation har anslutits eller ändrats.
+En separat adapter implementerar TrainMeets HTTP-v1-kontrakt, ursprungligen granskat i commit63f3fd1 (18 september). Den nu angivna demoserverns version har också identifierats och dess matchande källkod granskats enligt nedan. Verklig parkoppling har ännu inte utförts.
 
-Från version 0.19.0 finns en egen sida under **Meny → TrainMeet** (`/#trainmeet`). Operatören anger serveradressen och väljer **Spara adress** före parkoppling. Adressen sparas på TKL-servern och återläses efter omstart. Administratören kan fortfarande låsa adressen med `CHARLOTTENDAL_TRAINMEET_ORIGIN`; då går den inte att ändra i gränssnittet.
+## TKL-id från 0.27.0
+
+Meny → TrainMeet visar **TKL-id** tillsammans med serveradressen. En ny installation föreslår `cda-tkl`. Id:t är installationens identitet hos TrainMeet, skilt från stations-id som anger vilken station i träffen tidtabellen gäller. Välj ett eget id för varje separat TKL-installation.
+
+**Spara anslutning** sparar adress och id tillsammans före parkoppling. Id:t får ha 3–64 tecken enligt TrainMeets verifierade format: ASCII-bokstäver, siffror, punkt, understreck, bindestreck och kolon. Det skickas som både `client_id` och `display_name`, med oförändrad typ `tkl_terminal`. Id:t visas i TKL även efter parkoppling och bevaras vid omstart och frånkoppling. Redan sparade identiteter byts inte automatiskt. För en parad anslutning krävs först Koppla från; en serveradress som låsts av installationen förblir låst även om klient-id ändras.
+
+### Demoservern som Casper angav
+
+25 september 2026 svarade `https://server.trainmeet.app/healthz` med version **1.11.0**, build **152156da**. Den vanliga webbsidan visade **Grimslöv 2027**. Matchande lokal källcommit har granskats: `/v1/pair` stöder `tkl_terminal`, klient-id och anslutningskod; stationsåtkomst prövas separat. Det är granskning av driftsatt versions kod, inte en genomförd verklig parkoppling.
+
+För Charlottendals anslutning används serveradress `https://server.trainmeet.app`, TKL-id `cda-tkl`, den valda demostationens exakta stations-id och serverns anslutningskod. Koden är serverns anslutningskod, inte Cloud-träffkoden. Matchande serverversion visar den i **Skärmar → Visa anslutningsuppgifter** när inloggning/behörighet tillåter det. Administratörsinloggning och val av demostation återstår för att kontrollera dessa uppgifter i drift. Anslutningskoden matas in direkt i TKL; den ska inte läggas i dokumentationen.
+
+
+Från version 0.19.0 finns en egen sida under **Meny → TrainMeet** (`/#trainmeet`). Operatören anger serveradressen och väljer **Spara anslutning** före parkoppling (knappen hette tidigare Spara adress). Adressen sparas på TKL-servern och återläses efter omstart. Administratören kan fortfarande låsa adressen med `CHARLOTTENDAL_TRAINMEET_ORIGIN`; då går den inte att ändra i gränssnittet.
 
 Adressen måste vara en HTTPS-origin eller HTTP på loopback (`localhost`, `127.0.0.1`, `::1`). Sökväg, användaruppgifter, frågeparametrar och fragment avvisas. Omdirigeringar följs inte och TLS-verifiering är på. En parad anslutning måste först kopplas från innan adressen får ändras: en sparad nyckel flyttas aldrig till den nya servern. Revision och sessions-id skyddar mot samtidiga eller gamla formulär. Misslyckad lagring lämnar den gamla inställningen kvar.
 
-**Adressen måste kunna nås av TKL-servern**, inte bara av webbläsaren. I webbdriften betyder `localhost` DigitalOcean-servern. En lokal TrainMeet-server på Mac eller Raspberry Pi behöver därför en förbindelse från TKL, exempelvis en separat upprättad krypterad tunnel. Att spara adressen öppnar ingen tunnel och gör inget nätverksanrop. Den riktiga adressen och placeringen är fortfarande efterfrågade; ingen lokal TrainMeet-installation har anslutits.
+**Adressen måste kunna nås av TKL-servern**, inte bara av webbläsaren. I webbdriften betyder `localhost` DigitalOcean-servern. En lokal TrainMeet-server på Mac eller Raspberry Pi behöver därför en förbindelse från TKL, exempelvis en separat upprättad krypterad tunnel. Att spara adressen öppnar ingen tunnel och gör inget nätverksanrop. Casper har nu angett den publika demoservern ovan; någon verklig parkoppling har ännu inte verifierats.
 
 På TrainMeet-sidan anger operatören stations-id och den vanliga anslutningskoden från TrainMeet. Appen använder POST/v1/pair med device_kind=tkl_terminal och en stabil klientidentitet. Stationsbehörigheten kontrolleras genom GET/v1/tkl/context. Nyckeln sparas först efter godkänt stationssvar, endast på servern i trainmeet.json med rättighet0600. Varken kod, nyckel eller andra serverns anslutningsuppgifter skickas tillbaka till webbläsaren. Katalogbackup ska skyddas som övriga driftdata.
 
@@ -16,7 +29,7 @@ Svaren måste ha protokollversion1, samma publikation/dag och rätt station. Dub
 
 **Koppla från** raderar den lokala nyckeln men återkallar inte klientregistreringen hos TrainMeet; återkallelse görs där. HTTPv1 ger ännu inget verifierat kontrakt för säker automatisk återleverans av alla skrivande klareringskommandon. Denna adapter skriver därför endast den uttryckliga parkopplingen. Skift, rörelser och klareringar manövreras fortfarande i TrainMeet. Tågnummer från vyn flyttas inte automatiskt till TKL:s fysiska spår.
 
-Adaptern har ingen referens till förreglingskärnan eller simulatorn och kan inte ändra beläggningar, lås eller signaler. Sjutton riktade prov samt ett processprov med adressinställning, parkoppling, omstart, nyckelskydd och oförändrat fälttillstånd passerar. Det nya konfigurationsanropet omfattas också av provet för inloggningsskydd. Aktuell serveradress, stations-id och normal anslutningskod behövs för att verifiera den riktiga installationen.
+Adaptern har ingen referens till förreglingskärnan eller simulatorn och kan inte ändra beläggningar, lås eller signaler. Tjugo riktade prov samt ett processprov med adressinställning, parkoppling, omstart, nyckelskydd och oförändrat fälttillstånd passerar. Det nya konfigurationsanropet omfattas också av provet för inloggningsskydd. Aktuell serveradress, stations-id och normal anslutningskod behövs för att verifiera den riktiga installationen.
 
 ## Stationsklient som TMBox – vad som faktiskt stöds
 
