@@ -257,3 +257,10 @@ Release `c605c16` ersätter `4919f97`. En enda direktknapp, Återställ panel, b
 Backup: `/root/charlottendal-backups/network-c605c16-20260925T214128Z`. Föregående kod: `/opt/charlottendal/releases/4919f97`. Förkontrollen fann noll tågvägar och AIS aktiv; detta aktuella läge bevarades, liksom tidtabell, TrainMeet, konfiguration, bindningar, anteckningar, inspelningsarkiv och inloggning. Endast TKL omstartad; simulatorn fortsatte köra. Backendändringen är begränsad till engine och HTTP-endpoint; profiler, källdata, övrig backend, simulatorfiler, nginx och beroenden är oförändrade.
 
 Livewebbläsaren visar 0.30.0, LocoNet ansluten och en aktiverad Återställ panel-knapp. Befintlig AIS-indikering kvarstår. Ingen återställningsmanöver utfördes mot produktionen under efterkontrollen.
+
+## 26 september 2026 · 0.30.1 · gemensam nollställning av panelval
+
+- Release `ae4c083` publicerad kl. 00:30 svensk tid utan omstart. Endast `public/app.js` och `public/index.html` lades också atomiskt på den körande processens gamla public-sökväg, `/opt/charlottendal/releases/c605c16/public`. `/opt/charlottendal/current` pekar nu på `/opt/charlottendal/releases/ae4c083`; nästa vanliga omstart använder den fullständiga nya releasen. Backend är byte-identisk med 0.30.0.
+- Backup: `/root/charlottendal-backups/ui-ae4c083-20260925T223027Z`. Vid rollback till c605c16 måste även `public/app.js` och `public/index.html` återställas från backupens `public/`; det räcker inte att byta current-länken. Återställ inga driftfiler.
+- Båda tjänsternas process-id behölls. En befintlig tågväg låg kvar, och routes, controls, TrainMeet, tidtabell och konfiguration var oförändrade. Skyddade API:er kräver fortsatt inloggning.
+- Lokalt verifierat med två paneler: startval, shuntläge och växel-/kompismarkeringar rensas i båda vid återställning; nya startval överlever följande tillståndsuppdateringar. En aktiv Cu → Spår 1c återställdes med belagt S100: noll vägar/lås, alla signaler i stopp, fortsatt S100-beläggning och V1-varning. Inga konsolfel. Syntax och fyra renderingsprov godkända lokalt och på servern. Inga nya detektor- eller växelorder har lagts till.

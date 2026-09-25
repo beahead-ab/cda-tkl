@@ -17,7 +17,7 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Publicerat på webbadressen
 
-Version **0.30.0**, release `c605c16`, publicerades 25 september kl. 23:41 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/). Vid versionsbytet fanns inga tågvägar och AIS var aktiv. Detta aktuella läge bevarades. Simulatorn fortsatte köra. Inloggning och manöverspärrar bevarades.
+Version **0.30.1**, release `ae4c083`, publicerades 26 september kl. 00:30 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/) utan omstart. Backend är oförändrad från 0.30.0. Pågående tågväg, inloggning, driftlägen och sparade inställningar bevarades. Se driftjournalen för gränssnittsöverläggets rollback.
 
 - Start- och slutplupp blinkar lugnt växelvis under förberedelsen av en accepterad tågväg. Klart läge ger fast sken; återtagning, hållna lås, AIS och kontaktbortfall ger ingen förberedelseblinkning.
 - Fast ställverksyta: spårplan, tidtabell och knappar har fasta fält. Driftmeddelanden ligger som toast ovanpå; inget tomt meddelandefält reserveras. Detaljer öppnas ovanpå, hover flyttar inga symboler och ljusflödet följer bildrutorna med monoton tidsmätning.
@@ -54,7 +54,7 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
 
 ## Nästa praktiska steg
 
-[Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation och anslutningsstatus finns på den renodlade panelen; återtagning nås via Meny → Driftverktyg → Tågvägar och stödfunktionerna via menyn. Casper kan nu provköra version 0.30.0 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
+[Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation och anslutningsstatus finns på den renodlade panelen; återtagning nås via Meny → Driftverktyg → Tågvägar och stödfunktionerna via menyn. Casper kan nu provköra version 0.30.1 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
 
 Vid införandet av version 0.17.0 passerade 134 enhetstester och sex processhelhetstester. Backupens driftdata har återlästs i en isolerad kopia utan fältorder. Telegraminspelningen ger namngivna loggar med båda riktningarna, råtelegram och separat tolkning. Det förbereder jämförelsen mellan simulator och fysisk utrustning. Det ersätter inte hårdvaruanslutningen. Fortsätt samtidigt med verifierbara manöverfall, admin och visuell avstämning; aktivera inte okända signal- eller adressbindningar genom gissning.
 
