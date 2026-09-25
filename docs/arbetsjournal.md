@@ -442,3 +442,13 @@ Casper vill att panelen upplevs som en permanent fysisk anläggning. Statusfält
 174 enhetstester, riktad omkontroll av rörelsepreferens och syntax godkända. Separat webbläsarprov med tågväg, AIS, avbrott, 23 tidtabellsrader, modaler, tre skins och skärmstorlekar. Se provresultat.md för mått och fullskärmsprovets begränsning. Backend, driftregler, autentisering och fysiska bindningar är oförändrade.
 
 Publicerad kl. 22:53 som ed27e49. Serverns riktade renderingsprov och syntax godkända; backend, profiler, källdata och beroenden verifierat identiska med f2bbaef. Noll lås och AIS av vid byte, stoppläget bevarat. Endast TKL omstartad; simulatorn lämnad igång. Backup /root/charlottendal-backups/network-ed27e49-20260924T205321Z. Efterkontroll och inloggad webbläsare godkända, 0.26.0 synlig, inga konsolfel. Fullskärmskod oförändrad; testverktyget gav ingen verifierbar fullskärmsövergång.
+
+## 25 september 2026 kl. 02:47 · version 0.26.1
+
+Release `32a605e` ersätter `ed27e49` på cda-tkl.trainmeet.app. Casper godkände uttryckligen omstarten. Två aktiva tågvägar före bytet (Au → Spår 1a, Spår 11 → Bu) återställdes till stopp med samma id, ändpunkter, block, signaler och växellås. Ingen återtagning eller radering gjordes. Backend och driftprofil är byte-identiska med föregående release; simulatorn fortsatte köra och nginx ändrades inte.
+
+V1–V3 har nu lugn blinkning som standard: 1,5 s per lampa, halva tidigare frekvensen, mjuka kanter och dämpat rött. Meny → Utseende och ljud → Övergångslampor erbjuder även Fast rött sken och Tidigare blinkning. Valet sparas i webbläsaren.
+
+Backup: `/root/charlottendal-backups/network-32a605e-20260925T004712Z`. Föregående kod: `/opt/charlottendal/releases/ed27e49`. Aktuell kod: `/opt/charlottendal/releases/32a605e`. Backup innehåller driftdata, inloggning, tjänster och serverkonfiguration. Driftfiler ska inte skrivas över vid en kodåtergång; låsen bevaras.
+
+Verifierat: syntax, tre renderingsprov och omstartsprovet för beständiga lås lokalt och på servern. Backend/profiler/källdata/beroenden oförändrade. Efterkontroll bekräftar båda tjänsterna, ny anslutning, skyddade API:er, oförändrad inloggning/manöverspärrar och båda låsen i `held`. Inloggad webbläsare visar 0.26.1, LocoNet ansluten, lugna V1–V3 med 1,5 s / −0,75 s och inga konsolfel. De båda vägarna behöver återtas och läggas på nytt för nya körbesked.

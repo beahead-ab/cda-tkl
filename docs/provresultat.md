@@ -178,3 +178,5 @@ Avslutat i lokalt läge, huvudtågväg, AIS av, inga provtågvägslås, Original
 ## Version 0.26.1 – övergångarnas visningsläge
 
 Syntaxkontroll och tre renderingsprov godkända. Lokalt webbläsarprov på 9040: aktiv V1 använder 1,5 s period och höger lampa −0,75 s förskjutning; V2/V3 är mörka utan animation. Fast rött ger båda aktiva lamporna rgb(199,91,80), inga animationer och fortsatt mörka vilolampor. Fast-läget bevarades efter omladdning; Lugn blinkning återvaldes. Högerklick visar rätt lägesbeskrivning och den befintliga reservationsorsaken. Spårplanens mått före/efter visningsbyte var identiska. Inga konsolfel. V4 och backend har inte ändrats.
+
+Publicering 25 september kl. 02:47: samma prov och backendjämförelse godkända på servern. Två befintliga lås återställdes till held efter uttryckligt godkänd omstart. Webbkontroll bekräftade 0.26.1, anslutning, 1,5 s / −0,75 s på aktiva V1–V3 och inga konsolfel. Inga provvägar eller provtidtabeller tillfördes.
