@@ -206,3 +206,14 @@ Hela enhetssviten passerade: 178/178. Syntax och diffkontroll godkända.
 183 enhetstester och sju processhelhetstester godkända. Utökat HTTP-processprov för kalkylblad, revision och omstart passerade också. Syntax och diffkontroll godkända. [UI-prov, inventering och kvarvarande avstämning](admin-forenkling.md).
 
 0.28.0 publicerad kl. 20:53 som f1ce9d8. Serverns 37 riktade prov, sju processhelhetsprov, låsomstartsprov och syntaxkontroll passerade. Efterkontroll verifierar anslutna tjänster, skyddade API:er, oförändrade admin-/inloggningsfiler och tre bevarade held-lås. Livegränssnittet visar den nya översikten och befintligt enradigt utkast i kalkylbladet; anslutningsmodal öppnad/avbruten utan ändringar. Inga konsolfel observerades. Ingen liveprovdata skapades.
+
+
+## 25 september 2026 kl. 21:14 · version 0.28.1
+
+Release `ff62c71` ersätter `f1ce9d8` efter Caspers godkännande av de två menyförenklingarna. Profilinformationen finns i Anläggningsregistret; den dubblerande anslutningssidan är borttagen. XML-granskning, införandestatus och protokollinspelning nås under Avancerat. Äldre anslutningslänk leder till registret. Konto/lösenordsbyte, TrainMeet och driftjournalen finns kvar.
+
+Lokalt UI-prov verifierade navigation, direktlänk/omladdning, källavsnitt till objektdetalj, helregistersökning, inspelningsdialog samt förenklad meny. Syntax/diffkontroll godkända. Serverns syntax och låsomstartsprov passerade; backend, profiler, källdata, simulatorfiler, nginx och beroenden jämfördes och är oförändrade. Ingen ny full testsvit kördes för denna rena navigationsändring; 0.28.0:s 183 enhetsprov och sju helhetsprov är föregående fulla resultat.
+
+Backup: `/root/charlottendal-backups/network-ff62c71-20260925T191454Z`. Föregående kod: `/opt/charlottendal/releases/f1ce9d8`. Endast TKL omstartad, simulatorn fortsatte köra. Samma tre held-reservationer med alla resurser bevarade. Tidtabell, TrainMeet, konfiguration, bindningar, anteckningar, inspelningsarkiv, stoppläge och autentisering jämfördes med backup och var oförändrade. Inga liveprovdata eller manövrer.
+
+Livewebbläsaren visar 0.28.1, LocoNet ansluten, tre ingångar under Avancerat och profilinformationen i registret. Den borttagna sidan saknas och XML-verktygen visas inte på registeröversikten. Inga konsolfel observerades.
