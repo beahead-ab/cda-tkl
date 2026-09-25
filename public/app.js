@@ -470,7 +470,6 @@ async function start() {
   $('catalog-to').onchange=catalogHint;
   function routeMode(){ const mode=$('route-mode').value; document.body.dataset.routeMode=mode; clearChoice(); const starts=catalogOrder([...new Set(config.routes.filter(r=>(r.kind||'main')===mode).map(r=>r.from))]); $('catalog-from').innerHTML=starts.map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('');targets(); }
   $('route-mode').onchange=()=>{$('catalog-mode').value=$('route-mode').value;routeMode();}; $('catalog-mode').onchange=()=>{$('route-mode').value=$('catalog-mode').value;routeMode();}; $('catalog-from').onchange=targets;routeMode();
-  for(const b of document.querySelectorAll('#panel-console [data-route-mode]'))b.onclick=()=>{$('route-mode').value=b.dataset.routeMode;$('catalog-mode').value=b.dataset.routeMode;routeMode();};
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };

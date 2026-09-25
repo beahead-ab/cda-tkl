@@ -1,6 +1,32 @@
 # Ren panel och separat verktygssida
 
-Ställverket öppnas på `/#panel`. Spårplan, signaler, växelpluppar och tågnummer finns kvar på sina platser. Från version 0.20.0 innehåller överkanten bara namn, anslutningsstatus och hamburgerknappen. Själva manöverfunktionerna finns under spårplanen.
+Ställverket öppnas på `/#panel`. Överkanten innehåller namn, anslutningsstatus och meny. Från version 0.29.0 är den stora knappraden borttagen enligt Caspers godkända förenkling.
+
+## Kompakt tidtabell och driftmeny (0.29.0)
+
+Tidtabellen använder samma ljusa text som panelen, utan ram, kortbakgrund eller gröna tågnummer. Varje tågrörelse tar en rad: tåg, ankomst, avgång och spår. Raderna fyller första kolumnen uppifrån och ned, sedan nästa, med högst tre kolumner. Antalet rader följer tillgänglig höjd; tidigare/nästa visar resterande rörelser utan att flytta spårplanen. Till höger finns utrymme för senare valda funktioner.
+
+Vid 1280 × 720 visas 15 rörelser (5 × 3), med 13 px text och 24 px radhöjd. Spårplanens fasta yta är 496 px hög, 152 px högre än i 0.28.2. Vid 390 px bredd används en tidtabellskolumn och stoppknappen under den. På större skärm ryms fler rader. Från/till, trafikdag, driftläge, planerat/ändrat spår, uppehåll och anmärkning finns kvar i radens detaljruta. Punkt visar anmärkning, asterisk och understrykning ändrat spår. Samma visning används för TrainMeet och egen/importerad tidtabell.
+
+| Tidigare knapp | Funktion och bedömning | Ny placering |
+|---|---|---|
+| Alla signaler i stopp | Viktig snabbmanöver; återkallar körmedgivanden och behåller låsen. | Enda permanenta driftknappen, till höger om tidtabellen. |
+| Återställ stopp | Häver stopp först när servervillkoren tillåter; återstartar inga gamla vägar. | Visas bredvid stopp när AIS är aktiv. |
+| Huvudtågväg / Växeltågväg | Väljer vanlig trafik respektive växling. Behövs men inte som två stora knappar. | Meny → Driftverktyg → Tågvägar, befintlig typväljare. Aktivt växeltågvägsläge anges på panelen. |
+| Tågvägar | Listval behövs även för vägar utan synlig plupp; aktiva vägar kan återtas normalt. | Driftverktyg → Tågvägar. Direkt läggning/återtagning via plupparna finns kvar. |
+| Avbryt val | Avbryter endast halvfärdigt startval. Redundant på huvudytan: Escape eller klick på start igen gör samma sak. | Avbryt startval i Tågvägar. |
+| Nödåterta alla | Stopp-/återtagningsbegäran; lås ligger kvar tills frigivningsvillkoren uppfylls. Viktig återhämtningsfunktion. | Tågvägar, med förklaring. |
+| Spårspärrar | Hindrar nya vägar och stoppar befintliga med låsen kvar. Behövs vid avvikelser. | Driftverktyg → Spårspärrar. |
+| Linjer / prog. | Linjespärrar och omkoppling av Lastspår 3. Används vid särskilda driftuppgifter. | Driftverktyg → Linjer och programmeringsspår. |
+| Tågnummer | Manuell identitet och nummerföljning; stödfunktion. | Driftverktyg → Tågnummer. Klick på registrerat nummer fungerar också. |
+| Modellklocka | Lokal gemensam klocka, tid och hastighet; stödfunktion. | Driftverktyg → Modellklocka. |
+| Fjärrmanövrering | Spärrar lokala manövrer, men inget fjärrsystem är anslutet. Har lågt dagligt värde. | Driftverktyg → Lokal- och fjärrläge, med tydlig förklaring. |
+
+Ingen bakomliggande driftfunktion eller sparad uppgift har raderats. Driftverktyg öppnar en gemensam dialog med förklaringar och tillbaka-knapp. Stäng/Escape återför fokus till menyknappen. Att öppna en vy skickar inga manöverorder. Tidtabellens admin- och kalkylbladsytor är oförändrade.
+
+Lokalt webbläsarprov: 37 tydligt märkta provrader, ordning 1–15/16–30/31–37 utan bortfall, inledande nollor, 25:10, full detaljtext, samtliga sex verktyg, huvud-/växeltågvägsval, Cu → Spår 1a till klar och normal återtagning, AIS/återställning, admin till driftmeny, Escape/fokus och 390 px utan sidöverflöde. Inga konsolfel; syntax och fyra renderingsprov godkända. Provdata ligger bara i en isolerad lokal testmiljö.
+
+Nedan följer historiken för tidigare utformning; beskrivningen ovan gäller från 0.29.0.
 
 ## Manöverfält under spårplanen (0.20.0, lokalt färdigt)
 

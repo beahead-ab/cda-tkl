@@ -34,9 +34,9 @@ export function createTrainMeetTimetable({selectSource}) {
   $('content').addEventListener('contextmenu',showDetails);
   $('content').addEventListener('keydown',e=>{if(e.key==='ContextMenu'||e.shiftKey&&e.key==='F10')showDetails(e);});
   function rowHTML(row,index){
-    const meta=[row.context,row.noStop?'Passerar':'',row.state,row.note].filter(Boolean).join(' · ');
-    return '<li><button type="button" class="tt-entry" data-timetable-row="'+index+'" aria-haspopup="dialog" aria-label="Visa tidtabellsuppgifter för tåg '+esc(row.number)+'"><span class="tt-values"><strong>'+esc(row.number)+(row.note?'<span class="tt-note-flag" aria-label="Anmärkning finns"> ·</span>':'')+'</strong><span>'+esc(row.arrival||'—')+'</span><span>'+esc(row.departure||'—')+'</span><span class="tt-track'+(row.changed?' tt-track-changed':'')+'">'+esc(row.track)+(row.changed?' *':'')+'</span></span><span class="tt-route">'+esc(row.from||'—')+' → '+esc(row.to||'—')+'</span><span class="tt-meta">'+esc(meta||'—')+'</span></button></li>';
+    return '<li><button type="button" class="tt-entry" data-timetable-row="'+index+'" aria-haspopup="dialog" aria-label="Visa tidtabellsuppgifter för tåg '+esc(row.number)+'"><span class="tt-values"><strong>'+esc(row.number)+(row.note?'<span class="tt-note-flag" aria-label="Anmärkning finns"> ·</span>':'')+'</strong><span>'+esc(row.arrival||'—')+'</span><span>'+esc(row.departure||'—')+'</span><span class="tt-track'+(row.changed?' tt-track-changed':'')+'">'+esc(row.track)+(row.changed?' *':'')+'</span></span></button></li>';
   }
+
   function render(){
     const capacity=columns*perColumn;page=Math.min(page,Math.max(0,Math.ceil(rows.length/capacity)-1));
     const start=page*capacity,end=Math.min(start+capacity,rows.length);
@@ -66,8 +66,8 @@ export function createTrainMeetTimetable({selectSource}) {
   }
   function layout(){
     frame=0;const width=$('content').clientWidth;if(!width)return;
-    const nextColumns=Math.max(1,Math.floor((width+12)/300));
-    const nextRows=Math.max(1,Math.min(4,Math.floor(($('content').clientHeight-18)/56)));
+    const nextColumns=Math.max(1,Math.min(3,Math.floor((width+18)/230)));
+    const nextRows=Math.max(1,Math.floor(($('content').clientHeight-18)/24));
     if(nextColumns!==columns||nextRows!==perColumn){const first=page*columns*perColumn;columns=nextColumns;perColumn=nextRows;page=Math.floor(first/(columns*perColumn));render();}
   }
   const schedule=()=>{if(!frame)frame=requestAnimationFrame(layout);};
