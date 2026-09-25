@@ -217,3 +217,10 @@ Lokalt UI-prov verifierade navigation, direktlänk/omladdning, källavsnitt till
 Backup: `/root/charlottendal-backups/network-ff62c71-20260925T191454Z`. Föregående kod: `/opt/charlottendal/releases/f1ce9d8`. Endast TKL omstartad, simulatorn fortsatte köra. Samma tre held-reservationer med alla resurser bevarade. Tidtabell, TrainMeet, konfiguration, bindningar, anteckningar, inspelningsarkiv, stoppläge och autentisering jämfördes med backup och var oförändrade. Inga liveprovdata eller manövrer.
 
 Livewebbläsaren visar 0.28.1, LocoNet ansluten, tre ingångar under Avancerat och profilinformationen i registret. Den borttagna sidan saknas och XML-verktygen visas inte på registeröversikten. Inga konsolfel observerades.
+
+
+## Version 0.28.2 – toastmeddelanden
+
+Syntax- och diffkontroll samt fyra befintliga renderingsprov godkända. Isolerat UI-prov på 9050: AIS visas som toast, avvisad tågväg under AIS ger tillfällig toast, automatisk borttoning efter åtta sekunder, tangentbordsfokus pausar tiden och Tab ut återupptar den. Återställ stopp släcker AIS-beskedet och lämnar ingen tom meddelanderad. Inga konsolfel.
+
+Vid 1280 × 720 låg spårplanen på x=0, y=40, bredd=1280, höjd=344 både före och under AIS/toast. Tidtabell och knappar hade också identiska mått. När den faktiska vyn ändrades till 319 × 880 verifierades separat oförändrad spårplan före/under AIS (1000 × 504, x=0, y=40) och toastbredd 291 vid x=14. Provets AIS återställdes, inga provvägar skapades. Backend och driftdataformat har inte ändrats.

@@ -91,7 +91,21 @@ function objectDetails(node,kind,name) {
     if(e.key==='ContextMenu'||e.key==='F10'&&e.shiftKey){e.preventDefault();showInspector(kind,name,e);}
   });
 }
-function message(text) { if(text)feedback?.error(); $('message-text').textContent = text; $('message').hidden = !text; }
+let messageTimer,messageHideTimer;
+function pauseMessage(){clearTimeout(messageTimer);clearTimeout(messageHideTimer);$('message').classList.remove('toast-leaving');}
+function resumeMessage(){
+  pauseMessage();const toast=$('message');
+  if(toast.hidden||toast.matches(':hover')||toast.contains(document.activeElement))return;
+  messageTimer=setTimeout(()=>{toast.classList.add('toast-leaving');messageHideTimer=setTimeout(()=>{toast.hidden=true;toast.classList.remove('toast-leaving');},180);},8000);
+}
+function message(text) {
+  pauseMessage();if(text)feedback?.error();$('message-text').textContent=text;$('message').hidden=!text;
+  if(text)resumeMessage();
+}
+$('message').addEventListener('pointerenter',pauseMessage);
+$('message').addEventListener('pointerleave',resumeMessage);
+$('message').addEventListener('focusin',pauseMessage);
+$('message').addEventListener('focusout',e=>{if(!$('message').contains(e.relatedTarget))resumeMessage();});
 async function api(path, data) {
   const urgent=path==='emergency-cancel'||(path==='all-stop'&&data.enabled===true);
   if (pending&&!urgent) return; pending++;

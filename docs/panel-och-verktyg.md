@@ -83,7 +83,7 @@ Kolumnlayouten är provad med 37 tydligt märkta provrörelser: samtliga sidor, 
 
 ## Version 0.26 – fast ställverksyta
 
-Spårplan, driftmeddelanden, tidtabell och manöverknappar har reserverade fält inom skärmytan. De ändrar inte storlek eller position när meddelanden tillkommer, ett startval görs, tågvägar räknas om eller tidtabellen fylls/bläddras. Endast uttrycklig zoom eller ändrad skärmstorlek ändrar skalan. Vid smal skärm kan spårplanen och knappfältet panoreras var för sig; sidan rullar inte automatiskt.
+Spårplan, tidtabell och manöverknappar har fasta fält inom skärmytan. Från 0.28.2 visas driftmeddelanden som flytande toast ovanpå panelen, utan reserverat meddelandefält. De ändrar inte storlek eller position när meddelanden tillkommer, ett startval görs, tågvägar räknas om eller tidtabellen fylls/bläddras. Endast uttrycklig zoom eller ändrad skärmstorlek ändrar skalan. Vid smal skärm kan spårplanen och knappfältet panoreras var för sig; sidan rullar inte automatiskt.
 
 Manöverknappar öppnar en modal ovanpå ställverket. Stäng eller Escape återgår till samma panelposition. Högerklicksdetaljer ligger fortsatt nära objektet. Symbolerna förstoras inte vid hover; den större befintliga träffytan lyses upp utan geometriförändring.
 
@@ -104,3 +104,10 @@ Lugn blinkning har 3 s period per lampa och 300 ms mjuk tändning/släckning. Ti
 Efter val av start och slut, när kärnan har accepterat reservationen, blinkar de två plupparna lugnt växelvis i dämpat gult under växelläggning, etablering och klarsättning. Perioden är 2,4 s per plupp med 1,2 s fasförskjutning. Övergångar mellan förberedelsestegen och upprepade rapporter startar inte om animationen. Inga mått eller positioner ändras.
 
 När vägen är klar återgår plupparna till fast tågvägssken. Återtagning, kvarvarande lås, kontaktbortfall, AIS och lagringsfel ger ingen förberedelseblinkning. Första klickets startmarkering och samma två klick för återtagning fungerar som tidigare. Systemets Reducerad rörelse visar fast dämpat gult under förberedelsen. Funktionen gäller både huvud- och växeltågvägarnas synliga knappar, alla tre skins och skärmläsarens upptagetindikering. Backend, manöverorder och låsregler är oförändrade.
+
+
+## Version 0.28.2 – driftmeddelanden ovanpå panelen
+
+Den tomma raden ”DRIFTMEDDELANDEN · Inga aktiva meddelanden” är borttagen. Panelen börjar vid skärmens överkant och får tillbaka de 48 pixlar som tidigare reserverades (32 på låga skärmar). Meddelanden visas i en stapel uppe till höger, under menyknappen. Bara meddelandekorten fångar pekarklick; omgivande yta förblir manövrerbar.
+
+Tillfälliga manöver-/felbesked kan stängas direkt och tonas annars bort efter åtta sekunder. Muspekare eller tangentbordsfokus i meddelandet pausar tiden; efteråt ges åtta sekunders lästid igen. Aktiva AIS-, fjärr- och nödåtertagningsbesked följer fortfarande driftläget och försvinner när villkoret upphör. De ligger också ovanpå och flyttar aldrig panelen. Reducerad rörelse stänger av toningen. Samma meddelandehantering används på adminsidorna under deras sidhuvud.
