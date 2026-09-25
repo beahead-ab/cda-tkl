@@ -97,3 +97,9 @@ V1–V3 blinkar som standard hälften så ofta med mjukare kanter och dämpat r�
 ## Version 0.26.2 – ytterligare lugnare lampor
 
 Lugn blinkning har 3 s period per lampa och 300 ms mjuk tändning/släckning. Tidigare blinkning har tagits bort. Valen är nu Lugn blinkning och Fast rött sken; äldre sparat classic-val faller tillbaka till lugnt läge.
+
+## Version 0.26.3 – pluppar under tågvägsförberedelse
+
+Efter val av start och slut, när kärnan har accepterat reservationen, blinkar de två plupparna lugnt växelvis i dämpat gult under växelläggning, etablering och klarsättning. Perioden är 2,4 s per plupp med 1,2 s fasförskjutning. Övergångar mellan förberedelsestegen och upprepade rapporter startar inte om animationen. Inga mått eller positioner ändras.
+
+När vägen är klar återgår plupparna till fast tågvägssken. Återtagning, kvarvarande lås, kontaktbortfall, AIS och lagringsfel ger ingen förberedelseblinkning. Första klickets startmarkering och samma två klick för återtagning fungerar som tidigare. Systemets Reducerad rörelse visar fast dämpat gult under förberedelsen. Funktionen gäller både huvud- och växeltågvägarnas synliga knappar, alla tre skins och skärmläsarens upptagetindikering. Backend, manöverorder och låsregler är oförändrade.

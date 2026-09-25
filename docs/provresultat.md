@@ -186,3 +186,7 @@ Publicering 25 september kl. 02:47: samma prov och backendjämförelse godkända
 Syntaxkontroll godkänd. Isolerad webbläsarprovning på 9050: aktiv V1 visar 3 s ease-in-out och −1,5 s på höger lampa. Vilande V2/V3 saknar animation. Menyn innehåller exakt Lugn blinkning och Fast rött sken. Fast sken ger båda aktiva lamporna dämpat rött och behåller vilolamporna mörka. Inga konsolfel. Backend och aktiveringsvillkor oförändrade.
 
 0.26.2 publicerad: serverns syntax, tre renderingsprov, omstartsprov, tjänst-/åtkomst-/låskontroller godkända. Sparat lugnt läge kvar efter omladdning lokalt. Produktionsfliken kräver ny inloggning efter utgången session; inget inloggat UI-efterprov påstås.
+
+## Version 0.26.3 – start-/slutindikering
+
+Syntaxkontroll och fyra renderingsprov godkända. Nytt prov täcker växling genom setting/establishing/clearing med stabila ändpunktsroller, samtliga avslutande driftfaser, kontaktbortfall, samtidiga vägar och delad knapp. Lokalt UI på 9050: första klick väljer Cu utan förberedelseblinkning; andra klick på Bu ger båda ändpunkterna aria-busy=true och 2,4 s / −1,2 s animation. Bekräftad klar väg har fast grönt i trafikskärmen, ingen animation och aria-busy=false. Samma två klick återtar vägen. Förloppet provat på Trafikskärm och Reläpanel; runda pluppar och fyrkanter stöds, ingen transform. Inga konsolfel.

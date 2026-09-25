@@ -31,3 +31,18 @@ export function createPanelFrames({render,animate,request=requestAnimationFrame,
   function schedule(){if(frame==null)frame=request(run);}
   return {paint(){dirty=true;schedule();},stop(){if(frame!=null)cancel(frame);frame=null;}};
 }
+
+// Only confirmed, fresh preparations blink; held/cancelled/ready routes never do.
+// Keep endpoint roles independent of the current preparation stage so telemetry
+// can advance setting → establishing → clearing without restarting the animation.
+export function preparingEndpoints(routes, fresh=true) {
+  const endpoints=new Map();
+  if(!fresh)return endpoints;
+  for(const route of routes) {
+    if(!['setting','establishing','clearing'].includes(route.state))continue;
+    for(const [id,role] of [[route.from,'start'],[route.to,'end']]) {
+      if(!endpoints.has(id))endpoints.set(id,role);
+    }
+  }
+  return endpoints;
+}

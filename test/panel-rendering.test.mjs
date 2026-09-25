@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {attribute,style,text,flowProgress,createPanelFrames} from '../public/panel-rendering.js';
+import {attribute,style,text,flowProgress,createPanelFrames,preparingEndpoints} from '../public/panel-rendering.js';
 
 test('bursts render the latest state once per frame; idle panels stop scheduling',()=>{
   const callbacks=new Map();let id=0,renders=0,animations=0,latest=0,shown=0,moving=false;
@@ -32,4 +32,17 @@ test('unchanged telemetry preserves attributes, style and text nodes',()=>{
   for(let n=0;n<100;n++){attribute(node,'visibility','visible');text(node,'Stopp');style(node,'visibility','visible');}
   assert.equal(writes,2);assert.equal(node.style.visibility,'visible');
   attribute(node,'visibility','hidden');text(node,'Okänt');assert.equal(writes,4);
+});
+
+test('preparation endpoint roles survive stage changes and stop on ready, failure or lost contact',()=>{
+  const route={id:'one',from:'A',to:'B'};
+  for(const state of ['setting','establishing','clearing']) {
+    assert.deepEqual([...preparingEndpoints([{...route,state}])],[['A','start'],['B','end']]);
+    assert.equal(preparingEndpoints([{...route,state}],false).size,0);
+  }
+  for(const state of ['active','traversing','held','occupied','cancelling','unknown'])assert.equal(preparingEndpoints([{...route,state}]).size,0);
+  assert.equal(preparingEndpoints([]).size,0);
+  const simultaneous=[{...route,state:'clearing'},{from:'C',to:'D',state:'setting'},{from:'E',to:'F',state:'active'}];
+  assert.deepEqual([...preparingEndpoints(simultaneous)],[['A','start'],['B','end'],['C','start'],['D','end']]);
+  assert.deepEqual([...preparingEndpoints([{...route,state:'clearing'},{from:'B',to:'C',state:'setting'}])],[['A','start'],['B','end'],['C','end']]);
 });

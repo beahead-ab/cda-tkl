@@ -1,4 +1,4 @@
-import {attribute,style,text as setText,flowProgress,createPanelFrames} from './panel-rendering.js';
+import {attribute,style,text as setText,flowProgress,createPanelFrames,preparingEndpoints} from './panel-rendering.js';
 import {createTimetableImport} from './timetable-import.js';
 import { createManualFeedback } from './manual-feedback.js';
 import { createSourceRegister } from './source-register.js';
@@ -211,7 +211,7 @@ function buildPlan() {
     });
     if(names.length){manualName=manualFeedback.addControl(g,names,b.centerX,b.centerY);objectDetails(g,'turnout',manualName);}
     const indication=sourceLamps.find(l=>l.g===g);if(indication)objectDetails(g,'indication',indication.name);
-    if(isButton) buttons.push({id:b.sensor,g,hit,hitCap:b.hitCap,available,names});
+    if(isButton) buttons.push({id:b.sensor,g,hit,hitCap:b.hitCap,available,names,isRoute});
   }
   new ResizeObserver(()=>{
     const scale=root.getScreenCTM()?.a||1;
@@ -280,7 +280,15 @@ function paintPlan() {
     button.title=button.dataset.indication+' · Beräknad panelindikering, ingen bomkvittens';
     button.setAttribute('aria-label',button.dataset.indication+' · '+(crossing?(value===true?crossingDisplays[crossingDisplay].label:value===false?'släckta lampor':'okänt underlag'):(value===true?'aktivt':value===false?'inaktivt':'okänt')+' underlag')+' · detaljer');
   }
+  const preparing=preparingEndpoints(state.routes,usable()&&!state.controls?.stopAll);
   for (const b of buttons) {
+    const preparingRole=b.isRoute?preparing.get(b.id):null;
+    b.g.classList.toggle('route-preparing',!!preparingRole);
+    attribute(b.g,'data-preparing-endpoint',preparingRole||'');
+    if(b.isRoute){
+      attribute(b.g,'aria-busy',!!preparingRole);
+      attribute(b.g,'aria-description',preparingRole?(preparingRole==='start'?'Startpunkt':'Slutpunkt')+' · Tågvägen förbereds.':'');
+    }
     b.g.classList.toggle('chosen', b.id === chosen); b.g.classList.toggle('unavailable', !b.available || (b.names.length && state.manual?.[b.names[0]]?.allowed===false));
     b.g.classList.toggle('in-route', !!state?.routes.some(r => r.from === b.id || r.to === b.id));
     b.g.classList.toggle('locked',!!state?.routes.some(r=>b.names.some(n=>r.turnouts[n]))||(state.operating?.programming?.reserved&&b.names.includes('Vx133')));

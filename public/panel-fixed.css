@@ -46,3 +46,9 @@ body:not([data-panel-ready=true]) .panel-scroll::before{content:'Läser in stäl
 @media(prefers-reduced-motion:reduce){.touch-target .hit,.touch-target .dot,.panel-key{transition:none}}
 /* On a phone, retain readable symbols with deliberate panning inside the plan. */
 @media(max-width:700px){#panel-view #track-plan{min-width:1000px}}
+
+/* Two fixed lenses alternate gently while the server prepares the route. */
+@keyframes route-endpoint-wait{0%,35%,100%{fill:#cbb876;stroke:#cbb876}50%,85%{fill:#394039;stroke:#8b917f}}
+.touch-target.route-preparing .dot,.touch-target.route-preparing .traffic-dot{animation:route-endpoint-wait 2400ms ease-in-out infinite}
+.touch-target.route-preparing[data-preparing-endpoint=end] .dot,.touch-target.route-preparing[data-preparing-endpoint=end] .traffic-dot{animation-delay:-1200ms}
+@media(prefers-reduced-motion:reduce){.touch-target.route-preparing .dot,.touch-target.route-preparing .traffic-dot{animation:none;fill:#cbb876;stroke:#cbb876}}
