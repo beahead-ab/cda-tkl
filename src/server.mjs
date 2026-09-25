@@ -150,6 +150,7 @@ const server = http.createServer(async (req, res) => {
     else if (url.pathname === '/api/line-block') {engine.operating.checkCommand(data);engine.operating.blockLine(data.id,data.blocked);}
     else if (url.pathname === '/api/programming') {engine.operating.checkCommand(data);engine.operating.setProgramming(data.enabled);}
     else if (url.pathname === '/api/all-stop') engine.allStop(data.enabled);
+    else if (url.pathname === '/api/panel-reset') engine.resetPanel();
     else if (url.pathname === '/api/emergency-cancel') engine.emergencyCancelAll();
     else if (url.pathname === '/api/control-mode') engine.setMode(data.mode);
     else if (url.pathname === '/api/note') {

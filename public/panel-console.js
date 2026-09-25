@@ -1,18 +1,17 @@
 // Move occasional operations into one dialog; opening it sends no orders.
-export function createPanelConsole({onOpen}) {
+export function createPanelConsole({onOpen,onResetComplete}) {
   const $=id=>document.getElementById(id),root=$('panel-console');
-  root.innerHTML='<div id="panel-quick-actions"></div><div class="panel-runtime-info"><span id="panel-mode-status"></span><span id="panel-selection-slot"></span></div>';
+  root.innerHTML='<div id="panel-quick-actions"><button type="button" id="panel-reset">Återställ panel</button></div><div class="panel-runtime-info"><span id="panel-reset-status" role="status"></span><span id="panel-mode-status"></span><span id="panel-selection-slot"></span></div>';
   const drawer=document.createElement('dialog');drawer.id='panel-drawer';drawer.setAttribute('aria-labelledby','panel-drawer-title');
   drawer.innerHTML='<div class="panel-drawer-heading"><button type="button" id="panel-drawer-back">← Driftverktyg</button><h2 id="panel-drawer-title"></h2><button type="button" id="close-panel-drawer" aria-label="Stäng driftverktyg">Stäng</button></div><div id="panel-drawer-content"></div>';
   document.body.append(drawer);
-  for(const id of ['all-stop','reset-ais']){$('panel-quick-actions').append($(id));$(id).classList.remove('panel-key');}
   $('all-stop').textContent='Alla signaler i stopp';$('reset-ais').textContent='Återställ stopp';$('reset-ais').hidden=true;
   $('panel-selection-slot').append($('selection-hint'));
   const routes=document.createElement('section');routes.id='panel-route-tools';
   $('panel-drawer-content').append(routes);
   routes.innerHTML='<p class="muted">Välj huvudtågväg för vanlig trafik eller växeltågväg för växling. Använd start- och slutplupparna på panelen eller listvalet här. Samma val återtar vägen.</p>';
   routes.append($('route-activity'),$('route-catalog').closest('.card'));
-  const routeActions=document.createElement('div');routeActions.className='admin-actions';routeActions.append($('clear-selection'),$('emergency-cancel'));routes.append(routeActions);
+  const routeActions=document.createElement('div');routeActions.className='admin-actions';routeActions.append($('clear-selection'),$('all-stop'),$('reset-ais'),$('emergency-cancel'));routes.append(routeActions);
   const emergencyHelp=document.createElement('p');emergencyHelp.className='muted';emergencyHelp.textContent='Nödåterta alla begär stopp och återtagning. Låsen ligger kvar tills spåren är fria och stopp samt växellägen är bekräftade.';routes.append(emergencyHelp);
   $('clear-selection').textContent='Avbryt startval';$('clear-selection').hidden=false;$('clear-selection').disabled=true;
   $('emergency-cancel').textContent='Nödåterta alla';$('route-mode').hidden=true;routes.append($('route-mode'));
@@ -34,7 +33,7 @@ export function createPanelConsole({onOpen}) {
   for(const pane of panes){pane.hidden=true;$('panel-drawer-content').append(pane);}
   $('inspector-home').hidden=true;document.body.append($('inspector-home'));
   $('traffic-tools').remove();$('operating-tools').remove();
-  let active=null,trigger=null;
+  let active=null,trigger=null,lastReset=null;
   function close(restore=false){if(drawer.open)drawer.close();for(const pane of panes)pane.hidden=true;active=null;if(restore)trigger?.focus({preventScroll:true});}
   function open(id,{toggle=false}={}){
     if(id==='trainmeet-timetable'){onOpen();$('trainmeet-timetable').focus({preventScroll:true});return true;}
@@ -51,8 +50,15 @@ export function createPanelConsole({onOpen}) {
   $('panel-drawer-back').onclick=()=>open('panel-operations');$('close-panel-drawer').onclick=()=>close(true);
   drawer.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close(true);}});
   drawer.addEventListener('cancel',e=>{e.preventDefault();close(true);});
-  return {open,close,update(state){
+  return {open,close,update(state,online){
     const stopped=!!state.controls?.stopAll,remote=state.controls?.mode==='remote',shunt=$('route-mode').value==='shunt';
+    const reset=state.panelReset,waiting=reset?.phase==='waiting';
+    $('panel-reset').textContent=waiting?'Återställer…':'Återställ panel';
+    $('panel-reset').disabled=!online||waiting||!!state.storageFault;
+    $('panel-reset').setAttribute('aria-busy',String(waiting));
+    $('panel-reset-status').textContent=['waiting','interrupted'].includes(reset?.phase)?reset.reason:'';
+    if(reset?.phase==='complete'&&lastReset&&(lastReset.id!==reset.id||lastReset.phase!=='complete'))onResetComplete?.(reset.reason);
+    lastReset=reset;
     $('all-stop').setAttribute('aria-pressed',String(stopped));$('reset-ais').hidden=!stopped;
     $('toggle-authority').setAttribute('aria-pressed',String(remote));$('toggle-authority').textContent=remote?'Återgå till lokal manövrering':'Spärra lokal manövrering';
     $('panel-mode-status').textContent=[remote?'Fjärrläge':'',shunt?'Växeltågväg':''].filter(Boolean).join(' · ');

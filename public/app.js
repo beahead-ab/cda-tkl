@@ -98,8 +98,8 @@ function resumeMessage(){
   if(toast.hidden||toast.matches(':hover')||toast.contains(document.activeElement))return;
   messageTimer=setTimeout(()=>{toast.classList.add('toast-leaving');messageHideTimer=setTimeout(()=>{toast.hidden=true;toast.classList.remove('toast-leaving');},180);},8000);
 }
-function message(text) {
-  pauseMessage();if(text)feedback?.error();$('message-text').textContent=text;$('message').hidden=!text;
+function message(text,{error=true}={}) {
+  pauseMessage();if(text&&error)feedback?.error();$('message-text').textContent=text;$('message').hidden=!text;
   if(text)resumeMessage();
 }
 $('message').addEventListener('pointerenter',pauseMessage);
@@ -107,13 +107,13 @@ $('message').addEventListener('pointerleave',resumeMessage);
 $('message').addEventListener('focusin',pauseMessage);
 $('message').addEventListener('focusout',e=>{if(!$('message').contains(e.relatedTarget))resumeMessage();});
 async function api(path, data) {
-  const urgent=path==='emergency-cancel'||(path==='all-stop'&&data.enabled===true);
+  const urgent=path==='panel-reset'||path==='emergency-cancel'||(path==='all-stop'&&data.enabled===true);
   if (pending&&!urgent) return; pending++;
   try {
     const response = await fetch('/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     const answer = await response.json(); if (!response.ok) throw Error(answer.error);
     // The ordered event stream owns the display; a late HTTP reply cannot roll it back.
-    message(''); return answer;
+    if(path!=='panel-reset')message(''); return answer;
   } catch (e) { message(e.message); } finally { pending--; paint(); }
 }
 function clearChoice(repaint=true) { chosen = null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('selection-hint').hidden=true; $('clear-selection').disabled = true; if(repaint)paint(); }
@@ -370,7 +370,8 @@ function renderPanel() {
   if(currentPage==='panel')paintPlan();
   paintInspector(); manualFeedback?.update();
   document.body.dataset.panelReady='true';
-  $('ais-status').hidden = !state.controls?.stopAll;
+  const resetting=['waiting','interrupted'].includes(state.panelReset?.phase);
+  $('ais-status').hidden = !state.controls?.stopAll||resetting;
   $('all-stop').disabled = !online;
   $('emergency-cancel').disabled = !online;
   const remote=state.controls?.mode==='remote', emergency=state.controls?.emergency, remaining=state.emergencyRemaining?.length||0;
@@ -379,7 +380,7 @@ function renderPanel() {
   $('toggle-authority').title=remote?'Återgå till lokal manövrering':'Växla till fjärrläge';
   $('toggle-authority').disabled=!online||pending||!state.modeChange?.allowed;
   $('mode-reason').textContent=state.modeChange?.allowed?'':state.modeChange?.reason||'';
-  $('emergency-status').hidden=!emergency||(!state.controls.stopAll&&!remaining);
+  $('emergency-status').hidden=resetting||!emergency||(!state.controls.stopAll&&!remaining);
   $('emergency-status').textContent=remaining?`Nödåtertagning pågår · ${remaining} av ${emergency.routeIds.length} tågvägslås kvar. Fria spår, kända växellägen och nya stoppbesked krävs. Efter omstart: begär återtagning igen.`:emergency?'Nödåtertagning färdig · alla berörda lås är frigivna. Återställ AIS när anläggningen har kontrollerats.':'';
   $('ais-text').textContent=remaining?'AIS aktiv · nödåtertagning pågår, låsen skyddar kvarvarande vägar':'AIS aktiv · alla körmedgivanden återkallade';
   $('reset-ais').disabled = !state.controls?.stopAll || !usable() || pending || !state.allStopReset?.allowed;
@@ -396,7 +397,7 @@ function renderPanel() {
   $('event-status').textContent = state.routes.length + ' tågvägslås · ' + Object.keys(config.turnouts).length + ' anslutna växlar';
   html('events', state.events.filter(e => !['report', 'transport'].includes(e.kind)).slice(0, 7).map(e => `<div class="event-row"><time>${time(e.at)}</time><span>${esc(e.message)}</span></div>`).join(''));
   $('wire').textContent = (state.trace || []).slice(0, 40).map(e => `${time(e.at)}  ${e.direction === 'out' ? 'SKICKAT ' : 'MOTTAGET'}  ${e.hex}`).join('\n');
-  panelConsole?.update(state);
+  panelConsole?.update(state,online);
 }
 function paintInspector() {
   if (!inspected || !state) return;
@@ -436,7 +437,7 @@ async function start() {
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
   timetableImport=createTimetableImport();modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable')});feedback=createFeedback();
-  panelConsole=createPanelConsole({onOpen:()=>{if(currentPage!=='panel')setPage('panel');}});
+  panelConsole=createPanelConsole({onOpen:()=>{if(currentPage!=='panel')setPage('panel');},onResetComplete:text=>message(text,{error:false})});
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.
@@ -458,6 +459,7 @@ async function start() {
   $('inspect-turnout').onchange=()=>{const name=$('inspect-turnout').value;if(name)showInspector('turnout',name);else manualFeedback.clear();};
   $('toggle-block').onclick=()=>api('track-block',{name:$('block-choice').value,blocked:!isBlocked($('block-choice').value)});
   $('all-stop').onclick=()=>api('all-stop',{enabled:true});
+  $('panel-reset').onclick=()=>{message('');clearChoice();return api('panel-reset',{});};
   $('emergency-cancel').onclick=()=>api('emergency-cancel',{});
   $('toggle-authority').onclick=async()=>{if(await api('control-mode',{mode:state.controls.mode==='remote'?'local':'remote'}))clearChoice();};
   $('reset-ais').onclick=()=>api('all-stop',{enabled:false});

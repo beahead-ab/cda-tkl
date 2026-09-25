@@ -152,3 +152,65 @@ test('GO acknowledgement is newer than the latest command even at identical time
   assert.equal(route.state,'clearing');assert.equal(route.nextSignal,0);
   engine.receive(signalReport(signal.reportAddress,8));engine.tick();assert.equal(route.state,'active');
 });
+
+test('explicit panel reset releases occupied routes after fresh STOP, preserving detectors and turnout positions', () => {
+  const r=rig(),route=r.request('2b-2c');r.advance(3500);
+  r.field.setBlock('S121',true);r.drain();
+  const blocks=structuredClone(r.engine.blocks),positions=Object.fromEntries(Object.entries(r.engine.turnouts).map(([n,s])=>[n,s.position]));
+  const first=r.commands.length;r.engine.resetPanel();
+  assert.equal(r.engine.routes.length,1,'old STOP reports cannot release reservations');
+  assert.equal(r.engine.snapshot().panelReset.phase,'waiting');
+  assert.throws(()=>r.engine.allStop(false),/panelåterställningen/);
+  const resetId=r.engine.controls.panelReset.id;r.engine.resetPanel();assert.equal(r.engine.controls.panelReset.id,resetId,'duplicate request is idempotent');
+  r.drain();r.advance(250);
+  assert.equal(r.engine.routes.length,0);assert.equal(r.engine.controls.stopAll,false);
+  assert.equal(r.engine.snapshot().panelReset.phase,'complete');
+  assert.deepEqual(r.engine.blocks,blocks,'reset writes no detector state');
+  assert.deepEqual(Object.fromEntries(Object.entries(r.engine.turnouts).map(([n,s])=>[n,s.position])),positions);
+  assert.ok(r.commands.slice(first).every(c=>c.position==='T'&&Object.values(profile.signals).some(s=>s.address===c.address)),'only STOP signal orders');
+  assert.ok(Object.values(r.engine.signals).every(s=>s.aspect==='stop'&&s.desired==='STOP'));
+  assert.throws(()=>r.engine.request(route.from,route.to),/belagt/);
+  assert.throws(()=>r.engine.manual('Vx121','T'),/fritt/);
+  r.field.setBlock('S121',false);r.drain();r.request('2b-2c');r.advance(3500);assert.equal(r.engine.routes[0].state,'active');
+});
+
+test('reset waits for all signal acknowledgements, handles lost connection and never manufactures free detectors', () => {
+  const r=rig();r.request('2b-2c');r.advance(3500);
+  const reportSignal=r.field.reportSignal.bind(r.field);r.field.reportSignal=name=>{if(name!=='2/8')reportSignal(name);};r.engine.resetPanel();r.drain();r.advance(8000);
+  assert.equal(r.engine.routes.length,1);assert.equal(r.engine.controls.stopAll,true);assert.match(r.engine.snapshot().panelReset.reason,/stoppåterrapport/);
+  r.engine.connection(false);assert.equal(r.engine.snapshot().panelReset.ready,false);assert.equal(r.engine.blocks.S121.occupied,null);
+  r.engine.connection(true);r.field.reportSignal=reportSignal;r.field.setFault('sensor','S121');r.drain();r.advance(500);
+  assert.equal(r.engine.snapshot().panelReset.phase,'complete');assert.equal(r.engine.blocks.S121.occupied,null,'unknown detector remains unknown');
+  assert.throws(()=>r.request('2b-2c'),/saknar aktuell/);
+});
+
+test('an unfinished reset requires a new operator request after process restart', () => {
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'cda-reset-restart-'));
+  try{
+    const storage=new Storage(dir),r=rig(storage);r.request('2b-2c');r.advance(3500);r.engine.resetPanel();
+    const reboot=rig(storage);reboot.advance(500);
+    assert.equal(reboot.engine.snapshot().panelReset.phase,'interrupted');assert.equal(reboot.engine.routes.length,1);assert.equal(reboot.engine.controls.stopAll,true);
+    reboot.engine.resetPanel();reboot.drain();reboot.advance(250);
+    assert.equal(reboot.engine.routes.length,0);assert.equal(reboot.engine.controls.stopAll,false);
+    const again=rig(storage);assert.equal(again.engine.snapshot().panelReset.phase,'complete');assert.equal(again.engine.routes.length,0);
+  }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
+
+test('a later stop or emergency request supersedes automatic reset completion', () => {
+  for(const command of ['stop','emergency']){
+    const r=rig();r.request('2b-2c');r.advance(3500);r.field.setBlock('S121',true);r.drain();r.engine.resetPanel();
+    if(command==='stop')r.engine.allStop(true);else r.engine.emergencyCancelAll();
+    r.drain();r.advance(500);assert.equal(r.engine.controls.stopAll,true);assert.equal(r.engine.routes.length,1);assert.equal(r.engine.controls.panelReset,null);
+  }
+});
+
+test('reset storage failures never report completion or allow new orders', () => {
+  for(const failOn of ['routes.json','controls.json']){
+    const r=rig();r.request('2b-2c');r.advance(3500);r.engine.resetPanel();
+    r.engine.storage={event(){},save(name){if(name===failOn)throw Error('disk full');}};
+    assert.throws(()=>r.drain(),/spara/);assert.equal(r.engine.controls.stopAll,true);assert.ok(r.engine.storageFault);
+    assert.equal(r.engine.snapshot().panelReset.phase,'waiting');assert.equal(r.engine.snapshot().panelReset.ready,false);
+    if(failOn==='routes.json')assert.equal(r.engine.routes.length,1);
+    assert.throws(()=>r.request('cu-2b'),/spärrad/);
+  }
+});

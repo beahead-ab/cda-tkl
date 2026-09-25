@@ -2,6 +2,22 @@
 
 Ställverket öppnas på `/#panel`. Överkanten innehåller namn, anslutningsstatus och meny. Från version 0.29.0 är den stora knappraden borttagen enligt Caspers godkända förenkling.
 
+## Gemensam återställning (0.30.0)
+
+Den enda direkta manöverknappen är **Återställ panel**. Casper har förtydligat att återställningen ska nollställa tågvägar även vid beläggning, men att lok/vagnar som spårledningen fortfarande ser ska fortsätta visas som belagda.
+
+Knappen avbryter det lokala startvalet, spärrar nya körmedgivanden och begär stopp i samtliga signaler. Efter nya bekräftade stoppbesked från alla signaler tas tågvägsreservationerna bort och AIS hävs automatiskt. Inga körmedgivanden återupptas. Routenollställningen kräver inte fria spår eller nya växellägen och ger inga växel- eller detektororder. Spårledningarnas rapporter behålls; okänt underlag visas fortsatt okänt. En ny väg eller växelmanöver kontrollerar fortfarande beläggningarna som vanligt.
+
+Övergångarna V1–V3 räknas om från kvarvarande rapporterat tillstånd: ingen reservation + fria korsande block ger släckta lampor, kvarstående beläggning ger fortsatt varning, saknad återrapport ger okänt. Återställningen får alltså inte tvinga övergången till släckt medan ett korsande block rapporterar belagt.
+
+Knappen visar Återställer… och väntorsak vid kontakt- eller stoppbeskedsbrist. Slutförandet visas som en tillfällig toast. Ett nytt knapptryck under pågående återställning upprepar inte orderna. Vid omstart behålls stopp och eventuella lås; en ofärdig återställning kräver nytt knapptryck. En senare separat AIS- eller nödåtertagningsorder avbryter den automatiska avslutningen. Lagringsfel ger aldrig färdigindikering eller nya körmedgivanden.
+
+De separata stopp-/återställningsknapparna ligger under Driftverktyg → Tågvägar för särskilda drift- och administrationsuppgifter. Vanlig återtagning och Nödåterta alla behåller sina tidigare frigivningsvillkor med fria spår. Den nya panelåterställningen är den uttryckliga nollställningsmanövern. Tidtabell, tågidentiteter, administrativa spärrar, programmeringsmatning och konfiguration ingår inte i panelens tågvägsåterställning.
+
+Verifierat: 188 enhetsprov, åtta processhelhetsprov, ny HTTP-kedja från beläggning via återställning till bibehållen övergångsvarning och ny tillåten väg först efter frirapport. Lokal webbläsare: en knapp, borttagna vägar, kvarstående S100-beläggning/V1-varning, avvisad ny väg, vänteläge vid LocoNet-avbrott och fortsättning efter nya rapporter.
+
+Nedan beskrivs den föregående knappplaceringen i 0.29.0.
+
 ## Kompakt tidtabell och driftmeny (0.29.0)
 
 Tidtabellen använder samma ljusa text som panelen, utan ram, kortbakgrund eller gröna tågnummer. Varje tågrörelse tar en rad: tåg, ankomst, avgång och spår. Raderna fyller första kolumnen uppifrån och ned, sedan nästa, med högst tre kolumner. Antalet rader följer tillgänglig höjd; tidigare/nästa visar resterande rörelser utan att flytta spårplanen. Till höger finns utrymme för senare valda funktioner.

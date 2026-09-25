@@ -24,6 +24,10 @@ export class Engine extends EventEmitter {
     if(this.controls.programming.reserved&&this.controls.programming.fingerprint!==this.fingerprint)throw Error('Profilen har ändrats medan programmeringsspärr finns kvar. Återställ profilen före start.');
     const emergency=this.controls.emergency;
     if(!['local','remote'].includes(this.controls.mode) || (emergency!==null && (!emergency || !Number.isFinite(emergency.requestedAt) || !Array.isArray(emergency.routeIds) || emergency.routeIds.some(id=>typeof id!=='string') || (emergency.completedAt!==null&&!Number.isFinite(emergency.completedAt))))) throw Error('Sparat manöverläge eller nödåtertagning är ogiltig. Kontrollera före start.');
+    const reset=this.controls.panelReset;
+    if(reset!=null && (typeof reset.id!=='string'||!Number.isFinite(reset.requestedAt)||(reset.completedAt!==null&&!Number.isFinite(reset.completedAt))||typeof reset.interrupted!=='boolean'))throw Error('Sparad panelåterställning är ogiltig.');
+    // A restart must never silently resume an unfinished operator reset.
+    if(reset?.completedAt===null){this.controls.stopAll=true;reset.interrupted=true;}
     this.operating=new OperatingControls(this);
     this.log('startup', this.routes.length ? `${this.routes.length} tågvägslås återställda; inget körmedgivande återupptas.` : 'TKL startad. Väntar på återrapporter.');
   }
@@ -233,6 +237,7 @@ export class Engine extends EventEmitter {
       this.controls.stopAll = false; this.persistControls();
       this.log('all-stop', 'AIS återställd. Tidigare tågvägar behåller sina lås och återupptas inte.'); return;
     }
+    this.controls.panelReset=null;
     this.controls.stopAll = true;
     try {
       this.persistControls();
@@ -241,6 +246,7 @@ export class Engine extends EventEmitter {
     this.log('all-stop', 'Alla signaler i stopp begärt. Tågvägslås behålls.');
   }
   allStopResetStatus() {
+    if(this.controls.panelReset?.completedAt===null)return {allowed:false,reason:'Slutför panelåterställningen först.'};
     if(this.emergencyRemaining().length) return {allowed:false,reason:'Nödåtertagning pågår. Kvarvarande tågvägslås måste frigivas innan AIS återställs.'};
     if(this.storageFault||!this.connected||Object.values(this.signals).some(s=>!this.fresh(s)||s.aspect!=='stop'||s.desired!=='STOP'||s.reportSequence<=(s.commandSequence??-1))) return {allowed:false,reason:'Alla signaler måste återrapportera stopp innan AIS kan återställas.'};
     return {allowed:true,reason:'Alla signaler har aktuella stoppbesked. Återställning återupptar inga tågvägar.'};
@@ -250,6 +256,7 @@ export class Engine extends EventEmitter {
   }
   emergencyCancelAll() {
     const now=this.now(), routeIds=this.routes.map(r=>r.id);
+    this.controls.panelReset=null;
     this.controls.stopAll=true;
     this.controls.emergency={requestedAt:now,routeIds,completedAt:routeIds.length?null:now};
     try {
@@ -264,6 +271,46 @@ export class Engine extends EventEmitter {
     } finally { for(const name of Object.keys(this.signals)) this.permission(name,'STOP'); }
     this.log('emergency',`Nödåtertagning begärd för ${routeIds.length} tågvägar. AIS kvarstår; inga lås tvångsfrigivs.`);
     this.tick();
+  }
+  resetPanel() {
+    if(this.storageFault)throw Error('Lagringsfel; panelen kan inte återställas.');
+    if(this.controls.panelReset?.completedAt===null&&!this.controls.panelReset.interrupted)return;
+    this.controls.stopAll=true;
+    this.controls.panelReset={id:randomUUID(),requestedAt:this.now(),completedAt:null,interrupted:false};
+    this.resetIssuing=true;
+    try {
+      this.persistControls();
+      for(const r of this.routes){r.state='held';r.cancelRequested=false;r.nextSignal=-1;r.reason='Panelåterställning begärd. Inväntar bekräftat stopp i alla signaler.';}
+      this.persist();
+    } finally {
+      try{for(const name of Object.keys(this.signals))this.permission(name,'STOP');}
+      finally{this.resetIssuing=false;}
+    }
+    this.log('panel-reset','Panelåterställning begärd. Tågvägar nollställs efter stoppåterrapport; spårbeläggningar bevaras.');
+    this.tick();
+  }
+  panelResetStatus() {
+    const reset=this.controls.panelReset;
+    if(!reset)return {phase:'idle'};
+    if(reset.completedAt!==null)return {id:reset.id,phase:'complete',reason:'Panelen är återställd. Spårbeläggningar visas enligt återrapport.'};
+    if(reset.interrupted)return {id:reset.id,phase:'interrupted',reason:'Återställningen avbröts av omstart. Tryck Återställ panel för att fortsätta.'};
+    let reason='';
+    if(this.storageFault)reason='Återställningen väntar: lagringsfel.';
+    else if(!this.connected)reason='Återställningen väntar på anslutning och stoppåterrapporter.';
+    else {
+      const missing=Object.values(this.signals).filter(s=>!this.fresh(s)||s.aspect!=='stop'||s.desired!=='STOP'||s.reportSequence<=(s.commandSequence??-1)).length;
+      if(missing)reason=`Återställningen inväntar stoppåterrapport från ${missing} signaler.`;
+    }
+    return {id:reset.id,phase:'waiting',ready:!reason&&!this.resetIssuing,reason:reason||'Återställer tågvägar…'};
+  }
+  finishPanelReset() {
+    const status=this.panelResetStatus();if(!status.ready)return;
+    const previous=this.routes;this.routes=[];
+    try{this.persist();}catch(e){this.routes=previous;throw e;}
+    const controls=this.controls;
+    this.controls={...controls,stopAll:false,emergency:null,panelReset:{...controls.panelReset,completedAt:this.now()}};
+    try{this.persistControls();}catch(e){this.controls=controls;throw e;}
+    this.log('panel-reset-complete',`Panelen återställd: ${previous.length} tågvägar borttagna, signaler i stopp. Spårledningarnas beläggningar bevarade.`);
   }
   modeStatus() {
     if(this.controls.programming.reserved)return {allowed:false,reason:'Återgå till bekräftad normaldrift innan manöverläge byts.'};
@@ -316,6 +363,7 @@ export class Engine extends EventEmitter {
     for (const s of Object.values(this.turnouts)) if (!this.fresh(s)) s.position = 'unknown';
     for (const s of Object.values(this.blocks)) if (!this.fresh(s)) s.occupied = null;
     for (const s of Object.values(this.signals)) if (!this.fresh(s)) s.aspect = 'unknown';
+    if(this.controls.panelReset?.completedAt===null){this.finishPanelReset();this.emit('change');return;}
     for (const r of [...this.routes]) {
       const free = r.blocks.every(b => this.fresh(this.blocks[b]) && this.blocks[b].occupied === false);
       const known = Object.keys(r.turnouts).every(n => this.fresh(this.turnouts[n]) && this.turnouts[n].position !== 'unknown' && this.turnouts[n].updatedAt >= (this.turnouts[n].commandAt || 0));
@@ -383,7 +431,7 @@ export class Engine extends EventEmitter {
       turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, routes: this.routes, controls:this.controls, events: this.events,
       operating:this.operating.snapshot(),
       manual:Object.fromEntries(Object.keys(this.turnouts).map(n=>[n,this.manualStatus(n)])),
-      modeChange:this.modeStatus(),allStopReset:this.allStopResetStatus(),emergencyRemaining:this.emergencyRemaining().map(r=>r.id),
+      modeChange:this.modeStatus(),allStopReset:this.allStopResetStatus(),panelReset:this.panelResetStatus(),emergencyRemaining:this.emergencyRemaining().map(r=>r.id),
       catalog: this.profile.routes.map(r => ({ id: r.id, from: r.from, to: r.to, label: r.label })) };
   }
 }

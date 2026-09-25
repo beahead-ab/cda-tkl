@@ -23,7 +23,7 @@ body:not([data-panel-ready=true]) .panel-scroll::before{content:'Läser in stäl
 #panel-bottom{position:relative;display:grid;grid-template-columns:minmax(0,3fr) minmax(180px,1fr);gap:24px;min-height:0;padding:0 14px 8px;color:#e4e8e3}
 body[data-page=panel] #panel-console{min-height:0;height:auto;overflow:hidden;margin:0;padding:8px 0;border:0;border-radius:0;box-shadow:none;background:transparent;color:inherit}
 #panel-quick-actions{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}#panel-quick-actions button{font-size:12px;padding:8px 12px;min-height:34px;border-radius:3px}
-#panel-quick-actions #all-stop[aria-pressed=true]{background:#754038!important;border-color:#ce8070!important}
+#panel-quick-actions #panel-reset[aria-busy=true]{border-color:#8b8973}
 .panel-runtime-info{display:flex;flex-direction:column;gap:10px;margin-top:12px;font-size:12px;line-height:1.5}.panel-runtime-info>span:empty{display:none}
 #panel-console #selection-hint{font-size:12px;color:inherit;white-space:normal}
 .operation-overview{display:grid;grid-template-columns:1fr 1fr;gap:12px}.operation-overview button{text-align:left;padding:16px;background:transparent}.operation-overview strong{display:block;font-size:14px;font-weight:500}.operation-overview span{display:block;margin-top:8px;color:var(--muted);font-size:12px;line-height:1.5}
