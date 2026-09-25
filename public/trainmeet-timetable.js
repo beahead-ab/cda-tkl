@@ -1,3 +1,4 @@
+import {createAdminDialog} from './admin-ui.js';
 import {createContextDialog} from './context-dialog.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const status=value=>({none:'',approaching:'Närmar sig',arrived:'Ankommet',positioned:'Uppställt',ready:'Redo',waiting:'Väntar',departed:'Avgått'})[value]??value;
@@ -5,13 +6,18 @@ const status=value=>({none:'',approaching:'Närmar sig',arrived:'Ankommet',posit
 export function createTrainMeetTimetable({selectSource}) {
   const root=document.getElementById('trainmeet-timetable'),$=id=>document.getElementById('tt-'+id);
   root.innerHTML='<header class="tt-heading"><h2>Tidtabell</h2><span id="tt-station"></span><span id="tt-clock"></span><nav class="tt-pagination" aria-label="Bläddra i tidtabellen"><button id="tt-prev" type="button" aria-label="Föregående tågrörelser">‹</button><span id="tt-range" role="status"></span><button id="tt-next" type="button" aria-label="Nästa tågrörelser">›</button></nav></header><p id="tt-status" role="status" hidden></p><div id="tt-content"></div>';
-  document.getElementById('timetable-settings').innerHTML='<h2>Tidtabellskälla</h2><div class="timetable-choice"><label>Visa i ställverket <select id="tt-source"><option value="trainmeet">TrainMeet</option><option value="import">Egen tidtabell</option></select></label><a href="#panel">Till ställverket →</a></div><p class="muted">Den valda tidtabellen visas i kolumner under spårplanen. Båda källorna behålls när du byter.</p>';
+  document.getElementById('timetable-settings').innerHTML='<div class="admin-current-source"><div><h2>Visas i ställverket</h2><p id="tt-source-summary" class="muted"></p></div><button id="tt-change-source">Byt tidtabellskälla</button></div>';
+  const sourceForm=document.createElement('form');sourceForm.id='tt-source-form';sourceForm.innerHTML='<label>Visa i ställverket<select id="tt-source"><option value="trainmeet">TrainMeet</option><option value="import">Egen tidtabell</option></select></label><p class="muted">Båda källorna behålls när du byter.</p><button id="tt-save-source" type="submit">Spara</button>';
+  let sourceBase='',sourceRevision,sourceBusy=false;
+  const sourceDialog=createAdminDialog({title:'Byt tidtabellskälla',body:sourceForm,saveButton:sourceForm.querySelector('button'),dirty:()=>$('source').value!==sourceBase,busy:()=>sourceBusy});
+
   const dialog=document.createElement('dialog');dialog.className='inspector-host timetable-details';dialog.setAttribute('aria-labelledby','tt-detail-title');
   dialog.innerHTML='<div class="card"><div class="card-heading"><h3 id="tt-detail-title"></h3><button type="button" id="tt-close-detail" aria-label="Stäng tidtabellsuppgifter" autofocus>Stäng</button></div><div id="tt-detail-content"></div></div>';document.body.append(dialog);
   let importState,rows=[],page=0,columns=1,perColumn=3,last='',identity='',selected=null,detailHTML='',frame=0,emptyText='Ingen tidtabell hämtad.';
   const details=createContextDialog({dialog,onClose:()=>{selected=null;}});
   $('close-detail').onclick=()=>details.close();
-  $('source').onchange=e=>selectSource({sessionId:importState.sessionId,revision:importState.revision,source:e.target.value});
+  $('change-source').onclick=()=>{sourceRevision={sessionId:importState.sessionId,revision:importState.revision};sourceBase=importState.source;$('source').value=sourceBase;sourceDialog.open();};
+  sourceForm.onsubmit=async e=>{e.preventDefault();if(sourceBusy)return;sourceBusy=true;sourceDialog.setBusy(true);$('save-source').disabled=true;try{if(await selectSource({...sourceRevision,source:$('source').value}))sourceDialog.close(true);else sourceDialog.message(document.getElementById('message-text').textContent||'Kunde inte spara.');}finally{sourceBusy=false;sourceDialog.setBusy(false);$('save-source').disabled=false;}};
   function drawDetails(){
     if(!selected)return;const row=rows.find(r=>r.id===selected);if(!row){details.close();return;}
     $('detail-title').textContent='Tåg '+row.number;
@@ -70,7 +76,7 @@ export function createTrainMeetTimetable({selectSource}) {
   return {update(state,online,imported){
     importState=imported;
     const local=imported?.source==='import',active=local?imported.active:null;
-    const source=$('source');source.value=local?'import':'trainmeet';source.disabled=!online||!imported;source.options[1].disabled=!imported?.active;
+    const source=$('source');if(!sourceDialog.isOpen)source.value=local?'import':'trainmeet';source.disabled=!online||!imported;source.options[1].disabled=!imported?.active;$('change-source').disabled=!online||!imported;$('source-summary').textContent=local?(imported.active?.title||'Egen tidtabell'):'TrainMeet';
     const c=local?(active?{station:{name:'Egen tidtabell'},meet:active.title,day:'',tracks:[],operatingPoints:[],movements:[],trains:active.rows.map(r=>({id:r.id,train_number:r.trainNumber,station_name:r.station,day_label:r.day,arrival_time:r.arrival,departure_time:r.departure,arrival_from:r.from,departure_to:r.to,track:r.track,no_stop:r.noStop,note:r.note}))}:null):state?.context;
     const stale=!!c&&(!online||!local&&state?.stale);
     root.classList.toggle('timetable-stale',stale);

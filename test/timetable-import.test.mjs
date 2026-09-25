@@ -90,8 +90,28 @@ test('manual timetable works without AI, shares the imported source, and edits n
 });
 test('manual editing respects existing drafts, row bounds, revisions and import provenance',async t=>{
   const {service:s}=rig(t);await importDraft(s);assert.throws(()=>s.manual(rev(s)),/utkast/);assert.throws(()=>s.append(rev(s)),/manuell/);
-  s.activate({...rev(s),reviewed:true});assert.throws(()=>s.edit(rev(s)),/ingen manuellt/);
+  s.activate({...rev(s),reviewed:true});s.edit(rev(s));assert.deepEqual(s.view().draft.rows[0].sources,s.view().active.rows[0].sources);s.discard(rev(s));
   s.manual(rev(s));const before=rev(s);s.append(rev(s));assert.throws(()=>s.append(before),/ändrats/);assert.throws(()=>s.edit(rev(s)),/utkast/);
   while(s.view().draft.rows.length<300)s.append(rev(s));assert.throws(()=>s.append(rev(s)),/300/);assert.equal(new Set(s.view().draft.rows.map(r=>r.id)).size,300);
   const previous=structuredClone(s.view().active);s.discard(rev(s));assert.deepEqual(s.view().active,previous);
+});
+
+test('spreadsheet saves multiple new rows atomically, retains provenance and rejects stale or incomplete identity sets',async t=>{
+  const {service:s,storage}=rig(t);await importDraft(s);const before=structuredClone(s.view().draft),old=rev(s);
+  const extra={...before.rows[0],id:null,trainNumber:'00402',sources:[{file:99,page:1}],uncertainties:['forged']};
+  s.sheet({...old,title:'Kalkylblad',rows:[before.rows[0],extra]});
+  assert.equal(s.view().draft.rows[1].trainNumber,'00402');assert.deepEqual(s.view().draft.rows[1].sources,[]);assert.deepEqual(s.view().draft.rows[0].sources,before.rows[0].sources);assert.equal(s.view().active,null);
+  assert.throws(()=>s.sheet({...old,title:'gammalt',rows:before.rows}),/ändrats/);
+  const saved=structuredClone(s.view());const rows=structuredClone(saved.draft.rows);
+  for(const bad of [[rows[0],rows[0]],[rows[0],{...rows[1],id:null}],[...rows,{...extra,noStop:'yes'}],Array(301).fill(extra)]){
+    assert.throws(()=>s.sheet({...rev(s),title:'Fel',rows:bad}));assert.deepEqual(s.view(),saved);
+  }
+  storage.save=()=>{throw Error('disk');};assert.throws(()=>s.sheet({...rev(s),title:'Misslyckad',rows:[...rows,extra]}),/kunde inte sparas/);assert.deepEqual(s.view(),saved);
+});
+test('named manual drafts validate before saving and invalid spreadsheet times cannot be activated',t=>{
+  const {service:s}=rig(t);assert.throws(()=>s.manual({...rev(s),title:''}),/namn/);assert.equal(s.view().draft,null);
+  s.manual({...rev(s),title:'Söndag'});assert.equal(s.view().draft.title,'Söndag');
+  const row={...s.view().draft.rows[0],trainNumber:'001',day:'Dagl',departure:'12:99'};
+  s.sheet({...rev(s),title:'Söndag',rows:[row]});assert.throws(()=>s.activate({...rev(s),reviewed:true}),/HH:MM/);
+  s.sheet({...rev(s),title:'Söndag',rows:[{...row,departure:'25:10'}]});s.activate({...rev(s),reviewed:true});assert.equal(s.view().active.rows[0].departure,'25:10');
 });

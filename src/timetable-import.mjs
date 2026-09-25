@@ -42,6 +42,7 @@ export function reviewWarnings(rows){
   const seen=new Set(),warnings=[];
   for(const r of rows.filter(r=>r.included)){
     if(!r.trainNumber||!r.station||!r.day||!r.arrival&&!r.departure)warnings.push('Tågnummer, station, trafikdag eller båda tiderna saknas på en vald rad.');
+    if([r.arrival,r.departure].some(value=>value&&!/^\d{2}:[0-5]\d$/.test(value)))warnings.push('Ange tider som HH:MM, exempelvis 09:15 eller 25:10.');
     const key=JSON.stringify(ROW_FIELDS.filter(k=>k!=='note').map(k=>r[k]));
     if(seen.has(key))warnings.push('Samma tågrörelse finns flera gånger. Uteslut dubbletten eller rätta uppgifterna.');seen.add(key);
   }
@@ -66,11 +67,13 @@ export class TimetableImport extends EventEmitter {
   directory(id){return path.join(this.storage.directory,'timetable-imports',id);}
   manual(data){
     this.check(data);if(this.data.draft)fail('Slutför eller kasta det befintliga utkastet först.',409);
-    return this.commit({...this.data,draft:{id:randomUUID(),kind:'manual',title:'Egen tidtabell',createdAt:this.now(),status:'review',error:'',rows:[blankRow()],warnings:[],coverage:[],files:[]}});
+    const title=data.title===undefined?'Egen tidtabell':data.title;
+    if(!text(title)||!title.trim())fail('Ange ett namn för tidtabellen.');
+    return this.commit({...this.data,draft:{id:randomUUID(),kind:'manual',title:title.trim(),createdAt:this.now(),status:'review',error:'',rows:[blankRow()],warnings:[],coverage:[],files:[]}});
   }
   edit(data){
     this.check(data);if(this.data.draft)fail('Slutför eller kasta det befintliga utkastet först.',409);
-    if(this.data.active?.kind!=='manual')fail('Det finns ingen manuellt skapad tidtabell att redigera.',409);
+    if(!this.data.active)fail('Det finns ingen sparad tidtabell att redigera.',409);
     return this.commit({...this.data,draft:{...structuredClone(this.data.active),status:'review',error:'',warnings:[],coverage:[]}});
   }
   append(data){
@@ -117,6 +120,21 @@ export class TimetableImport extends EventEmitter {
     if(!text(data.title)||!data.title.trim()||!Array.isArray(data.rows)||data.rows.length!==draft.rows.length)fail('Utkastets titel eller rader är ogiltiga.');
     const ids=new Set();const rows=data.rows.map(row=>{const original=draft.rows.find(r=>r.id===row.id);if(!original||ids.has(row.id)||typeof row.included!=='boolean')fail('Utkastets radidentiteter stämmer inte.');ids.add(row.id);return {...original,...rowValues(row),included:row.included};});
     return this.commit({...this.data,draft:{...draft,title:data.title.trim(),rows,...(['csv','xlsx'].includes(draft.kind)?{warnings:reviewWarnings(rows)}:{})}});
+  }
+  sheet(data){
+    this.check(data);const draft=this.data.draft;
+    if(!draft||draft.status!=='review')fail('Det finns inget färdigt utkast att redigera.',409);
+    if(!text(data.title)||!data.title.trim()||!Array.isArray(data.rows)||data.rows.length<draft.rows.length||data.rows.length>IMPORT_LIMITS.rows)fail('Tidtabellens namn eller antal rader är ogiltigt. Högst 300 rader.');
+    const originals=new Map(draft.rows.map(r=>[r.id,r])),seen=new Set();
+    const rows=data.rows.map(row=>{
+      if(!object(row)||typeof row.included!=='boolean')fail('En tidtabellsrad har ogiltiga uppgifter.');
+      const values=rowValues(row);
+      if(row.id===null)return {...blankRow(),...values,included:row.included};
+      const original=originals.get(row.id);if(!original||seen.has(row.id))fail('Tidtabellens radidentiteter stämmer inte.');seen.add(row.id);
+      return {...original,...values,included:row.included};
+    });
+    if(seen.size!==originals.size)fail('Befintliga rader får inte försvinna. Uteslut dem med Ta med: Nej.');
+    return this.commit({...this.data,draft:{...draft,title:data.title.trim(),rows,warnings:reviewWarnings(rows)}});
   }
   activate(data){
     this.check(data);const d=this.data.draft;

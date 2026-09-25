@@ -1,3 +1,9 @@
+# Uppdaterat arbetsflöde från 0.28.0
+
+Meny → Tidtabell och import är en översikt. **Ny tidtabell** skapar ett namngivet utkast och **Importera** öppnar en egen importsida. **Redigera** eller **Fortsätt med utkastet** öppnar en kalkylbladssida för direkt cellredigering och inklistring av flera rader från Excel/Google Sheets. Även godkända importer kan redigeras som ett nytt utkast. **Spara utkast** sparar samtliga celler; **Godkänn och använd** aktiverar först efter granskning. Tidtabellskällan byts genom en modal. [Detaljer och avgränsningar](admin-forenkling.md).
+
+Nedan beskrivs format och regler; äldre hänvisningar till en radblankett avser nu motsvarande celler i kalkylbladet.
+
 # Egen tidtabell och import · 0.25.0
 
 TKL kan ta emot en egen tidtabell manuellt, från Excel/CSV med fasta kolumner eller genom AI-tolkning av bilder och PDF. Ingenting används i panelen innan användaren har granskat och godkänt det. Alla källor visas i samma kolumnfält under spårplanen.

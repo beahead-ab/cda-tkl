@@ -200,3 +200,7 @@ Syntaxkontroll och fyra renderingsprov godkända. Nytt prov täcker växling gen
 Hela enhetssviten passerade: 178/178. Syntax och diffkontroll godkända.
 
 0.27.0 publicerad och efterkontrollerad: 20 TrainMeet-prov, HTTP-processprov, låsomstartsprov och syntax passerade på servern. Tre bevarade held-lås, anslutna tjänster, oförändrad inloggning och skyddade API:er. Livegränssnittet sparade cda-tkl och återläste det efter omladdning utan konsolfel. Serveradressen är https://server.trainmeet.app; verklig parkoppling återstår.
+
+## Version 0.28.0 – administration och kalkylblad
+
+183 enhetstester och sju processhelhetstester godkända. Utökat HTTP-processprov för kalkylblad, revision och omstart passerade också. Syntax och diffkontroll godkända. [UI-prov, inventering och kvarvarande avstämning](admin-forenkling.md).

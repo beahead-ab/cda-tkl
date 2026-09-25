@@ -1,3 +1,5 @@
+import {createAdminAppearance} from './admin-appearance.js';
+import {syncAdminWorkspaces,registerAdminWorkspace} from './admin-ui.js';
 import {attribute,style,text as setText,flowProgress,createPanelFrames,preparingEndpoints} from './panel-rendering.js';
 import {createTimetableImport} from './timetable-import.js';
 import { createManualFeedback } from './manual-feedback.js';
@@ -33,10 +35,11 @@ $('crossing-display').onchange=()=>{setCrossingDisplay($('crossing-display').val
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
 let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport;
-const pageFromHash=()=>({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet','#import':'import'})[location.hash]||'panel';
+const pageFromHash=()=>({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet','#import':'import'})[location.hash.split('/')[0]]||'panel';
 function setPage(page,{historyMode='push'}={}) {
-  const hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet',import:'#import'}[page];
+  let hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet',import:'#import'}[page];
   if(!hash)return;
+  if(historyMode==='replace'&&location.hash.startsWith(hash+'/'))hash=location.hash;
   if(historyMode!=='none'&&location.hash!==hash)history[historyMode==='replace'?'replaceState':'pushState'](null,'',hash);
   closeInspector(false);manualFeedback?.clear();
   if(currentPage!==page)clearChoice(false);
@@ -48,13 +51,12 @@ function setPage(page,{historyMode='push'}={}) {
     if(p===page)$(p+'-tab').setAttribute('aria-current','page');else $(p+'-tab').removeAttribute('aria-current');
   }
   document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet',import:'Tidtabell och import'})[page]+' · Charlottendal TKL';
-  window.scrollTo(0,0);paint();
+  window.scrollTo(0,0);syncAdminWorkspaces();paint();
   if(page==='admin')return sourceRegister.open().catch(e=>message(e.message));
 }
 function openTools(section) {
   if(panelConsole?.open(section))return;
-  if(currentPage!=='tools')setPage('tools');
-  const target=$(section);if(target){if(target.tagName==='DETAILS')target.open=true;target.scrollIntoView({block:'start'});}
+  const target=$(section);if(target)location.hash='#tools/'+section.replace('-tools','');
 }
 async function openSource(kind,name) { await setPage('admin'); await sourceRegister.open(kind,name); }
 const rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], sourceLamps=[],routeNodes = new Map();
@@ -457,11 +459,13 @@ async function start() {
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };
   $('clear-selection').onclick = ()=>clearChoice();
-  document.addEventListener('keydown', e => { if(e.key==='Escape'){if($('inspector-host').open){e.preventDefault();closeInspector();return;}if(fullscreen.active()){fullscreen.exit();return;}manualFeedback.clear();clearChoice();} });
+  document.addEventListener('keydown', e => { if(e.key==='Escape'){if(document.querySelector('.admin-dialog[open]'))return;if($('inspector-host').open){e.preventDefault();closeInspector();return;}if(fullscreen.active()){fullscreen.exit();return;}manualFeedback.clear();clearChoice();} });
   for (const b of document.querySelectorAll('.skin-picker button')) b.onclick = () => setSkin(b.dataset.skin);
   function setSkin(value) { document.body.dataset.skin = value; localStorage.setItem('charlottendal-skin', value); for (const b of document.querySelectorAll('.skin-picker button')) b.classList.toggle('selected', b.dataset.skin === value); }
   setSkin(localStorage.getItem('charlottendal-skin') || 'relay');
   $('zoom').onchange = () => { const value=$('zoom').value+'%';$('track-plan').style.width=value;$('track-plan').style.height=value; };
+  createAdminAppearance();
+  for(const id of ['appearance','connections','journal'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   document.addEventListener('click',e=>{
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}

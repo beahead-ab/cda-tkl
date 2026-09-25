@@ -1,3 +1,4 @@
+import {createAdminDialog,registerAdminWorkspace} from './admin-ui.js';
 import { createBindingConfiguration } from './binding-configuration.js';
 import { createConfiguration } from './configuration.js';
 import { createSignalDetails, preloadSignalReferences } from './signal-details.js';
@@ -70,11 +71,12 @@ export function createSourceRegister({config, saveNote, onActive}) {
     $('registry-page').textContent=`Sida ${page+1} av ${Math.max(1,Math.ceil(found.length/pageSize))}`;
     $('registry-category').value=category;
   }
+  let detailPage,noteModal,noteBaseline='';
   async function showRecord(record) {
     selected=record; signalDetails=null;
     $('source-detail').hidden=false; $('source-detail-heading').textContent=presentation(record).name||record.name;
     $('source-detail-body').textContent='Läser källuppgifter…'; $('source-xml').hidden=true;
-    $('source-detail').scrollIntoView({behavior:'smooth',block:'start'});
+    detailPage.open('?record='+encodeURIComponent(record.key));
     try {
       await loadTree(); if(selected!==record)return;
       const node=nodeMap.get(record.path), b=binding(record);
@@ -95,7 +97,7 @@ export function createSourceRegister({config, saveNote, onActive}) {
       }
       $('source-path').textContent=record.path;
       $('source-note').value=config.notes[record.noteKey||'xml:'+record.key]||'';
-      $('source-note-status').textContent='';
+      $('source-note-status').textContent='';$('source-note-display').textContent=$('source-note').value||'Ingen anteckning.';
     } catch(e) { $('source-detail-body').textContent=e.message; }
   }
   function initialize() {
@@ -105,6 +107,10 @@ export function createSourceRegister({config, saveNote, onActive}) {
       <section class="card"><div class="card-heading"><h2 id="registry-count"></h2><span class="muted">Välj ett objekt för samtliga källfält</span></div><div class="table-wrap"><table><thead><tr><th>Objekt</th><th>Kategori</th><th>Källidentitet</th><th>Status</th><th></th></tr></thead><tbody id="registry-rows"></tbody></table></div><div class="source-pagination"><button id="registry-prev">← Föregående</button><span id="registry-page"></span><button id="registry-next">Nästa →</button></div></section>
       <section id="source-detail" class="card source-detail" hidden><div class="card-heading"><h2 id="source-detail-heading"></h2><button id="source-close">Stäng detaljer</button></div><div id="source-detail-body"></div><p id="source-path" class="source-path"></p><button id="source-xml-button">Visa XML för objektet</button><pre id="source-xml" hidden></pre><div class="source-note"><label for="source-note">Egen anteckning</label><textarea id="source-note" maxlength="4000" rows="3"></textarea><button id="source-save">Spara anteckning</button><span id="source-note-status" role="status"></span></div></section>
       <details class="source-audit"><summary>Importkontroll och källfil</summary><p>Originalfilen kan hämtas oförändrad. Alla element, attribut, texter och ordningen i dokumentträdet är bevarade. Filens ursprungliga formatering, XML-deklaration och namnrymder finns i originalet.</p><p id="source-hash"></p><div id="source-sections"></div><p>Registerposter kan överlappa: exempelvis visas en signalrelation både i signalmastlogiken och som egen post. Avsnittet Inställningar och historik ger tillgång till hela dokumentträdet, inklusive managerinställningar.</p></details>`;
+    detailPage=registerAdminWorkspace('#register/object',$('source-detail'));
+    const note=$('source-note').closest('.source-note');note.insertAdjacentHTML('beforebegin','<h3>Egen anteckning</h3><p id="source-note-display"></p><button id="source-note-edit">Redigera anteckning</button>');
+    noteModal=createAdminDialog({title:'Egen anteckning',body:note,saveButton:$('source-save'),dirty:()=>$('source-note').value!==noteBaseline,busy:()=>$('source-save').disabled});
+    $('source-note-edit').onclick=()=>{if(!selected)return;$('source-note').value=config.notes[selected.noteKey||'xml:'+selected.key]||'';noteBaseline=$('source-note').value;noteModal.open();};
     configuration=createConfiguration({root:$('configuration-editor'),config,onActive});
     configuration.updateState(lastState,lastOnline);
     bindingConfiguration=createBindingConfiguration({root:$('binding-editor')});bindingConfiguration.updateState(lastState,lastOnline);
@@ -122,12 +128,12 @@ export function createSourceRegister({config, saveNote, onActive}) {
     $('source-all').onclick=()=>{category='';page=0;render();};
     $('registry-prev').onclick=()=>{page--;render();};$('registry-next').onclick=()=>{page++;render();};
     $('registry-rows').onclick=e=>{const key=e.target.closest('button')?.dataset.source;if(key)showRecord(recordByKey(key));};
-    $('source-close').onclick=()=>{$('source-detail').hidden=true;selected=null;signalDetails=null;};
+    $('source-close').onclick=()=>{detailPage.close();selected=null;signalDetails=null;};
     $('source-xml-button').onclick=()=>{if(selected&&nodeMap){$('source-xml').textContent=sourceXML(nodeMap.get(selected.path));$('source-xml').hidden=!$('source-xml').hidden;}};
     $('source-save').onclick=async()=>{
       if(!selected)return; const record=selected, key=record.noteKey||'xml:'+record.key, note=$('source-note').value;
       $('source-save').disabled=true;
-      try { if(await saveNote(key,note)){config.notes[key]=note;$('source-note-status').textContent='Sparat';render();}else $('source-note-status').textContent='Kunde inte spara. Försök igen.'; }
+      try { if(await saveNote(key,note)){config.notes[key]=note;$('source-note-status').textContent='Sparat';$('source-note-display').textContent=note||'Ingen anteckning.';noteModal.close(true);render();}else noteModal.message('Kunde inte spara. Försök igen.'); }
       finally {$('source-save').disabled=false;}
     };
     render();
@@ -135,6 +141,7 @@ export function createSourceRegister({config, saveNote, onActive}) {
   async function open(kind, name) {
     ready ||= Promise.all([fetch('/data/source/index.json').then(check),fetch('/data/migration.json').then(check),fetch('/data/signal-catalog.json').then(check)]).then(async ([data,status,signals])=>{index=data;migration=status;signalCatalog=signals;if(signals.sourceHash!==index.meta.sha256)throw Error('Signalregistret stämmer inte med källfilen');await preloadSignalReferences(signals);initialize();}).catch(e=>{ready=null;document.getElementById('admin-view').textContent=e.message;throw e;});
     await ready;
+    if(!kind&&location.hash.startsWith('#register/object')){const key=new URLSearchParams(location.hash.split('?')[1]||'').get('record'),record=recordByKey(key);if(record&&selected!==record)await showRecord(record);else if(!record)detailPage.close();}
     if(kind){category=kind;query='';status='all';page=0;$('search').value='';$('registry-status').value='all';render();if(name){const record=index.records.find(r=>r.category===kind&&r.name===name);if(record)await showRecord(record);}}
   }
   return {open,presentationChanged(){if(index){render();if(selected)$('source-detail-heading').textContent=presentation(selected).name||selected.name;}},updateState(state,online){lastState=state;lastOnline=online;configuration?.updateState(state,online);bindingConfiguration?.updateState(state,online);signalDetails?.update(state,online);}};

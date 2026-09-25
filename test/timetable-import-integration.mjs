@@ -34,6 +34,11 @@ test('process imports files, edits and activates reviewed rows, selects sources 
     await stop();launch('');v=await until(view);assert.equal(v.active.rows[0].trainNumber,'M42');
     response=await request('/api/timetable-import/edit',{sessionId:v.sessionId,revision:v.revision});assert.equal(response.status,200);v=await response.json();
     response=await request('/api/timetable-import/append',{sessionId:v.sessionId,revision:v.revision});assert.equal(response.status,200);v=await response.json();assert.equal(v.draft.rows.length,2);assert.equal(v.active.rows.length,1);
+    const sheetRows=structuredClone(v.draft.rows);Object.assign(sheetRows[1],{trainNumber:'0042',day:'Dagl',departure:'25:10'});sheetRows.push({...sheetRows[1],id:null,trainNumber:'0043'});
+    const oldRevision={sessionId:v.sessionId,revision:v.revision};
+    response=await request('/api/timetable-import/sheet',{...oldRevision,title:'Kalkylbladsprov',rows:sheetRows});assert.equal(response.status,200);v=await response.json();assert.equal(v.draft.rows.length,3);assert.equal(v.draft.rows[2].trainNumber,'0043');assert.equal(v.active.rows.length,1);
+    response=await request('/api/timetable-import/sheet',{...oldRevision,title:'Gammal',rows:sheetRows});assert.equal(response.status,409);
+    await stop();launch('');v=await until(view);assert.equal(v.draft.title,'Kalkylbladsprov');assert.equal(v.draft.rows.length,3);assert.equal(v.active.rows[0].trainNumber,'M42');
     const manualState=await(await request('/api/state')).json();assert.equal(manualState.routes.length,0);assert.ok(Object.values(manualState.blocks).every(b=>b.occupied===null));assert.equal(manualState.clock.authority,'local');assert.equal(manualState.trainMeet.status,'unconfigured');assert.equal(output,'');
     response=await request('/api/timetable-import/discard',{sessionId:v.sessionId,revision:v.revision});v=await response.json();
     for(const ext of ['csv','xlsx']){
