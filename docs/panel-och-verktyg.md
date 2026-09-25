@@ -2,6 +2,12 @@
 
 Ställverket öppnas på `/#panel`. Överkanten innehåller namn, anslutningsstatus och meny. Från version 0.29.0 är den stora knappraden borttagen enligt Caspers godkända förenkling.
 
+## Original som enda panel (0.30.2)
+
+Reläpanel och Trafikskärm har tagits bort som val på Caspers begäran. Original används från första sidrenderingen, även om webbläsaren tidigare sparat ett annat tema. Det gamla temavalet rensas. Översikten visar Original som fast information; redigeringsmodalen har enbart zoom, övergångslampor och ljud. Nya skins skjuts upp tills originalpanelen är färdig. Befintliga vilande stilregler finns kvar utan åtkomliga val; ingen spårgeometri eller driftlogik har ändrats.
+
+Verifierat lokalt: Original, borttagen temaväljare, spara zoom, kasta osparat zoomval, återgå till Anpassa, oförändrad övergångs-/ljudinställning och inga konsolfel. Syntaxkontroll godkänd. Zoomändring är endast föreslagen denna gång: tydligt Visa hela-läge med bibehållna proportioner samt separat detaljzoom. Nuvarande Anpassa skalar redan SVG-bilden till tillgänglig yta, medan telefoner har en minsta planbredd för läsbarhet. Originalets utsnitt är 2102 × 688, cirka 3,05:1, så en vanlig skärm lämnar höjd över vid full bredd; detta kan inte fyllas genom proportionell skalning utan att beskära i sidled.
+
 ## Återställning av knappar i alla paneler (0.30.1)
 
 Återställ panel nollställer även varje öppen panels startval, huvud-/växeltågvägsval, listval för start/slut och tillfälliga växel-/kompismarkeringar. Öppen objektinformation stängs och fokusmarkering på spårplanen tas bort. Alla paneler reagerar en gång per återställnings-id, även om återställningen hinner slutföras mellan två uppdateringar. Efterföljande rapporter tar inte bort nya val.

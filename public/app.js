@@ -486,9 +486,8 @@ async function start() {
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };
   $('clear-selection').onclick = ()=>clearChoice();
   document.addEventListener('keydown', e => { if(e.key==='Escape'){if(document.querySelector('.admin-dialog[open]'))return;if($('inspector-host').open){e.preventDefault();closeInspector();return;}if(fullscreen.active()){fullscreen.exit();return;}manualFeedback.clear();clearChoice();} });
-  for (const b of document.querySelectorAll('.skin-picker button')) b.onclick = () => setSkin(b.dataset.skin);
-  function setSkin(value) { document.body.dataset.skin = value; localStorage.setItem('charlottendal-skin', value); for (const b of document.querySelectorAll('.skin-picker button')) b.classList.toggle('selected', b.dataset.skin === value); }
-  setSkin(localStorage.getItem('charlottendal-skin') || 'relay');
+  // Original is the only active panel. Retired skin preferences must not restore it differently.
+  try{localStorage.removeItem('charlottendal-skin');}catch{}
   $('zoom').onchange = () => { const value=$('zoom').value+'%';$('track-plan').style.width=value;$('track-plan').style.height=value; };
   createAdminAppearance();
   for(const id of ['appearance','journal'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));

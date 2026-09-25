@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><link rel="stylesheet" href="/panel-fixed.css"><link rel="stylesheet" href="/admin.css">
   <script type="module" src="/app.js"></script>
 </head>
-<body data-skin="relay" data-page="panel" data-crossing-display="calm">
+<body data-skin="original" data-page="panel" data-crossing-display="calm">
 <header class="app-header">
   <a class="brand" href="#panel"><span>Charlottendal TKL</span></a>
   <div class="connection" id="connection">Startar…</div><div id="header-menu-slot"></div>
@@ -70,7 +70,7 @@
   </section>
   <section id="appearance-tools" class="tools-section" aria-labelledby="appearance-heading">
     <h2 id="appearance-heading">Utseende och ljud</h2>
-    <div class="card appearance-controls"><div class="skin-picker" role="group" aria-label="Panelutseende"><button data-skin="original">Original</button><button data-skin="relay" class="selected">Reläpanel</button><button data-skin="traffic">Trafikskärm</button></div><label>Zoom <select id="zoom"><option value="100">Anpassa</option><option value="140">140 %</option><option value="200">200 %</option></select></label><label>Övergångslampor <select id="crossing-display"><option value="calm">Lugn blinkning</option><option value="steady">Fast rött sken</option></select></label><button id="sound-toggle" aria-pressed="false">Ljud av</button><span id="error-lamp" class="error-lamp" hidden>Fel</span></div>
+    <div class="card appearance-controls"><label>Zoom <select id="zoom"><option value="100">Anpassa</option><option value="140">140 %</option><option value="200">200 %</option></select></label><label>Övergångslampor <select id="crossing-display"><option value="calm">Lugn blinkning</option><option value="steady">Fast rött sken</option></select></label><button id="sound-toggle" aria-pressed="false">Ljud av</button><span id="error-lamp" class="error-lamp" hidden>Fel</span></div>
     <details class="card"><summary>Teckenförklaring</summary><div class="legend"><span><i class="line free"></i> Fritt</span><span><i class="line route"></i> Tågväg</span><span><i class="line occupied"></i> Belagt</span><span><i class="line held"></i> Lås kvar</span><span><i class="line unknown"></i> Okänt / ej inkopplat</span><span id="derived-indications" aria-label="Beräknade panelindikeringar"></span></div></details>
   </section>
   <section id="journal-tools" class="card journal tools-section" aria-labelledby="journal-heading"><div class="card-heading"><h2 id="journal-heading">Händelser</h2><span class="muted" id="event-status">Väntar på rapporter</span></div><div id="events"></div></section>
@@ -91,5 +91,5 @@
   <section id="advanced-protocol" hidden><div class="admin-workspace-heading"><h1 tabindex="-1">Protokollinspelning</h1><a href="#advanced">Tillbaka till Avancerat →</a></div><section class="card"><div id="recording-tools"></div></section><details class="card"><summary>Visa protokolltrafik</summary><pre id="wire"></pre></details></section>
 </main>
 <dialog id="inspector-host" class="inspector-host" aria-labelledby="inspector-heading"></dialog>
-<footer>Charlottendal TKL · version 0.30.1</footer>
+<footer>Charlottendal TKL · version 0.30.2</footer>
 </body></html>
