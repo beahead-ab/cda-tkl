@@ -120,6 +120,7 @@ function clearChoice(repaint=true) { chosen = null; $('selection-hint').textCont
 function choose(id) {
   manualFeedback?.clear();
   if (!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
+  if (['waiting','interrupted'].includes(state.panelReset?.phase)) return message(state.panelReset.reason);
   if(state.controls?.mode==='remote') return message('Fjärrläge: lokal tågvägsläggning är spärrad.');
   if (!chosen) {
     chosen = id; $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + ' → välj slutpunkt'; $('clear-selection').disabled = false; paint();
@@ -459,7 +460,6 @@ async function start() {
   $('inspect-turnout').onchange=()=>{const name=$('inspect-turnout').value;if(name)showInspector('turnout',name);else manualFeedback.clear();};
   $('toggle-block').onclick=()=>api('track-block',{name:$('block-choice').value,blocked:!isBlocked($('block-choice').value)});
   $('all-stop').onclick=()=>api('all-stop',{enabled:true});
-  $('panel-reset').onclick=()=>{message('');clearChoice();return api('panel-reset',{});};
   $('emergency-cancel').onclick=()=>api('emergency-cancel',{});
   $('toggle-authority').onclick=async()=>{if(await api('control-mode',{mode:state.controls.mode==='remote'?'local':'remote'}))clearChoice();};
   $('reset-ais').onclick=()=>api('all-stop',{enabled:false});
@@ -472,6 +472,15 @@ async function start() {
   $('catalog-to').onchange=catalogHint;
   function routeMode(){ const mode=$('route-mode').value; document.body.dataset.routeMode=mode; clearChoice(); const starts=catalogOrder([...new Set(config.routes.filter(r=>(r.kind||'main')===mode).map(r=>r.from))]); $('catalog-from').innerHTML=starts.map(id=>`<option value="${esc(id)}">${esc(label(id))}</option>`).join('');targets(); }
   $('route-mode').onchange=()=>{$('catalog-mode').value=$('route-mode').value;routeMode();}; $('catalog-mode').onchange=()=>{$('route-mode').value=$('catalog-mode').value;routeMode();}; $('catalog-from').onchange=targets;routeMode();
+  function resetPanelChoices() {
+    closeInspector(false);inspected=null;$('inspect-turnout').value='';
+    manualFeedback.clear();
+    $('route-mode').value=$('catalog-mode').value='main';routeMode();
+    // Clear only transient panel choices. Keep the mounted plan, detector reports,
+    // viewport, appearance and any unfinished administrative edits intact.
+    if($('track-plan').contains(document.activeElement))document.activeElement.blur();
+  }
+  $('panel-reset').onclick=()=>{message('');resetPanelChoices();return api('panel-reset',{});};
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };
@@ -495,9 +504,14 @@ async function start() {
   setPage(pageFromHash(),{historyMode:'replace'});
   applyPresentation(config.presentation);
   const source = new EventSource('/api/events');
-  let presentationLoading=false;
+  let presentationLoading=false,observedResetId;
   source.onmessage = e => {
-    state = JSON.parse(e.data);if(state.bindingVersion!==config.bindingVersion){location.reload();return;} online = true; lastEvent = Date.now(); paint();
+    state = JSON.parse(e.data);if(state.bindingVersion!==config.bindingVersion){location.reload();return;} online = true; lastEvent = Date.now();
+    // A quick reset may finish between two snapshots. Use its identity, not a
+    // waiting/stop transition, so every open panel clears its local buttons once.
+    const resetId=state.panelReset?.id;
+    if(resetId&&resetId!==observedResetId)resetPanelChoices();
+    observedResetId=resetId;paint();
     if(!presentationLoading && state.configurationVersion!==config.presentation?.activeVersion) {
       presentationLoading=true;
       fetch('/api/presentation').then(r=>{if(!r.ok)throw Error('Kunde inte hämta nya visningsinställningar.');return r.json();}).then(applyPresentation).catch(e=>message(e.message)).finally(()=>{presentationLoading=false;});

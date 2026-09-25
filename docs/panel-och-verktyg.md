@@ -2,6 +2,14 @@
 
 Ställverket öppnas på `/#panel`. Överkanten innehåller namn, anslutningsstatus och meny. Från version 0.29.0 är den stora knappraden borttagen enligt Caspers godkända förenkling.
 
+## Återställning av knappar i alla paneler (0.30.1)
+
+Återställ panel nollställer även varje öppen panels startval, huvud-/växeltågvägsval, listval för start/slut och tillfälliga växel-/kompismarkeringar. Öppen objektinformation stängs och fokusmarkering på spårplanen tas bort. Alla paneler reagerar en gång per återställnings-id, även om återställningen hinner slutföras mellan två uppdateringar. Efterföljande rapporter tar inte bort nya val.
+
+Tågvägar, lås och signalbilder fortsätter följa serverns bekräftade läge. Panelen byggs inte om; zoom, utseende, tidtabell och administrativa utkast bevaras. Nya startval väntar medan återställningen är ofärdig. Själva nollställningsordern och bevarandet av faktisk beläggning är oförändrade från 0.30.0.
+
+Verifierat i två samtidiga lokala paneler: val i panel B rensas från panel A, växeltågvägsläge återgår till huvudtågväg, växelinformation och kompisringar stängs, nya startval består efter fortsatta rapporter. Cu → Spår 1c med belagt S100 återställs till noll vägar, lås och vägmarkeringar samt stopp i alla signaler; S100 och V1-varningen består. Inga konsolfel. Syntax och fyra renderingsprov godkända.
+
 ## Gemensam återställning (0.30.0)
 
 Den enda direkta manöverknappen är **Återställ panel**. Casper har förtydligat att återställningen ska nollställa tågvägar även vid beläggning, men att lok/vagnar som spårledningen fortfarande ser ska fortsätta visas som belagda.
