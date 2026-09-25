@@ -17,9 +17,8 @@ const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 const crossingDisplays = {
-  calm: {label:'Lugn röd växelblinkning',description:'Dämpade röda lampor med mjuk tändning, 40 blinkningar per minut per lampa.'},
-  steady: {label:'Fast rött sken',description:'Båda lamporna lyser med ett dämpat fast rött sken när övergången är aktiv.'},
-  classic: {label:'Röd växelblinkning',description:'Två röda lampor, växelvis med 80 blinkningar per minut per lampa.'}
+  calm: {label:'Lugn röd växelblinkning',description:'Dämpade röda lampor med mjuk tändning och släckning, 20 blinkningar per minut per lampa.'},
+  steady: {label:'Fast rött sken',description:'Båda lamporna lyser med ett dämpat fast rött sken när övergången är aktiv.'}
 };
 let crossingDisplay='calm';
 function setCrossingDisplay(value,{save=true}={}) {

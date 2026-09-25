@@ -37,16 +37,12 @@ body[data-page]:not([data-page=panel])>.app-header{position:sticky;top:0;z-index
 .tools-section{scroll-margin-top:85px}
 /* Calm panel display: slower alternating lamps with soft edges and muted red.
    Only active V1–V3 lamps animate; this preference never changes field commands. */
-@keyframes crossing-calm{0%,40%,100%{fill:#2c2a25;stroke:#6b6663}8%,32%{fill:#c75b50;stroke:#b57d70}}
-@keyframes crossing-red{0%,100%{fill:#ef382d;stroke:#ffc4b7}40%{fill:#2c2a25;stroke:#6b6663}}
-.crossing-active .indicator-off{animation:crossing-calm 1500ms linear infinite}
-.crossing-right.crossing-active .indicator-off{animation-delay:-750ms}
+@keyframes crossing-calm{0%,40%,100%{fill:#2c2a25;stroke:#6b6663}10%,30%{fill:#c75b50;stroke:#b57d70}}
+.crossing-active .indicator-off{animation:crossing-calm 3000ms ease-in-out infinite}
+.crossing-right.crossing-active .indicator-off{animation-delay:-1500ms}
 body[data-crossing-display=steady] .crossing-active .indicator-off{animation:none;fill:#c75b50;stroke:#b57d70}
-body[data-crossing-display=classic] .crossing-active .indicator-off{animation:crossing-red 750ms step-end infinite}
-body[data-crossing-display=classic] .crossing-right.crossing-active .indicator-off{animation-delay:-375ms}
 #derived-indications [data-crossing=true] i{background:#2c2a25;border-color:#6b6663}
 #derived-indications [data-crossing=true][data-value=active] i{background:#c75b50;border-color:#b57d70}
-body[data-crossing-display=classic] #derived-indications [data-crossing=true][data-value=active] i{background:#ef382d;border-color:#ffc4b7}
 #derived-indications [data-crossing=true][data-value=unknown] i{background:transparent;border-color:#c5a063;border-style:dashed}
 #menu-toggle{display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:32px;padding:6px;border-radius:4px;background:transparent}
 #menu-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}

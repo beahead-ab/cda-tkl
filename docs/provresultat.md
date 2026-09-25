@@ -180,3 +180,7 @@ Avslutat i lokalt läge, huvudtågväg, AIS av, inga provtågvägslås, Original
 Syntaxkontroll och tre renderingsprov godkända. Lokalt webbläsarprov på 9040: aktiv V1 använder 1,5 s period och höger lampa −0,75 s förskjutning; V2/V3 är mörka utan animation. Fast rött ger båda aktiva lamporna rgb(199,91,80), inga animationer och fortsatt mörka vilolampor. Fast-läget bevarades efter omladdning; Lugn blinkning återvaldes. Högerklick visar rätt lägesbeskrivning och den befintliga reservationsorsaken. Spårplanens mått före/efter visningsbyte var identiska. Inga konsolfel. V4 och backend har inte ändrats.
 
 Publicering 25 september kl. 02:47: samma prov och backendjämförelse godkända på servern. Två befintliga lås återställdes till held efter uttryckligt godkänd omstart. Webbkontroll bekräftade 0.26.1, anslutning, 1,5 s / −0,75 s på aktiva V1–V3 och inga konsolfel. Inga provvägar eller provtidtabeller tillfördes.
+
+## Version 0.26.2 – långsammare blinkning
+
+Syntaxkontroll godkänd. Isolerad webbläsarprovning på 9050: aktiv V1 visar 3 s ease-in-out och −1,5 s på höger lampa. Vilande V2/V3 saknar animation. Menyn innehåller exakt Lugn blinkning och Fast rött sken. Fast sken ger båda aktiva lamporna dämpat rött och behåller vilolamporna mörka. Inga konsolfel. Backend och aktiveringsvillkor oförändrade.

@@ -93,3 +93,7 @@ Upprepade rapporter skrivs inte om till samma SVG-attribut. Flera uppdateringar 
 ## Version 0.26.1 – lugnare övergångslampor
 
 V1–V3 blinkar som standard hälften så ofta med mjukare kanter och dämpat rött. Meny → Utseende och ljud → Övergångslampor erbjuder även Fast rött sken och Tidigare blinkning. Valet sparas i webbläsaren. Panelens geometri, signalbesked och driftsregler är oförändrade.
+
+## Version 0.26.2 – ytterligare lugnare lampor
+
+Lugn blinkning har 3 s period per lampa och 300 ms mjuk tändning/släckning. Tidigare blinkning har tagits bort. Valen är nu Lugn blinkning och Fast rött sken; äldre sparat classic-val faller tillbaka till lugnt läge.

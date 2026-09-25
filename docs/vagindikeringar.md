@@ -1,16 +1,16 @@
 # V1–V4 · beräknade panelindikeringar
 
-## Lugnare visning från version 0.26.1
+## Lugnare visning från version 0.26.2
 
-**Meny → Utseende och ljud → Övergångslampor** erbjuder tre lägen. **Lugn blinkning** är standard: 1 500 ms period per lampa, 750 ms fasförskjutning och dämpat rött ljus med 120 ms mjuka kanter. Varje lampa blinkar 40 gånger per minut, hälften så ofta som tidigare. Det är ett avsiktligt lugnare visningsläge för ställverkspanelen.
+**Meny → Utseende och ljud → Övergångslampor** erbjuder två lägen. **Lugn blinkning** är standard: 3 000 ms period per lampa, 1 500 ms fasförskjutning och dämpat rött ljus med 300 ms mjuk tändning och släckning. Varje lampa blinkar 20 gånger per minut, hälften så ofta som i 0.26.1. Det är ett avsiktligt lugnare visningsläge för ställverkspanelen.
 
-**Fast rött sken** låter båda lamporna lysa dämpat när övergången är aktiv. **Tidigare blinkning** behåller 750 ms-perioden och den tidigare färgen. Valet sparas i den aktuella webbläsaren. Samma SVG-lampor finns kvar; inga mått eller positioner ändras. Viloläge, okänt underlag, orsaker, reservationer och V4 är oförändrade. Inställningen ändrar inga fältorder.
+**Fast rött sken** låter båda lamporna lysa dämpat när övergången är aktiv. Det ursprungliga snabba läget har tagits bort; ett äldre sparat val av detta faller tillbaka på Lugn blinkning. Valet sparas i den aktuella webbläsaren. Samma SVG-lampor finns kvar; inga mått eller positioner ändras. Viloläge, okänt underlag, orsaker, reservationer och V4 är oförändrade. Inställningen ändrar inga fältorder.
 
 ## V1–V3 från version 0.18.0
 
 På Caspers begäran visas V1, V2 och V3 som vägövergångar: båda lamporna är släckta när ingen korsande tågväg är reserverad och samtliga korsande block är bekräftat fria. Vid reservation eller beläggning blinkar lamporna växelvis rött. Ingen grön lampa eller röd vilolampa används för dessa tre övergångar. V4 har kvar sin tidigare visning.
 
-Det tidigare läget (nu valbart) följer 80 blinkningar per minut per lampa, mitt i intervallet 75–85, med 40 procent tänd och 60 procent släckt tid enligt [TSFS 2014:30, 11 kap. 4 §](https://www.transportstyrelsen.se/tsfs/TSFS%202014_30.pdf). Perioden är 750 ms, tänd tid 300 ms och fasförskjutningen mellan lamporna 375 ms. Det ger 75 ms mörker mellan vänster och höger lampa. Rytmen använder verklig tid och påverkas inte av modellklockans hastighet. Befintliga SVG-lampor animeras utan bildbyte eller omladdning.
+Det tidigare läget (borttaget från 0.26.2) följde 80 blinkningar per minut per lampa, mitt i intervallet 75–85, med 40 procent tänd och 60 procent släckt tid enligt [TSFS 2014:30, 11 kap. 4 §](https://www.transportstyrelsen.se/tsfs/TSFS%202014_30.pdf). Perioden är 750 ms, tänd tid 300 ms och fasförskjutningen mellan lamporna 375 ms. Det ger 75 ms mörker mellan vänster och höger lampa. Rytmen använder verklig tid och påverkas inte av modellklockans hastighet. Befintliga SVG-lampor animeras utan bildbyte eller omladdning.
 
 | Övergång | Streck i panelkällan | Korsande block | Korsande körbara tågvägar |
 |---|---|---|---|
