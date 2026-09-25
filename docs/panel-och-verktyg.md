@@ -89,3 +89,7 @@ Manöverknappar öppnar en modal ovanpå ställverket. Stäng eller Escape åter
 Originalets signalbilder förladdas och avkodas i en gemensam omgång med begränsad startväntan. Alla bildvarianter ligger kvar med fasta mått. Stopp, beläggning och okända besked växlar direkt; signalbilder tonas aldrig ihop. Ljuset längs en tågväg följer en monoton lokal klocka, uppdateras i takt med webbläsarens bildrutor och kan inte gå bakåt av en senare tidsuppgift. Reducerad rörelse stöds; övergångarnas varningsblinkning behåller sin funktion.
 
 Upprepade rapporter skrivs inte om till samma SVG-attribut. Flera uppdateringar under samma bildruta samlas; en stillastående panel har ingen permanent animationsslinga. Tidtabellens oförändrade rader lämnas monterade när en annan rad uppdateras. Fullskärmsknappen är oförändrad och ligger i menyn.
+
+## Version 0.26.1 – lugnare övergångslampor
+
+V1–V3 blinkar som standard hälften så ofta med mjukare kanter och dämpat rött. Meny → Utseende och ljud → Övergångslampor erbjuder även Fast rött sken och Tidigare blinkning. Valet sparas i webbläsaren. Panelens geometri, signalbesked och driftsregler är oförändrade.

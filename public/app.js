@@ -16,6 +16,21 @@ import { createPanelConsole } from './panel-console.js';
 const $ = id => document.getElementById(id);
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
+const crossingDisplays = {
+  calm: {label:'Lugn röd växelblinkning',description:'Dämpade röda lampor med mjuk tändning, 40 blinkningar per minut per lampa.'},
+  steady: {label:'Fast rött sken',description:'Båda lamporna lyser med ett dämpat fast rött sken när övergången är aktiv.'},
+  classic: {label:'Röd växelblinkning',description:'Två röda lampor, växelvis med 80 blinkningar per minut per lampa.'}
+};
+let crossingDisplay='calm';
+function setCrossingDisplay(value,{save=true}={}) {
+  crossingDisplay=Object.hasOwn(crossingDisplays,value)?value:'calm';
+  document.body.dataset.crossingDisplay=crossingDisplay;
+  $('crossing-display').value=crossingDisplay;
+  if(save)try{localStorage.setItem('charlottendal-crossing-display',crossingDisplay);}catch{}
+}
+try{setCrossingDisplay(localStorage.getItem('charlottendal-crossing-display'),{save:false});}catch{setCrossingDisplay('calm',{save:false});}
+$('crossing-display').onchange=()=>{setCrossingDisplay($('crossing-display').value);paint();};
+
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
 let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport;
@@ -255,7 +270,7 @@ function paintPlan() {
     attribute(lamp.g,'data-value',value===true?'active':value===false?'inactive':'unknown');
     attribute(lamp.lens,'class','indicator-off '+(value==null?'derived-missing':!lamp.crossing&&value===(lamp.color==='g')?'derived-on-'+lamp.color:''));
     style(lamp.unknown,'display',value==null&&lamp.color==='g'?'':'none');
-    const text=lamp.name+' · '+(lamp.crossing?'vägövergång · '+(value===true?'röd växelblinkning':value===false?'släckta lampor':'okänt underlag'): 'beräknad panelindikering · '+(value===true?'aktivt underlag':value===false?'inaktivt underlag':'okänt underlag'));
+    const text=lamp.name+' · '+(lamp.crossing?'vägövergång · '+(value===true?crossingDisplays[crossingDisplay].label:value===false?'släckta lampor':'okänt underlag'): 'beräknad panelindikering · '+(value===true?'aktivt underlag':value===false?'inaktivt underlag':'okänt underlag'));
     attribute(lamp.g,'aria-label',text+' · '+(lamp.crossing?(lamp.color==='g'?'vänster':'höger'):lamp.color));
   }
   for(const button of $('derived-indications').querySelectorAll('button')) {
@@ -264,7 +279,7 @@ function paintPlan() {
     button.dataset.value=value===true?'active':value===false?'inactive':'unknown';
     button.querySelector('span').textContent=value==null?'?':crossing?(value?'Varnar':'Släckt'):'';
     button.title=button.dataset.indication+' · Beräknad panelindikering, ingen bomkvittens';
-    button.setAttribute('aria-label',button.dataset.indication+' · '+(crossing?(value===true?'röd växelblinkning':value===false?'släckta lampor':'okänt underlag'):(value===true?'aktivt':value===false?'inaktivt':'okänt')+' underlag')+' · detaljer');
+    button.setAttribute('aria-label',button.dataset.indication+' · '+(crossing?(value===true?crossingDisplays[crossingDisplay].label:value===false?'släckta lampor':'okänt underlag'):(value===true?'aktivt':value===false?'inaktivt':'okänt')+' underlag')+' · detaljer');
   }
   for (const b of buttons) {
     b.g.classList.toggle('chosen', b.id === chosen); b.g.classList.toggle('unavailable', !b.available || (b.names.length && state.manual?.[b.names[0]]?.allowed===false));
@@ -381,7 +396,7 @@ function paintIndication(name) {
   if(def.crossing) {
     const warning=s?.warning,fresh=online&&state.connection==='connected'&&!state.storageFault,value=fresh?warning?.value:null;
     const causes=fresh?(warning?.conditions||[]).filter(c=>c.value!==false):[];
-    html('inspector',`<h2>${esc(name)} · vägövergång</h2><dl><dt>Lampor</dt><dd>${value===true?'Röd växelblinkning':value===false?'Släckta':'Okänt underlag · frågetecken'}</dd><dt>Korsande block</dt><dd>${def.crossing.blocks.map(n=>esc(displayName('blocks',n))).join(', ')}</dd><dt>Kända villkor</dt><dd>${fresh?warning?.known||0:0} av ${warning?.total||def.crossing.blocks.length+1}</dd></dl><p class="muted">Varnar så länge en tågväg över strecket är reserverad eller ett korsande block är belagt. Lamporna släcks när reservationerna är frigivna och alla korsande block är bekräftat fria.</p><p class="muted">Två röda lampor, växelvis med 80 blinkningar per minut per lampa. Beräknad panelvisning; ingen fysisk bomkvittens.</p>${causes.length?`<ul class="indication-causes">${causes.map(c=>`<li><strong>${esc(c.label)}</strong> · ${esc(c.reason)}</li>`).join('')}</ul>`:''}<button class="source-inspect" data-source-kind="conditionals" data-source-name="${esc(def.name)}">Visa ursprunglig XML-regel →</button>`);
+    html('inspector',`<h2>${esc(name)} · vägövergång</h2><dl><dt>Lampor</dt><dd>${value===true?crossingDisplays[crossingDisplay].label:value===false?'Släckta':'Okänt underlag · frågetecken'}</dd><dt>Korsande block</dt><dd>${def.crossing.blocks.map(n=>esc(displayName('blocks',n))).join(', ')}</dd><dt>Kända villkor</dt><dd>${fresh?warning?.known||0:0} av ${warning?.total||def.crossing.blocks.length+1}</dd></dl><p class="muted">Varnar så länge en tågväg över strecket är reserverad eller ett korsande block är belagt. Lamporna släcks när reservationerna är frigivna och alla korsande block är bekräftat fria.</p><p class="muted">${crossingDisplays[crossingDisplay].description} Inställningen gäller panelens visning; ingen fysisk bomkvittens.</p>${causes.length?`<ul class="indication-causes">${causes.map(c=>`<li><strong>${esc(c.label)}</strong> · ${esc(c.reason)}</li>`).join('')}</ul>`:''}<button class="source-inspect" data-source-kind="conditionals" data-source-name="${esc(def.name)}">Visa ursprunglig XML-regel →</button>`);
     return;
   }
   const fresh=online&&state.connection==='connected'&&!state.storageFault,value=fresh?s?.value:null;

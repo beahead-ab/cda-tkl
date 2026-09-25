@@ -174,3 +174,7 @@ Avslutat i lokalt läge, huvudtågväg, AIS av, inga provtågvägslås, Original
 - 1920×1080: sex tidtabellskolumner med tre rörelser vardera; samma panelgeometri i Original, Reläpanel och Trafikskärm. Högerklick visar aktuellt signalbesked utan scrollning. Smal vy 390×844 håller sidan stilla; manuell panorering reserverad för spårplan/knappfält.
 - Tågväg Cu → Spår 1a etablerad i simulatorn. Vid avbruten LocoNet visas frånkopplad status och förladdade mörka bilder/okänt besked, med oförändrad geometri. Återanslutning återupptar inte körmedgivandet.
 - Fullskärmsknappen kunde aktiveras i testverktyget men webbläsaren rapporterade inget aktivt fullskärmselement. Faktisk fullskärmsövergång har därför inte verifierats i detta prov. Befintlig fullskärmskod är oförändrad. Ingen uppmätt FPS-garanti; bildrutetakt beror på skärm och dator.
+
+## Version 0.26.1 – övergångarnas visningsläge
+
+Syntaxkontroll och tre renderingsprov godkända. Lokalt webbläsarprov på 9040: aktiv V1 använder 1,5 s period och höger lampa −0,75 s förskjutning; V2/V3 är mörka utan animation. Fast rött ger båda aktiva lamporna rgb(199,91,80), inga animationer och fortsatt mörka vilolampor. Fast-läget bevarades efter omladdning; Lugn blinkning återvaldes. Högerklick visar rätt lägesbeskrivning och den befintliga reservationsorsaken. Spårplanens mått före/efter visningsbyte var identiska. Inga konsolfel. V4 och backend har inte ändrats.
