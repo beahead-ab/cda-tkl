@@ -224,3 +224,12 @@ Livewebbläsaren visar 0.28.1, LocoNet ansluten, tre ingångar under Avancerat o
 Syntax- och diffkontroll samt fyra befintliga renderingsprov godkända. Isolerat UI-prov på 9050: AIS visas som toast, avvisad tågväg under AIS ger tillfällig toast, automatisk borttoning efter åtta sekunder, tangentbordsfokus pausar tiden och Tab ut återupptar den. Återställ stopp släcker AIS-beskedet och lämnar ingen tom meddelanderad. Inga konsolfel.
 
 Vid 1280 × 720 låg spårplanen på x=0, y=40, bredd=1280, höjd=344 både före och under AIS/toast. Tidtabell och knappar hade också identiska mått. När den faktiska vyn ändrades till 319 × 880 verifierades separat oförändrad spårplan före/under AIS (1000 × 504, x=0, y=40) och toastbredd 291 vid x=14. Provets AIS återställdes, inga provvägar skapades. Backend och driftdataformat har inte ändrats.
+
+
+## 25 september 2026 kl. 21:44 · version 0.28.2
+
+Release `32fa1a3` ersätter `ff62c71`. Driftmeddelanden visas som toast ovanpå panelen. Det reserverade statusfältet och tomtexten är borta. Tillfälliga besked tonas bort efter åtta sekunder med paus vid pekare/fokus; aktiva AIS/fjärr/nödåtertagningsbesked följer fortsatt sitt driftvillkor. Ingen ändring av manöverregler.
+
+Syntax, fyra renderingsprov och lokalt UI-prov godkända. Serverns syntax, fyra renderingsprov och låsomstartsprov passerade. Backend, profiler, källdata, simulator, nginx och beroenden jämfördes och är oförändrade. Backup: `/root/charlottendal-backups/network-32fa1a3-20260925T194443Z`. Tidigare kod: `/opt/charlottendal/releases/ff62c71`.
+
+Endast TKL omstartad; simulatorn fortsatte köra. Tre reservationer behållna i held med samma resurser. Tidtabell, inställningar, anteckningar, inspelningsarkiv, controls och autentisering bevarade. Livewebbläsaren visar 0.28.2, LocoNet ansluten, panelens överkant 0 och spårplanens överkant 40. Tom meddelanderegion är dold. Inga konsolfel och inga liveprovmanövrer. Isolerat AIS-prov återställt och inga provvägar skapade.
