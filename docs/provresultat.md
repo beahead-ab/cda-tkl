@@ -198,3 +198,5 @@ Syntaxkontroll och fyra renderingsprov godkända. Nytt prov täcker växling gen
 20 riktade TrainMeet-prov godkända, inklusive valt id/visningsnamn i faktisk parkopplingspayload, sparning/omstart/frånkoppling, bevarande av äldre identitet, spärr mot ändring när parad, formatkontroll, diskfel och fast serveradress. Isolerat processprov över HTTP med omstart verifierar cda-tkl-demo i både client_id/display_name och ingen ny parkoppling efter omstart. Gränssnittsprov: standard cda-tkl, eget id sparas och återläses efter omladdning, osparat id spärrar Parkoppla och mellanslag avvisas av formuläret. Inga konsolfel.
 
 Hela enhetssviten passerade: 178/178. Syntax och diffkontroll godkända.
+
+0.27.0 publicerad och efterkontrollerad: 20 TrainMeet-prov, HTTP-processprov, låsomstartsprov och syntax passerade på servern. Tre bevarade held-lås, anslutna tjänster, oförändrad inloggning och skyddade API:er. Livegränssnittet sparade cda-tkl och återläste det efter omladdning utan konsolfel. Serveradressen är https://server.trainmeet.app; verklig parkoppling återstår.
