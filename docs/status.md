@@ -1,4 +1,4 @@
-# Charlottendal TKL – lägesbild 25 september 2026
+# Charlottendal TKL – lägesbild 26 september 2026
 
 Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter ännu inte den fysiska JMRI-installationen fullt ut. Att information finns importerad betyder inte att motsvarande funktion är implementerad eller verifierad mot banan.
 
@@ -6,7 +6,7 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 - Ren ställverkssida med fullskärm, manöverknappar och tidtabellskolumner under spårplanen. En [meny](panel-och-verktyg.md) samlar TrainMeet, import, utseende, anslutningar och händelser. Signal- och kompisinformation visas vid behov; aktiva stopp och fel är fortsatt synliga.
 
-- Tre panelutseenden, förladdade originalikoner, större träffytor och tågväg som tänds i färdriktningen. Samma start och mål återtar vägen.
+- Originalpanelen med förladdade originalikoner, större träffytor och tågväg som tänds i färdriktningen. Samma start och mål återtar vägen.
 - 210 huvudtågvägar och 130 växeltågvägar med etablerings- och passageprov. 49 växlar, 197 körbara layoutblock och 66 signaler. Låsta växlar kan inte läggas om manuellt. Kompisväxlar följer med; omläggning kontrollerar även kompisens spår utanför färdvägen.
 - Separat simulator över telegramgränsen, inklusive två samtidiga tåg, beläggning, avbrott och uteblivna återrapporter. TKL läser inte simulatorns interna tillstånd.
 - Beständiga lås, spårspärrar, AIS, nödåtertagning, sju linjespärrar, programmeringsspår samt lokal-/fjärrläge. Läget fjärr innebär ännu ingen anslutning till ett fjärrsystem.
@@ -17,7 +17,7 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Publicerat på webbadressen
 
-Version **0.30.2**, release `e91f4da`, publicerades 26 september kl. 00:36 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/) utan omstart. Original är enda panelutseendet; Reläpanel och Trafikskärm är borttagna som val. Backend är oförändrad från 0.30.0 och driftdata bevarades. Se driftjournalen för rollback av gränssnittsöverlägget.
+Version **0.31.0**, release `f917153`, publicerades 26 september kl. 01:54 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/) utan omstart. Meny → Zoom har reglage 50–300 %, Visa hela och förhandsvisning; valet sparas per enhet/webbläsare. Original är enda panelutseendet. Backend är oförändrad från 0.30.0 och driftdata bevarades. Se driftjournalen för rollback av gränssnittsöverlägget.
 
 - Start- och slutplupp blinkar lugnt växelvis under förberedelsen av en accepterad tågväg. Klart läge ger fast sken; återtagning, hållna lås, AIS och kontaktbortfall ger ingen förberedelseblinkning.
 - Fast ställverksyta: spårplan, tidtabell och knappar har fasta fält. Driftmeddelanden ligger som toast ovanpå; inget tomt meddelandefält reserveras. Detaljer öppnas ovanpå, hover flyttar inga symboler och ljusflödet följer bildrutorna med monoton tidsmätning.
@@ -54,7 +54,7 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
 
 ## Nästa praktiska steg
 
-[Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation och anslutningsstatus finns på den renodlade panelen; återtagning nås via Meny → Driftverktyg → Tågvägar och stödfunktionerna via menyn. Casper kan nu provköra version 0.30.2 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
+[Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation och anslutningsstatus finns på den renodlade panelen; återtagning nås via Meny → Driftverktyg → Tågvägar och stödfunktionerna via menyn. Casper kan nu provköra version 0.31.0 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
 
 Vid införandet av version 0.17.0 passerade 134 enhetstester och sex processhelhetstester. Backupens driftdata har återlästs i en isolerad kopia utan fältorder. Telegraminspelningen ger namngivna loggar med båda riktningarna, råtelegram och separat tolkning. Det förbereder jämförelsen mellan simulator och fysisk utrustning. Det ersätter inte hårdvaruanslutningen. Fortsätt samtidigt med verifierbara manöverfall, admin och visuell avstämning; aktivera inte okända signal- eller adressbindningar genom gissning.
 

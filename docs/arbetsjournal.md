@@ -546,3 +546,13 @@ Release `e91f4da` publicerad kl. 00:36 svensk tid utan omstart. Original är end
 Backup: `/root/charlottendal-backups/ui-e91f4da-20260925T223612Z`. `current` pekar på `/opt/charlottendal/releases/e91f4da`. Backendprocessen kör fortsatt från `c605c16` med byte-identisk backend. Dess tre statiska filer `public/app.js`, `public/index.html` och `public/admin-appearance.js` uppdaterades också atomiskt på plats. Vid återgång till 0.30.1 utan omstart: återställ dessa tre filer på `c605c16/public` från backupens `public/` och peka current mot `ae4c083`. Rör inga driftfiler. Nästa vanliga omstart använder hela e91f4da-releasen.
 
 Båda process-id oförändrade. Tågvägar, driftkontroller, TrainMeet, tidtabell och konfiguration oförändrade efter publiceringen. API-skyddet verifierat.
+
+## 26 september 2026 – manuell zoom 0.31.0
+
+Release `f917153` publicerad kl. 01:54 svensk tid. Zoomreglage 50–300 %, Visa hela, förhandsvisning och lokalt sparat val per webbläsare. Sju riktade prov och syntax godkända lokalt och på servern. Gränssnittets Spara/Avbryt, omladdning, flera flikar och återställd rullposition verifierade lokalt. Liveappen visar 0.31.0, menyvalet Zoom och dialogen; inga konsolfel.
+
+Publiceringen lade sex gränssnittsfiler på den redan körande processens public-katalog; backend och simulator startades inte om. Alla kontrollerade driftfiler var oförändrade. `current` pekar på f917153; körande processens arbetskatalog är fortfarande c605c16.
+
+Backup: `/root/charlottendal-backups/ui-f917153-20260925T235458Z`. Återgång utan omstart: återlägg app.js, index.html, admin-appearance.js, panel-fixed.css och panel-layout.js från backupens public till `/opt/charlottendal/releases/c605c16/public`; ta bort den i denna release nytillkomna panel-zoom.js där och peka current på e91f4da. Återställ inte driftdata. Vid nästa vanliga omstart används hela f917153-releasen.
+
+Tre ytterligare svartvita adminförslag (Linje, Register, Menyfack) framtagna som separat klickbar förhandsvisning. Inget av dessa utseenden är valt eller infört i produktion.

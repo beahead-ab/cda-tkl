@@ -362,3 +362,9 @@ Release `e91f4da` publicerad kl. 00:36 svensk tid utan omstart. Original är end
 Backup: `/root/charlottendal-backups/ui-e91f4da-20260925T223612Z`. `current` pekar på `/opt/charlottendal/releases/e91f4da`. Backendprocessen kör fortsatt från `c605c16` med byte-identisk backend. Dess tre statiska filer `public/app.js`, `public/index.html` och `public/admin-appearance.js` uppdaterades också atomiskt på plats. Vid återgång till 0.30.1 utan omstart: återställ dessa tre filer på `c605c16/public` från backupens `public/` och peka current mot `ae4c083`. Rör inga driftfiler. Nästa vanliga omstart använder hela e91f4da-releasen.
 
 Båda process-id oförändrade. Tågvägar, driftkontroller, TrainMeet, tidtabell och konfiguration oförändrade efter publiceringen. API-skyddet verifierat.
+
+## 0.31.0 – zoom per webbläsare, 26 september 01:54
+
+`current`: `/opt/charlottendal/releases/f917153`. Befintliga backend- och simulatorprocesser fortsätter utan omstart; körande backend serverar public ur c605c16. Fem befintliga UI-filer och nya panel-zoom.js har lagts där. Beroenden, backend, profiler, deploymentkonfiguration och driftfiler är oförändrade. Sju riktade prov, syntax, tjänststatus och API-skydd godkända.
+
+Backup: `/root/charlottendal-backups/ui-f917153-20260925T235458Z`. För UI-rollback, återställ backupens fem public-filer till c605c16/public, ta bort nya panel-zoom.js där, peka current tillbaka till e91f4da. Rör inte state-kopian eller aktuella driftfiler. Nästa ordinarie omstart använder current-releasen. Zoomvärden ligger endast i användarens lokala webbläsarlagring.
