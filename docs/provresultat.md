@@ -190,3 +190,5 @@ Syntaxkontroll godkänd. Isolerad webbläsarprovning på 9050: aktiv V1 visar 3 
 ## Version 0.26.3 – start-/slutindikering
 
 Syntaxkontroll och fyra renderingsprov godkända. Nytt prov täcker växling genom setting/establishing/clearing med stabila ändpunktsroller, samtliga avslutande driftfaser, kontaktbortfall, samtidiga vägar och delad knapp. Lokalt UI på 9050: första klick väljer Cu utan förberedelseblinkning; andra klick på Bu ger båda ändpunkterna aria-busy=true och 2,4 s / −1,2 s animation. Bekräftad klar väg har fast grönt i trafikskärmen, ingen animation och aria-busy=false. Samma två klick återtar vägen. Förloppet provat på Trafikskärm och Reläpanel; runda pluppar och fyrkanter stöds, ingen transform. Inga konsolfel.
+
+0.26.3 publicerad: fyra renderingsprov, syntax, omstartsprov och backendjämförelse godkända på servern. Efterkontroll bekräftade tre oförändrade reservationer i held, anslutning och skyddade API:er. Inloggad driftflik visar 0.26.3 utan konsolfel; ingen blinkning/aria-busy på stoppade vägars ändpunkter.
