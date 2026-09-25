@@ -184,3 +184,5 @@ Publicering 25 september kl. 02:47: samma prov och backendjämförelse godkända
 ## Version 0.26.2 – långsammare blinkning
 
 Syntaxkontroll godkänd. Isolerad webbläsarprovning på 9050: aktiv V1 visar 3 s ease-in-out och −1,5 s på höger lampa. Vilande V2/V3 saknar animation. Menyn innehåller exakt Lugn blinkning och Fast rött sken. Fast sken ger båda aktiva lamporna dämpat rött och behåller vilolamporna mörka. Inga konsolfel. Backend och aktiveringsvillkor oförändrade.
+
+0.26.2 publicerad: serverns syntax, tre renderingsprov, omstartsprov, tjänst-/åtkomst-/låskontroller godkända. Sparat lugnt läge kvar efter omladdning lokalt. Produktionsfliken kräver ny inloggning efter utgången session; inget inloggat UI-efterprov påstås.
