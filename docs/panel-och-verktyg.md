@@ -16,7 +16,7 @@ Spårtexterna använder normalvikt 400, med befintliga typsnittsfamiljer, storle
 
 ## Gemensam meny (0.19.0, lokalt färdig)
 
-Hamburgerknappen samlar Ställverk, TrainMeet, Utseende och ljud, Anslutningar, Anläggningsregister, Händelser och loggar samt Fullskärm. Från 0.20.0 ligger trafik- och manöverfunktionerna under panelen. Simulator och Byt lösenord visas i menyn när installationen erbjuder dem. TrainMeet har en egen sida på `/#trainmeet` med serveradress, parkoppling och tåginformation.
+Hamburgerknappen samlar Ställverk, TrainMeet, Tidtabell och import, Utseende och ljud, Anläggningsregister, Händelser, Avancerat samt Fullskärm. Från 0.20.0 ligger trafik- och manöverfunktionerna under panelen. Simulator och Byt lösenord visas i menyn när installationen erbjuder dem. TrainMeet har en egen sida på `/#trainmeet` med serveradress, parkoppling och tåginformation.
 
 Samma meny finns i sidhuvudet på stödsidorna. Den kan öppnas med tangentbord; pilknappar flyttar fokus. Escape stänger menyn före fullskärm eller startval, och klick utanför stänger den. Att bara öppna/stänga menyn bevarar panelens pågående startval. Menyn ryms även vid 390 pixlars bredd; längre menyer kan rullas.
 
@@ -33,8 +33,9 @@ Webbläsarprov: in/ut via knapp, Enter, Escape, signaluppgifter, Verktyg och til
 `/#tools` samlar stödfunktionerna i tre avsnitt:
 
 - **Utseende:** panelutseende, zoom, ljud och teckenförklaring.
-- **Anslutningar:** installationsöversikt samt länkar till TrainMeet och anläggningsregistret. Simulator och kontolänk finns i menyn.
-- **Händelser:** journal, protokolltrafik och telegraminspelning.
+- **Anläggningsregister:** profilinformation, objekt, visningsinställningar och driftbindningar. Den separata anslutningssidan är borttagen i 0.28.1. Simulator och kontolänk finns i menyn.
+- **Händelser:** driftjournal.
+- **Avancerat:** separata sidor för XML-granskning, införandestatus och protokollinspelning. Originalunderlag och sparade loggar bevaras.
 
 Anläggningsregistret finns kvar på `/#register`. Sidnavigationen och Tillbaka till ställverket återför till panelen. Webbläsarens bakåt/framåt och direktöppning av sidans adress fungerar. Funktionen Visa/Dölj verktyg på själva panelsidan är ersatt av sidbytet; profilpresentation, permanent instruktionstext, teckenförklaring och versionsfot visas inte på panelsidan.
 

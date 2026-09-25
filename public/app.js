@@ -35,9 +35,12 @@ $('crossing-display').onchange=()=>{setCrossingDisplay($('crossing-display').val
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
 let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport;
-const pageFromHash=()=>({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet','#import':'import'})[location.hash.split('/')[0]]||'panel';
+const pageFromHash=()=>{
+  if(location.hash==='#tools/connections')history.replaceState(null,'','#register');
+  return ({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet','#import':'import','#advanced':'advanced'})[location.hash.split('/')[0]]||'panel';
+};
 function setPage(page,{historyMode='push'}={}) {
-  let hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet',import:'#import'}[page];
+  let hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet',import:'#import',advanced:'#advanced'}[page];
   if(!hash)return;
   if(historyMode==='replace'&&location.hash.startsWith(hash+'/'))hash=location.hash;
   if(historyMode!=='none'&&location.hash!==hash)history[historyMode==='replace'?'replaceState':'pushState'](null,'',hash);
@@ -46,13 +49,13 @@ function setPage(page,{historyMode='push'}={}) {
   currentPage=page;document.body.dataset.page=page;
   appMenu?.close();panelConsole?.close();
   (page==='panel'?document.querySelector('.panel-actions'):$('header-menu-slot')).append($('menu-toggle'));
-  for(const p of ['panel','tools','admin','trainmeet','import']) {
+  for(const p of ['panel','tools','admin','trainmeet','import','advanced']) {
     $(p+'-view').hidden=p!==page;$(p+'-tab').classList.toggle('selected',p===page);
     if(p===page)$(p+'-tab').setAttribute('aria-current','page');else $(p+'-tab').removeAttribute('aria-current');
   }
-  document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet',import:'Tidtabell och import'})[page]+' · Charlottendal TKL';
+  document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet',import:'Tidtabell och import',advanced:'Avancerat'})[page]+' · Charlottendal TKL';
   window.scrollTo(0,0);syncAdminWorkspaces();paint();
-  if(page==='admin')return sourceRegister.open().catch(e=>message(e.message));
+  if(page==='admin'||page==='advanced')return sourceRegister.open().catch(e=>message(e.message));
 }
 function openTools(section) {
   if(panelConsole?.open(section))return;
@@ -446,7 +449,6 @@ async function start() {
   $('reset-ais').onclick=()=>api('all-stop',{enabled:false});
   $('account-link').hidden = !config.accountUrl;
   $('field-link').href = config.fieldUrl || 'http://127.0.0.1:8911/'; $('field-link').hidden = false;
-  $('profile-summary').textContent=`${config.routes.filter(r=>r.kind!=='shunt').length} huvudtågvägar och ${config.routes.filter(r=>r.kind==='shunt').length} växeltågvägar · ${Object.keys(config.turnouts).length} växlar · ${Object.keys(config.signals).length} signaler i provanläggningen.`;
   $('route-catalog').innerHTML=`<label>Från<select id="catalog-from"></select></label><label>Till<select id="catalog-to"></select></label><button id="catalog-request" class="primary" disabled>Lägg / återta tågväg</button><p id="catalog-hint" class="muted" hidden></p>`;
   function catalogHint(){const ids=[$('catalog-from').value,$('catalog-to').value].filter(id=>config.buttons[id]?.presentation==='catalog');$('catalog-hint').hidden=!ids.length;$('catalog-hint').textContent=ids.map(label).join(', ')+' väljs i listan. Använd Lägg / återta tågväg även för återtagning.';}
   function catalogOrder(ids){return $('route-mode').value==='shunt'?ids.sort((a,b)=>label(a).localeCompare(label(b),'sv',{numeric:true})):ids;}
@@ -465,12 +467,13 @@ async function start() {
   setSkin(localStorage.getItem('charlottendal-skin') || 'relay');
   $('zoom').onchange = () => { const value=$('zoom').value+'%';$('track-plan').style.width=value;$('track-plan').style.height=value; };
   createAdminAppearance();
-  for(const id of ['appearance','connections','journal'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
+  for(const id of ['appearance','journal'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
+  for(const id of ['xml','migration','protocol'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
   document.addEventListener('click',e=>{
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}
     const link=e.target.closest('a[href^="#"]');
-    const page={'#panel':'panel','#tools':'tools','#register':'admin','#trainmeet':'trainmeet','#import':'import'}[link?.getAttribute('href')];
+    const page={'#panel':'panel','#tools':'tools','#register':'admin','#trainmeet':'trainmeet','#import':'import','#advanced':'advanced'}[link?.getAttribute('href')];
     if(page){e.preventDefault();setPage(page);}
   });
   window.addEventListener('hashchange',()=>setPage(pageFromHash(),{historyMode:'none'}));

@@ -1,4 +1,4 @@
-# Administration och kalkylblad · 0.28.0
+# Administration och kalkylblad · 0.28.1
 
 ## Beslutad riktning
 
@@ -31,14 +31,14 @@ Spara utkast sparar hela kalkylbladet i en servertransaktion. Befintliga radiden
 
 Modaler skyddar osparad inmatning med Fortsätt redigera/Kasta ändringarna i samma dialog, utan staplade modaler. Kalkylblad och filval skyddas vid sidbyte och webbläsaren får ett beforeunload-skydd vid omladdning. Sparade utkast finns kvar på servern.
 
-## Förslag som inväntar Casper
+## Godkänd förenkling i 0.28.1
 
-Inga moduler har tagits bort i denna version. Två frågor har skickats för avstämning:
+Casper godkände båda rekommendationerna med ”ok kör”:
 
-1. Ta bort den separata sidan Anslutningar och konto, som endast dubblerar profilinformation och länkar; flytta profilinformationen till registret.
-2. Samla XML-granskning, införandestatus och protokollinspelning under Avancerat (rekommenderat), eller ta bort dessa verktyg ur gränssnittet tills vidare. Källunderlag och sparade loggar ska bevaras.
-
-Dessa ändringar genomförs först efter svar. Versionshistorik och aktiveringsspärrar rekommenderas kvar eftersom de ger återställning och kontrollerad driftsättning.
+- Den separata sidan Anslutningar och konto är borttagen. Profilinformationen visas i Anläggningsregistret. TrainMeet, simulatorn och lösenordsbyte nås fortsatt via menyn. Äldre länkar till `#tools/connections` leder till registret.
+- Avancerat samlar tre separata sidor: XML-granskning (`#advanced/xml`), införandestatus (`#advanced/migration`) och protokollinspelning (`#advanced/protocol`). Vanliga Händelser visar driftjournalen.
+- XML-granskningen kontrollerar originalets innehåll och importens spårbarhet. Originalfil, källavsnitt och full registersökning är fortsatt tillgängliga. Införandestatus länkar fortfarande till varje källgrupp. Sparade loggar och inspelningsfunktionen är bevarade.
+- Objektregistret, anteckningar, versionshistorik och aktiveringsspärrar finns kvar. Ingen ändring av backend, profiler, originaldata eller autentisering.
 
 ## Provning
 
@@ -49,3 +49,7 @@ Dessa ändringar genomförs först efter svar. Versionshistorik och aktiveringss
 - Namn/beskrivning sparades i visningsutkast. Driftbindningsmodal, anteckningsmodal, protokollnamndialog och återöppning av objekt-/kalkylbladssidor kontrollerades. Inga observerade konsolfel.
 - Visuell kontroll i faktisk 1280 × 720-vy. Försökt viewportbyte till mobilmått ändrade inte verktygets verkliga fönsterbredd; någon verifierad mobilrendering påstås därför inte.
 - Provdata skapades endast i den isolerade lokala installationen, inte i webbdriften.
+
+### Navigationsprov 0.28.1
+
+Syntaxkontroll och diffkontroll godkända. Isolerat UI-prov verifierade de tre nya ingångarna, XML-avsnitt till objektdetalj, hela registersökningen, direktlänk/omladdning av XML-sidan, införandestatus, inspelningsmodalens öppning/avbryt, ren händelsesida och äldre anslutningslänk till profilen i registret. Visuell kontroll av Avancerat och den förenklade menyn; inga konsolfel observerades. Ingen inspelning, tidtabell eller driftmanöver skapades för provet.
