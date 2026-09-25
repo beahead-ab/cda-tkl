@@ -204,3 +204,5 @@ Hela enhetssviten passerade: 178/178. Syntax och diffkontroll godkända.
 ## Version 0.28.0 – administration och kalkylblad
 
 183 enhetstester och sju processhelhetstester godkända. Utökat HTTP-processprov för kalkylblad, revision och omstart passerade också. Syntax och diffkontroll godkända. [UI-prov, inventering och kvarvarande avstämning](admin-forenkling.md).
+
+0.28.0 publicerad kl. 20:53 som f1ce9d8. Serverns 37 riktade prov, sju processhelhetsprov, låsomstartsprov och syntaxkontroll passerade. Efterkontroll verifierar anslutna tjänster, skyddade API:er, oförändrade admin-/inloggningsfiler och tre bevarade held-lås. Livegränssnittet visar den nya översikten och befintligt enradigt utkast i kalkylbladet; anslutningsmodal öppnad/avbruten utan ändringar. Inga konsolfel observerades. Ingen liveprovdata skapades.

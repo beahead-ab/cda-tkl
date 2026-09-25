@@ -17,16 +17,19 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Publicerat på webbadressen
 
-Version **0.27.0**, release `4058803`, publicerades 25 september kl. 20:04 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/). Cu → Spår 11, Bn → Spår 2b och Spår 1c → Spår 1a finns kvar i stopp med behållna lås efter omstarten. Simulatorn fortsatte köra. Inloggning och manöverspärrar bevarades.
+Version **0.28.0**, release `f1ce9d8`, publicerades 25 september kl. 20:53 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/). Cu → Spår 11, Bn → Spår 2b och Spår 1c → Spår 1a finns kvar i stopp med behållna lås efter omstarten. Simulatorn fortsatte köra. Inloggning och manöverspärrar bevarades.
 
 - Start- och slutplupp blinkar lugnt växelvis under förberedelsen av en accepterad tågväg. Klart läge ger fast sken; återtagning, hållna lås, AIS och kontaktbortfall ger ingen förberedelseblinkning.
 - Fast ställverksyta: status, spårplan, tidtabell och knappar har reserverade fält. Detaljer öppnas ovanpå, hover flyttar inga symboler och ljusflödet följer bildrutorna med monoton tidsmätning.
 - V1–V3 har släckta vilolampor och som standard lugn, dämpad röd växelblinkning (3 s per lampa och mjuka kanter). Meny → Utseende och ljud erbjuder även fast rött sken. Det ursprungliga snabba läget är borttaget. Aktiveringsvillkoren är oförändrade.
 - Stödfunktioner ligger i menyn. Objektinformation öppnas med högerklick nära objektet. Panelmanövrerna ligger under spårplanen och spårtexterna har normalvikt.
 - TrainMeet har en egen anslutningssida och en läsande tidtabellsadapter. Serveradress `https://server.trainmeet.app` och TKL-id `cda-tkl` är sparade. Serverns version 1.11.0 har identifierats; stationsval, anslutningskod och verklig parkoppling återstår.
+- Adminsidorna visar översikter med separat redigering. Tidtabeller redigeras på en egen kalkylbladssida med celler, tangentbordsstyrning, områdesmarkering, kopiera/klistra in, ångra/gör om och sparade utkast. Aktivering kräver godkännande. [Inventering och kvarvarande avstämning](admin-forenkling.md).
 - Samma låga kolumnfält visar tidtabellen från TrainMeet, manuell inmatning eller importerade filer.
 - Excel-/CSV-import med tio fasta kolumner och nedladdningsbara mallar fungerar utan AI-nyckel. Underlagen granskas och godkänns före användning. [Format och handhavande](tidtabellsimport.md).
 - Bilder/PDF kan förberedas för AI-tolkning, men serverns OpenAI-nyckel behöver fortfarande läggas in. Verklig tolkningskvalitet är ännu inte verifierad.
+
+Version 0.28.0 klarade 183 lokala enhetsprov, sju processhelhetsprov och ett utökat kalkylbladsprov över HTTP. På servern passerade 37 riktade prov, sju processhelhetsprov, låsomstartsprov och syntaxkontroll. Befintligt tidtabellsutkast, TrainMeet-inställningar, adminfiler, inloggning och tre tågvägslås bevarades. Inloggad webbläsare visar 0.28.0 och den nya kalkylbladssidan utan konsolfel. Inga moduler togs bort i väntan på Caspers beslut.
 
 Version 0.27.0 klarade 178 lokala enhetsprov samt riktat HTTP-processprov. På servern passerade 20 TrainMeet-prov, HTTP-processprov, omstartsprov och syntaxkontroll. Id:t sparades via det vanliga gränssnittet och verifierades efter omladdning.
 
@@ -49,7 +52,7 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
 
 ## Nästa praktiska steg
 
-[Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation och anslutningsstatus finns på den renodlade panelen; återtagning nås via panelens Tågvägar-knapp och stödfunktionerna via menyn. Casper kan nu provköra version 0.27.0 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
+[Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation och anslutningsstatus finns på den renodlade panelen; återtagning nås via panelens Tågvägar-knapp och stödfunktionerna via menyn. Casper kan nu provköra version 0.28.0 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
 
 Vid införandet av version 0.17.0 passerade 134 enhetstester och sex processhelhetstester. Backupens driftdata har återlästs i en isolerad kopia utan fältorder. Telegraminspelningen ger namngivna loggar med båda riktningarna, råtelegram och separat tolkning. Det förbereder jämförelsen mellan simulator och fysisk utrustning. Det ersätter inte hårdvaruanslutningen. Fortsätt samtidigt med verifierbara manöverfall, admin och visuell avstämning; aktivera inte okända signal- eller adressbindningar genom gissning.
 
