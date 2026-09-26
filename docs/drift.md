@@ -405,3 +405,24 @@ Aktiveringen blockerades av automatisk godkännandegranskning innan kommando
 kördes: den kräver särskild aktuell bekräftelse för omstart av båda tjänsterna.
 Bekräftelsefråga är skickad. Inget versionsbyte eller driftavbrott har utförts;
 aktiv release är fortfarande `b68e037`. Återtagningen ovan är utförd.
+
+## Publicerad 0.38.0 · 26 september 2026
+
+Efter användarens aktuella ”kör på bara” aktiverades `6680ea6` klockan
+07:27 svensk tid. Både TKL och simulator startades om efter kontroll av
+tom reservationslista, inga tåg eller belagda spår, alla 66 signaler i stopp
+och normal programmeringsmatning. Detta ersätter den tidigare väntande
+publiceringen av `d3dc628`.
+
+Backup: `/root/charlottendal-backups/network-6680ea6-20260926T052705Z`.
+Föregående release: `/opt/charlottendal/releases/b68e037`.
+Aktiv release: `/opt/charlottendal/releases/6680ea6`.
+
+242 lokala tester godkända före publicering. Serverns syntax-, riktade
+regressions- och processtester godkända. Efter omstart verifierades båda
+tjänsterna aktiva, LocoNet anslutet, skyddade API:er fortfarande skyddade,
+ingen kvarvarande reservation samt bevarade driftinställningar,
+autentisering och övriga sparade data. Inloggad produktionspanel kontrollerad:
+toast 10 px från överkant, återställning med text centrerad under spårplanen
+och cirkulär vändskiva med okänt sensorläge. Användarens öppna flik lämnades
+orörd och kan behöva laddas om för att hämta nya visningsfiler.
