@@ -426,3 +426,22 @@ autentisering och övriga sparade data. Inloggad produktionspanel kontrollerad:
 toast 10 px från överkant, återställning med text centrerad under spårplanen
 och cirkulär vändskiva med okänt sensorläge. Användarens öppna flik lämnades
 orörd och kan behöva laddas om för att hämta nya visningsfiler.
+
+## Förberedd 0.39.0 · endast möjliga målpluppar
+
+`8d36b4e` uppladdad och verifierad i separat releasekatalog. 247 lokala
+tester och tre processtester godkända. Serverkontroller godkända: syntax,
+37 riktade tester, 16 vägvals-/återtagnings-/måltester och elva
+övergångs-/processtester. Plupparna behåller ordinarie utseende; ogiltiga
+mål saknar hover och är inte valbara. Giltiga mål beräknas läsande av samma
+driftkontroll som manövern, inklusive hel-/delåtertagning.
+
+Aktiveringen nekades före körning av automatisk godkännandegranskning:
+ny aktuell bekräftelse krävs för denna omstart av båda tjänsterna. Fråga
+skickad till användaren. Aktiv produktion är fortsatt `6680ea6` (0.38.0).
+Senaste driftkontroll: inga reservationer, inga simulerade tåg, noll belagda
+spår, 0 körbesked av 66, inga simulerade fel och normal programmeringsmatning.
+Ingen backup eller omstart för 0.39.0 har utförts. Vid godkännande ska
+driftläget kontrolleras igen innan `/root/switch-network-8d36b4e.sh` körs;
+scriptet behöver först överföras från arbetskatalogen eftersom överföringen
+ingick i det nekade kommandot.
