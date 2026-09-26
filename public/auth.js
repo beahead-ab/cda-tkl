@@ -1,5 +1,14 @@
 const $ = id => document.getElementById(id);
-let state, busy = false;
+let state, busy = false, navigationMounted=false;
+async function mountAccountNavigation(){
+  if(navigationMounted)return;navigationMounted=true;
+  for(const href of ['/app.css','/admin-line.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=href;document.head.append(link);}
+  const {createAdminNavigation}=await import('./admin-navigation.js');
+  document.body.dataset.page='account';document.body.dataset.skin='original';
+  const header=document.createElement('header');header.className='app-header';header.innerHTML='<button id="admin-nav-toggle" type="button" aria-label="Öppna sidomenyn" aria-controls="admin-sidebar" aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="4" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="16" cy="10" r="1.5"/></svg></button><a class="brand" href="/#panel"><span>CHARLOTTENDAL</span></a>';
+  const sidebar=document.createElement('nav');sidebar.id='admin-sidebar';sidebar.setAttribute('aria-label','Administration');document.body.prepend(header,sidebar);createAdminNavigation({account:true});
+}
+
 function showError(error) { $('error').textContent = error.message; $('error').hidden = false; }
 async function call(action, data) {
   const res = await fetch('/api/auth/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
@@ -11,7 +20,9 @@ function render() {
   const authenticated = state.authenticated;
   $('login').hidden = authenticated; $('change').hidden = !authenticated;
   $('account-actions').hidden = !authenticated; $('back').hidden = state.mustChange;
-  $('heading').textContent = authenticated ? 'Välj ditt lösenord' : 'Logga in';
+  $('heading').textContent = authenticated ? (state.mustChange?'Välj ditt lösenord':'Byt lösenord') : 'Logga in';
+  document.title=$('heading').textContent+' · Charlottendal TKL';
+  if(authenticated&&!state.mustChange)mountAccountNavigation().catch(showError);
   $('intro').textContent = authenticated ? (state.mustChange ? 'Byt det tillfälliga lösenordet innan du öppnar ställverket.' : 'Här kan du byta lösenord. Övriga inloggningar avslutas när du sparar.') : 'Ange ditt lösenord för att öppna ställverket.';
 }
 async function submit(form, action) {

@@ -8,19 +8,11 @@
 </head>
 <body data-skin="original" data-page="panel" data-crossing-display="calm">
 <header class="app-header">
-  <a class="brand" href="#panel"><span>Charlottendal TKL</span></a>
-  <div class="connection" id="connection">Startar…</div><div id="header-menu-slot"></div>
+  <button id="admin-nav-toggle" type="button" aria-label="Öppna sidomenyn" aria-controls="admin-sidebar" aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="4" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="16" cy="10" r="1.5"/></svg></button>
+  <a class="brand" href="#panel"><span>CHARLOTTENDAL</span></a>
 </header>
-<nav id="admin-sidebar" aria-label="Administration">
-  <a class="admin-panel-link" href="#panel"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10H4m5-5-5 5 5 5"/></svg>Ställverket</a>
-  <span class="admin-nav-label">Administration</span>
-  <a href="#import">Tidtabeller</a>
-  <a href="#trainmeet">TrainMeet</a>
-  <a href="#register">Anläggning</a>
-  <a href="#tools/appearance">Utseende och ljud</a>
-  <a href="#tools/journal">Händelser</a>
-  <a href="#advanced">Avancerat</a>
-</nav>
+<nav id="admin-sidebar" aria-label="Administration"></nav>
+<div id="connection" class="connection" hidden>Startar…</div>
 <nav id="app-menu" class="app-menu" aria-label="Appmeny" hidden>
   <div class="app-menu-heading"><span class="app-menu-title">CHARLOTTENDAL</span><span id="panel-connection" class="connection" role="status">Startar…</span></div>
   <a id="panel-tab" href="#panel">Ställverk</a>
@@ -102,5 +94,5 @@
   <section id="advanced-protocol" hidden><div class="admin-workspace-heading"><h1 tabindex="-1">Protokollinspelning</h1><a href="#advanced">Tillbaka till Avancerat →</a></div><section class="card"><div id="recording-tools"></div></section><details class="card"><summary>Visa protokolltrafik</summary><pre id="wire"></pre></details></section>
 </main>
 <dialog id="inspector-host" class="inspector-host" aria-labelledby="inspector-heading"></dialog>
-<footer>Charlottendal TKL · version 0.32.0</footer>
+<footer>Charlottendal TKL · version 0.33.0</footer>
 </body></html>

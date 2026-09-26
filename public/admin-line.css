@@ -3,20 +3,30 @@ body:not([data-page=panel]),.admin-dialog{
   --page:#111110;--surface:#181817;--card:#181817;--border:#353534;
   --text:#efefed;--muted:#a4a4a1;--accent:#efefed;
 }
-#admin-sidebar{display:none}
-body:not([data-page=panel])>.app-header{height:48px;min-height:48px;flex-wrap:nowrap;padding:0 22px;background:var(--page);gap:18px}
-body:not([data-page=panel]) .brand>span{font-weight:500;font-size:11px;letter-spacing:2px}
-body:not([data-page=panel])>.app-header .connection{font-size:11px}
-body:not([data-page=panel]) #admin-sidebar{display:flex;position:fixed;top:48px;bottom:0;left:0;width:174px;padding:20px 10px;flex-direction:column;gap:3px;border-right:1px solid var(--border);background:var(--page);overflow:auto;z-index:20}
-#admin-sidebar a{display:flex;align-items:center;gap:8px;min-height:36px;padding:9px 12px;font-size:12px;color:var(--muted);border-radius:2px;text-decoration:none}
-#admin-sidebar a:hover{background:#20201f;color:var(--text)}
-#admin-sidebar a[aria-current=page]{background:#252524;box-shadow:inset 2px 0 var(--text);color:var(--text)}
+/* A fixed navigation rail; only its adjacent workspace changes. */
+body:not([data-page=panel]){--admin-rail:204px;--page:#141212;--surface:#1b1919;--card:#1b1919;background:var(--page)}
+#admin-sidebar,#admin-nav-toggle{display:none}
+body[data-page]:not([data-page=panel])>.app-header{position:fixed;top:0;left:0;width:var(--admin-rail);height:56px;min-height:56px;padding:0 18px;flex-wrap:nowrap;background:var(--page);border:0;border-right:1px solid var(--border);z-index:40}
+body:not([data-page=panel]) .brand>span{font-size:10px;font-weight:500;letter-spacing:1.7px}
+body:not([data-page=panel]) #admin-sidebar{display:flex;position:fixed;top:56px;bottom:0;left:0;width:var(--admin-rail);padding:4px 10px 16px;flex-direction:column;gap:3px;border-right:1px solid var(--border);background:var(--page);overflow:auto;z-index:35}
+#admin-sidebar a{display:flex;align-items:center;gap:8px;min-height:36px;padding:9px 12px;font-size:12px;color:var(--muted);border-radius:2px;text-decoration:none;line-height:1.4}
+#admin-sidebar a:hover{background:#242222;color:var(--text)}
+#admin-sidebar a[aria-current=page]{background:#2a2727;box-shadow:inset 2px 0 var(--text);color:var(--text)}
+#admin-sidebar .active-group>a{color:var(--text)}
 #admin-sidebar .admin-panel-link{color:var(--text);margin-bottom:22px}
 #admin-sidebar svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
 .admin-nav-label{font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);padding:0 12px 9px}
-body:not([data-page=panel])>:is(#tools-view,#trainmeet-view,#import-view,#admin-view,#advanced-view){margin:0 0 0 174px;max-width:none;padding:28px 30px 24px;min-height:calc(100dvh - 92px)}
-body:not([data-page=panel])>footer{margin-left:174px;padding:12px 30px;text-align:left;font-size:10px;color:var(--muted)}
+.admin-nav-children{margin:2px 0 9px 13px;border-left:1px solid var(--border);padding-left:5px}
+#admin-sidebar .admin-nav-children a{font-size:11px;padding:8px 10px;min-height:32px}
+.admin-nav-footer{margin-top:auto;padding-top:28px}
+#admin-nav-status .connection{margin:12px 12px 0;font-size:10px;line-height:1.5;align-items:baseline}
+#admin-nav-status .connection::before{flex:none}
+body:not([data-page=panel])>:is(#tools-view,#trainmeet-view,#import-view,#admin-view,#advanced-view,#account-view){margin:0 0 0 var(--admin-rail);max-width:none;padding:28px 32px 24px;min-height:calc(100dvh - 40px)}
+body:not([data-page=panel])>footer{margin-left:var(--admin-rail);padding:12px 32px;text-align:left;font-size:10px;color:var(--muted)}
 body:not([data-page=panel]) .back-to-panel{display:none}
+#admin-nav-shade{position:fixed;inset:48px 0 0;background:#0008;z-index:32}
+#admin-nav-toggle{width:34px;height:32px;padding:6px;background:transparent;border:1px solid transparent}
+#admin-nav-toggle svg{width:18px;height:18px;fill:currentColor;stroke:none}
 body:not([data-page=panel]) :is(h1,.admin-workspace>h2){font-size:24px;font-weight:400;letter-spacing:-.6px;margin:0}
 body:not([data-page=panel]) .tools-heading{margin-bottom:22px;justify-content:flex-start}
 body:not([data-page=panel]) :is(.tools-heading,.toolbar) .admin-scope{margin-left:auto}
@@ -67,22 +77,61 @@ body:not([data-page=panel]) .timetable-sheet td.sheet-selected{background:#35353
 body:not([data-page=panel]) .timetable-sheet td.sheet-current{outline-color:#dfdfd8;background:#41413d}
 body:not([data-page=panel]) .timetable-sheet :is(input,textarea){background:#30302c;outline-color:#dfdfd8;font-size:13px}
 body:not([data-page=panel]) .sheet-excluded td{color:#888884}
-@media(min-width:701px){body:not([data-page=panel]) #tools-view>.tools-sections{display:none}}
-@media(max-width:900px){body:not([data-page=panel])>:is(#tools-view,#trainmeet-view,#import-view,#admin-view,#advanced-view){padding:22px 20px}.admin-overview-grid{grid-template-columns:1fr}}
-@media(max-width:700px){
-  body:not([data-page=panel]) #admin-sidebar{display:none}
-  body:not([data-page=panel])>:is(#tools-view,#trainmeet-view,#import-view,#admin-view,#advanced-view){margin:0;padding:20px 16px}
+/* Normalize legacy source, diagnostics and configuration views. */
+body:not([data-page=panel]) :is(.tools-heading,.toolbar,.admin-workspace-heading){min-height:34px;align-items:flex-start;gap:12px;margin:0 0 22px}
+body:not([data-page=panel]) .admin-workspace-heading{flex-wrap:wrap}
+body:not([data-page=panel]) .admin-workspace-heading>a{font-size:11px;color:var(--muted);padding-top:8px}
+body:not([data-page=panel]) :is(#source-detail-heading,#journal-heading){font-size:24px;font-weight:400;letter-spacing:-.6px}
+body:not([data-page=panel]) .admin-workspace.card{border:0;padding-top:0}
+body:not([data-page=panel]) :is(.source-node>summary,.source-operational,.migration-row span,.event-row:first-child){color:var(--text)}
+body:not([data-page=panel]) .signal-live{background:var(--surface);border-radius:3px;padding:12px 16px}
+body:not([data-page=panel]) .signal-reference h3{font-size:13px;font-weight:500}
+body:not([data-page=panel]) .configuration :is(label,input,select,textarea){font-size:13px}
+body:not([data-page=panel]) .configuration-grid{grid-template-columns:minmax(160px,1fr) minmax(220px,2fr);gap:24px}
+body:not([data-page=panel]) .configuration-grid>div{min-width:0}
+body:not([data-page=panel]) :is(.configuration-review,.signal-reference-section,.import-format,.recording-row){border-color:var(--border)}
+body:not([data-page=panel]) .source-pagination{padding-top:12px}
+body:not([data-page=panel]) .source-field{grid-template-columns:minmax(140px,1fr) 2fr;gap:16px}
+body:not([data-page=panel]) .admin-import-choices{gap:24px}
+body:not([data-page=panel]) :is(.import-templates a,.admin-section-picker a){border-radius:3px;padding:8px 12px;font-size:12px}
+body:not([data-page=panel]) .source-audit p{font-family:inherit;font-size:13px;line-height:1.6}
+body:not([data-page=panel]) :is(#source-hash,#source-path,pre){font:11px/1.6 Menlo,monospace;overflow-wrap:anywhere}
+body:not([data-page=panel]) pre{background:#1b1919;border:1px solid var(--border);padding:14px;border-radius:3px;max-width:100%;overflow:auto}
+body:not([data-page=panel]) #tools-view>.tools-sections{display:none}
+body:not([data-page=panel]) .admin-dialog{left:var(--admin-rail);right:0;max-width:calc(100vw - var(--admin-rail) - 24px)}
+body:not([data-page=panel]) .admin-editor-toolbar{top:0}
+body:not([data-page=panel]) #global-status{top:14px}
+@media(min-width:540px) and (max-width:900px){
+  body:not([data-page=panel]){--admin-rail:168px}
+  body[data-page]:not([data-page=panel])>.app-header{padding:0 15px}
+  body:not([data-page=panel])>:is(#tools-view,#trainmeet-view,#import-view,#admin-view,#advanced-view,#account-view){padding:24px 20px}
+  #admin-sidebar{padding-inline:6px!important}#admin-sidebar a{padding-inline:9px;font-size:11px}
+}
+@media(max-width:900px){
+  body:not([data-page=panel]) :is(.admin-overview-grid,.admin-import-choices,.configuration-grid){grid-template-columns:1fr}
+  body:not([data-page=panel]) .admin-summary{grid-template-columns:130px minmax(0,1fr)}
+  body:not([data-page=panel]) .tools-heading .admin-scope{margin-left:0}
+  body:not([data-page=panel]) :is(#configuration-editor,#binding-editor)>.card{grid-template-columns:1fr;gap:9px}
+  body:not([data-page=panel]) :is(#configuration-editor,#binding-editor)>.card>button{grid-column:1;grid-row:auto;justify-self:start}
+  body:not([data-page=panel]) :is(.source-filters>label,.source-search){min-width:0;width:100%}
+  body:not([data-page=panel]) .source-field{grid-template-columns:1fr;gap:5px}
+  body:not([data-page=panel]) .migration-row{grid-template-columns:1fr}
+  body:not([data-page=panel]) .migration-row p{grid-column:1}
+}
+@media(max-width:539px){
+  body:not([data-page=panel]){--admin-rail:0px}
+  body[data-page]:not([data-page=panel])>.app-header{width:100%;height:48px;min-height:48px;padding:0 16px 0 56px;border-right:0;border-bottom:1px solid var(--border)}
+  body:not([data-page=panel]) #admin-nav-toggle{display:inline-flex;position:absolute;left:8px;top:8px;align-items:center;justify-content:center}
+  body:not([data-page=panel]) #admin-sidebar{display:none;top:48px;width:244px}
+  body[data-admin-nav-open]:not([data-page=panel]) #admin-sidebar{display:flex}
+  body[data-admin-nav-open]{overflow:hidden}
+  body:not([data-page=panel])>:is(#tools-view,#trainmeet-view,#import-view,#admin-view,#advanced-view,#account-view){margin:0;padding:68px 16px 20px}
   body:not([data-page=panel])>footer{margin:0;padding:12px 16px}
-  body:not([data-page=panel])>.app-header{padding:0 16px;gap:10px}
-  body:not([data-page=panel]) .brand>span{font-size:10px;letter-spacing:1px}
-  body:not([data-page=panel])>.app-header .connection{max-width:130px;font-size:10px}
-  body:not([data-page=panel]) .back-to-panel{display:block;border:0;padding:0;font-size:11px}
   body:not([data-page=panel]) .admin-summary{grid-template-columns:1fr}
   body:not([data-page=panel]) .admin-summary dt{padding:10px 0 3px;border:0}
   body:not([data-page=panel]) .admin-summary dd{padding:0 0 10px;margin:0}
-  body:not([data-page=panel]) .tools-heading .admin-scope{margin-left:0}
-  body:not([data-page=panel]) :is(h1,.admin-workspace>h2){font-size:22px}
-  body:not([data-page=panel]) :is(#configuration-editor,#binding-editor)>.card{grid-template-columns:1fr;gap:9px}
-  body:not([data-page=panel]) :is(#configuration-editor,#binding-editor)>.card>button{grid-column:1;grid-row:auto;justify-self:start}
+  body:not([data-page=panel]) :is(h1,.admin-workspace>h2,#source-detail-heading,#journal-heading){font-size:22px}
+  body:not([data-page=panel]) .admin-editor-toolbar{top:48px}
+  body:not([data-page=panel]) #global-status{top:56px}
   .admin-dialog>header,.admin-dialog-body{padding:16px}.admin-dialog-actions{padding:12px 16px}
 }

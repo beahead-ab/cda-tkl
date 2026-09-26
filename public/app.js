@@ -1,3 +1,4 @@
+import {createAdminNavigation} from './admin-navigation.js';
 import {createAdminAppearance} from './admin-appearance.js';
 import {createPanelZoom,createZoomDialog,zoomLabel} from './panel-zoom.js';
 import {syncAdminWorkspaces,registerAdminWorkspace} from './admin-ui.js';
@@ -17,6 +18,7 @@ import { createAppMenu } from './app-menu.js';
 import { createContextDialog } from './context-dialog.js';
 import { createPanelConsole } from './panel-console.js';
 const $ = id => document.getElementById(id);
+const adminNavigation=createAdminNavigation();
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const time = n => new Date(n).toLocaleTimeString('sv-SE');
 const crossingDisplays = {
@@ -37,6 +39,7 @@ let state, config, panel, registry, chosen = null, inspected = null, online = fa
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
 let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport;
 const pageFromHash=()=>{
+  if(location.hash==='#tools')history.replaceState(null,'','#tools/appearance');
   if(location.hash==='#tools/connections')history.replaceState(null,'','#register');
   return ({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet','#import':'import','#advanced':'advanced'})[location.hash.split('/')[0]]||'panel';
 };
@@ -49,16 +52,11 @@ function setPage(page,{historyMode='push'}={}) {
   if(currentPage!==page)clearChoice(false);
   currentPage=page;document.body.dataset.page=page;
   appMenu?.close();panelConsole?.close();
-  (page==='panel'?$('panel-menu-slot'):$('header-menu-slot')).append($('menu-toggle'));
   for(const p of ['panel','tools','admin','trainmeet','import','advanced']) {
     $(p+'-view').hidden=p!==page;$(p+'-tab').classList.toggle('selected',p===page);
     if(p===page)$(p+'-tab').setAttribute('aria-current','page');else $(p+'-tab').removeAttribute('aria-current');
   }
-  for(const link of $('admin-sidebar').querySelectorAll('a')) {
-    const href=link.getAttribute('href'),current=location.hash.split('?')[0];
-    const selected=current===href||current.startsWith(href+'/')||(href==='#tools/appearance'&&current==='#tools');
-    if(selected)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');
-  }
+  adminNavigation.sync();
   document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet',import:'Tidtabell och import',advanced:'Avancerat'})[page]+' · Charlottendal TKL';
   window.scrollTo(0,0);syncAdminWorkspaces();paint();
   if(page==='admin'||page==='advanced')return sourceRegister.open().catch(e=>message(e.message));
@@ -478,6 +476,7 @@ async function start() {
   $('toggle-authority').onclick=async()=>{if(await api('control-mode',{mode:state.controls.mode==='remote'?'local':'remote'}))clearChoice();};
   $('reset-ais').onclick=()=>api('all-stop',{enabled:false});
   $('account-link').hidden = !config.accountUrl;
+  adminNavigation.setAccount(!!config.accountUrl);
   $('field-link').href = config.fieldUrl || 'http://127.0.0.1:8911/'; $('field-link').hidden = false;
   $('route-catalog').innerHTML=`<label>Från<select id="catalog-from"></select></label><label>Till<select id="catalog-to"></select></label><button id="catalog-request" class="primary" disabled>Lägg / återta tågväg</button><p id="catalog-hint" class="muted" hidden></p>`;
   function catalogHint(){const ids=[$('catalog-from').value,$('catalog-to').value].filter(id=>config.buttons[id]?.presentation==='catalog');$('catalog-hint').hidden=!ids.length;$('catalog-hint').textContent=ids.map(label).join(', ')+' väljs i listan. Använd Lägg / återta tågväg även för återtagning.';}
