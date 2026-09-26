@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { extendExitRoute } from '../src/exit-route.mjs';
 import { Topology } from '../src/topology.mjs';
 import { RoutePolicy, signalPlan, attachSourceEndpoints } from '../src/route-policy.mjs';
 import { selectRoutePaths } from '../src/route-selection.mjs';
@@ -33,6 +34,7 @@ for(const [id,system] of Object.entries(catalogReview.controls)) {
   routeButtons[id]={label:id.slice(3),sourceSensor:system,presentation:'catalog'};
 }
 const isCatalogShunt=pair=>pair.from.startsWith('tvv')&&[pair.from,pair.to].some(id=>routeButtons[id]?.presentation==='catalog');
+const operatingControls=compileOperatingControls(source,panel,admin);
 const routePreferences=selectRoutePaths(topology,source,policy.allowed().filter(pair=>routeButtons[pair.from]&&routeButtons[pair.to]).map(pair=>({...policy.inspect(pair.from,pair.to),...pair})),{
   eligible:(request,candidate)=>!isCatalogShunt(request)||catalogReview.routes.some(r=>r.from===request.from&&r.to===request.to&&JSON.stringify(r.signals)===JSON.stringify(candidate.plan.signals))
 });
@@ -43,9 +45,9 @@ for (const pair of policy.allowed()) {
   const reviewed=kind==='shunt'&&[pair.from,pair.to].some(id=>routeButtons[id]?.presentation==='catalog')?catalogReview.routes.find(r=>r.from===pair.from&&r.to===pair.to):null;
   const options=routePreferences.get(decision.nxButtons.join('\0'))||[];
   const preferred=options.find(c=>!reviewed||JSON.stringify(c.plan.signals)===JSON.stringify(reviewed.signals));
-  const path = preferred?.path;
+  let path = preferred?.path;
   if (!path) { excluded.push({ ...pair, ...provenance, reason: 'Ingen sammanhängande väg mellan synliga knappar i den importerade grafen.' }); continue; }
-  const plan = signalPlan(topology, source, path);
+  let plan = signalPlan(topology, source, path);
   if (!plan.signals.length || plan.boundaries[0]?.sensor !== decision.nxButtons[0]) {
     excluded.push({ ...pair, ...provenance, signals: plan.signals, reason: 'Signalriktning/start stämmer inte entydigt med XML-regelns NX-start.' }); continue;
   }
@@ -64,7 +66,12 @@ for (const pair of policy.allowed()) {
     if(!reviewed) { excluded.push({...pair,...provenance,reason:'Listvalet saknar granskad källregel.'}); continue; }
     if(JSON.stringify(reviewed.rules)!==JSON.stringify(provenance.rules) || JSON.stringify(reviewed.nxButtons)!==JSON.stringify(decision.nxButtons) || JSON.stringify(reviewed.signals)!==JSON.stringify(plan.signals) || reviewed.target!==targetMast) throw Error('Ändrad granskad växeltågväg: '+pair.from+' → '+pair.to);
   }
-  const sensors = [...plan.boundaries.map(b => b.sensor), target];
+  if(kind==='main'&&Object.values(operatingControls.lines).some(line=>line.button===pair.to)){
+    path=extendExitRoute(topology,source,path,target,pair.to);
+    plan=signalPlan(topology,source,path);
+    if(plan.signals.at(-1)!==path.exitSignal)throw Error('Utfartssignalen saknas i den utökade vägen.');
+  }
+  const sensors = [...new Set([...plan.boundaries.map(b => b.sensor), target])];
   // A source NX pair can span intermediate signals. Keep that complete
   // identity as well as adjacent signal pairs for source locks and coverage.
   const requestedNxIds=source.nxPairs.filter(p=>p.fromSensor===decision.nxButtons[0] && p.toSensor===decision.nxButtons[1]).map(p=>p.id);
@@ -73,7 +80,7 @@ for (const pair of policy.allowed()) {
   const label = routeButtons[pair.from].label + ' → ' + routeButtons[pair.to].label;
   routes.push({ id: pair.from+'--'+pair.to, ...pair, label, kind, source: provenance, nxIds,
     blocks: path.blocks, turnouts: path.settings, crossings: path.crossings, segments: path.used,
-    flow: path.flow, signals: plan.signals, guardSignals: plan.guardSignals, boundaries: plan.boundaries,
+    flow: path.flow, ...(path.exitSignal?{exitSignal:path.exitSignal}:{}), signals: plan.signals, guardSignals: plan.guardSignals, boundaries: plan.boundaries,
     path: path.path, routePreference:preferred.preference, autoRelease: true });
 }
 for(const reviewed of catalogReview.routes) if(!routes.some(r=>r.from===reviewed.from && r.to===reviewed.to)) throw Error('Granskad växeltågväg kunde inte anslutas: '+reviewed.from+' → '+reviewed.to);
@@ -117,7 +124,6 @@ for (const route of routes) for (let i=0;i<route.boundaries.length;i++) {
   if(!list.some(o=>JSON.stringify(o)===JSON.stringify(option))) list.push(option);
 }
 const manualPolicies=compileManualPolicies(source,{turnouts,blocks,coupled,protection});
-const operatingControls=compileOperatingControls(source,panel,admin);
 for(const line of Object.values(operatingControls.lines)) {
   const block=topology.segments[topology.buttons[line.button]?.segment]?.b;
   if(!block||!blocks[block])throw Error('Linjeknappen saknar spåranknytning: '+line.id);

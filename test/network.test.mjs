@@ -61,7 +61,7 @@ test('Spår6 catalog routes keep their distinct source NX boundaries and protect
   const cu=six.find(r=>r.from==='htvCu'),bu=six.find(r=>r.from==='htvBu'),out=six.find(r=>r.from==='htvSpVI'&&r.to==='htvCu');
   assert.deepEqual(cu.source.nxButtons,['tvs1/3','tvs6/9']);assert.deepEqual(cu.signals,['1/3','1/5','5/5','6/7']);assert.ok(cu.guardSignals.includes('6/9'));
   assert.deepEqual(bu.source.nxButtons,['tvs1/2','tvs6/8']);assert.deepEqual(bu.signals,['1/2','1/4','3/6','6/6']);assert.ok(bu.guardSignals.includes('6/8'));
-  assert.deepEqual(out.source.nxButtons,['tvs6/8','tvsU4']);assert.equal(out.signals[0],'6/8');assert.ok(out.guardSignals.includes('U4'));
+  assert.deepEqual(out.source.nxButtons,['tvs6/8','tvsU4']);assert.equal(out.signals[0],'6/8');assert.equal(out.signals.at(-1),'U4');assert.ok(out.blocks.includes('SU4A'));assert.ok(!out.guardSignals.includes('U4'));
   for(const def of six) {
     const r=rig();r.field.setBlock(def.blocks[0],true);r.drain();
     assert.throws(()=>r.request(def.from,def.to),/belagt|okänt/);assert.equal(r.engine.routes.length,0);
@@ -461,4 +461,36 @@ for(const occupied of [false,true])test(`original start and final end cancel the
  assert.equal(independent.state,'active');assert.ok(r.engine.routes.includes(independent));
  if(occupied){assert.ok(r.engine.routes.includes(a));r.field.setBlock(a.blocks[0],false);r.drain();r.advance(1000);}
  assert.deepEqual(r.engine.routes.map(x=>x.id),[independent.id]);
+});
+
+test('every connected line exit clears its outward signal only with the line detector reserved and free',()=>{
+  const exits={htvBu:'U1',htvBn:'N1',htvAu:'U2',htvAn:'N2',htvCu:'U4',htvCn:'N4'};
+  for(const [button,signal] of Object.entries(exits)){
+    const defs=mainRoutes.filter(r=>r.to===button);
+    assert(defs.length);
+    const line=Object.values(profile.operatingControls.lines).find(l=>l.button===button);
+    for(const def of defs){
+      assert.equal(def.exitSignal,signal);assert.equal(def.signals.at(-1),signal);
+      assert(!def.guardSignals.includes(signal));assert(def.blocks.includes(line.blocks[0]));
+      assert.equal(def.signalEntries.at(-1).signal,signal);
+      assert.equal(fieldProfile.protection[signal].alternatives.length,1);
+      assert.deepEqual(fieldProfile.protection[signal].alternatives[0].blocks,line.blocks);
+    }
+    const def=defs.sort((a,b)=>a.blocks.length-b.blocks.length)[0];
+    const r=rig();r.field.setBlock(line.blocks[0],true);r.drain();
+    assert.throws(()=>r.request(def.from,def.to),/belagt/);
+    assert.equal(r.engine.routes.length,0);
+    r.field.setBlock(line.blocks[0],false);r.drain();
+    const active=r.request(def.from,def.to);r.advance(6500);
+    assert.equal(active.state,'active',active.reason);assert.equal(r.engine.signals[signal].aspect,'go');
+    for(const guard of def.guardSignals)assert.equal(r.engine.signals[guard].aspect,'stop');
+    r.request(def.from,def.to);r.drain();r.advance(300);
+    assert.equal(r.engine.routes.length,0);assert.equal(r.engine.signals[signal].aspect,'stop');
+    const fault=rig();fault.field.setFault('signal',signal);fault.drain();
+    const failed=fault.request(def.from,def.to);fault.advance(10000);
+    assert.notEqual(failed.state,'active');assert.equal(fault.engine.signals[signal].aspect,'stop');
+    assert.equal(fault.engine.signals[def.signals[0]].aspect,'stop');
+  }
+  assert(shuntRoutes.every(r=>!r.exitSignal),'Shunting targets remain STOP boundaries');
+  assert(mainRoutes.filter(r=>!Object.keys(exits).includes(r.to)).every(r=>!r.exitSignal));
 });

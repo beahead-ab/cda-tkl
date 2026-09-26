@@ -2631,7 +2631,31 @@
             "Vx162": "C",
             "Vx165": "C"
           },
-          "nextSignal": null
+          "nextSignal": "U1"
+        },
+        {
+          "blocks": [
+            "S160b",
+            "S160",
+            "S160a",
+            "S162",
+            "S162c",
+            "S166c",
+            "S166",
+            "S166a",
+            "S170",
+            "S171",
+            "SN1B"
+          ],
+          "turnouts": {
+            "Vx160": "C",
+            "Vx162": "T",
+            "Vx166": "T",
+            "Vx170": "C",
+            "Vx171": "C",
+            "Vx165": "T"
+          },
+          "nextSignal": "N1"
         },
         {
           "blocks": [
@@ -2656,6 +2680,24 @@
             "Vx165": "T"
           },
           "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S160b",
+            "S160",
+            "S160a",
+            "S162",
+            "S165b",
+            "S165",
+            "S165a",
+            "SU1B"
+          ],
+          "turnouts": {
+            "Vx160": "C",
+            "Vx162": "C",
+            "Vx165": "C"
+          },
+          "nextSignal": null
         }
       ]
     },
@@ -2670,7 +2712,7 @@
           "turnouts": {
             "Vx95": "T"
           },
-          "nextSignal": null
+          "nextSignal": "U2"
         },
         {
           "blocks": [
@@ -2679,6 +2721,27 @@
           ],
           "turnouts": {
             "Vx95": "C"
+          },
+          "nextSignal": "U4"
+        },
+        {
+          "blocks": [
+            "S95",
+            "SU4B"
+          ],
+          "turnouts": {
+            "Vx95": "C"
+          },
+          "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S95",
+            "S95b",
+            "SU2B"
+          ],
+          "turnouts": {
+            "Vx95": "T"
           },
           "nextSignal": null
         }
@@ -3244,6 +3307,48 @@
             "Vx171": "C",
             "Vx165": "T"
           },
+          "nextSignal": "N1"
+        },
+        {
+          "blocks": [
+            "S160c",
+            "S160",
+            "S160a",
+            "S162",
+            "S165b",
+            "S165",
+            "S165a",
+            "SU1B"
+          ],
+          "turnouts": {
+            "Vx160": "T",
+            "Vx162": "C",
+            "Vx165": "C"
+          },
+          "nextSignal": "U1"
+        },
+        {
+          "blocks": [
+            "S160c",
+            "S160",
+            "S160a",
+            "S162",
+            "S162c",
+            "S166c",
+            "S166",
+            "S166a",
+            "S170",
+            "S171",
+            "SN1B"
+          ],
+          "turnouts": {
+            "Vx160": "T",
+            "Vx162": "T",
+            "Vx166": "T",
+            "Vx170": "C",
+            "Vx171": "C",
+            "Vx165": "T"
+          },
           "nextSignal": null
         },
         {
@@ -3383,6 +3488,50 @@
             "Vx171": "C",
             "Vx153": "C"
           },
+          "nextSignal": "N1"
+        },
+        {
+          "blocks": [
+            "S161b",
+            "S161",
+            "S161a",
+            "S163",
+            "S163c",
+            "S165c",
+            "S165",
+            "S165a",
+            "SU1B"
+          ],
+          "turnouts": {
+            "Vx161": "C",
+            "Vx163": "T",
+            "Vx165": "T",
+            "Vx153": "C",
+            "Vx162": "T"
+          },
+          "nextSignal": "U1"
+        },
+        {
+          "blocks": [
+            "S161b",
+            "S161",
+            "S161a",
+            "S163",
+            "S166b",
+            "S166",
+            "S166a",
+            "S170",
+            "S171",
+            "SN1B"
+          ],
+          "turnouts": {
+            "Vx161": "C",
+            "Vx163": "C",
+            "Vx166": "C",
+            "Vx170": "C",
+            "Vx171": "C",
+            "Vx153": "C"
+          },
           "nextSignal": null
         },
         {
@@ -3410,6 +3559,27 @@
     },
     "2/12": {
       "alternatives": [
+        {
+          "blocks": [
+            "S96",
+            "SN2B"
+          ],
+          "turnouts": {
+            "Vx96": "T"
+          },
+          "nextSignal": "N2"
+        },
+        {
+          "blocks": [
+            "S96",
+            "S96b",
+            "SN4B"
+          ],
+          "turnouts": {
+            "Vx96": "C"
+          },
+          "nextSignal": "N4"
+        },
         {
           "blocks": [
             "S96",
@@ -4205,7 +4375,7 @@
             "Vx170": "C",
             "Vx171": "C"
           },
-          "nextSignal": null
+          "nextSignal": "N1"
         },
         {
           "blocks": [
@@ -4227,6 +4397,30 @@
             "Vx165": "T",
             "Vx162": "T"
           },
+          "nextSignal": "U1"
+        },
+        {
+          "blocks": [
+            "S153",
+            "S161c",
+            "S161",
+            "S161a",
+            "S163",
+            "S166b",
+            "S166",
+            "S166a",
+            "S170",
+            "S171",
+            "SN1B"
+          ],
+          "turnouts": {
+            "Vx153": "T",
+            "Vx161": "T",
+            "Vx163": "C",
+            "Vx166": "C",
+            "Vx170": "C",
+            "Vx171": "C"
+          },
           "nextSignal": null
         },
         {
@@ -4240,6 +4434,28 @@
             "Vx153": "C",
             "Vx164": "C",
             "Vx161": "C"
+          },
+          "nextSignal": null
+        },
+        {
+          "blocks": [
+            "S153",
+            "S161c",
+            "S161",
+            "S161a",
+            "S163",
+            "S163c",
+            "S165c",
+            "S165",
+            "S165a",
+            "SU1B"
+          ],
+          "turnouts": {
+            "Vx153": "T",
+            "Vx161": "T",
+            "Vx163": "T",
+            "Vx165": "T",
+            "Vx162": "T"
           },
           "nextSignal": null
         }
@@ -5663,22 +5879,70 @@
       "alternatives": []
     },
     "N1": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "SN1A"
+          ],
+          "turnouts": {},
+          "nextSignal": null
+        }
+      ]
     },
     "N2": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "SN2A"
+          ],
+          "turnouts": {},
+          "nextSignal": null
+        }
+      ]
     },
     "N4": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "SN4A"
+          ],
+          "turnouts": {},
+          "nextSignal": null
+        }
+      ]
     },
     "U1": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "SU1A"
+          ],
+          "turnouts": {},
+          "nextSignal": null
+        }
+      ]
     },
     "U2": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "SU2A"
+          ],
+          "turnouts": {},
+          "nextSignal": null
+        }
+      ]
     },
     "U4": {
-      "alternatives": []
+      "alternatives": [
+        {
+          "blocks": [
+            "SU4A"
+          ],
+          "turnouts": {},
+          "nextSignal": null
+        }
+      ]
     },
     "Xv": {
       "alternatives": []
@@ -6378,7 +6642,8 @@
         "S165b",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "1/1",
       "signals": [
@@ -6386,7 +6651,8 @@
         "1/5",
         "1/7",
         "1/9",
-        "1/11"
+        "1/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -6408,6 +6674,10 @@
         {
           "signal": "1/11",
           "index": 14
+        },
+        {
+          "signal": "U1",
+          "index": 19
         }
       ],
       "turnouts": {
@@ -6456,7 +6726,8 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "1/1",
       "signals": [
@@ -6464,7 +6735,8 @@
         "1/5",
         "1/7",
         "1/9",
-        "1/11"
+        "1/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -6486,6 +6758,10 @@
         {
           "signal": "1/11",
           "index": 14
+        },
+        {
+          "signal": "N1",
+          "index": 21
         }
       ],
       "turnouts": {
@@ -7147,7 +7423,8 @@
         "S165b",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "2/1",
       "signals": [
@@ -7155,7 +7432,8 @@
         "2/5",
         "2/7",
         "2/9",
-        "1/11"
+        "1/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -7177,6 +7455,10 @@
         {
           "signal": "1/11",
           "index": 14
+        },
+        {
+          "signal": "U1",
+          "index": 19
         }
       ],
       "turnouts": {
@@ -7237,7 +7519,8 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "2/1",
       "signals": [
@@ -7245,7 +7528,8 @@
         "2/5",
         "5/5",
         "5/9",
-        "3/11"
+        "3/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -7267,6 +7551,10 @@
         {
           "signal": "3/11",
           "index": 15
+        },
+        {
+          "signal": "N1",
+          "index": 23
         }
       ],
       "turnouts": {
@@ -7951,7 +8239,8 @@
         "S165b",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "1/3",
       "signals": [
@@ -7959,7 +8248,8 @@
         "1/5",
         "1/7",
         "1/9",
-        "1/11"
+        "1/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -7981,6 +8271,10 @@
         {
           "signal": "1/11",
           "index": 13
+        },
+        {
+          "signal": "U1",
+          "index": 18
         }
       ],
       "turnouts": {
@@ -8028,7 +8322,8 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "1/3",
       "signals": [
@@ -8036,7 +8331,8 @@
         "1/5",
         "1/7",
         "1/9",
-        "1/11"
+        "1/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -8058,6 +8354,10 @@
         {
           "signal": "1/11",
           "index": 13
+        },
+        {
+          "signal": "N1",
+          "index": 20
         }
       ],
       "turnouts": {
@@ -8731,7 +9031,8 @@
         "S165b",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "2/3",
       "signals": [
@@ -8739,7 +9040,8 @@
         "2/5",
         "2/7",
         "2/9",
-        "1/11"
+        "1/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -8761,6 +9063,10 @@
         {
           "signal": "1/11",
           "index": 15
+        },
+        {
+          "signal": "U1",
+          "index": 20
         }
       ],
       "turnouts": {
@@ -8813,7 +9119,8 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "2/3",
       "signals": [
@@ -8821,7 +9128,8 @@
         "2/5",
         "2/7",
         "2/9",
-        "2/11"
+        "2/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -8843,6 +9151,10 @@
         {
           "signal": "2/11",
           "index": 15
+        },
+        {
+          "signal": "N1",
+          "index": 22
         }
       ],
       "turnouts": {
@@ -9647,7 +9959,8 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "1/2",
       "signals": [
@@ -9656,7 +9969,8 @@
         "1/6",
         "1/8",
         "1/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -9682,6 +9996,10 @@
         {
           "signal": "1/12",
           "index": 16
+        },
+        {
+          "signal": "U2",
+          "index": 19
         }
       ],
       "turnouts": {
@@ -9729,7 +10047,8 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "1/2",
       "signals": [
@@ -9738,7 +10057,8 @@
         "1/6",
         "2/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -9764,6 +10084,10 @@
         {
           "signal": "2/12",
           "index": 17
+        },
+        {
+          "signal": "N2",
+          "index": 19
         }
       ],
       "turnouts": {
@@ -9811,7 +10135,8 @@
         "S100a",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "1/2",
       "signals": [
@@ -9820,7 +10145,8 @@
         "1/6",
         "1/8",
         "1/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -9846,6 +10172,10 @@
         {
           "signal": "1/12",
           "index": 16
+        },
+        {
+          "signal": "U4",
+          "index": 18
         }
       ],
       "turnouts": {
@@ -9894,7 +10224,8 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "1/2",
       "signals": [
@@ -9903,7 +10234,8 @@
         "1/6",
         "2/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -9929,6 +10261,10 @@
         {
           "signal": "2/12",
           "index": 17
+        },
+        {
+          "signal": "N4",
+          "index": 20
         }
       ],
       "turnouts": {
@@ -10779,7 +11115,8 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "2/2",
       "signals": [
@@ -10788,7 +11125,8 @@
         "2/6",
         "1/8",
         "1/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -10814,6 +11152,10 @@
         {
           "signal": "1/12",
           "index": 18
+        },
+        {
+          "signal": "U2",
+          "index": 21
         }
       ],
       "turnouts": {
@@ -10875,7 +11217,8 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "2/2",
       "signals": [
@@ -10884,7 +11227,8 @@
         "3/6",
         "5/8",
         "3/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -10910,6 +11254,10 @@
         {
           "signal": "2/12",
           "index": 21
+        },
+        {
+          "signal": "N2",
+          "index": 23
         }
       ],
       "turnouts": {
@@ -10963,7 +11311,8 @@
         "S100a",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "2/2",
       "signals": [
@@ -10972,7 +11321,8 @@
         "1/6",
         "1/8",
         "1/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -10998,6 +11348,10 @@
         {
           "signal": "1/12",
           "index": 18
+        },
+        {
+          "signal": "U4",
+          "index": 20
         }
       ],
       "turnouts": {
@@ -11050,7 +11404,8 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "2/2",
       "signals": [
@@ -11059,7 +11414,8 @@
         "2/6",
         "2/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -11085,6 +11441,10 @@
         {
           "signal": "2/12",
           "index": 19
+        },
+        {
+          "signal": "N4",
+          "index": 22
         }
       ],
       "turnouts": {
@@ -11214,12 +11574,14 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "1/10",
       "signals": [
         "1/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -11229,6 +11591,10 @@
         {
           "signal": "1/12",
           "index": 4
+        },
+        {
+          "signal": "U2",
+          "index": 7
         }
       ],
       "turnouts": {
@@ -11262,13 +11628,15 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "1/7",
       "signals": [
         "1/7",
         "1/9",
-        "1/11"
+        "1/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -11282,6 +11650,10 @@
         {
           "signal": "1/11",
           "index": 6
+        },
+        {
+          "signal": "N1",
+          "index": 13
         }
       ],
       "turnouts": {
@@ -11317,13 +11689,15 @@
         "S165b",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "1/7",
       "signals": [
         "1/7",
         "1/9",
-        "1/11"
+        "1/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -11337,6 +11711,10 @@
         {
           "signal": "1/11",
           "index": 6
+        },
+        {
+          "signal": "U1",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -11358,12 +11736,14 @@
         "S100a",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "1/10",
       "signals": [
         "1/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -11373,6 +11753,10 @@
         {
           "signal": "1/12",
           "index": 4
+        },
+        {
+          "signal": "U4",
+          "index": 6
         }
       ],
       "turnouts": {
@@ -11570,12 +11954,14 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "2/10",
       "signals": [
         "2/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -11585,6 +11971,10 @@
         {
           "signal": "2/12",
           "index": 5
+        },
+        {
+          "signal": "N2",
+          "index": 7
         }
       ],
       "turnouts": {
@@ -11607,12 +11997,14 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "2/10",
       "signals": [
         "2/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -11622,6 +12014,10 @@
         {
           "signal": "1/12",
           "index": 5
+        },
+        {
+          "signal": "U2",
+          "index": 8
         }
       ],
       "turnouts": {
@@ -11655,13 +12051,15 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "2/7",
       "signals": [
         "2/7",
         "4/9",
-        "3/11"
+        "3/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -11675,6 +12073,10 @@
         {
           "signal": "3/11",
           "index": 6
+        },
+        {
+          "signal": "N1",
+          "index": 14
         }
       ],
       "turnouts": {
@@ -11712,13 +12114,15 @@
         "S165b",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "2/7",
       "signals": [
         "2/7",
         "2/9",
-        "1/11"
+        "1/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -11732,6 +12136,10 @@
         {
           "signal": "1/11",
           "index": 6
+        },
+        {
+          "signal": "U1",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -11757,12 +12165,14 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "2/10",
       "signals": [
         "2/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -11772,6 +12182,10 @@
         {
           "signal": "2/12",
           "index": 5
+        },
+        {
+          "signal": "N4",
+          "index": 8
         }
       ],
       "turnouts": {
@@ -11793,12 +12207,14 @@
         "S100a",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "2/10",
       "signals": [
         "2/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -11808,6 +12224,10 @@
         {
           "signal": "1/12",
           "index": 5
+        },
+        {
+          "signal": "U4",
+          "index": 7
         }
       ],
       "turnouts": {
@@ -11904,12 +12324,14 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "3/10",
       "signals": [
         "3/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -11919,6 +12341,10 @@
         {
           "signal": "2/12",
           "index": 5
+        },
+        {
+          "signal": "N2",
+          "index": 7
         }
       ],
       "turnouts": {
@@ -11945,12 +12371,14 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "3/10",
       "signals": [
         "3/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -11960,6 +12388,10 @@
         {
           "signal": "1/12",
           "index": 6
+        },
+        {
+          "signal": "U2",
+          "index": 9
         }
       ],
       "turnouts": {
@@ -12000,13 +12432,15 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "3/5",
       "signals": [
         "3/5",
         "5/9",
-        "3/11"
+        "3/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -12020,6 +12454,10 @@
         {
           "signal": "3/11",
           "index": 7
+        },
+        {
+          "signal": "N1",
+          "index": 15
         }
       ],
       "turnouts": {
@@ -12065,13 +12503,15 @@
         "S165c",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "3/5",
       "signals": [
         "3/5",
         "5/9",
-        "3/11"
+        "3/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -12085,6 +12525,10 @@
         {
           "signal": "3/11",
           "index": 7
+        },
+        {
+          "signal": "U1",
+          "index": 13
         }
       ],
       "turnouts": {
@@ -12115,12 +12559,14 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "3/10",
       "signals": [
         "3/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -12130,6 +12576,10 @@
         {
           "signal": "2/12",
           "index": 5
+        },
+        {
+          "signal": "N4",
+          "index": 8
         }
       ],
       "turnouts": {
@@ -12155,12 +12605,14 @@
         "S100b",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "3/10",
       "signals": [
         "3/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -12170,6 +12622,10 @@
         {
           "signal": "1/12",
           "index": 6
+        },
+        {
+          "signal": "U4",
+          "index": 8
         }
       ],
       "turnouts": {
@@ -12269,12 +12725,14 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "4/10",
       "signals": [
         "4/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -12284,6 +12742,10 @@
         {
           "signal": "2/12",
           "index": 6
+        },
+        {
+          "signal": "N2",
+          "index": 8
         }
       ],
       "turnouts": {
@@ -12313,12 +12775,14 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "4/10",
       "signals": [
         "4/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -12328,6 +12792,10 @@
         {
           "signal": "1/12",
           "index": 7
+        },
+        {
+          "signal": "U2",
+          "index": 10
         }
       ],
       "turnouts": {
@@ -12369,13 +12837,15 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "4/5",
       "signals": [
         "4/5",
         "5/9",
-        "3/11"
+        "3/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -12389,6 +12859,10 @@
         {
           "signal": "3/11",
           "index": 7
+        },
+        {
+          "signal": "N1",
+          "index": 15
         }
       ],
       "turnouts": {
@@ -12434,13 +12908,15 @@
         "S165c",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "4/5",
       "signals": [
         "4/5",
         "5/9",
-        "3/11"
+        "3/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -12454,6 +12930,10 @@
         {
           "signal": "3/11",
           "index": 7
+        },
+        {
+          "signal": "U1",
+          "index": 13
         }
       ],
       "turnouts": {
@@ -12486,12 +12966,14 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "4/10",
       "signals": [
         "4/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -12501,6 +12983,10 @@
         {
           "signal": "2/12",
           "index": 6
+        },
+        {
+          "signal": "N4",
+          "index": 9
         }
       ],
       "turnouts": {
@@ -12529,12 +13015,14 @@
         "S100b",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "4/10",
       "signals": [
         "4/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -12544,6 +13032,10 @@
         {
           "signal": "1/12",
           "index": 7
+        },
+        {
+          "signal": "U4",
+          "index": 9
         }
       ],
       "turnouts": {
@@ -12638,12 +13130,14 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "5/10",
       "signals": [
         "5/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -12653,6 +13147,10 @@
         {
           "signal": "2/12",
           "index": 6
+        },
+        {
+          "signal": "N2",
+          "index": 8
         }
       ],
       "turnouts": {
@@ -12682,12 +13180,14 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "5/10",
       "signals": [
         "5/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -12697,6 +13197,10 @@
         {
           "signal": "1/12",
           "index": 7
+        },
+        {
+          "signal": "U2",
+          "index": 10
         }
       ],
       "turnouts": {
@@ -12736,13 +13240,15 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "5/5",
       "signals": [
         "5/5",
         "5/9",
-        "3/11"
+        "3/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -12756,6 +13262,10 @@
         {
           "signal": "3/11",
           "index": 6
+        },
+        {
+          "signal": "N1",
+          "index": 14
         }
       ],
       "turnouts": {
@@ -12798,13 +13308,15 @@
         "S165c",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "5/5",
       "signals": [
         "5/5",
         "5/9",
-        "3/11"
+        "3/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -12818,6 +13330,10 @@
         {
           "signal": "3/11",
           "index": 6
+        },
+        {
+          "signal": "U1",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -12849,12 +13365,14 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "5/10",
       "signals": [
         "5/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -12864,6 +13382,10 @@
         {
           "signal": "2/12",
           "index": 6
+        },
+        {
+          "signal": "N4",
+          "index": 9
         }
       ],
       "turnouts": {
@@ -12892,12 +13414,14 @@
         "S100b",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "5/10",
       "signals": [
         "5/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -12907,6 +13431,10 @@
         {
           "signal": "1/12",
           "index": 7
+        },
+        {
+          "signal": "U4",
+          "index": 9
         }
       ],
       "turnouts": {
@@ -13037,13 +13565,15 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "1/8",
       "signals": [
         "1/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -13057,6 +13587,10 @@
         {
           "signal": "2/12",
           "index": 10
+        },
+        {
+          "signal": "N2",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -13084,13 +13618,15 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "1/8",
       "signals": [
         "1/8",
         "1/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -13104,6 +13640,10 @@
         {
           "signal": "1/12",
           "index": 7
+        },
+        {
+          "signal": "U2",
+          "index": 10
         }
       ],
       "turnouts": {
@@ -13136,12 +13676,14 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "1/9",
       "signals": [
         "1/9",
-        "1/11"
+        "1/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -13151,6 +13693,10 @@
         {
           "signal": "1/11",
           "index": 3
+        },
+        {
+          "signal": "N1",
+          "index": 10
         }
       ],
       "turnouts": {
@@ -13181,12 +13727,14 @@
         "S165b",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "1/9",
       "signals": [
         "1/9",
-        "1/11"
+        "1/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -13196,6 +13744,10 @@
         {
           "signal": "1/11",
           "index": 3
+        },
+        {
+          "signal": "U1",
+          "index": 8
         }
       ],
       "turnouts": {
@@ -13222,13 +13774,15 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "1/8",
       "signals": [
         "1/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -13242,6 +13796,10 @@
         {
           "signal": "2/12",
           "index": 10
+        },
+        {
+          "signal": "N4",
+          "index": 13
         }
       ],
       "turnouts": {
@@ -13268,13 +13826,15 @@
         "S100a",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "1/8",
       "signals": [
         "1/8",
         "1/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -13288,6 +13848,10 @@
         {
           "signal": "1/12",
           "index": 7
+        },
+        {
+          "signal": "U4",
+          "index": 9
         }
       ],
       "turnouts": {
@@ -13393,13 +13957,15 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "2/8",
       "signals": [
         "2/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -13413,6 +13979,10 @@
         {
           "signal": "2/12",
           "index": 8
+        },
+        {
+          "signal": "N2",
+          "index": 10
         }
       ],
       "turnouts": {
@@ -13442,13 +14012,15 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "2/8",
       "signals": [
         "2/8",
         "2/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -13462,6 +14034,10 @@
         {
           "signal": "1/12",
           "index": 8
+        },
+        {
+          "signal": "U2",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -13494,12 +14070,14 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "2/9",
       "signals": [
         "2/9",
-        "2/11"
+        "2/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -13509,6 +14087,10 @@
         {
           "signal": "2/11",
           "index": 3
+        },
+        {
+          "signal": "N1",
+          "index": 10
         }
       ],
       "turnouts": {
@@ -13540,12 +14122,14 @@
         "S165b",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "2/9",
       "signals": [
         "2/9",
-        "1/11"
+        "1/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -13555,6 +14139,10 @@
         {
           "signal": "1/11",
           "index": 3
+        },
+        {
+          "signal": "U1",
+          "index": 8
         }
       ],
       "turnouts": {
@@ -13581,13 +14169,15 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "2/8",
       "signals": [
         "2/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -13601,6 +14191,10 @@
         {
           "signal": "2/12",
           "index": 8
+        },
+        {
+          "signal": "N4",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -13629,13 +14223,15 @@
         "S100a",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "2/8",
       "signals": [
         "2/8",
         "2/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -13649,6 +14245,10 @@
         {
           "signal": "1/12",
           "index": 8
+        },
+        {
+          "signal": "U4",
+          "index": 10
         }
       ],
       "turnouts": {
@@ -13700,13 +14300,15 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "3/8",
       "signals": [
         "3/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -13720,6 +14322,10 @@
         {
           "signal": "2/12",
           "index": 9
+        },
+        {
+          "signal": "N2",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -13748,13 +14354,15 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "3/8",
       "signals": [
         "3/8",
         "2/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -13768,6 +14376,10 @@
         {
           "signal": "1/12",
           "index": 9
+        },
+        {
+          "signal": "U2",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -13797,12 +14409,14 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "3/9",
       "signals": [
         "3/9",
-        "3/11"
+        "3/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -13812,6 +14426,10 @@
         {
           "signal": "3/11",
           "index": 1
+        },
+        {
+          "signal": "N1",
+          "index": 9
         }
       ],
       "turnouts": {
@@ -13840,12 +14458,14 @@
         "S165c",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "3/9",
       "signals": [
         "3/9",
-        "3/11"
+        "3/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -13855,6 +14475,10 @@
         {
           "signal": "3/11",
           "index": 1
+        },
+        {
+          "signal": "U1",
+          "index": 7
         }
       ],
       "turnouts": {
@@ -13881,13 +14505,15 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "3/8",
       "signals": [
         "3/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -13901,6 +14527,10 @@
         {
           "signal": "2/12",
           "index": 9
+        },
+        {
+          "signal": "N4",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -13928,13 +14558,15 @@
         "S100a",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "3/8",
       "signals": [
         "3/8",
         "2/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -13948,6 +14580,10 @@
         {
           "signal": "1/12",
           "index": 9
+        },
+        {
+          "signal": "U4",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -13998,13 +14634,15 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "4/8",
       "signals": [
         "4/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -14018,6 +14656,10 @@
         {
           "signal": "2/12",
           "index": 9
+        },
+        {
+          "signal": "N2",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -14046,13 +14688,15 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "4/8",
       "signals": [
         "4/8",
         "2/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -14066,6 +14710,10 @@
         {
           "signal": "1/12",
           "index": 9
+        },
+        {
+          "signal": "U2",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -14097,12 +14745,14 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "4/9",
       "signals": [
         "4/9",
-        "3/11"
+        "3/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -14112,6 +14762,10 @@
         {
           "signal": "3/11",
           "index": 2
+        },
+        {
+          "signal": "N1",
+          "index": 10
         }
       ],
       "turnouts": {
@@ -14143,12 +14797,14 @@
         "S165c",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "4/9",
       "signals": [
         "4/9",
-        "3/11"
+        "3/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -14158,6 +14814,10 @@
         {
           "signal": "3/11",
           "index": 2
+        },
+        {
+          "signal": "U1",
+          "index": 8
         }
       ],
       "turnouts": {
@@ -14185,13 +14845,15 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "4/8",
       "signals": [
         "4/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -14205,6 +14867,10 @@
         {
           "signal": "2/12",
           "index": 9
+        },
+        {
+          "signal": "N4",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -14232,13 +14898,15 @@
         "S100a",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "4/8",
       "signals": [
         "4/8",
         "2/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -14252,6 +14920,10 @@
         {
           "signal": "1/12",
           "index": 9
+        },
+        {
+          "signal": "U4",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -14369,13 +15041,15 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "5/8",
       "signals": [
         "5/8",
         "3/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -14389,6 +15063,10 @@
         {
           "signal": "2/12",
           "index": 9
+        },
+        {
+          "signal": "N2",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -14426,13 +15104,15 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "5/8",
       "signals": [
         "5/8",
         "3/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -14446,6 +15126,10 @@
         {
           "signal": "1/12",
           "index": 10
+        },
+        {
+          "signal": "U2",
+          "index": 13
         }
       ],
       "turnouts": {
@@ -14481,12 +15165,14 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "5/9",
       "signals": [
         "5/9",
-        "3/11"
+        "3/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -14496,6 +15182,10 @@
         {
           "signal": "3/11",
           "index": 3
+        },
+        {
+          "signal": "N1",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -14530,12 +15220,14 @@
         "S165c",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "5/9",
       "signals": [
         "5/9",
-        "3/11"
+        "3/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -14545,6 +15237,10 @@
         {
           "signal": "3/11",
           "index": 3
+        },
+        {
+          "signal": "U1",
+          "index": 9
         }
       ],
       "turnouts": {
@@ -14580,13 +15276,15 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "5/8",
       "signals": [
         "5/8",
         "5/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -14600,6 +15298,10 @@
         {
           "signal": "2/12",
           "index": 9
+        },
+        {
+          "signal": "N4",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -14636,13 +15338,15 @@
         "S100b",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "5/8",
       "signals": [
         "5/8",
         "5/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -14656,6 +15360,10 @@
         {
           "signal": "1/12",
           "index": 10
+        },
+        {
+          "signal": "U4",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -14775,13 +15483,15 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "6/8",
       "signals": [
         "6/8",
         "3/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -14795,6 +15505,10 @@
         {
           "signal": "2/12",
           "index": 9
+        },
+        {
+          "signal": "N2",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -14832,13 +15546,15 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "6/8",
       "signals": [
         "6/8",
         "3/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -14852,6 +15568,10 @@
         {
           "signal": "1/12",
           "index": 10
+        },
+        {
+          "signal": "U2",
+          "index": 13
         }
       ],
       "turnouts": {
@@ -14887,12 +15607,14 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "6/9",
       "signals": [
         "6/9",
-        "3/11"
+        "3/11",
+        "N1"
       ],
       "signalEntries": [
         {
@@ -14902,6 +15624,10 @@
         {
           "signal": "3/11",
           "index": 3
+        },
+        {
+          "signal": "N1",
+          "index": 11
         }
       ],
       "turnouts": {
@@ -14936,12 +15662,14 @@
         "S165c",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "6/9",
       "signals": [
         "6/9",
-        "3/11"
+        "3/11",
+        "U1"
       ],
       "signalEntries": [
         {
@@ -14951,6 +15679,10 @@
         {
           "signal": "3/11",
           "index": 3
+        },
+        {
+          "signal": "U1",
+          "index": 9
         }
       ],
       "turnouts": {
@@ -14986,13 +15718,15 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "6/8",
       "signals": [
         "6/8",
         "3/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -15006,6 +15740,10 @@
         {
           "signal": "2/12",
           "index": 9
+        },
+        {
+          "signal": "N4",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -15042,13 +15780,15 @@
         "S100b",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "6/8",
       "signals": [
         "6/8",
         "3/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -15062,6 +15802,10 @@
         {
           "signal": "1/12",
           "index": 10
+        },
+        {
+          "signal": "U4",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -15227,14 +15971,16 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "1/6",
       "signals": [
         "1/6",
         "2/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -15252,6 +15998,10 @@
         {
           "signal": "2/12",
           "index": 11
+        },
+        {
+          "signal": "N2",
+          "index": 13
         }
       ],
       "turnouts": {
@@ -15288,14 +16038,16 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "1/6",
       "signals": [
         "1/6",
         "1/8",
         "1/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -15313,6 +16065,10 @@
         {
           "signal": "1/12",
           "index": 10
+        },
+        {
+          "signal": "U2",
+          "index": 13
         }
       ],
       "turnouts": {
@@ -15341,16 +16097,22 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "1/11",
       "signals": [
-        "1/11"
+        "1/11",
+        "N1"
       ],
       "signalEntries": [
         {
           "signal": "1/11",
           "index": 0
+        },
+        {
+          "signal": "N1",
+          "index": 7
         }
       ],
       "turnouts": {
@@ -15373,16 +16135,22 @@
         "S165b",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "1/11",
       "signals": [
-        "1/11"
+        "1/11",
+        "U1"
       ],
       "signalEntries": [
         {
           "signal": "1/11",
           "index": 0
+        },
+        {
+          "signal": "U1",
+          "index": 5
         }
       ],
       "turnouts": {
@@ -15413,14 +16181,16 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "1/6",
       "signals": [
         "1/6",
         "1/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -15438,6 +16208,10 @@
         {
           "signal": "2/12",
           "index": 13
+        },
+        {
+          "signal": "N4",
+          "index": 16
         }
       ],
       "turnouts": {
@@ -15484,7 +16258,8 @@
         "S100a",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "2/2",
       "signals": [
@@ -15493,7 +16268,8 @@
         "1/6",
         "1/8",
         "1/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -15519,6 +16295,10 @@
         {
           "signal": "1/12",
           "index": 18
+        },
+        {
+          "signal": "U4",
+          "index": 20
         }
       ],
       "turnouts": {
@@ -15689,14 +16469,16 @@
         "S101",
         "S101a",
         "S96",
-        "SN2B"
+        "SN2B",
+        "SN2A"
       ],
       "signal": "2/6",
       "signals": [
         "2/6",
         "2/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N2"
       ],
       "signalEntries": [
         {
@@ -15714,6 +16496,10 @@
         {
           "signal": "2/12",
           "index": 11
+        },
+        {
+          "signal": "N2",
+          "index": 13
         }
       ],
       "turnouts": {
@@ -15750,14 +16536,16 @@
         "S100",
         "S95",
         "S95b",
-        "SU2B"
+        "SU2B",
+        "SU2A"
       ],
       "signal": "2/6",
       "signals": [
         "2/6",
         "1/8",
         "1/10",
-        "1/12"
+        "1/12",
+        "U2"
       ],
       "signalEntries": [
         {
@@ -15775,6 +16563,10 @@
         {
           "signal": "1/12",
           "index": 10
+        },
+        {
+          "signal": "U2",
+          "index": 13
         }
       ],
       "turnouts": {
@@ -15803,16 +16595,22 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "2/11",
       "signals": [
-        "2/11"
+        "2/11",
+        "N1"
       ],
       "signalEntries": [
         {
           "signal": "2/11",
           "index": 0
+        },
+        {
+          "signal": "N1",
+          "index": 7
         }
       ],
       "turnouts": {
@@ -15836,16 +16634,22 @@
         "S165c",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "2/11",
       "signals": [
-        "2/11"
+        "2/11",
+        "U1"
       ],
       "signalEntries": [
         {
           "signal": "2/11",
           "index": 0
+        },
+        {
+          "signal": "U1",
+          "index": 5
         }
       ],
       "turnouts": {
@@ -15877,14 +16681,16 @@
         "S101a",
         "S96",
         "S96b",
-        "SN4B"
+        "SN4B",
+        "SN4A"
       ],
       "signal": "2/6",
       "signals": [
         "2/6",
         "2/8",
         "2/10",
-        "2/12"
+        "2/12",
+        "N4"
       ],
       "signalEntries": [
         {
@@ -15902,6 +16708,10 @@
         {
           "signal": "2/12",
           "index": 11
+        },
+        {
+          "signal": "N4",
+          "index": 14
         }
       ],
       "turnouts": {
@@ -15937,14 +16747,16 @@
         "S100a",
         "S100",
         "S95",
-        "SU4B"
+        "SU4B",
+        "SU4A"
       ],
       "signal": "2/6",
       "signals": [
         "2/6",
         "1/8",
         "1/10",
-        "1/12"
+        "1/12",
+        "U4"
       ],
       "signalEntries": [
         {
@@ -15962,6 +16774,10 @@
         {
           "signal": "1/12",
           "index": 10
+        },
+        {
+          "signal": "U4",
+          "index": 12
         }
       ],
       "turnouts": {
@@ -15991,16 +16807,22 @@
         "S166a",
         "S170",
         "S171",
-        "SN1B"
+        "SN1B",
+        "SN1A"
       ],
       "signal": "10/11",
       "signals": [
-        "10/11"
+        "10/11",
+        "N1"
       ],
       "signalEntries": [
         {
           "signal": "10/11",
           "index": 0
+        },
+        {
+          "signal": "N1",
+          "index": 7
         }
       ],
       "turnouts": {
@@ -16023,16 +16845,22 @@
         "S165b",
         "S165",
         "S165a",
-        "SU1B"
+        "SU1B",
+        "SU1A"
       ],
       "signal": "10/11",
       "signals": [
-        "10/11"
+        "10/11",
+        "U1"
       ],
       "signalEntries": [
         {
           "signal": "10/11",
           "index": 0
+        },
+        {
+          "signal": "U1",
+          "index": 5
         }
       ],
       "turnouts": {
