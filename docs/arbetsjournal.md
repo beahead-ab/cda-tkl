@@ -741,3 +741,16 @@ Lokalt webbläsarprov: Au → Spår 1b gav identisk grön fyllning på Au, 1c oc
 1b samt en sammanhängande startmarkering. Delåtertagning Au → 1c lämnade
 bara 1c och 1b gröna, med kvarvarande linje från x=856. Driftskod och profiler
 är oförändrade; publicering kan göras som gränssnittsuppdatering utan omstart.
+
+## 0.39.4 · cirklar vid signalval
+
+Signalernas rektangulära valrutor ersätts med tunna ofyllda cirklar. Giltiga
+start- och slutsignaler markeras vid hover eller tangentbordsfokus; vald start
+och valt slut behåller en stadig ring. Ingen bakgrundsfyllning eller puls används
+för signalval. Signalbilderna fortsätter enbart visa rapporterat besked.
+
+Befintlig kontroll av möjliga mål bevaras. För 3/5 är de godkända målen 6/7,
+5/9 och 6/9; ytterligare geometriskt närliggande signaler görs inte valbara
+utan godkänd tågvägsdefinition. Lokalt webbläsarprov verifierar dessa tre mål,
+transparent fyllning, ring vid tangentbordsfokus, bibehållet stoppbesked och
+att Escape avbryter valet. Elva riktade tester och syntaxkontroll godkända.

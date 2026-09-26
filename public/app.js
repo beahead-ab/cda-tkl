@@ -150,7 +150,7 @@ function choose(id,kind='main') {
   if(chosen&&chosen!==id&&!routeTargets.has(id))return;
   if (!chosen) {
     if(kind==='shunt'&&!signalControls.starts.has(id))return message('Signalen kan väljas som mål men saknar en ansluten växeltågväg som start.');
-    chosenKind=kind;chosen = id;routeTargets.select(id,kind); $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + (kind==='shunt'?' → välj markerad slutsignal':' → välj slutplupp'); $('clear-selection').disabled = false; paint();
+    chosenKind=kind;chosen = id;routeTargets.select(id,kind); $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + (kind==='shunt'?' → välj slutsignal':' → välj slutplupp'); $('clear-selection').disabled = false; paint();
   } else if (chosen === id) clearChoice();
   else { routeConfirmation.start({from:chosen,to:id,kind}); }
 }
@@ -264,7 +264,7 @@ function buildPlan() {
     const w = type[3] * (m.scale || 1), h = type[4] * (m.scale || 1);
     const rad = m.deg * Math.PI / 180, rw = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad)), rh = Math.abs(h * Math.cos(rad)) + Math.abs(w * Math.sin(rad));
     const g = svg('g', { transform: `translate(${m.x + rw / 2},${m.y + rh / 2})`, class: 'touch-target signal-target','data-signal':m.mast }, icons);
-    svg('rect', { x: -rw / 2 - 7, y: -rh / 2 - 8, width: rw + 14, height: rh + 16, class: 'hit' }, g);
+    svg('circle', { r: Math.hypot(rw,rh)/2+4, class: 'hit' }, g);
     const files=type.slice(0,3);
     if(m.type==='hdvsi_8')files.push('Hdvsi0+Sh1');
     if(m.type==='hsi_3+dvsi')files.push('Hsi0+Sh1');
@@ -272,6 +272,7 @@ function buildPlan() {
     const unknown = svg('text', { x: rw / 2 + 1, y: 3, class: 'signal-unknown' }, g, '?');
     const routeButton=signalControls.buttons.get(m.mast);
     if(routeButton)g.dataset.routeButton=routeButton;
+    g.classList.toggle('signal-startable',signalControls.starts.has(routeButton));
     accessible(g, `Signal ${m.mast}${routeButton?(signalControls.starts.has(routeButton)?' · växeltågväg':' · slutsignal'):''}`, e => {if(routeButton)choose(routeButton,'shunt');else if(e.type==='keydown')showInspector('signal',m.mast,e);});
     objectDetails(g,'signal',m.mast);
     signals.push({ ...m, g, images, unknown, type, signalType:m.type, files, routeButton });
