@@ -45,3 +45,24 @@ Efter sista detektorns frirapport visas **Passerad · kontrollera**. Numret stan
 Format 2 lagrar nummer, följningsläge och historik i samma atomiska sparning. Format 1 läses utan informationsförlust; filen skrivs om vid nästa ändring. Tidigare kod till och med 0.14 kan inte läsa format 2. Återgång måste använda kompatibel kod; radera inte filen eller återställ en äldre tom fil för att tvinga fram uppstart. Omstart pausar alla pågående följningar och gör placeringen till en kontrolluppgift. Ett skrivfel behåller senaste varaktiga nummer och steg samt spärrar fortsatta informationsändringar tills lagringen kontrollerats och processen startats om.
 
 Tio riktade prov täcker ordnad passage, alias, dubbletter, uteblivna/okända rapporter, avbrott, återtagning, ny väg med samma definition, omstart, samtidiga redigeringar, atomisk lagring och trasigt sparat läge. Processprovet följer två tåg över den separata LocoNet-anslutningen till färdig passage. TKL får varken simulatorns tåg-id eller tillgång till dess interna tågrörelse.
+
+## Inkommande tåg vid linjespåret · version 0.39.5
+
+Registrerade inkommande nummer visas i ljusblå rutor vid respektive linjespår
+på spårplanen. Tomma fält visas inte. Under Driftverktyg → Tågnummer väljer
+linjeknapparna normal infart enligt Normal utfart i Orter och telefonnummer:
+normal infart är det andra spåret (vänstertrafik: Cu, Au, Bn), eller D på enkelspåret.
+Befintliga registreringar behåller sitt uttryckligen angivna spår. Ändrat normalspår
+i admin flyttar alltså inte redan anmälda tåg.
+
+Högerklick, vanligt klick eller tangentbordsaktivering på numret öppnar valet
+Byt till avvikande spår / Återgå till normal infart. Spårbyte flyttar endast
+aktuell identitet mellan linjens två importerade inkommande minnesfält.
+Avvikande spår får streckad blå ram; uppgifter som behöver kontrolleras får
+varmare text och förklaring. Enkelspår har inget bytesval. Ett upptaget
+nummerfält skrivs aldrig över; gamla revisioner nekas. En pågående
+nummerföljning avslutas enligt befintlig manuell flytt, så att numret inte
+senare flyttas längs den gamla vägen. Sparning är gemensam och varaktig.
+
+Inga tågvägar, växlar, signalbesked eller beläggningar ändras. Nummer anges
+manuellt tills nästa etapp ansluter den verifierade TrainMeet-källan.

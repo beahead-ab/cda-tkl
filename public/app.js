@@ -588,7 +588,7 @@ async function start() {
   sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   signalControls=signalRouteControls(config,registry,signalEndpoints);
   buildPlan();
-  trainInformation=createTrainInformation({catalog:config.trainFields,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
+  trainInformation=createTrainInformation({catalog:config.trainFields,controls:layout.controls,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
   $('close-inspector').onclick=()=>closeInspector();
   $('dismiss-message').onclick=()=>message('');
 

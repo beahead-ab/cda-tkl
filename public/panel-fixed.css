@@ -164,3 +164,17 @@ body.panel-app #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-r
 #track-plan .signal-target.route-choice-start .hit,
 #track-plan .signal-target.route-choice-end .hit,
 #track-plan .signal-target.signal-preparing .hit{stroke:#dedbd0;stroke-width:1.5;fill:transparent;animation:none}
+
+/* Incoming identities are planning information, separate from signal aspects. */
+#track-plan .incoming-train-number{cursor:pointer}
+#track-plan .incoming-train-number rect{fill:#13202b;stroke:#8dcaf1;stroke-width:1.2}
+#track-plan .incoming-train-number text{fill:#bde5ff;font:600 12px Menlo,monospace;pointer-events:none}
+#track-plan .incoming-train-number:hover rect,#track-plan .incoming-train-number:focus-visible rect{stroke:#e1f3ff;stroke-width:2}
+#track-plan .incoming-train-number.deviating rect{stroke-dasharray:4 2}
+#track-plan .incoming-train-number.needs-review text{fill:#e6c486}
+.incoming-train-menu{position:fixed;margin:0;padding:18px;width:300px;max-width:calc(100vw - 32px);border:1px solid #48545c;border-radius:6px;background:#191b1c;color:#eee;box-shadow:0 8px 35px #0008}
+.incoming-train-menu::backdrop{background:#0003}
+.incoming-train-menu h2{font-size:16px;margin:0 0 10px}
+.incoming-train-menu p{font-size:12px;line-height:1.5;color:#bcc4c9}
+.incoming-train-menu button{display:block;width:100%;text-align:left;margin:6px 0}
+.incoming-train-menu [data-arrival-message]{color:#d9c7a2}

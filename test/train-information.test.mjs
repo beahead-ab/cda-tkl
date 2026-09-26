@@ -73,3 +73,17 @@ test('unknown keys, forged sources, malformed values and corrupt saved records a
   save(book,'block:SIA','421');const saved=structuredClone(book.data);saved.entries['block:SIA'].source='MGP';storage.save('train-information.json',saved);assert.throws(()=>new TrainInformation(catalog,profile,options),/ogiltig/);
   saved.entries['block:SIA'].source='manual';saved.history=[null];storage.save('train-information.json',saved);assert.throws(()=>new TrainInformation(catalog,profile,options),/historik/);
 });
+test('arrival track switch persists only that identity, rejects conflicts and can return to normal',t=>{
+  const {book,storage,options}=rig(t),from='incoming:AuppIn',to='incoming:AnedIn';
+  save(book,from,'421');save(book,'incoming:BnedIn','222');
+  const stale=request(book,[from,to]);
+  book.move({...stale,from,to});
+  assert.equal(book.data.entries[from],undefined);assert.equal(book.data.entries[to].value,'421');
+  assert.equal(book.data.entries['incoming:BnedIn'].value,'222');
+  assert.equal(new TrainInformation(catalog,profile,options).data.entries[to].value,'421');
+  assert.throws(()=>book.move({...stale,from:to,to:from}),e=>e.status===409);
+  save(book,from,'999');
+  assert.throws(()=>book.move({...request(book,[from,to]),from:to,to:from}),e=>e.status===409);
+  save(book,from,'');book.move({...request(book,[from,to]),from:to,to:from});
+  assert.equal(book.data.entries[from].value,'421');assert.equal(book.data.entries[to],undefined);
+});

@@ -1,8 +1,11 @@
+import {createContextDialog} from './context-dialog.js';
+import {destinationLines} from './destination-data.js';
+import {incomingFields,normalIncoming,incomingChoice,incomingAnchors} from './incoming-trains.js';
 import {attribute,text as setText} from './panel-rendering.js';
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export function createTrainInformation({catalog,plan,displayName,openSource,onOpen=()=>{}}) {
-  const fields=new Map(catalog.fields.map(f=>[f.key,f])),nodes=[],chips=[];
+export function createTrainInformation({catalog,plan,controls,displayName,openSource,onOpen=()=>{}}) {
+  const fields=new Map(catalog.fields.map(f=>[f.key,f])),nodes=[],chips=[],arrivalNodes=[];
   let info=null,state=null,online=false,dirty=false,busy=false,base=null;
   const title=f=>f.kind==='incoming'?'Inkommande '+f.label:displayName('blocks',f.name)+(f.label!==f.name?' · '+f.label:'');
   const stamp=n=>new Date(n).toLocaleString('sv-SE',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
@@ -24,9 +27,10 @@ export function createTrainInformation({catalog,plan,displayName,openSource,onOp
   const options=`<optgroup label="Inkommande tåg">${incoming.map(option).join('')}</optgroup><optgroup label="Spårblock">${blocks.map(option).join('')}</optgroup>`;
   $('train-field').innerHTML=options;$('train-target').innerHTML='<option value="">Välj mål…</option>'+options;
   let activeKey=$('train-field').value;
-  for(const f of incoming) {
-    const button=document.createElement('button');button.className='incoming-train';button.innerHTML=`<span>${esc(f.label)}</span><strong>—</strong>`;
-    button.onclick=()=>open(f.key);$('incoming-trains').append(button);chips.push({f,button});
+  for(const line of destinationLines) {
+    const button=document.createElement('button');button.className='incoming-train';button.innerHTML=`<span>${esc(line.name)}</span><strong>—</strong>`;
+    button.onclick=()=>open(incomingFields[normalIncoming(line.id,state?.destinations?.outgoing)]);
+    $('incoming-trains').append(button);chips.push({line,button});
   }
   function svg(tag,attrs,parent,text) {const n=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;parent.append(n);return n;}
   const layer=svg('g',{id:'train-number-layer'},plan);
@@ -38,6 +42,46 @@ export function createTrainInformation({catalog,plan,displayName,openSource,onOp
     group.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open(a.key);}});
     nodes.push({a,group,rect,text,hint});
   }
+  const arrivalLayer=svg('g',{id:'incoming-train-layer'},plan);
+  for(const a of incomingAnchors(controls)) {
+    const group=svg('g',{transform:`translate(${a.x},${a.y})`,class:'incoming-train-number',visibility:'hidden',role:'button',tabindex:'-1','data-incoming-field':a.key,'aria-haspopup':'dialog'},arrivalLayer);
+    const rect=svg('rect',{y:0,height:20,rx:2},group),text=svg('text',{y:14,'text-anchor':'middle'},group),hint=svg('title',{},group);
+    group.addEventListener('contextmenu',e=>{e.preventDefault();showArrival(a.key,e);});
+    group.addEventListener('click',e=>showArrival(a.key,e));
+    group.addEventListener('keydown',e=>{if(['Enter',' ','ContextMenu'].includes(e.key)||e.key==='F10'&&e.shiftKey){e.preventDefault();showArrival(a.key,e);}});
+    arrivalNodes.push({a,group,rect,text,hint});
+  }
+  const arrivalDialog=document.createElement('dialog');arrivalDialog.className='incoming-train-menu';arrivalDialog.setAttribute('aria-label','Inkommande tåg');
+  arrivalDialog.innerHTML='<h2></h2><p data-arrival-place></p><button data-arrival-switch autofocus></button><button data-arrival-edit>Redigera tågnummer</button><p data-arrival-message role="status"></p><button data-arrival-close>Stäng</button>';
+  document.body.append(arrivalDialog);
+  let arrival=null,arrivalBusy=false;
+  const arrivalMenu=createContextDialog({dialog:arrivalDialog,onClose:()=>{arrival=null;}});
+  const switchButton=arrivalDialog.querySelector('[data-arrival-switch]'),arrivalMessage=arrivalDialog.querySelector('[data-arrival-message]');
+  function showArrival(key,event){
+    const entry=info?.entries[key],choice=incomingChoice(key,state?.destinations?.outgoing);if(!entry||!choice)return;
+    arrival={key,choice,revision:info.revision,sessionId:info.sessionId,epochs:{...info.epochs}};
+    arrivalDialog.querySelector('h2').textContent='Tåg '+entry.value;
+    arrivalDialog.querySelector('[data-arrival-place]').textContent=`Linje ${choice.line} · ${choice.track} · ${choice.deviating?'avvikande ankomstspår':'normal infart'}`;
+    switchButton.hidden=!choice.target;
+    switchButton.textContent=choice.deviating?'Återgå till normal infart ('+choice.alternate+')':'Byt till avvikande spår ('+choice.alternate+')';
+    switchButton.disabled=!online||busy||dirty||arrivalBusy||!!info.fault||!!info.entries[choice.target];
+    arrivalMessage.textContent=dirty?'Spara eller kasta pågående redigering först.':info.entries[choice.target]?'Det andra spåret har redan ett inkommande tåg.':!online?'Panelen saknar kontakt.':info.fault||(!choice.target?'Linjen har bara ett ankomstspår.':'Ändrar bara ankomstuppgiften; lägger ingen tågväg.');
+    arrivalMenu.open(event);
+  }
+  arrivalDialog.querySelector('[data-arrival-close]').onclick=()=>arrivalMenu.close();
+  arrivalDialog.querySelector('[data-arrival-edit]').onclick=()=>{const key=arrival?.key;arrivalMenu.close();if(key)open(key);};
+  switchButton.onclick=async()=>{
+    if(!arrival||arrivalBusy||busy||dirty||!online)return;
+    const selected=arrival;arrivalBusy=true;switchButton.disabled=true;arrivalMessage.textContent='Sparar ankomstspår…';
+    try{
+      const keys=[selected.key,selected.choice.target];
+      const response=await fetch('/api/train-information/move',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:keys[0],to:keys[1],revision:selected.revision,sessionId:selected.sessionId,epochs:Object.fromEntries(keys.map(k=>[k,selected.epochs[k]||0]))})});
+      const result=await response.json();if(!response.ok)throw Error(result.error||'Kunde inte byta ankomstspår.');
+      if(info.sessionId===result.sessionId&&result.revision>=info.revision)info=result;
+      if(arrival===selected)arrivalMenu.close();paint();
+    }catch(e){if(arrival===selected)arrivalMessage.textContent=e.message+' Stäng och öppna tågnumret igen för aktuella uppgifter.';}
+    finally{arrivalBusy=false;}
+  };
   function capture() {base=info?{revision:info.revision,sessionId:info.sessionId,epochs:{...info.epochs}}:null;}
   function loadEditor() {
     if(!info)return;dirty=false;capture();$('train-value').value=info.entries[$('train-field').value]?.value||'';paintEditor();
@@ -69,10 +113,20 @@ export function createTrainInformation({catalog,plan,displayName,openSource,onOp
     const status={active:'Följer',paused:'Pausad · kontrollera',stopped:'Avslutad',complete:'Passerad · kontrollera'};
     const follows=(info.follows||[]).slice().reverse().map(f=>`<div class="follow-row"><strong>${esc(f.value)} · ${esc(f.routeLabel)}</strong><span>${status[f.status]} · senast ${esc(f.key.replace('block:','').replace('incoming:',''))}</span><small>${esc(f.reason)}</small><button data-show-train="${esc(f.key)}">Visa plats för ${esc(f.value)}</button>${['active','paused'].includes(f.status)?`<button data-unfollow="${esc(f.id)}">Avsluta följning för ${esc(f.value)}</button>`:''}</div>`).join('');
     if($('train-follow-list').innerHTML!==follows)$('train-follow-list').innerHTML=follows;
-    for(const {f,button} of chips) {
-      const e=info.entries[f.key],review=e&&(!online||e.needsReview);
-      button.querySelector('strong').textContent=e?e.value+(review?' ?':''):'—';
-      button.classList.toggle('needs-review',!!review);button.title=e?`${e.value} · manuellt · ${review?'kontrollera':'registrerat'} · ${stamp(e.updatedAt)}`:'Ange inkommande tåg';
+    for(const {line,button} of chips) {
+      const values=line.tracks.map(t=>info.entries[incomingFields[t]]?.value).filter(Boolean);
+      button.querySelector('strong').textContent=values.join(' / ')||'Ange tåg';
+      button.title='Ange inkommande tåg på normal infart '+normalIncoming(line.id,state?.destinations?.outgoing);
+    }
+    for(const {a,group,rect,text,hint} of arrivalNodes){
+      const entry=info.entries[a.key],choice=incomingChoice(a.key,state?.destinations?.outgoing),review=entry&&(!online||entry.needsReview||entry.duplicate);
+      attribute(group,'visibility',entry?'visible':'hidden');attribute(group,'tabindex',entry?'0':'-1');
+      group.classList.toggle('needs-review',!!review);group.classList.toggle('deviating',choice.deviating);
+      const label=entry?.value||'',width=Math.min(90,Math.max(34,label.length*7.5+12)),x=a.right?-width:0;
+      setText(text,label);attribute(rect,'x',x);attribute(rect,'width',width);attribute(text,'x',x+width/2);
+      if(label.length>10){attribute(text,'textLength',width-12);attribute(text,'lengthAdjust','spacingAndGlyphs');}else{text.removeAttribute('textLength');text.removeAttribute('lengthAdjust');}
+      const description=`Inkommande tåg ${label} · ${a.track} · ${choice.deviating?'avvikande spår':'normal infart'}${review?' · kontrollera uppgiften':''}. Högerklicka för att byta ankomstspår.`;
+      attribute(group,'aria-label',description);setText(hint,description);
     }
     $('train-count').textContent=Object.keys(info.entries).length||'';
     for(const {a,group,rect,text,hint} of nodes) {

@@ -754,3 +754,18 @@ Befintlig kontroll av möjliga mål bevaras. För 3/5 är de godkända målen 6/
 utan godkänd tågvägsdefinition. Lokalt webbläsarprov verifierar dessa tre mål,
 transparent fyllning, ring vid tangentbordsfokus, bibehållet stoppbesked och
 att Escape avbryter valet. Elva riktade tester och syntaxkontroll godkända.
+
+## 0.39.5 · inkommande tågnummer vid linjerna
+
+Sju inkommande JMRI-minnesfält binds uttryckligen till de sju linjeplupparna.
+Ljusblå nummer och ramar visas bara för registrerade tåg. Fyra linjeknappar
+i tågnummersverktyget väljer konfigurerad normal infart; högerklick på panelens
+nummer kan flytta till linjens andra spår eller tillbaka. Befintlig atomisk
+flytt med revisionskontroll och journal används, utan ny driftkod eller
+koppling till TrainMeet. Avvikelse markeras med streckad ram.
+
+21 riktade tester godkända: normalspår vid båda trafikriktningar, enkelspår,
+alla sju källbindningar, ankargeometri, varaktig flytt, upptaget målfält,
+gamla revisioner och befintlig nummerföljning. Lokalt webbläsarprov:
+linje A valde Au automatiskt; 421 registrerades, högerklick flyttade till An,
+omladdning behöll An och återgång flyttade tillbaka till Au. Inga JavaScript-fel.
