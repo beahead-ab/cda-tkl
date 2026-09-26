@@ -11,7 +11,7 @@ export function createAdminNavigation({account=false}={}) {
     ['#trainmeet','TrainMeet','trainmeet-tab',[]],
     ['#import','Tidtabeller','import-tab',[['upload','Importera'],['edit','Redigera utkast']]],
     ['#tools/appearance','Utseende och ljud','tools-tab',[]],
-    ['#register','Anläggningsregister','admin-tab',[['presentation','Visningsinställningar'],['bindings','Driftinställningar']]],
+    ['#register','Anläggningsregister','admin-tab',[['destinations','Orter och telefonnummer'],['presentation','Visningsinställningar'],['bindings','Driftinställningar']]],
     ['#tools/journal','Händelser','journal-tab',[]],
     ['#advanced','Avancerat','advanced-tab',[['xml','XML-granskning'],['migration','Införandestatus'],['protocol','Protokollinspelning']]]
   ];

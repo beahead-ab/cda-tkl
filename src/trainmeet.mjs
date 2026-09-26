@@ -52,6 +52,8 @@ export class TrainMeet extends EventEmitter {
     const display=await this.request('/v1/display',{token});
     if(context?.protocol_version!==1||display?.protocol_version!==1||!identity(context.publication_id)||context.publication_id!==display.publication_id||!identity(context.active_day)||context.active_day!==display.active_day||context.station?.id!==station||!Number.isSafeInteger(display.revision)||display.revision<0||!Array.isArray(display.trains)||display.trains.length>5000||!record(context.movements)||Object.keys(context.movements).length>5000||!Array.isArray(context.connection_states))fail('TrainMeet-svaret matchar inte det granskade stationskontraktet.',502);
     if(!allowReset&&this.context?.publicationId===display.publication_id&&this.context.day===display.active_day&&display.revision<this.context.revision)fail('TrainMeet skickade en äldre revision. Kontrollera serverbytet och parkoppla på nytt.',502);
+    const stations=display.stations??[];
+    if(!Array.isArray(stations)||stations.length>5000||stations.some(s=>!record(s)||!identity(s.id)||!text(s.name,200)||!s.name.trim())||new Set(stations.map(s=>s.id)).size!==stations.length)fail('Ogiltig stationskatalog från TrainMeet.',502);
     const clock=display.clock;
     if(!record(clock)||typeof clock.configured!=='boolean'||typeof clock.running!=='boolean'||!/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(clock.time)||!Number.isFinite(clock.speed)||clock.speed<=0||clock.speed>1000)fail('TrainMeet-klockan kunde inte verifieras.',502);
     const trains=display.trains.filter(t=>t.station_id===station).map(t=>{if(!identity(t.id))fail('Tågrörelse saknar identitet.',502);const result={id:t.id};for(const k of ['train_number','arrival_time','departure_time','track','train_type','arrival_from','departure_to','track_id'])if(t[k]!=null){const value=String(t[k]);if(!text(value))fail('Ogiltig tåginformation.',502);result[k]=value;}return result;});
@@ -65,7 +67,7 @@ export class TrainMeet extends EventEmitter {
     const cached=!allowReset&&!reloadTimetable&&previous?.timetable&&previous.publicationId===display.publication_id&&previous.day===display.active_day&&previous.station.id===station;
     const timetable=cached?{trains:previous.trains,tracks:previous.tracks,operatingPoints:previous.operatingPoints,timetable:previous.timetable}
       :readTimetable(await this.request('/v1/timetable?station_id='+encodeURIComponent(station),{token}),{stationId:station,publicationId:display.publication_id,day:display.active_day,loadedAt:this.now()});
-    return {publicationId:display.publication_id,revision:display.revision,day:display.active_day,meet:text(display.meet?.name)?display.meet.name:'',station:{id:station,name:text(context.station.name)?context.station.name:station},clock:{time:clock.time,rate:clock.speed,running:clock.running,configured:clock.configured},...timetable,movements,connections};
+    return {stations:stations.map(s=>({id:s.id,name:s.name})),publicationId:display.publication_id,revision:display.revision,day:display.active_day,meet:text(display.meet?.name)?display.meet.name:'',station:{id:station,name:text(context.station.name)?context.station.name:station},clock:{time:clock.time,rate:clock.speed,running:clock.running,configured:clock.configured},...timetable,movements,connections};
   }
   async pair(data) {
     this.check(data);if(!identity(data.stationId)||!text(data.code,128)||!data.code.trim())fail('Ange stations-id och giltig anslutningskod.');

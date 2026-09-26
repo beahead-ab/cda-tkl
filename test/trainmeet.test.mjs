@@ -142,3 +142,9 @@ test('installation-locked origin allows an unpaired id change; existing legacy i
   assert.equal(service.view().clientId,legacy.clientId);assert.equal(service.view().paired,true);
   assert.equal(JSON.stringify(service.view()).includes('saved-token'),false);
 });
+test('station names refresh each poll; only public identity fields reach the panel',async()=>{
+ const r=rig();r.display.stations=[{id:'other',name:'Lekby',code:'LEK',private_info:'NEVER EXPOSE'}];await pair(r);
+ assert.deepEqual(r.service.view().context.stations,[{id:'other',name:'Lekby'}]);
+ r.display.stations[0].name='Ny ort';await r.service.refresh();assert.equal(r.service.view().context.stations[0].name,'Ny ort');
+ r.display.stations.push({...r.display.stations[0]});await r.service.refresh();assert.equal(r.service.view().stale,true);assert.equal(r.service.view().context.stations.length,1);
+});

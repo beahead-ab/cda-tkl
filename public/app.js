@@ -1,3 +1,4 @@
+import {destinationDisplay,destinationDefaults} from './destination-data.js';
 import {createRouteConfirmation} from './route-confirmation.js';
 import {trackRestrictions,restrictionMarkers,lineRestrictionExtents} from './track-restrictions.js';
 import {signalRouteControls,signalImage} from './signal-route-controls.js';
@@ -72,7 +73,7 @@ function openTools(section) {
 async function openSource(kind,name) { await setPage('admin'); await sourceRegister.open(kind,name); }
 let blockedTracks=new Map(),blockedLineParts=new Set(),lineExtents=new Map();
 const blockMarkers=[];
-const rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], sourceLamps=[],routeNodes = new Map();
+const destinationNodes=[], rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], sourceLamps=[],routeNodes = new Map();
 const iconTypes = {
   hsi_2: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_4: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_5: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32],
   'hsi_3+dvsi': ['Hsi0+Sh0', 'Hsi1+Sh1', 'Hsi-dark+Sh-dark', 12, 32], hdvsi_8: ['Hdvsi0+Sh0', 'Hdvsi1+Sh1', 'Hdvsi-dark', 18, 31],
@@ -201,17 +202,19 @@ function buildPlan() {
     objectDetails(g,'block',marker.block);blockMarkers.push({...marker,g});
   }
   for (const l of panel.labels.filter(l => !l.hidden && l.y < 840)) {
-    const destination=/Lekby|Vagnsta|Kungsfors/i.test(l.text), size=destination?11:l.size||12;
-    if(destination){
-      const text=l.text.replace(/[<>]/g,'').trim().toUpperCase(),right=l.text.includes('>');
-      const arrowX=right?l.x+l.text.length*size*.58-8:l.x;
-      const group=svg('g',{class:'destination',role:'img','aria-label':`${text}, åt ${right?'höger':'vänster'}`},labels);
-      svg('path',{class:'destination-arrow',transform:`translate(${arrowX} ${l.y+size*.6})`,d:right?'M0 0H14M10 -4L14 0L10 4':'M14 0H0M4 -4L0 0L4 4','aria-hidden':'true'},group);
-      svg('text',{x:right?arrowX-8:l.x+22,y:l.y+size,'text-anchor':right?'end':'start',class:'track-label destination-label',style:`font-size:${size}px`,'aria-hidden':'true'},group,text);
-    }else{
-      if(l.br!=null)svg('rect',{x:l.x-3,y:l.y-3,width:l.text.length*size*.58+12,height:size*1.5+3,fill:`rgb(${l.br},${l.bg},${l.bb})`},labels);
-      svg('text',{x:l.x,y:l.y+size,class:'track-label',style:`font-size:${size}px`},labels,l.text);
-    }
+    if(/Lekby|Vagnsta|Kungsfors/i.test(l.text))continue;
+    const size=l.size||12;
+    if(l.br!=null)svg('rect',{x:l.x-3,y:l.y-3,width:l.text.length*size*.58+12,height:size*1.5+3,fill:`rgb(${l.br},${l.bg},${l.bb})`},labels);
+    svg('text',{x:l.x,y:l.y+size,class:'track-label',style:`font-size:${size}px`},labels,l.text);
+  }
+  for(const fallback of destinationDefaults){
+    const b=layout.controls.find(b=>b.sensor==='htv'+fallback.id);if(!b)continue;
+    const right=['Bu','Bn','D'].includes(fallback.id),lower=fallback.id.endsWith('n')||fallback.id==='D',y=b.centerY+(lower?38:-36),arrowX=right?2078:50;
+    const group=svg('g',{class:'destination',role:'img','data-destination':fallback.id},labels);
+    svg('path',{class:'destination-arrow',transform:`translate(${arrowX} ${y-4})`,d:right?'M0 0H14M10 -4L14 0L10 4':'M14 0H0M4 -4L0 0L4 4','aria-hidden':'true'},group);
+    const nameNode=svg('text',{y,'text-anchor':right?'end':'start',class:'track-label destination-label',style:'font-size:11px','aria-hidden':'true'},group,fallback.name.toUpperCase());
+    const badge=svg('g',{'aria-hidden':'true'},group),box=svg('rect',{y:y-13,height:18,rx:2,fill:'#fff'},badge),number=svg('text',{y:y, class:'destination-phone',style:'font-size:12px'},badge);
+    destinationNodes.push({id:fallback.id,fallback:{...fallback,source:'local'},group,nameNode,badge,box,number,right,x:right?arrowX-8:arrowX+22});
   }
   const tt = panel.turntable; svg('circle', { cx: tt.cx, cy: tt.cy, r: tt.r, class: 'rail unconfigured' }, track);
   svg('line', { x1: tt.cx - tt.r, y1: tt.cy, x2: tt.cx + tt.r, y2: tt.cy, class: 'rail unconfigured' }, track);
@@ -299,6 +302,10 @@ function isBlocked(name) { const address=config.blocks[name]?.address;return add
 function hasTrackRestriction(name){return blockedTracks.has(config.blocks[name]?.address);}
 function usable() { return online && state?.connection === 'connected' && !state.storageFault; }
 function paintPlan() {
+  for(const n of destinationNodes){
+    const entry=state.destinations?.entries.find(d=>d.id===n.id)||n.fallback,d=destinationDisplay(entry,state.trainMeet),width=Math.max(30,d.phone.length*7.4+14);
+    setText(n.nameNode,d.name.toUpperCase());const x=n.right?n.x-width:n.x+n.nameNode.getComputedTextLength()+8;attribute(n.nameNode,'x',n.right?n.x-(d.phone?width+8:0):n.x);setText(n.number,d.phone);attribute(n.box,'x',x);attribute(n.box,'width',width);attribute(n.number,'x',x+width/2);attribute(n.number,'text-anchor','middle');attribute(n.badge,'visibility',d.phone?'visible':'hidden');attribute(n.group,'aria-label',d.name+(d.phone?' · telefon '+d.phone:'')+' · '+d.sourceLabel);
+  }
   blockedTracks=trackRestrictions(config,state);
   blockedLineParts=new Set((state.operating?.lines||[]).filter(l=>l.blocked).flatMap(l=>[...(lineExtents.get(l.id)||[])]));
   for(const marker of blockMarkers){const blocked=blockedTracks.has(marker.address);attribute(marker.g,'visibility',blocked?'visible':'hidden');attribute(marker.g,'tabindex',blocked?'0':'-1');}

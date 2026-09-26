@@ -117,3 +117,6 @@ body.panel-app #panel-console{display:flex;flex-direction:column;justify-content
 #track-plan .signal-target.route-choice-start .hit{animation:signal-start-choice 1100ms ease-in-out infinite}
 @keyframes signal-start-choice{0%,35%,100%{stroke:#fff8d8;fill:#fff2bd30}50%,85%{stroke:#a89d77;fill:#fff2bd05}}
 @media(prefers-reduced-motion:reduce){#track-plan .route-choice-start .dot,#track-plan .route-choice-start .traffic-dot,#track-plan .signal-target.route-choice-start .hit{animation:none;stroke:#fff8d8}#track-plan .route-choice-start .dot{fill:#fff5bd}}
+
+#track-plan .destination-phone{fill:#111;stroke:none;font-weight:500;font-family:"Helvetica Neue",Arial,sans-serif}
+.destination-list{overflow-x:auto}

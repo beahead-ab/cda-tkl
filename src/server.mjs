@@ -1,4 +1,5 @@
 import http from 'node:http';
+import {Destinations} from './destinations.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -52,6 +53,7 @@ function createRuntime(p){
 const bindings=new BindingConfiguration(baseProfile,{storage,canActivate:activationStatus,prepare:p=>{const next=createRuntime(p);return ()=>installRuntime(next);}});
 const trainMeet=new TrainMeet({storage,origin:process.env.CHARLOTTENDAL_TRAINMEET_ORIGIN||''});
 const timetableImport=new TimetableImport({storage,reader:new TimetableAI()});let importUploading=false;
+const destinations=new Destinations(storage);
 const modelClock=new ModelClock(storage);let clockPublished=0;
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
 auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
@@ -71,7 +73,7 @@ function installRuntime(next,start=true){
 trainMeet.on('change',()=>{dirty=true;});
 timetableImport.on('change',()=>{dirty=true;});
 installRuntime(createRuntime(bindings.profile()),false);
-const snapshot = () => {const state=engine.snapshot();return { ...state,bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),timetableImport:timetableImport.summary(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
+const snapshot = () => {const state=engine.snapshot();return { ...state,destinations:destinations.view(),bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),timetableImport:timetableImport.summary(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -125,6 +127,7 @@ const server = http.createServer(async (req, res) => {
     const data = await body(req,url.pathname==='/api/timetable-import/save'?2*1024*1024:65536);
     if(url.pathname.startsWith('/api/timetable-import/')){const command=url.pathname.slice('/api/timetable-import/'.length);if(!['manual','edit','append','save','sheet','activate','discard','select'].includes(command))return json(res,{error:'Okänd tidtabellsåtgärd'},404);return json(res,timetableImport[command](data));}
     if(url.pathname.startsWith('/api/bindings/')){const command=url.pathname.slice('/api/bindings/'.length);if(!['save','discard','restore','activate'].includes(command))return json(res,{error:'Okänd driftinställning'},404);const result=bindings[command](data);engine.log('bindings',command==='activate'?'Driftprofil version '+result.activeVersion+' aktiverad. AIS kvarstår, alla rapporter läses in på nytt.':'Driftinställningarnas utkast uppdaterat.');dirty=true;return json(res,result);}
+    if(url.pathname==='/api/destinations'){const result=destinations.save(data,trainMeet.context?.stations||[]);dirty=true;return json(res,result);}
     if(url.pathname.startsWith('/api/trainmeet/')){const command=url.pathname.slice('/api/trainmeet/'.length);if(!['configure','pair','refresh','disconnect'].includes(command))return json(res,{error:'Okänd TrainMeet-åtgärd'},404);return json(res,await trainMeet[command](data));}
     if(url.pathname==='/api/clock'){const result=modelClock.change(data);dirty=true;engine.log('clock','Modellklockan '+(result.running?'går':'är pausad')+' med hastighet '+result.rate+'×.');return json(res,result);}
     if(url.pathname==='/api/recordings/start'){recorder.start(data,engine.connected?'connected':'disconnected');return json(res,recorder.view());}
