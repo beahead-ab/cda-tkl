@@ -74,10 +74,24 @@ body.panel-app .tt-values{font-size:13px;line-height:24px;color:inherit}body.pan
 @media(prefers-reduced-motion:reduce){.touch-target.route-preparing .dot,.touch-target.route-preparing .traffic-dot{animation:none;fill:#cbb876;stroke:#cbb876}}
 
 .tt-pagination svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-/* The single direct operation is anchored to the lower right edge. */
-body.panel-app #panel-console{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;padding:0}
-#panel-quick-actions{order:1;justify-content:flex-end}
-#panel-console .panel-runtime-info{order:0;margin:0 0 10px;text-align:right}
-#panel-quick-actions #panel-reset{background:transparent;border-color:#494946;color:var(--ink)}
-#panel-quick-actions #panel-reset:hover:not(:disabled){background:#252524;border-color:#858580}
-@media(max-width:700px){body.panel-app #panel-console{flex-direction:row;align-items:center;gap:10px}#panel-console .panel-runtime-info{margin:0;text-align:left;flex:1}#panel-quick-actions{margin-left:auto;flex:none}}
+/* A spring-return instrument switch, fixed directly below the track image. */
+body.panel-app #panel-console{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-end;padding:4px 0 0}
+#panel-quick-actions{order:0;justify-content:flex-end}
+#panel-console .panel-runtime-info{order:1;margin:8px 0 0;text-align:right}
+#panel-quick-actions #panel-reset{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:112px;min-height:80px;padding:3px 10px 7px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--ink);font:400 11px/1.3 "Helvetica Neue",Arial,sans-serif;letter-spacing:.3px;touch-action:manipulation}
+#panel-reset .reset-switch{display:block;width:64px;height:52px;overflow:visible}
+.reset-switch-bezel{fill:#30302e;stroke:#8b8b83;stroke-width:1.2}
+.reset-switch-socket{fill:#111110;stroke:#55554f;stroke-width:2}
+.reset-switch-mark{fill:none;stroke:#a4a49b;stroke-width:1.2}
+.reset-switch-stem{fill:#88887f;stroke:#c0c0b6;stroke-width:1}
+.reset-switch-grip{fill:#deded1;stroke:#8d8d84;stroke-width:1}
+.reset-switch-ridge{fill:none;stroke:#99998e;stroke-width:1}
+.reset-switch-lever{transform-origin:32px 29px;transform:rotate(-25deg);transition:transform 160ms ease-out}
+#panel-quick-actions #panel-reset:hover:not(:disabled){background:#ffffff05;border-color:#ffffff12}
+#panel-reset:hover:not(:disabled) .reset-switch-bezel{stroke:#deded1}
+#panel-quick-actions #panel-reset:focus-visible{outline:2px solid #deded1;outline-offset:2px}
+#panel-reset:active:not(:disabled) .reset-switch-lever,#panel-reset[aria-busy=true] .reset-switch-lever{transform:rotate(25deg)}
+#panel-quick-actions #panel-reset[aria-busy=true]{opacity:1;border-color:transparent;cursor:wait}
+#panel-reset:disabled:not([aria-busy=true]){opacity:.4}
+@media(max-width:700px){#panel-bottom{grid-template-rows:minmax(0,1fr) 64px}body.panel-app #panel-console{flex-direction:row;align-items:center;padding:0;gap:10px}#panel-console .panel-runtime-info{order:0;margin:0;text-align:left;flex:1}#panel-quick-actions{order:1;margin-left:auto;flex:none}#panel-quick-actions #panel-reset{min-height:60px;padding:0 8px 3px;gap:0}#panel-reset .reset-switch{width:54px;height:44px}}
+@media(prefers-reduced-motion:reduce){.reset-switch-lever{transition:none}}

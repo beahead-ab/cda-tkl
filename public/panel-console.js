@@ -2,7 +2,7 @@
 import {registerAdminWorkspace} from './admin-ui.js';
 export function createPanelConsole({onOpen,onResetComplete}) {
   const $=id=>document.getElementById(id),root=$('panel-console');
-  root.innerHTML='<div id="panel-quick-actions"><button type="button" id="panel-reset">Återställ panel</button></div><div class="panel-runtime-info"><span id="panel-reset-status" role="status"></span><span id="panel-mode-status"></span><span id="panel-selection-slot"></span></div>';
+  root.innerHTML='<div id="panel-quick-actions"><button type="button" id="panel-reset" aria-label="Återställ panel"><svg class="reset-switch" viewBox="0 0 64 52" aria-hidden="true" focusable="false"><circle class="reset-switch-bezel" cx="32" cy="29" r="18"/><circle class="reset-switch-socket" cx="32" cy="29" r="13"/><path class="reset-switch-mark" d="M32 4v4M10 29h4M50 29h4"/><g class="reset-switch-lever"><path class="reset-switch-stem" d="M27 31L29 10h6l2 21z"/><rect class="reset-switch-grip" x="23" y="6" width="18" height="12" rx="3"/><path class="reset-switch-ridge" d="M27 10h10M27 14h10"/></g></svg><span id="panel-reset-label">Återställ panel</span></button></div><div class="panel-runtime-info"><span id="panel-reset-status" role="status"></span><span id="panel-mode-status"></span><span id="panel-selection-slot"></span></div>';
   const drawer=document.createElement('div');drawer.id='operations-workspaces';$('tools-view').append(drawer);
   $('all-stop').textContent='Alla signaler i stopp';$('reset-ais').textContent='Återställ stopp';$('reset-ais').hidden=true;
   $('panel-selection-slot').append($('selection-hint'));
@@ -56,7 +56,7 @@ export function createPanelConsole({onOpen,onResetComplete}) {
   return {open,close,update(state,online){
     const stopped=!!state.controls?.stopAll,remote=state.controls?.mode==='remote',shunt=$('route-mode').value==='shunt';
     const reset=state.panelReset,waiting=reset?.phase==='waiting';
-    $('panel-reset').textContent=waiting?'Återställer…':'Återställ panel';
+    $('panel-reset-label').textContent=waiting?'Återställer…':'Återställ panel';
     $('panel-reset').disabled=!online||waiting||!!state.storageFault;
     $('panel-reset').setAttribute('aria-busy',String(waiting));
     $('panel-reset-status').textContent=['waiting','interrupted'].includes(reset?.phase)?reset.reason:'';
