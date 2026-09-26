@@ -496,3 +496,17 @@ simulatorn ska behålla sin process. Ingen återtagning eller omstart har gjorts
 Efter tillstånd: kontrollera aktuellt driftläge, återta via panelen och kör
 /root/switch-network-545e649.sh. Scriptet kräver tom reservationslista, tar
 backup och bevarar sparade data. Ingen omstart av simulatorn ingår.
+
+### Aktiverad 08:10 svensk tid
+
+Efter uttryckligt ”Ja, återta och publicera” återtogs Au → Spår 1b via
+inloggad panel. Därefter kontrollerades 0 tåg, 0 belagda av 197 spårledningar
+och stopp på alla 66 signaler i simulatorns gränssnitt.
+
+`545e649` aktiverad med omstart av endast TKL. Simulatorns process-ID bevarat.
+Backup: `/root/charlottendal-backups/network-545e649-20260926T061055Z`.
+Driftinställningar, ortsfiler, autentisering och övriga sparade data bevarade;
+LocoNet återanslutet och inloggningsskydd kontrollerat efter omstart.
+
+Inloggad efterkontroll visar Normal utfart i admin och precis Cn, An, Bu, D
+som märkta utfarter i panelen. Användarens ursprungliga flik lämnades orörd.
