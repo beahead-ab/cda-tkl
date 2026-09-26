@@ -379,3 +379,10 @@ Syntax och tio riktade rendering-/zoom-/kalkylbladsprov godkända både lokalt o
 `current` pekar på `/opt/charlottendal/releases/afe9e99`. Backend och simulator kör vidare med samma process-id, utan omstart. Körande backend serverar statiska filer ur `c605c16/public`; tretton befintliga filer och nya `admin-line.css` är överlagda där. Backend, profiler, deploymentkonfiguration och beroenden är byte-identiska. Skyddade API:er kräver fortsatt inloggning. Routes, controls, configuration, TrainMeet och tidtabell var oförändrade efter publiceringen.
 
 Backup: `/root/charlottendal-backups/ui-afe9e99-20260926T002655Z`. Återgång utan omstart: återlägg backupens tretton public-filer i `/opt/charlottendal/releases/c605c16/public`, ta bort endast den nytillkomna `admin-line.css` där och peka current på `/opt/charlottendal/releases/f917153`. Återställ inga driftfiler. Nästa ordinarie omstart använder hela afe9e99-releasen.
+
+
+### Gemensam meny 0.33.1
+Release `bd2ff96` publicerad 26 september 03:06 svensk tid. Panel och admin använder samma meny; Driftverktyg har sex arbetsytor. Elva riktade tester godkända på servern. Statisk publicering utan omstart, driftfiler oförändrade. Backup `/root/charlottendal-backups/ui-bd2ff96-20260926T010628Z`.
+
+### Övergångslampor 0.33.2
+V1–V3 tonar växelvis mellan rött och släckt utan gemensam mörk paus. Samma lugna tresekunderscykel; fast rött sken oförändrat.

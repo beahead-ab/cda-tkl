@@ -37,7 +37,8 @@ body[data-page]:not([data-page=panel])>.app-header{position:sticky;top:0;z-index
 .tools-section{scroll-margin-top:85px}
 /* Calm panel display: slower alternating lamps with soft edges and muted red.
    Only active V1–V3 lamps animate; this preference never changes field commands. */
-@keyframes crossing-calm{0%,40%,100%{fill:#2c2a25;stroke:#6b6663}10%,30%{fill:#c75b50;stroke:#b57d70}}
+/* Opposite phases cross-fade continuously: no shared dark pause or held plateau. */
+@keyframes crossing-calm{0%,100%{fill:#c75b50;stroke:#b57d70}50%{fill:#2c2a25;stroke:#6b6663}}
 .crossing-active .indicator-off{animation:crossing-calm 3000ms ease-in-out infinite}
 .crossing-right.crossing-active .indicator-off{animation-delay:-1500ms}
 body[data-crossing-display=steady] .crossing-active .indicator-off{animation:none;fill:#c75b50;stroke:#b57d70}
