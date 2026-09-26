@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { Topology } from '../src/topology.mjs';
-import { RoutePolicy, signalPlan, attachSourceEndpoints, searchSourceRoute } from '../src/route-policy.mjs';
+import { RoutePolicy, signalPlan, attachSourceEndpoints } from '../src/route-policy.mjs';
+import { selectRoutePaths } from '../src/route-selection.mjs';
 import { compileManualPolicies } from '../src/manual-policy.mjs';
 import { compileOperatingControls } from '../src/operating-policy.mjs';
 const read = file => JSON.parse(fs.readFileSync(new URL('../' + file, import.meta.url)));
@@ -31,11 +32,18 @@ for(const [id,system] of Object.entries(catalogReview.controls)) {
   if(routeButtons[id] || source.sensors.find(s=>s.name===id)?.system!==system) throw Error('Ändrad källkontroll: '+id);
   routeButtons[id]={label:id.slice(3),sourceSensor:system,presentation:'catalog'};
 }
+const isCatalogShunt=pair=>pair.from.startsWith('tvv')&&[pair.from,pair.to].some(id=>routeButtons[id]?.presentation==='catalog');
+const routePreferences=selectRoutePaths(topology,source,policy.allowed().filter(pair=>routeButtons[pair.from]&&routeButtons[pair.to]).map(pair=>({...policy.inspect(pair.from,pair.to),...pair})),{
+  eligible:(request,candidate)=>!isCatalogShunt(request)||catalogReview.routes.some(r=>r.from===request.from&&r.to===request.to&&JSON.stringify(r.signals)===JSON.stringify(candidate.plan.signals))
+});
 for (const pair of policy.allowed()) {
   const kind = pair.from.startsWith('tvv') ? 'shunt' : 'main';
   const decision = policy.inspect(pair.from, pair.to);
   const provenance = { rules: decision.rules.map(r => r.rule), nxButtons: decision.nxButtons };
-  const path = searchSourceRoute(topology,...decision.nxButtons);
+  const reviewed=kind==='shunt'&&[pair.from,pair.to].some(id=>routeButtons[id]?.presentation==='catalog')?catalogReview.routes.find(r=>r.from===pair.from&&r.to===pair.to):null;
+  const options=routePreferences.get(decision.nxButtons.join('\0'))||[];
+  const preferred=options.find(c=>!reviewed||JSON.stringify(c.plan.signals)===JSON.stringify(reviewed.signals));
+  const path = preferred?.path;
   if (!path) { excluded.push({ ...pair, ...provenance, reason: 'Ingen sammanhängande väg mellan synliga knappar i den importerade grafen.' }); continue; }
   const plan = signalPlan(topology, source, path);
   if (!plan.signals.length || plan.boundaries[0]?.sensor !== decision.nxButtons[0]) {
@@ -66,7 +74,7 @@ for (const pair of policy.allowed()) {
   routes.push({ id: pair.from+'--'+pair.to, ...pair, label, kind, source: provenance, nxIds,
     blocks: path.blocks, turnouts: path.settings, crossings: path.crossings, segments: path.used,
     flow: path.flow, signals: plan.signals, guardSignals: plan.guardSignals, boundaries: plan.boundaries,
-    path: path.path, autoRelease: true });
+    path: path.path, routePreference:preferred.preference, autoRelease: true });
 }
 for(const reviewed of catalogReview.routes) if(!routes.some(r=>r.from===reviewed.from && r.to===reviewed.to)) throw Error('Granskad växeltågväg kunde inte anslutas: '+reviewed.from+' → '+reviewed.to);
 const names = Object.keys(topology.turnouts).sort();

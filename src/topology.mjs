@@ -32,18 +32,24 @@ export class Topology {
     }
     return result;
   }
-  search(from, to, { blocked = new Set(), locks = {}, crossings = new Set() } = {}) {
+  search(from, to, options = {}) { return this.searchRoutes(from,to,{...options,limit:1})[0] || null; }
+  searchRoutes(from, to, { blocked = new Set(), locks = {}, crossings = new Set(), limit = 256 } = {}) {
     const first = this.buttons[from]?.segment, last = this.buttons[to]?.segment;
-    if (!first || !last || first === last || blocked.has(this.segments[first].b) || blocked.has(this.segments[last].b)) return null;
+    if (!first || !last || first === last || blocked.has(this.segments[first].b) || blocked.has(this.segments[last].b)) return [];
     const length = s => Math.hypot(s.x2 - s.x1, s.y2 - s.y1);
     const queue = (this.buttons[from].end ? [this.buttons[from].end] : [1, 2]).map(end => ({ id: first, end, settings: {}, path: [{ kind: 'segment', id: first, end }], blocks: [this.segments[first].b], crossings: [], used: [first], cost: length(this.segments[first]) }));
-    const seen = new Map();
+    const seen = new Map(), results=[];
     let attempts = 0;
     while (queue.length && attempts++ < 30000) {
       queue.sort((a, b) => a.cost - b.cost);
       const n = queue.shift();
-      if (n.id === last && (!this.buttons[to].end || this.buttons[to].end === n.end)) return { ...n, blocks: [...new Set(n.blocks.filter(Boolean))], flow: this.flow(n.path) };
-      const key = n.id + ':' + n.end + ':' + JSON.stringify(Object.entries(n.settings).sort());
+      if (n.id === last && (!this.buttons[to].end || this.buttons[to].end === n.end)) {
+        results.push({ ...n, blocks: [...new Set(n.blocks.filter(Boolean))], flow: this.flow(n.path) });
+        if(limit===1)return results;
+        if(results.length>limit)throw Error('För många alternativa tågvägar; grafen behöver granskas.');
+        continue;
+      }
+      const key = n.id + ':' + n.end + ':' + JSON.stringify(Object.entries(n.settings).sort()) + (limit===1?'':':'+n.used.slice().sort().join(','));
       if (seen.has(key) && seen.get(key) <= n.cost) continue;
       seen.set(key, n.cost);
       const s = this.segments[n.id], out = n.end === 1 ? 2 : 1, node = s['c' + out], type = s['t' + out];
@@ -90,7 +96,8 @@ export class Topology {
         if (x) push(x['c' + exit.toLowerCase()], 'LEVEL_XING_' + exit, n.settings, null, node);
       }
     }
-    return null;
+    if(queue.length)throw Error('Sökgränsen för alternativa tågvägar nåddes; grafen behöver granskas.');
+    return results;
   }
   flow(path) {
     const out = []; let distance = 0;

@@ -60,6 +60,28 @@ export class Engine extends EventEmitter {
     if (route.guardSignals) return route.guardSignals;
     return [...new Set(this.profile.routes.filter(r => r.blocks.some(b => route.blocks.includes(b))).flatMap(r => r.signals))].filter(n => !route.signals.includes(n));
   }
+  isContinuation(upstream, downstream, signal) {
+    const end=upstream.source?.nxButtons?.[1],start=downstream.source?.nxButtons?.[0];
+    return Boolean(end && end===start && upstream.kind===downstream.kind && downstream.signals[0]===signal && downstream.boundaries?.[0]?.sensor===start);
+  }
+  guardConfirmed(route,name) {
+    const signal=this.signals[name];
+    if(!this.fresh(signal))return false;
+    if(signal.aspect==='stop')return true;
+    // Only the forward destination boundary can be cleared by a separately
+    // reserved continuation. Opposing/flank guards remain STOP requirements.
+    if(signal.aspect!=='go')return false;
+    return this.routes.some(next=>{
+      if(next.id===route.id||!this.isContinuation(route,next,name))return false;
+      const stopping=signal.desired==='STOP'&&this.now()-signal.commandAt<=this.profile.commandTimeoutMs;
+      if(next.cancelRequested) {
+        // Normal cancellation retains the reservation while its STOP report
+        // is in flight. Never waive unknown, occupied or wrong-position data.
+        return next.state==='cancelling'&&stopping&&next.blocks.every(b=>this.fresh(this.blocks[b])&&this.blocks[b].occupied===false)&&Object.entries(next.turnouts).every(([n,p])=>this.turnoutConfirmed(n,p));
+      }
+      return ['clearing','active','traversing'].includes(next.state)&&(signal.desired==='GO'||(next.state==='traversing'&&stopping));
+    });
+  }
   receive(bytes) {
     let d; try { d = decode(bytes); } catch (e) { this.log('bad-frame', e.message, { frame: hex(bytes) }); return; }
     // B0 echo and SENT OK are not field feedback.
@@ -146,11 +168,13 @@ export class Engine extends EventEmitter {
     const blocked = def.blocks.find(b => this.trackBlocked(b));
     if (blocked) throw Error(`${blocked} är administrativt spärrat.`);
     for (const b of def.blocks) if (!this.fresh(this.blocks[b]) || this.blocks[b].occupied !== false) throw Error(`${b} är belagt eller saknar aktuell återrapport.`);
-    for (const name of [...def.signals, ...this.guardSignals(def)]) if (!this.fresh(this.signals[name]) || this.signals[name].aspect !== 'stop') throw Error(`Signal ${name} är inte bekräftat i stopp.`);
+    for (const name of def.signals) if (!this.fresh(this.signals[name]) || this.signals[name].aspect !== 'stop') throw Error(`Signal ${name} är inte bekräftat i stopp.`);
+    for (const name of this.guardSignals(def)) if(!this.guardConfirmed(def,name)) throw Error(`Signal ${name} är inte bekräftat i stopp eller skyddad av en anslutande tågväg.`);
     for (const route of this.routes) {
       const occupiedResources = new Set(route.blocks.map(b => this.profile.blocks[b].address));
       const hit = def.blocks.find(b => occupiedResources.has(this.profile.blocks[b].address));
       if (hit || def.crossings.some(x => route.crossings.includes(x))) throw Error('Tågvägen korsar en reserverad väg. Ingen godkänd alternativ väg finns i denna profil.');
+      if (def.signals.some(n=>this.guardSignals(route).includes(n)&&!this.isContinuation(route,def,n)) || route.signals.some(n=>this.guardSignals(def).includes(n)&&!this.isContinuation(def,route,n))) throw Error('Signal skyddar en annan tågväg och är inte en anslutande fortsättning.');
       if (def.signals.some(s => route.signals.includes(s))) throw Error('Signal används av en annan tågväg.');
       if (Object.entries(def.turnouts).some(([n, p]) => route.turnouts[n] && route.turnouts[n] !== p)) throw Error('En kopplad växel är låst i motsatt läge.');
     }
@@ -368,7 +392,7 @@ export class Engine extends EventEmitter {
       const free = r.blocks.every(b => this.fresh(this.blocks[b]) && this.blocks[b].occupied === false);
       const known = Object.keys(r.turnouts).every(n => this.fresh(this.turnouts[n]) && this.turnouts[n].position !== 'unknown' && this.turnouts[n].updatedAt >= (this.turnouts[n].commandAt || 0));
       const correct = known && Object.entries(r.turnouts).every(([n, p]) => this.turnouts[n].position === p);
-      const protectedSignals = this.guardSignals(r).every(n => this.fresh(this.signals[n]) && this.signals[n].aspect === 'stop');
+      const protectedSignals = this.guardSignals(r).every(n => this.guardConfirmed(r,n));
       if (r.cancelRequested) {
         const stopped = r.signals.every(n => this.fresh(this.signals[n]) && this.signals[n].aspect === 'stop' && this.signals[n].updatedAt >= r.cancelAt && this.signals[n].reportSequence > (r.cancelSequence ?? -1));
         if (free && known && stopped && protectedSignals && !this.storageFault) {

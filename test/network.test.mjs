@@ -59,7 +59,7 @@ test('a composed route retains the complete source NX identity alongside interme
 test('Spår6 catalog routes keep their distinct source NX boundaries and protect both directions',()=>{
   const six=mainRoutes.filter(r=>r.from==='htvSpVI'||r.to==='htvSpVI');assert.equal(six.length,18);
   const cu=six.find(r=>r.from==='htvCu'),bu=six.find(r=>r.from==='htvBu'),out=six.find(r=>r.from==='htvSpVI'&&r.to==='htvCu');
-  assert.deepEqual(cu.source.nxButtons,['tvs1/3','tvs6/9']);assert.deepEqual(cu.signals,['1/3','1/5','4/5','6/7']);assert.ok(cu.guardSignals.includes('6/9'));
+  assert.deepEqual(cu.source.nxButtons,['tvs1/3','tvs6/9']);assert.deepEqual(cu.signals,['1/3','1/5','5/5','6/7']);assert.ok(cu.guardSignals.includes('6/9'));
   assert.deepEqual(bu.source.nxButtons,['tvs1/2','tvs6/8']);assert.deepEqual(bu.signals,['1/2','1/4','3/6','6/6']);assert.ok(bu.guardSignals.includes('6/8'));
   assert.deepEqual(out.source.nxButtons,['tvs6/8','tvsU4']);assert.equal(out.signals[0],'6/8');assert.ok(out.guardSignals.includes('U4'));
   for(const def of six) {
@@ -309,7 +309,7 @@ test('a route along one track locks the off-path crossover companion without a p
 });
 test('missing crossover companion feedback prevents GO and retains locks after recovery',()=>{
   const r=rig();r.field.setFault('turnout','Vx101');r.drain();
-  const route=r.request('htvAu','htvSpIIA');r.drain();r.advance(profile.commandTimeoutMs+1000);
+  const route=r.request('htvAu','htvSpIIIA');r.drain();r.advance(profile.commandTimeoutMs+1000);
   assert.equal(route.turnouts.Vx100,'T');assert.equal(route.turnouts.Vx101,'T');
   assert.equal(r.field.turnouts.Vx100.position,'T');assert.equal(r.engine.turnouts.Vx101.position,'unknown');
   assert.equal(route.state,'held');assert.equal(r.engine.routes.length,1);
@@ -371,4 +371,78 @@ test('compatible routes share a pending companion order without restarting eithe
   const a=r.request('htvCu','htvSpIA'),b=r.request('htvAn','htvSpIIA');
   for(const name of ['Vx100','Vx101'])assert.equal(r.commands.slice(before).filter(c=>c.address===profile.turnouts[name].address).length,1,name+' receives only the first route order');
   r.drain();r.advance(4000);assert.equal(a.state,'active',a.reason);assert.equal(b.state,'active',b.reason);
+});
+
+for(const order of [0,1])test(`late crossover leaves the lower left arrival to the yard available, order ${order}`,()=>{
+  const r=rig(),pairs=[['htvCu','htvSpIIA'],['htvCn','htvSpIIIA']];if(order)pairs.reverse();
+  const a=r.request(...pairs[0]);r.advance(6500);assert.equal(a.state,'active',a.reason);
+  const b=r.request(...pairs[1]);r.advance(6500);assert.equal(b.state,'active',b.reason);assert.equal(a.state,'active',a.reason);
+  const through=r.engine.routes.find(x=>x.definitionId==='htvCu--htvSpIIA');
+  assert.equal(through.turnouts.Vx100,'C');assert.equal(through.turnouts.Vx101,'C');
+  assert.equal(through.turnouts.Vx110,'T');assert.equal(through.turnouts.Vx117,'T');assert.equal(through.turnouts.Vx102,undefined);
+  for(const route of [a,b])r.field.startTrain(route.definitionId);
+  r.advance(30000);assert.equal(r.engine.routes.length,0);assert.equal(r.field.trains.length,0);
+});
+
+for(const pairs of [
+ [['htvAu','htvSpIC'],['htvSpIC','htvBu']],
+ [['htvCu','htvSpIA'],['htvSpIA','htvSpIB'],['htvSpIB','htvSpIC'],['htvSpIC','htvBu']],
+ [['htvBn','htvSpIIC'],['htvSpIIC','htvSpIIB'],['htvSpIIB','htvSpIIA'],['htvSpIIA','htvCn']]
+])for(const reverse of [false,true])test(`continuous routes keep every previous section active: ${pairs[0][0]}, reverse build ${reverse}`,()=>{
+ const r=rig(),established=[];
+ for(const pair of reverse?[...pairs].reverse():pairs){
+  const route=r.request(...pair);established.push(route);r.advance(6500);
+  for(const previous of established)assert.equal(previous.state,'active',previous.label+': '+previous.reason);
+ }
+ assert.equal(r.engine.routes.length,pairs.length);
+ for(const route of established)for(const name of route.signals)assert.equal(r.engine.signals[name].desired,'GO');
+});
+
+test('continuation does not waive an opposing guard or an unreserved GO report',()=>{
+ const r=rig(),first=r.request('htvAu','htvSpIC');r.advance(6500);
+ const target=profile.routes.find(x=>x.from==='htvSpIC'&&x.to==='htvBu').signals[0];
+ r.engine.receive(signalReport(profile.signals[target].reportAddress,8));
+ assert.equal(first.state,'held');assert.ok(first.signals.every(n=>r.engine.signals[n].desired==='STOP'));
+});
+test('failure in a continuation retains its reservations and removes upstream authority',()=>{
+ const r=rig(),first=r.request('htvAu','htvSpIC');r.advance(6500);
+ const next=r.request('htvSpIC','htvBu');r.advance(6500);
+ r.field.setFault('signal',next.signals[0]);r.drain();r.advance(500);
+ assert.equal(next.state,'held');assert.equal(r.engine.routes.length,2);
+ // The upstream route may remain clear to a confirmed STOP boundary, but can
+ // never use this failed route as authority for a GO destination signal.
+ const boundary=next.signals[0];assert.equal(r.engine.signals[boundary].desired,'STOP');
+ r.engine.signals[boundary].aspect='go';r.engine.tick();assert.equal(first.state,'held');
+});
+test('a train traverses four joined sections without holding or losing the earlier reservations',()=>{
+ const r=rig(),pairs=[['htvCu','htvSpIA'],['htvSpIA','htvSpIB'],['htvSpIB','htvSpIC'],['htvSpIC','htvBu']];
+ for(const pair of pairs){r.request(...pair);r.advance(6500);}
+ r.field.startTrain('htvCu--htvBu');r.advance(60000);
+ assert.equal(r.field.trains.length,0);assert.equal(r.engine.routes.length,0,JSON.stringify(r.engine.routes.map(x=>({label:x.label,state:x.state,reason:x.reason}))));
+ assert.ok(!r.engine.events.some(e=>e.kind==='route-held'));
+});
+
+for(const removeFirst of [false,true])test(`cancelling one joined section preserves the other: remove upstream ${removeFirst}`,()=>{
+ const r=rig(),a=r.request('htvAu','htvSpIC');r.advance(6500);const b=r.request('htvSpIC','htvBu');r.advance(6500);
+ r.engine.cancel(removeFirst?a.id:b.id);r.drain();r.advance(1000);
+ assert.equal(r.engine.routes.length,1);assert.equal(r.engine.routes[0].id,removeFirst?b.id:a.id);assert.equal(r.engine.routes[0].state,'active');
+});
+
+test('every available source join works for main and shunt controls, independent of panel location',{timeout:120000},()=>{
+ const examples=new Map();
+ const overlaps=(a,b)=>a.some(x=>b.includes(x));
+ for(const a of profile.routes)for(const b of profile.routes){
+  const end=a.source.nxButtons[1];
+  if(a.kind!==b.kind||end!==b.source.nxButtons[0]||b.boundaries[0]?.sensor!==end)continue;
+  if(overlaps(a.blocks.map(n=>profile.blocks[n].address),b.blocks.map(n=>profile.blocks[n].address))||overlaps(a.crossings,b.crossings)||overlaps(a.signals,b.signals))continue;
+  if(Object.entries(a.turnouts).some(([n,p])=>b.turnouts[n]&&b.turnouts[n]!==p))continue;
+  if(b.signals.some(n=>a.guardSignals.includes(n)&&n!==b.signals[0])||a.signals.some(n=>b.guardSignals.includes(n)))continue;
+  examples.set(a.kind+':'+end,[a,b]);
+ }
+ assert.ok(examples.size>=10,'exercise distinct join locations, not just the reported example');
+ for(const [key,defs]of examples){
+  const r=rig();const a=r.request(defs[0].from,defs[0].to);r.advance(6500);assert.equal(a.state,'active',key+': '+a.reason);
+  const b=r.request(defs[1].from,defs[1].to);r.advance(6500);
+  assert.equal(a.state,'active',key+': '+a.reason);assert.equal(b.state,'active',key+': '+b.reason);
+ }
 });

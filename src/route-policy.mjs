@@ -56,7 +56,14 @@ function deltaFromAnchor(topology, segment, at, anchor) {
 }
 
 export function searchSourceRoute(topology, fromSensor, toSensor) {
-  const route = topology.search(fromSensor, toSensor);
+  return trimApproach(topology,topology.search(fromSensor,toSensor));
+}
+
+export function searchSourceRoutes(topology,fromSensor,toSensor) {
+  return topology.searchRoutes(fromSensor,toSensor).map(route=>trimApproach(topology,route)).filter(Boolean);
+}
+
+function trimApproach(topology,route) {
   if (!route) return null;
   // The incoming segment ends AT the start signal. Its occupancy belongs to
   // the approach, not to the protected route ahead of that signal.
@@ -95,7 +102,8 @@ export function signalPlan(topology, source, route) {
     add(anchor[forward + 'signalmast'], index, anchor[forward + 'sensor']);
     if (anchor[reverse + 'signalmast']) guards.push(anchor[reverse + 'signalmast']);
   }
-  // The destination boundary stays at stop; it is not a continuation authority.
+  // The destination is a STOP guard unless Engine verifies a separately
+  // reserved continuation at this exact source signal boundary.
   const last = route.path.at(-1);
   if (last?.kind === 'segment') {
     const seg = topology.segments[last.id], exit = last.end === 1 ? 2 : 1, node = seg['c' + exit];

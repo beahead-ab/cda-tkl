@@ -386,3 +386,5 @@ Release `bd2ff96` publicerad 26 september 03:06 svensk tid. Panel och admin anv�
 
 ### Övergångslampor 0.33.2
 V1–V3 tonar växelvis mellan rött och släckt utan gemensam mörk paus. Samma lugna tresekunderscykel; fast rött sken oförändrat.
+
+Blinkning 0.33.2 publicerad som `7b3e2bc` utan omstart. Backup `/root/charlottendal-backups/ui-7b3e2bc-20260926T010844Z`. Elva riktade kontroller godkända; driftfiler bevarade.
