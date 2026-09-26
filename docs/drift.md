@@ -510,3 +510,18 @@ LocoNet återanslutet och inloggningsskydd kontrollerat efter omstart.
 
 Inloggad efterkontroll visar Normal utfart i admin och precis Cn, An, Bu, D
 som märkta utfarter i panelen. Användarens ursprungliga flik lämnades orörd.
+
+## Publicerad gränssnittsändring 0.39.3 · pluppar och sammanhängande markering
+
+`a4451d7` publicerad 26 september 08:21 svensk tid utan omstart.
+Backup: `/root/charlottendal-backups/ui-a4451d7-20260926T062102Z`.
+Backend kör fortsatt från `545e649`; både TKL och simulator behöll sina
+process-ID. Driftkod, profiler och tjänsteinställningar jämförda identiska.
+route-presentation.js, app.js, panel-fixed.css och index.html installerade
+atomärt per fil med återställning vid fel. Current pekar på hela nya releasen.
+
+Tio riktade lokala tester, syntax och webbläsarprov av Au → 1b samt delåtertagning
+Au → 1c godkända. Serverns 13 riktade tester och genereringskontroll godkända.
+Driftdata jämförda oförändrade efter publicering. Inloggad produktionspanel
+laddar utan JavaScript-fel; inga tågvägar var lagda vid efterkontrollen och inga
+nya skapades där. Användarens ursprungliga flik lämnades orörd.
