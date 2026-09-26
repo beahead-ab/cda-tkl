@@ -17,7 +17,7 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Publicerat på webbadressen
 
-Version **0.32.0**, release `afe9e99`, publicerades 26 september kl. 02:26 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/) utan omstart. [Linje och adminprinciperna](admin-linje.md) är införda, med separata redigeringsflöden och en renare panel. Meny → Zoom behåller reglage 50–300 %, Visa hela och lokalt sparat val. Original är enda panelutseendet. Backend är oförändrad från 0.30.0 och driftdata bevarades. Se driftjournalen för rollback av gränssnittsöverlägget.
+Version **0.33.0**, release `8bef196`, publicerades 26 september kl. 02:51 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/) utan omstart. [Linje och adminprinciperna](admin-linje.md) är införda, med gemensam vänstermeny för samtliga adminvyer, separata redigeringsflöden och en renare panel. Meny → Zoom behåller reglage 50–300 %, Visa hela och lokalt sparat val. Original är enda panelutseendet. Backend är oförändrad från 0.30.0 och driftdata bevarades. Se driftjournalen för rollback av gränssnittsöverlägget.
 
 - Start- och slutplupp blinkar lugnt växelvis under förberedelsen av en accepterad tågväg. Klart läge ger fast sken; återtagning, hållna lås, AIS och kontaktbortfall ger ingen förberedelseblinkning.
 - Fast ställverksyta: spårplan, tidtabell och knappar har fasta fält. Driftmeddelanden ligger som toast ovanpå; inget tomt meddelandefält reserveras. Detaljer öppnas ovanpå, hover flyttar inga symboler och ljusflödet följer bildrutorna med monoton tidsmätning.

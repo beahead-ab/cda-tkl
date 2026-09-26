@@ -567,3 +567,12 @@ Syntax och tio riktade rendering-/zoom-/kalkylbladsprov godkända både lokalt o
 `current` pekar på `/opt/charlottendal/releases/afe9e99`. Backend och simulator kör vidare med samma process-id, utan omstart. Körande backend serverar statiska filer ur `c605c16/public`; tretton befintliga filer och nya `admin-line.css` är överlagda där. Backend, profiler, deploymentkonfiguration och beroenden är byte-identiska. Skyddade API:er kräver fortsatt inloggning. Routes, controls, configuration, TrainMeet och tidtabell var oförändrade efter publiceringen.
 
 Backup: `/root/charlottendal-backups/ui-afe9e99-20260926T002655Z`. Återgång utan omstart: återlägg backupens tretton public-filer i `/opt/charlottendal/releases/c605c16/public`, ta bort endast den nytillkomna `admin-line.css` där och peka current på `/opt/charlottendal/releases/f917153`. Återställ inga driftfiler. Nästa ordinarie omstart använder hela afe9e99-releasen.
+
+
+## 26 september 2026 kl. 02:51 · sammanhängande admin 0.33.0
+
+Release `8bef196` publicerad utan omstart. Samma fasta vänstermeny och svarta Linje-ytor i översikter, undersidor, registerdetaljer, kalkylblad och kontosida. Mobil har samma navigation i sidolåda. Ställverket återgår till fullbredd med trepunktsmeny. Tidigare headerflytt är borttagen. Den öppna produktionsfliken hade fortfarande 0.32.0 och visade den gamla högerknappen; efter omladdning är 0.33.0 och vänstermenyn visuellt verifierade, med bevarad 95 % zoom.
+
+Syntax och elva riktade prov inklusive lösenordsintegration godkända lokalt och på servern. Responsiv kontroll vid 1280/650/390 px, undersidor och skydd för osparat kalkylblad verifierade. Backup `/root/charlottendal-backups/ui-8bef196-20260926T005150Z`. Current pekar på 8bef196; körande backend finns fortfarande i c605c16 och serverar överlagda statiska filer. Routes, controls, configuration, TrainMeet och tidtabell oförändrade; båda tjänsternas process-id oförändrade och skyddade API:er kräver fortsatt inloggning.
+
+Rollback utan omstart: återlägg sex filer från backupens public (admin-line.css, app.js, index.html, auth.html, auth.css, auth.js) i c605c16/public, ta bort endast den nytillkomna admin-navigation.js där och peka current på afe9e99. Återställ inga driftfiler.
