@@ -388,3 +388,20 @@ Release `bd2ff96` publicerad 26 september 03:06 svensk tid. Panel och admin anv�
 V1–V3 tonar växelvis mellan rött och släckt utan gemensam mörk paus. Samma lugna tresekunderscykel; fast rött sken oförändrat.
 
 Blinkning 0.33.2 publicerad som `7b3e2bc` utan omstart. Backup `/root/charlottendal-backups/ui-7b3e2bc-20260926T010844Z`. Elva riktade kontroller godkända; driftfiler bevarade.
+
+## Förberedd publicering 0.37.0 · 26 september 2026
+
+Release `d3dc628` är uppladdad till separat releasekatalog och serverns
+förberedelsekontroller passerar (syntax, 32 riktade tester, tre tester av
+alternativa tågvägar och elva övergångs-/processtester). Lokalt passerar
+samtliga 232 enhetstester.
+
+Inloggad simulator kontrollerad: inga tåg i rörelse, inga belagda spår eller
+aktiva fel, normal programmeringsmatning. Två därefter lagda delvägar,
+Au → Spår 1a och Spår 1a → Bu, återtagna via panelens ändpunkter Au/Bu.
+Sparad reservationslista verifierades tom. Linjespärr AN/BN lämnas kvar.
+
+Aktiveringen blockerades av automatisk godkännandegranskning innan kommando
+kördes: den kräver särskild aktuell bekräftelse för omstart av båda tjänsterna.
+Bekräftelsefråga är skickad. Inget versionsbyte eller driftavbrott har utförts;
+aktiv release är fortfarande `b68e037`. Återtagningen ovan är utförd.

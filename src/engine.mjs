@@ -3,6 +3,7 @@ import { randomUUID, createHash } from 'node:crypto';
 import { decode, hex, switchOrder } from './protocol.mjs';
 import { RoutePolicy } from './route-policy.mjs';
 import { OperatingControls } from './operating-controls.mjs';
+import { splitRouteAt } from './route-sections.mjs';
 
 export class Engine extends EventEmitter {
   constructor(profile, { send = () => {}, storage, now = Date.now } = {}) {
@@ -159,6 +160,8 @@ export class Engine extends EventEmitter {
     if (existing) return this.cancel(existing.id);
     const chain=this.findRouteChain(from,to);
     if(chain.length>1){this.cancelRoutes(chain);return chain[0];}
+    const section=this.cancelSection(from,to);
+    if(section)return section;
     if (!this.connected || this.storageFault) throw Error(this.storageFault ? 'Lagringsfel; manövrering spärrad.' : 'Ingen LocoNet-anslutning.');
     if(this.controls.mode!=='local') throw Error('Fjärrläge: lokal tågvägsläggning är spärrad. Inget fjärrsystem är anslutet ännu.');
     if (this.controls.stopAll) throw Error('Alla signaler i stopp är aktiverat. Återställ AIS före ny tågväg.');
@@ -209,16 +212,56 @@ export class Engine extends EventEmitter {
     }
     return r;
   }
-  findRouteChain(from,to) {
+  findRouteChain(from,to,routes=this.routes) {
     const found=[];
     const visit=chain=>{
       const last=chain.at(-1);
       if(last.to===to){found.push(chain);return;}
-      for(const next of this.routes)if(!chain.includes(next)&&last.to===next.from&&this.isContinuation(last,next,next.signals[0]))visit([...chain,next]);
+      for(const next of routes)if(!chain.includes(next)&&last.to===next.from&&this.isContinuation(last,next,next.signals[0]))visit([...chain,next]);
     };
-    for(const first of this.routes)if(first.from===from)visit([first]);
+    for(const first of routes)if(first.from===from)visit([first]);
     if(found.length>1)throw Error('Flera anslutande tågvägar hittades. Välj återtagning i tågvägslistan.');
     return found[0]||[];
+  }
+  cancelSection(from,to) {
+    const origins=new Map();
+    let proposed=this.routes.slice();
+    for(const button of [from,to])proposed=proposed.flatMap(route=>{
+      const defs=splitRouteAt(this.profile,route,button);if(!defs)return [route];
+      const origin=origins.get(route)||route;
+      return defs.map(def=>{
+        const part={...structuredClone(def),definitionId:def.id,id:randomUUID(),splitFrom:origin.id,
+          state:'active',createdAt:origin.createdAt,establishedAt:origin.establishedAt,
+          cancelRequested:false,nextSignal:-1,reason:'Del av befintlig tågväg. Körbesked återrapporterat.'};
+        if(part.autoRelease)part.passage=[...new Set(part.blocks.map(n=>this.profile.blocks[n].address))].map(address=>({address,state:'pending'}));
+        origins.set(part,origin);return part;
+      });
+    });
+    const chain=this.findRouteChain(from,to,proposed);
+    if(!chain.length||!chain.some(r=>origins.has(r)))return null;
+    // Do not split other reservations merely because the same button lies on them.
+    const changed=new Set(chain.map(r=>origins.get(r)).filter(Boolean));
+    proposed=this.routes.flatMap(r=>changed.has(r)?proposed.filter(p=>origins.get(p)===r):[r]);
+    for(const r of changed){
+      if(!this.connected||this.storageFault||r.state!=='active'||r.cancelRequested||
+         r.blocks.some(n=>!this.fresh(this.blocks[n])||this.blocks[n].occupied!==false)||
+         r.passage?.some(p=>p.state!=='pending')||
+         Object.entries(r.turnouts).some(([n,p])=>!this.turnoutConfirmed(n,p))||
+         r.signals.some(n=>!this.fresh(this.signals[n])||this.signals[n].aspect!=='go'))
+        throw Error('Delåtertagning kräver en klar tågväg med fria spår och aktuella lägesbesked. Återta annars hela tågvägen.');
+    }
+    const previous=this.routes;this.routes=proposed;
+    try {
+      // All new guard boundaries must already be protected by a confirmed STOP
+      // or by their independently reserved forward continuation.
+      for(const r of proposed)if(this.guardSignals(r).some(n=>!this.guardConfirmed(r,n)))throw Error('Delsträckans skyddssignaler är inte bekräftade.');
+      this.cancelRoutes(chain); // Persist the split AND cancellation before STOP.
+    } catch(error){
+      this.routes=previous;
+      if(this.storageFault)for(const r of previous){r.state='held';r.nextSignal=-1;r.reason='Lagringsfel vid delåtertagning. Ursprungliga lås kvarstår.';}
+      throw error;
+    }
+    return chain[0];
   }
   cancel(id) {
     const r=this.routes.find(r=>r.id===id);if(!r)throw Error('Tågvägen finns inte.');

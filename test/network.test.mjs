@@ -5,6 +5,7 @@ import { Engine } from '../src/engine.mjs';
 import { Field } from '../src/field.mjs';
 import { decode, sensorReport, signalReport, switchOrder } from '../src/protocol.mjs';
 import { RoutePolicy } from '../src/route-policy.mjs';
+import { splitRouteAt } from '../src/route-sections.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url)));
 const profile=read('profiles/charlottendal-network.json'), fieldProfile=read('profiles/simulator-network.json'), source=read('public/data/operations-source.json');
 const mainRoutes=profile.routes.filter(r=>r.kind==='main'), shuntRoutes=profile.routes.filter(r=>r.kind==='shunt');
@@ -543,4 +544,93 @@ test('alternative reservations persist their actual path and cancel by the origi
   assert.equal(held.state,'held');assert.equal(held.variantId,alternative.variantId);assert.deepEqual(held.turnouts,alternative.turnouts);assert.deepEqual(held.blocks,alternative.blocks);
   r.request('htvBu','htvSpIIB');r.advance(1000);
   assert.equal(r.engine.routes.length,1);assert.equal(r.engine.routes[0].from,'htvAu');
+});
+
+for(const [from,to,kept] of [
+ ['htvAu','htvSpIA',[['htvSpIA','htvSpIC']]],
+ ['htvSpIB','htvSpIC',[['htvAu','htvSpIB']]],
+ ['htvSpIA','htvSpIB',[['htvAu','htvSpIA'],['htvSpIB','htvSpIC']]],
+])test(`partial cancellation inside one long route ${from} to ${to}`,()=>{
+ const r=rig(),whole=r.request('htvAu','htvSpIC');r.advance(6500);
+ const continuation=r.request('htvSpIC','htvBu');r.advance(6500);
+ assert.equal(whole.state,'active');const before=r.commands.length;
+ r.request(from,to);r.drain();r.advance(1000);
+ assert.ok(r.commands.slice(before).every(c=>c.position==='T'),'only STOP orders, no turnout movement or new GO');
+ assert.deepEqual(r.engine.routes.filter(x=>x.id!==continuation.id).map(x=>[x.from,x.to]),kept);
+ assert.ok(r.engine.routes.every(x=>x.state==='active'),JSON.stringify(r.engine.routes.map(x=>({label:x.label,state:x.state,reason:x.reason}))));
+ assert.equal(continuation.state,'active');
+});
+
+test('partial cancellation refuses occupied or stale long routes without changing reservations',()=>{
+ for(const mode of ['occupied','stale','preparing']){
+  const r=rig(),whole=r.request('htvAu','htvSpIC');if(mode!=='preparing')r.advance(6500);
+  if(mode==='occupied'){r.field.setBlock(whole.blocks[0],true);r.drain();}
+  if(mode==='stale')r.engine.blocks[whole.blocks[0]].updatedAt=0;
+  const before=r.commands.length;
+  assert.throws(()=>r.request('htvAu','htvSpIA'),/Delåtertagning/);
+  assert.deepEqual(r.engine.routes.map(x=>x.id),[whole.id]);assert.equal(r.commands.length,before);
+ }
+});
+
+test('partial cancellation saves the exact remaining locks and restores them held on restart',()=>{
+ const saved=new Map(),storage={load:(k,d)=>structuredClone(saved.get(k)||d),save:(k,v)=>saved.set(k,structuredClone(v)),event:()=>{}};
+ const r=rig(storage);r.request('htvAu','htvSpIC');r.advance(6500);
+ r.request('htvAu','htvSpIA');r.drain();r.advance(1000);
+ const remaining=r.engine.routes[0],restored=new Engine(profile,{storage});
+ assert.equal(remaining.from,'htvSpIA');assert.equal(restored.routes.length,1);
+ assert.deepEqual(restored.routes[0].blocks,remaining.blocks);assert.deepEqual(restored.routes[0].turnouts,remaining.turnouts);
+ assert.equal(restored.routes[0].state,'held');
+});
+
+test('failed split persistence preserves the original whole reservation and stops signals',()=>{
+ let fail=false;const storage={load:(k,d)=>d,save:()=>{if(fail)throw Error('disk full');},event:()=>{}};
+ const r=rig(storage),whole=r.request('htvAu','htvSpIC');r.advance(6500);fail=true;
+ assert.throws(()=>r.request('htvAu','htvSpIA'),/spara lås/);
+ assert.deepEqual(r.engine.routes.map(x=>x.id),[whole.id]);assert.equal(whole.state,'held');
+ assert.ok(whole.signals.every(n=>r.engine.signals[n].desired==='STOP'));
+});
+
+test('partial cancellation works at reviewed boundaries in both directions for main and shunt routes',{timeout:120000},()=>{
+ const examples=new Map();
+ for(const def of profile.routes)for(const button of Object.keys(profile.buttons)){
+  const parts=splitRouteAt(profile,def,button);if(!parts)continue;
+  const direction=Math.sign(def.flow.at(-1).x2-def.flow[0].x1);
+  examples.set(def.kind+':'+button+':'+direction,{def,parts});
+ }
+ assert.ok(examples.size>=10);assert.ok([...examples.values()].some(x=>x.def.kind==='shunt'));
+ for(const [key,{def,parts}]of examples){
+  const r=rig(),whole=r.request(def.from,def.to);r.advance(6500);assert.equal(whole.state,'active',key);
+  r.request(parts[0].from,parts[0].to);r.drain();r.advance(1000);
+  assert.equal(r.engine.routes.length,1,key);assert.equal(r.engine.routes[0].definitionId,parts[1].id,key);
+  assert.equal(r.engine.routes[0].state,'active',key+': '+r.engine.routes[0].reason);
+ }
+});
+
+test('partial cancellation across joined reservations keeps both unselected outer sections',()=>{
+ const r=rig();r.request('htvAu','htvSpIB');r.advance(6500);r.request('htvSpIB','htvBu');r.advance(6500);
+ r.request('htvSpIA','htvSpIC');r.drain();r.advance(1000);
+ assert.deepEqual(r.engine.routes.map(x=>[x.from,x.to]),[['htvAu','htvSpIA'],['htvSpIC','htvBu']]);
+ assert.ok(r.engine.routes.every(x=>x.state==='active'));
+});
+
+test('split reservation retains all locks until new STOP feedback and occupancy clearance',()=>{
+ const r=rig(),whole=r.request('htvAu','htvSpIC');r.advance(6500);
+ r.request('htvAu','htvSpIA');
+ assert.equal(r.engine.routes.length,2,'no replies yet');
+ assert.deepEqual(new Set(r.engine.routes.flatMap(x=>x.blocks)),new Set(whole.blocks));
+ const stopping=r.engine.routes.find(x=>x.cancelRequested),remaining=r.engine.routes.find(x=>!x.cancelRequested);
+ r.field.setBlock(stopping.blocks[0],true);r.drain();r.advance(1000);
+ assert.ok(r.engine.routes.includes(stopping));assert.equal(remaining.state,'active');
+ r.field.setBlock(stopping.blocks[0],false);r.drain();r.advance(1000);
+ assert.deepEqual(r.engine.routes,[remaining]);
+});
+
+test('an alternative path is split only where both reviewed parts match that actual path',()=>{
+ const r=rig();r.request('htvAu','htvSpIC');r.advance(6500);
+ const alt=r.request('htvBu','htvSpIIA');r.advance(6500);assert(alt.variantId);assert.equal(alt.state,'active');
+ const parts=splitRouteAt(profile,alt,'htvSpIIB');assert(parts);
+ r.request(parts[0].from,parts[0].to);r.drain();r.advance(1000);
+ const remaining=r.engine.routes.find(x=>x.from==='htvSpIIB');assert(remaining);assert.equal(remaining.state,'active');
+ assert.deepEqual(remaining.flow,parts[1].flow);
+ assert.ok(r.engine.routes.every(x=>x.state==='active'));
 });

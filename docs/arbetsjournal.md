@@ -620,3 +620,37 @@ bekräftad anslutning. Högerklick och tangentbord öppnar lägesinformation.
 Sensoradresser, lägesmappning och faktisk återrapport är ännu inte inkopplade.
 Verifierat lokalt i webbläsare, inklusive högerklicksdetaljer, samt syntax och
 diffkontroll. Inte publicerat; tidigare omstartsgodkännande är fortfarande öppet.
+
+### 0.38.0 · Delåtertagning mellan valda knappar
+
+Ett klickpar kan nu återta en del av en lång, redan lagd tågväg. Exempel:
+Au → Spår 1a ligger, operatören väljer Au → Spår 1c, och Spår 1c → Spår 1a
+behålls. Samma mekanism hanterar början, mitten och slutet, även över gränsen
+mellan flera sammanhängande reservationer och på en vald alternativ väg.
+
+Uppdelning använder bara redan granskade delvägar vars sammanlagda riktade
+geometri exakt motsvarar den faktiska reservationen. Block, detektoradresser,
+korsningar, signaler, kopplade växlar och skyddssignaler kontrolleras.
+Inga geometriska gissningar eller nya växel-/körorder skickas. Uppdelningen
+och återtagningsavsikten sparas tillsammans innan stopporder går ut.
+Det som återtas frigörs genom den befintliga återrapportskontrollen; resten
+behåller reservation och körbesked.
+
+En lång reservation kan delas endast när den är klar, alla dess spår är
+bekräftat fria och inga passageindikeringar finns. Okända/gamla besked,
+omläggning eller pågående passage vägras. Hela reservationen kan fortfarande
+begäras återtagen med befintlig väntan på fria spår. Efter omstart återställs
+kvarvarande delreservationer hållna, utan automatiskt körbesked. Vid
+lagringsfel stannar ursprungliga lås och signalerna begärs i stopp.
+Tågnummerföljning som var knuten till den uppdelade reservationen pausas enligt
+befintlig regel; numret raderas inte och måste kontrolleras före ny följning.
+
+Den förberedda produktionen d3dc628 innehåller inte denna ändring. Ingen
+publicering eller omstart utförd; tidigare särskilda godkännandefråga kvarstår.
+
+Verifiering: samtliga 242 tester godkända. De tio nya testerna omfattar
+22 kombinationer av delningsgräns, vägtyp och riktning samt mittdelar,
+alternativ geometri, väntan på stopp/fria spår, omstart och lagringsfel.
+Lokalt webbläsarprov med separat TKL- och simulatorprocess bekräftade att
+Au → Spår 1c återtas och Spår 1c → Spår 1a ligger kvar grön. Den kvarvarande
+provsträckan återtogs därefter via samma klickpar; ingen aktiv provväg kvar.
