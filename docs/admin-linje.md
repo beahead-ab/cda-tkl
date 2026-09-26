@@ -28,3 +28,6 @@ Visuellt kontrollerat vid 1280, 650 och 390 px, inklusive mobilens öppna/stäng
 ## Gemensam meny även för driftverktygen · 0.33.1
 
 Samma monterade meny används nu både bakom panelens tre punkter och som fast vänstermeny i administrationen. Ordning, namn, genvägar och status är samma. Driftverktygens sex avsnitt öppnas som egna arbetsytor bredvid menyn; den separata äldre driftlådan är borttagen. Zoom öppnas ovanpå aktuell sida. Endast själva ställverket får fullbredd när menyn stängs. Inga driftkommandon skickas av navigering.
+
+## Direkt adminfönster · 0.34.0
+Trepunktsknappen öppnar nu hela administrationen direkt som ett stort fönster över ställverket. Samma vänsternavigation används för alla arbetsytor, utan en första liten meny. Kryss eller Escape går tillbaka till panelen via befintligt skydd för osparade ändringar. Panelen ligger kvar i sin fasta storlek bakom fönstret.

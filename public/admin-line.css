@@ -171,3 +171,30 @@ body:not([data-page=panel]) #admin-sidebar{top:48px}
 body[data-page=panel] #admin-sidebar,body[data-page=panel][data-admin-nav-open]>.app-header{width:var(--navigation-width)}
 @media(min-width:540px) and (max-width:900px){body{--navigation-width:204px}}
 @media(max-width:539px){body:not([data-page=panel]){--admin-rail:0px}body:not([data-page=panel]) #admin-sidebar{width:var(--navigation-width)}}
+
+/* Administration opens directly as one large window above the fixed panel. */
+body.admin-shell-app{overflow:hidden;--navigation-width:224px}
+#admin-shell-shade{position:fixed;inset:0;z-index:110;background:#0009;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+#admin-shell{position:fixed;inset:20px;z-index:111;display:grid;grid-template-columns:var(--navigation-width) minmax(0,1fr);overflow:hidden;border:1px solid #3b3a38;border-radius:14px;background:#181817;color:#efefed;box-shadow:0 20px 80px #0009;--page:#181817;--surface:#181817;--card:#181817;--border:#353534;--text:#efefed;--muted:#a4a4a1}
+#admin-shell[hidden],#admin-shell-shade[hidden]{display:none}
+#admin-shell .admin-shell-rail{display:flex;flex-direction:column;min-width:0;min-height:0;background:#141413;border-right:1px solid var(--border)}
+#admin-shell .app-header{display:flex;position:static;flex:none;width:auto;height:62px;min-height:62px;padding:0 22px;background:transparent;border:0;z-index:auto}
+#admin-shell .app-header .brand>span{font-size:11px;font-weight:500;letter-spacing:1.6px}
+#admin-shell #admin-nav-toggle{display:none!important}
+#admin-shell #admin-sidebar{display:flex;position:static;flex:1;min-height:0;width:auto;overflow:auto;padding:0 12px 18px;border:0;background:transparent;z-index:auto}
+#admin-shell #admin-sidebar a{border-radius:6px;padding:10px 12px;font-size:12px;min-height:38px}
+#admin-shell #admin-sidebar a[aria-current=page]{background:#30302e;box-shadow:none;color:#f3f3f0}
+#admin-shell #admin-sidebar .admin-nav-children a{font-size:11px;min-height:32px;padding:7px 9px}
+#admin-shell #admin-sidebar .admin-nav-footer{padding-top:16px}
+#admin-shell-content{min-width:0;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+#admin-shell-content>main{min-height:calc(100% - 44px);width:100%;max-width:none;margin:0;padding:32px 44px 24px}
+#admin-shell-content>main[hidden]{display:none}
+#admin-shell-content>footer{margin:0;padding:12px 44px;color:var(--muted);font-size:10px;text-align:left}
+#admin-shell-content :is(.tools-heading,.admin-workspace-heading,.toolbar){padding-right:24px}
+#admin-shell-content .admin-editor-toolbar{top:0}
+#admin-shell-close{position:absolute;right:12px;top:12px;width:32px;height:32px;display:grid;place-items:center;padding:6px;border:0;border-radius:5px;color:#d0d0cc;background:transparent;z-index:12}
+#admin-shell-close:hover{background:#30302e}
+#admin-shell-close svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
+body[data-admin-window] #global-status{z-index:112;top:64px;right:40px}
+@media(max-width:900px){body.admin-shell-app{--navigation-width:190px}#admin-shell{inset:12px}#admin-shell-content>main{padding:28px 24px 20px}#admin-shell-content>footer{padding-inline:24px}}
+@media(max-width:539px){body.admin-shell-app{--navigation-width:142px}#admin-shell{inset:6px;border-radius:9px}#admin-shell .app-header{padding-inline:12px;height:54px;min-height:54px}#admin-shell .app-header .brand>span{font-size:9px;letter-spacing:.8px}#admin-shell #admin-sidebar{padding-inline:5px!important}#admin-shell #admin-sidebar a{padding:9px 7px;font-size:11px;overflow-wrap:anywhere}#admin-shell-content>main{padding:54px 12px 18px}#admin-shell-content>footer{padding-inline:12px}#admin-shell-content :is(.tools-heading,.admin-workspace-heading,.toolbar){padding-right:0}#admin-shell-content h1{font-size:20px}#admin-shell-close{right:8px;top:8px}}

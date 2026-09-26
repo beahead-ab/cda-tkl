@@ -1,4 +1,4 @@
-// One mounted menu serves the panel drawer and every administration workspace.
+// One administration window; the panel ellipsis opens the full workspace directly.
 export function createAdminNavigation({account=false}={}) {
   const sidebar=document.getElementById('admin-sidebar'),button=document.getElementById('admin-nav-toggle'),panelButton=document.getElementById('menu-toggle');
   const prefix=account?'/':'';
@@ -25,19 +25,36 @@ export function createAdminNavigation({account=false}={}) {
     popup.querySelector('.admin-nav-items').append(group);
   }
   const connection=document.getElementById('connection');if(connection){connection.hidden=false;popup.querySelector('#admin-nav-status').append(connection);}
-  const shade=document.createElement('div');shade.id='admin-nav-shade';shade.hidden=true;document.body.append(shade);
-  const compact=matchMedia('(max-width:539px)');
-  const drawer=()=>document.body.dataset.page==='panel'||compact.matches;
-  const trigger=()=>document.body.dataset.page==='panel'?panelButton:button;
-  function close(restore=false){const wasOpen=!!document.body.dataset.adminNavOpen;document.body.removeAttribute('data-admin-nav-open');shade.hidden=true;for(const b of [button,panelButton].filter(Boolean)){b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Öppna meny');}if(restore&&wasOpen)trigger()?.focus({preventScroll:true});return wasOpen;}
-  function open(){document.body.dataset.adminNavOpen='true';shade.hidden=false;trigger()?.setAttribute('aria-expanded','true');trigger()?.setAttribute('aria-label','Stäng meny');(sidebar.querySelector('a[aria-current=page]')||sidebar.querySelector('a')).focus();}
-  for(const b of [button,panelButton].filter(Boolean)){b.setAttribute('aria-controls','admin-sidebar');b.onclick=()=>document.body.dataset.adminNavOpen?close(true):open();b.addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();open();}});}
-  shade.onclick=()=>close(true);sidebar.addEventListener('click',e=>{if(e.target.closest('a,button')&&drawer())close();});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.dataset.adminNavOpen&&!document.querySelector('dialog[open]')){e.preventDefault();e.stopImmediatePropagation();close(true);}},true);
-  document.addEventListener('focusin',e=>{if(document.body.dataset.adminNavOpen&&!sidebar.contains(e.target)&&![button,panelButton].some(b=>b?.contains(e.target))&&!document.querySelector('dialog[open]'))close();});
-  compact.addEventListener('change',()=>close());
+  const shell=document.createElement('section');shell.id='admin-shell';shell.hidden=true;shell.setAttribute('role','dialog');shell.setAttribute('aria-modal','true');shell.setAttribute('aria-label','Administration');
+  const rail=document.createElement('aside');rail.className='admin-shell-rail';
+  const header=document.querySelector('.app-header');if(header)rail.append(header);rail.append(sidebar);
+  const content=document.createElement('div');content.id='admin-shell-content';
+  for(const node of document.querySelectorAll('body>main:not(#panel-view),body>footer'))content.append(node);
+  const exit=document.createElement('a');exit.id='admin-shell-close';exit.href=prefix+'#panel';exit.setAttribute('aria-label','Stäng administration');exit.innerHTML='<svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>';
+  shell.append(rail,content,exit);document.body.append(shell);document.body.classList.add('admin-shell-app');
+  const shade=document.createElement('div');shade.id='admin-shell-shade';shade.hidden=true;document.body.append(shade);
+  const panel=document.getElementById('panel-view');let lastAdmin='#tools/operations',wasOpen=false;
+  function close(){return false;} // Legacy calls only closed the old small menu.
+  function open(){location.hash=lastAdmin;}
+  if(panelButton){panelButton.setAttribute('aria-controls','admin-shell');panelButton.setAttribute('aria-haspopup','dialog');panelButton.setAttribute('aria-label','Öppna administration');panelButton.onclick=open;}
+  if(button)button.hidden=true;
+  document.addEventListener('keydown',e=>{
+    if(shell.hidden||document.querySelector('dialog[open]'))return;
+    if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();exit.click();return;}
+    if(e.key==='Tab'){
+      const focusable=[...shell.querySelectorAll('a[href],button,input,select,textarea,[tabindex="0"]')].filter(n=>!n.disabled&&n.getClientRects().length);
+      const first=focusable[0],last=focusable.at(-1);
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}
+    }
+  },true);
   function sync(){
-    close();const current=account?'account':location.hash.split('?')[0]||'#panel';
+    const current=account?'account':location.hash.split('?')[0]||'#panel';
+    const opened=current!=='#panel';shell.hidden=!opened;shade.hidden=!opened;if(panel)panel.inert=opened;
+    document.body.toggleAttribute('data-admin-window',opened);if(panelButton)panelButton.setAttribute('aria-expanded',String(opened));
+    if(opened&&!account)lastAdmin=location.hash;
+    if(opened&&!wasOpen)queueMicrotask(()=>exit.focus({preventScroll:true}));
+    if(!opened&&wasOpen)panelButton?.focus({preventScroll:true});wasOpen=opened;
     for(const group of sidebar.querySelectorAll('.admin-nav-group')){const hash=group.dataset.section,active=current===hash||current.startsWith(hash+'/');group.classList.toggle('active-group',active);const sub=group.querySelector('.admin-nav-children');if(sub)sub.hidden=!active;}
     for(const a of sidebar.querySelectorAll('[data-nav-hash]')){if(a.dataset.navHash==='#import/edit')a.hidden=current!=='#import/edit';if(a.dataset.navHash===current)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
     if(account)popup.querySelector('#account-link').setAttribute('aria-current','page');

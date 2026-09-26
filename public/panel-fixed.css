@@ -1,7 +1,7 @@
 /* A fixed instrument face. Only an explicit viewport/zoom change resizes it. */
-body[data-page=panel]{--panel-bottom-height:184px;height:100dvh;overflow:hidden;overscroll-behavior:none}
-body[data-page=panel] #panel-view{position:fixed;inset:0;margin:0;overflow:hidden}
-body[data-page=panel] #panel-view .panel-shell{height:100%;display:grid;grid-template-rows:minmax(0,1fr) var(--panel-bottom-height)}
+body.panel-app{--panel-bottom-height:184px;height:100dvh;overflow:hidden;overscroll-behavior:none}
+body.panel-app #panel-view{position:fixed;inset:0;margin:0;overflow:hidden}
+body.panel-app #panel-view .panel-shell{height:100%;display:grid;grid-template-rows:minmax(0,1fr) var(--panel-bottom-height)}
 /* Messages float above the instrument face and never reserve layout space. */
 #global-status{position:fixed;z-index:80;top:52px;right:14px;width:min(560px,calc(100vw - 28px));max-height:calc(100dvh - 76px);display:flex;flex-direction:column;gap:8px;overflow:auto;overscroll-behavior:contain;pointer-events:none}
 body:not([data-page=panel]) #global-status{top:88px;max-height:calc(100dvh - 112px)}
@@ -21,7 +21,7 @@ body:not([data-page=panel]) #global-status{top:88px;max-height:calc(100dvh - 112
 body:not([data-panel-ready=true]) #track-plan{visibility:hidden}
 body:not([data-panel-ready=true]) .panel-scroll::before{content:'Läser in ställverket…';position:absolute;inset:45% 0 auto;text-align:center;color:var(--ink);font-size:12px;letter-spacing:1px}
 #panel-bottom{position:relative;display:grid;grid-template-columns:minmax(0,3fr) minmax(180px,1fr);gap:24px;min-height:0;padding:0 14px 8px;color:#e4e8e3}
-body[data-page=panel] #panel-console{min-height:0;height:auto;overflow:hidden;margin:0;padding:8px 0;border:0;border-radius:0;box-shadow:none;background:transparent;color:inherit}
+body.panel-app #panel-console{min-height:0;height:auto;overflow:hidden;margin:0;padding:8px 0;border:0;border-radius:0;box-shadow:none;background:transparent;color:inherit}
 #panel-quick-actions{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}#panel-quick-actions button{font-size:12px;padding:8px 12px;min-height:34px;border-radius:3px}
 #panel-quick-actions #panel-reset[aria-busy=true]{border-color:#8b8973}
 .panel-runtime-info{display:flex;flex-direction:column;gap:10px;margin-top:12px;font-size:12px;line-height:1.5}.panel-runtime-info>span:empty{display:none}
@@ -31,14 +31,14 @@ body[data-page=panel] #panel-console{min-height:0;height:auto;overflow:hidden;ma
 #panel-drawer{position:fixed;inset:auto auto 10px 50%;transform:translateX(-50%);margin:0;width:min(900px,calc(100vw - 24px));max-height:calc(100dvh - 80px);overflow:auto;overscroll-behavior:contain;border:1px solid #819080;border-radius:5px;box-shadow:0 8px 35px #0009;scrollbar-gutter:stable}
 #panel-drawer::backdrop{background:#0002}
 #panel-drawer .panel-drawer-heading{position:sticky;top:-14px;background:var(--page);z-index:1;padding:10px 0}
-body[data-page=panel] #trainmeet-timetable{height:100%;min-height:0;min-width:0;display:grid;grid-template-rows:24px minmax(0,1fr);gap:0;overflow:hidden;margin:0;padding:4px 0 0;border:0;border-radius:0;background:transparent;color:#e4e8e3;font:400 13px/1.4 "Helvetica Neue",Arial,sans-serif;position:relative}
+body.panel-app #trainmeet-timetable{height:100%;min-height:0;min-width:0;display:grid;grid-template-rows:24px minmax(0,1fr);gap:0;overflow:hidden;margin:0;padding:4px 0 0;border:0;border-radius:0;background:transparent;color:#e4e8e3;font:400 13px/1.4 "Helvetica Neue",Arial,sans-serif;position:relative}
 .tt-heading{height:24px;min-height:0;margin:0;flex-wrap:nowrap;overflow:hidden}.tt-heading h2{color:inherit;font-size:11px;font-weight:400;letter-spacing:1px}
 #tt-status{position:absolute;z-index:2;top:32px;left:0;right:0;margin:0;padding:5px 8px;font-size:11px;line-height:16px;background:var(--panel);color:inherit;border:1px solid #8b897355}
 #tt-status[hidden]{display:none!important}
 #tt-content{min-height:0;overflow:hidden}
 .tt-columns{height:100%;min-height:0;gap:18px}.tt-column{border:0;padding:0;min-width:0}
 .tt-labels,.tt-values{grid-template-columns:minmax(52px,1fr) 44px 44px minmax(42px,.7fr);gap:6px}.tt-labels{height:18px;padding:0 3px;font-size:10px;letter-spacing:.3px;opacity:.75;color:inherit}
-body[data-page=panel] .tt-values{font-size:13px;line-height:24px;color:inherit}body[data-page=panel] .tt-values strong{font-weight:400;color:inherit;letter-spacing:0}
+body.panel-app .tt-values{font-size:13px;line-height:24px;color:inherit}body.panel-app .tt-values strong{font-weight:400;color:inherit;letter-spacing:0}
 .tt-entry{height:24px;padding:0 3px;border:0;border-radius:0;color:inherit}.tt-entry:hover{background:#ffffff0a}.tt-track-changed{color:inherit;text-decoration:underline;text-underline-offset:3px}
 .tt-pagination{gap:5px}.tt-pagination button{width:22px;height:22px;border:0;background:transparent;color:inherit}.tt-pagination #tt-range{width:82px;min-width:82px;white-space:nowrap}
 #tt-clock{min-width:0;overflow:hidden;text-overflow:ellipsis}#tt-station{font-size:10px;opacity:.8}.tt-empty{color:inherit;font-size:12px;opacity:1}
@@ -46,10 +46,10 @@ body[data-page=panel] .tt-values{font-size:13px;line-height:24px;color:inherit}b
 .touch-target .hit{transition:fill 100ms,stroke 100ms}
 .touch-target .dot{transition:fill 100ms}
 .signal-target image{transition:none}
-@media(min-height:900px){body[data-page=panel]{--panel-bottom-height:232px}}
+@media(min-height:900px){body.panel-app{--panel-bottom-height:232px}}
 @media(max-width:900px){#panel-bottom{grid-template-columns:minmax(0,1fr) 160px;gap:16px}#panel-view .panel-name{grid-template-columns:auto minmax(0,1fr) 34px;gap:8px;padding-inline:10px}#panel-view .panel-name>span:first-child{font-size:10px;letter-spacing:1px}#tt-clock{display:none}}
-@media(max-width:700px){body[data-page=panel]{--panel-bottom-height:220px}#panel-bottom{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) 36px;gap:4px;padding-inline:8px}body[data-page=panel] #panel-console{padding:0;display:flex;align-items:center;gap:8px}#panel-quick-actions{flex-wrap:nowrap}#panel-quick-actions button{min-height:30px;padding:5px 8px;font-size:11px;white-space:nowrap}.panel-runtime-info{margin:0;min-width:0;font-size:10px;gap:0;overflow:hidden}#panel-console #selection-hint{font-size:10px}.operation-overview{grid-template-columns:1fr}#panel-view .panel-actions{flex:none}#tt-station{flex:1 1 auto}.tt-heading{gap:6px}.tt-heading h2{font-size:10px;letter-spacing:.5px}.tt-pagination #tt-range{width:70px;min-width:70px}#panel-drawer{width:calc(100vw - 16px);padding:12px 8px}}
-@media(max-height:600px){body[data-page=panel]{--panel-bottom-height:148px}}
+@media(max-width:700px){body.panel-app{--panel-bottom-height:220px}#panel-bottom{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) 36px;gap:4px;padding-inline:8px}body.panel-app #panel-console{padding:0;display:flex;align-items:center;gap:8px}#panel-quick-actions{flex-wrap:nowrap}#panel-quick-actions button{min-height:30px;padding:5px 8px;font-size:11px;white-space:nowrap}.panel-runtime-info{margin:0;min-width:0;font-size:10px;gap:0;overflow:hidden}#panel-console #selection-hint{font-size:10px}.operation-overview{grid-template-columns:1fr}#panel-view .panel-actions{flex:none}#tt-station{flex:1 1 auto}.tt-heading{gap:6px}.tt-heading h2{font-size:10px;letter-spacing:.5px}.tt-pagination #tt-range{width:70px;min-width:70px}#panel-drawer{width:calc(100vw - 16px);padding:12px 8px}}
+@media(max-height:600px){body.panel-app{--panel-bottom-height:148px}}
 @media(prefers-reduced-motion:reduce){.touch-target .hit,.touch-target .dot,.panel-key{transition:none}}
 /* One fitted image plane; manual zoom expands only this scrollable area. */
 #plan-stage{display:grid;place-items:center;width:100%;height:100%;min-width:0;min-height:0}
@@ -75,9 +75,9 @@ body[data-page=panel] .tt-values{font-size:13px;line-height:24px;color:inherit}b
 
 .tt-pagination svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 /* The single direct operation is anchored to the lower right edge. */
-body[data-page=panel] #panel-console{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;padding:0}
+body.panel-app #panel-console{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;padding:0}
 #panel-quick-actions{order:1;justify-content:flex-end}
 #panel-console .panel-runtime-info{order:0;margin:0 0 10px;text-align:right}
 #panel-quick-actions #panel-reset{background:transparent;border-color:#494946;color:var(--ink)}
 #panel-quick-actions #panel-reset:hover:not(:disabled){background:#252524;border-color:#858580}
-@media(max-width:700px){body[data-page=panel] #panel-console{flex-direction:row;align-items:center;gap:10px}#panel-console .panel-runtime-info{margin:0;text-align:left;flex:1}#panel-quick-actions{margin-left:auto;flex:none}}
+@media(max-width:700px){body.panel-app #panel-console{flex-direction:row;align-items:center;gap:10px}#panel-console .panel-runtime-info{margin:0;text-align:left;flex:1}#panel-quick-actions{margin-left:auto;flex:none}}
