@@ -525,3 +525,17 @@ Au → 1c godkända. Serverns 13 riktade tester och genereringskontroll godkänd
 Driftdata jämförda oförändrade efter publicering. Inloggad produktionspanel
 laddar utan JavaScript-fel; inga tågvägar var lagda vid efterkontrollen och inga
 nya skapades där. Användarens ursprungliga flik lämnades orörd.
+
+## Publicerad gränssnittsändring 0.39.4 · signalcirklar
+
+`021a9ca` publicerad 26 september 08:31 svensk tid utan omstart.
+Backup: `/root/charlottendal-backups/ui-021a9ca-20260926T063133Z`.
+TKL kör fortsatt från `545e649`; båda tjänster behöll sina process-ID.
+Appens JavaScript, båda stilmallarna och index installerades atomärt per fil.
+Driftkod och profiler är identiska och sparade driftdata jämfördes oförändrade.
+
+Elva riktade tester samt syntax och genereringskontroll godkända på servern.
+Lokalt webbläsarprov verifierade vald startsignal 3/5, tre giltiga mål,
+ofyllda cirklar och tangentbordsfokus utan ändrat signalbesked.
+Inloggad produktionspanel visar version 0.39.4 och cirkelgeometri för samtliga
+66 signaler, utan JavaScript-fel. Ingen driftmanöver gjordes i produktion.
