@@ -6,7 +6,6 @@ export function createAdminNavigation({account=false}={}) {
   popup.innerHTML=`<div class="admin-nav-items"></div><div class="admin-nav-footer"><a id="open-panel-zoom" href="${prefix}#tools/zoom">Zoom <span id="menu-zoom-value"></span></a><button id="toggle-fullscreen" type="button" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="fullscreen-expand" d="M7 3H3v4m10-4h4v4M3 13v4h4m10-4v4h-4"/><path class="fullscreen-contract" d="M3 7h4V3m6 0v4h4M7 17v-4H3m10 4v-4h4"/></svg><span>Fullskärm</span></button><a id="field-link" hidden target="_blank" rel="noopener">Anläggningssimulator ↗</a><a id="account-link" href="/account" hidden>Byt lösenord</a><div id="admin-nav-status"></div><span id="panel-connection" hidden></span></div>`;
   sidebar.replaceChildren(popup);
   const sections=[
-    ['#panel','Ställverket','panel-tab',[]],
     ['#tools/operations','Driftverktyg','operations-tab',[['routes','Tågvägar'],['blocks','Spårspärrar'],['lines','Linjer och programmeringsspår'],['trains','Tågnummer'],['clock','Modellklocka'],['authority','Lokal- och fjärrläge']]],
     ['#trainmeet','TrainMeet','trainmeet-tab',[]],
     ['#import','Tidtabeller','import-tab',[['upload','Importera'],['edit','Redigera utkast']]],
@@ -18,7 +17,6 @@ export function createAdminNavigation({account=false}={}) {
   for(const [hash,label,id,children] of sections){
     const group=document.createElement('div');group.className='admin-nav-group';group.dataset.section=hash;
     const link=document.createElement('a');link.href=prefix+hash;link.textContent=label;link.id=id;link.dataset.navHash=hash;group.append(link);
-    if(hash==='#panel')link.className='admin-panel-link';
     if(hash==='#trainmeet'){const status=document.createElement('span');status.id='menu-trainmeet-status';link.append(status);}
     if(children.length){const sub=document.createElement('div');sub.className='admin-nav-children';sub.hidden=true;
       for(const [suffix,title] of children){const a=document.createElement('a');a.href=prefix+hash+'/'+suffix;a.textContent=title;a.dataset.navHash=hash+'/'+suffix;sub.append(a);}group.append(sub);}

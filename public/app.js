@@ -59,8 +59,9 @@ function setPage(page,{historyMode='push'}={}) {
   currentPage=page;document.body.dataset.page=page;
   appMenu?.close();
   for(const p of ['panel','tools','admin','trainmeet','import','advanced']) {
-    $(p+'-view').hidden=p!=='panel'&&p!==page;$(p+'-tab').classList.toggle('selected',p===page);
-    if(p===page)$(p+'-tab').setAttribute('aria-current','page');else $(p+'-tab').removeAttribute('aria-current');
+    $(p+'-view').hidden=p!=='panel'&&p!==page;
+    const tab=$(p+'-tab');
+    if(tab){tab.classList.toggle('selected',p===page);if(p===page)tab.setAttribute('aria-current','page');else tab.removeAttribute('aria-current');}
   }
   adminNavigation.sync();
   document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet',import:'Tidtabell och import',advanced:'Avancerat'})[page]+' · Charlottendal TKL';
