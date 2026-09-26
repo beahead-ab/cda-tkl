@@ -1,18 +1,22 @@
 // Bind clicks to reviewed NX controls, never to the nearest track or icon.
-export function signalRouteControls(config, registry) {
+export function signalRouteControls(config, registry, sourceEndpoints={endpoints:[]}) {
   const types=new Set(['dvsi_4','hdvsi_8','hsi_3+dvsi']);
   const capable=new Set(registry.signals.filter(s=>types.has(s.type)&&(s.aspects.some(a=>/Sh[123]/.test(a))||s.cls==='VirtualSignalMastXml'&&s.aspects.length===0)).map(s=>s.id));
   const sensors=new Map(), ambiguous=new Set();
-  for(const r of config.routes)for(const b of r.boundaries||[]) {
+  for(const b of [...sourceEndpoints.endpoints,...config.routes.flatMap(r=>r.boundaries||[])]) {
     if(!b.sensor||!b.mast)continue;
     if(sensors.has(b.sensor)&&sensors.get(b.sensor)!==b.mast)ambiguous.add(b.sensor);
     sensors.set(b.sensor,b.mast);
   }
+  // A destination need not display shunting permission. It remains a STOP
+  // guard; its exact XML sensor/mast binding also covers terminal signals.
+  const stops=new Set(registry.signals.filter(s=>config.signals[s.id]&&
+    (capable.has(s.id)||s.aspects.includes('Stop')||s.type==='sly_2'&&s.aspects.includes('Lit'))).map(s=>s.id));
   const rows=config.routes.filter(r=>r.kind==='shunt').flatMap(r=>{
     const [start,end]=r.source?.nxButtons||[];
     const from=sensors.get(start),to=sensors.get(end);
-    if(ambiguous.has(start)||ambiguous.has(end)||!capable.has(from)||!capable.has(to)||
-       !types.has(config.signals[from]?.sourceType)||!types.has(config.signals[to]?.sourceType)||
+    if(ambiguous.has(start)||ambiguous.has(end)||!capable.has(from)||!stops.has(to)||
+       !types.has(config.signals[from]?.sourceType)||
        r.signals[0]!==from||!r.guardSignals.includes(to))return [];
     return [{...r,fromSignal:from,toSignal:to}];
   });

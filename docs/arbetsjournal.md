@@ -682,3 +682,22 @@ Verifierat: 247 tester och tre processtester godkända, inklusive läsande API
 och autentiseringsskydd. Lokalt webbläsarprov av giltiga mål, ignorerade
 växel-/signalklick, hel-/delåtertagning, Escape, startklick och växeltågväg.
 Syntax- och diffkontroll godkända.
+
+### 0.39.1 · Signalval inklusive slutsignaler
+
+Signalval använder fortsatt driftens läsande målprövning och spärrar alla
+pluppar, växlar och ogiltiga signaler under valet, utan nedtoning eller hover.
+Slutpunkter kräver nu inte att signalen själv kan visa växlingsmedgivande.
+IIIev, IIIdo och Xv samt skyddande huvudsignaler kan vara mål för befintliga
+verifierade växeltågvägar. De får inte bli startsignaler eller ges körbesked
+genom denna visningskoppling.
+
+En liten genererad tabell hämtar exakta sensor-/signalkopplingar från XML:s
+ankare och växeländar, inklusive ändstopp som saknar genomgående tågvägar.
+Tabellen verifieras mot källunderlaget vid importkontroll. Inga backend-,
+profil- eller manöverregler ändrade. 101 befintliga växeltågvägar kan nu
+väljas via signalikoner (tidigare 71).
+
+15 riktade tester, syntax och genereringskontroll godkända. Lokalt
+webbläsarprov: 9/10 → IIIev läggs, slutsignal visar fortsatt stopp, endast
+de två signalerna kan väljas och samma par återtar provvägen.

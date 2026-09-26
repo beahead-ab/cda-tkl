@@ -42,7 +42,7 @@ $('crossing-display').onchange=()=>{setCrossingDisplay($('crossing-display').val
 
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
-let routeConfirmation;
+let routeConfirmation,signalEndpoints;
 const routeTargets=createRouteTargets({load:async(from,kind)=>{
   const response=await fetch('/api/route-targets?'+new URLSearchParams({from,kind}),{cache:'no-store'});
   if(!response.ok)throw Error('Mål kunde inte kontrolleras.');
@@ -271,7 +271,7 @@ function buildPlan() {
     const unknown = svg('text', { x: rw / 2 + 1, y: 3, class: 'signal-unknown' }, g, '?');
     const routeButton=signalControls.buttons.get(m.mast);
     if(routeButton)g.dataset.routeButton=routeButton;
-    accessible(g, `Signal ${m.mast}${routeButton?' · växeltågväg':''}`, e => {if(routeButton)choose(routeButton,'shunt');else if(e.type==='keydown')showInspector('signal',m.mast,e);});
+    accessible(g, `Signal ${m.mast}${routeButton?(signalControls.starts.has(routeButton)?' · växeltågväg':' · slutsignal'):''}`, e => {if(routeButton)choose(routeButton,'shunt');else if(e.type==='keydown')showInspector('signal',m.mast,e);});
     objectDetails(g,'signal',m.mast);
     signals.push({ ...m, g, images, unknown, type, signalType:m.type, files, routeButton });
   }
@@ -387,7 +387,7 @@ function paintPlan() {
     s.g.classList.toggle('signal-preparing',!!preparing);
     attribute(s.g,'aria-busy',!!preparing);
     if(s.routeButton)attribute(s.g,'aria-pressed',chosenKind==='shunt'&&s.routeButton===chosen);
-    attribute(s.g,'aria-description',(s.routeButton?(s.routeButton===chosen?'Vald startsignal. ':signalTargets.has(s.routeButton)?'Möjlig slutsignal. ':'Klicka för växeltågväg. '):'')+'Högerklicka eller tryck Skift+F10 för information.');
+    attribute(s.g,'aria-description',(s.routeButton?(s.routeButton===chosen?'Vald startsignal. ':signalTargets.has(s.routeButton)?'Möjlig slutsignal. ':signalControls.starts.has(s.routeButton)?'Klicka för växeltågväg. ':'Slutsignal · välj en startsignal först. '):'')+'Högerklicka eller tryck Skift+F10 för information.');
   }
   for(const lamp of indicatorLamps) lamp.node.classList.toggle('occupied',fresh&&state.blocks[lamp.block]?.occupied===true);
   for(const lamp of sourceLamps) {
@@ -561,7 +561,7 @@ async function start() {
   operatingControls=createOperatingControls({api,openSource});
   timetableImport=createTimetableImport();modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable')});feedback=createFeedback();
   panelConsole=createPanelConsole({onOpen:()=>{appMenu?.close();},onResetComplete:text=>message(text,{error:false,duration:4000})});
-  [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
+  [config, panel, registry, signalEndpoints] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json', '/data/signal-endpoints.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.
   // Each displayed variant is decoded before it can replace the dark indication.
@@ -571,7 +571,7 @@ async function start() {
   await Promise.race([preload,new Promise(resolve=>{preloadTimer=setTimeout(resolve,2000);})]);
   clearTimeout(preloadTimer);
   sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
-  signalControls=signalRouteControls(config,registry);
+  signalControls=signalRouteControls(config,registry,signalEndpoints);
   buildPlan();
   trainInformation=createTrainInformation({catalog:config.trainFields,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
   $('close-inspector').onclick=()=>closeInspector();
