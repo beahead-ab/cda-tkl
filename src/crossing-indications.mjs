@@ -36,7 +36,7 @@ export function crossingWarning(crossing, state, profile) {
   const usable = state.connection === 'connected' && !state.storageFault;
   const unavailable = state.storageFault ? 'Lagringsfel' : 'Anläggningen är frånkopplad';
   // Any retained reservation counts, from establishment until its locks release.
-  const routes = state.routes.filter(r => crossing.routeIds.includes(r.definitionId));
+  const routes = state.routes.filter(r => r.flow ? r.flow.some(part=>crosses(crossing.line,part)) : crossing.routeIds.includes(r.definitionId));
   const conditions = [{kind: 'route', id: crossing.line.id, label: 'Tågväg över övergången',
     value: usable ? routes.length > 0 : null,
     reason: !usable ? unavailable : routes.length ? routes.map(r => r.label).join(', ') + ' · reservation kvar' : 'Ingen reservation'}];

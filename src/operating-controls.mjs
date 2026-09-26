@@ -8,7 +8,7 @@ export class OperatingControls {
     this.relay={position:'unknown',updatedAt:0,reportSequence:0};this.feedback={active:null,updatedAt:0,reportSequence:0};
     this.phase=engine.controls.programming.reserved?'held':'normal';this.reason=this.phase==='held'?'Programmeringsspärr återställd. Kontrollera anläggningen och begär normaldrift.':'';
     this.commandSequence=-1;this.commandAt=0;
-    this.protectingSignals=[...new Set(engine.profile.routes.filter(r=>this.affected(r)).flatMap(r=>[...r.signals,...engine.guardSignals(r)]))];
+    this.protectingSignals=[...new Set([...engine.profile.routes,...(engine.profile.routeAlternatives||[])].filter(r=>this.affected(r)).flatMap(r=>[...r.signals,...engine.guardSignals(r)]))];
   }
   get e(){return this.engine;} get def(){return this.catalog.programming;} get reservation(){return this.e.controls.programming;}
   checkCommand({sessionId,revision}){if(sessionId!==this.sessionId||revision!==this.revision)throw Object.assign(Error('Manöverläget har ändrats. Läs senaste läget och försök igen.'),{status:409});}

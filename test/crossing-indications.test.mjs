@@ -95,3 +95,15 @@ test('warning uses occupation after binding polarity has been resolved, not raw 
   state.blocks.S100.occupied = true;
   assert.equal(opposite.snapshot(state).V1.warning.value, true);
 });
+
+test('alternative reservations warn for their actual geometry, not the preferred catalog path',()=>{
+  const state=ready();
+  const route=profile.routeAlternatives.find(r=>r.id==='htvBu--htvSpIIB');
+  state.routes=[{...route,definitionId:route.id,state:'setting'}];
+  for(const def of model.definitions.filter(d=>d.crossing)){
+    assert.equal(model.snapshot(state)[def.name].warning.value,route.flow.some(part=>crosses(def.crossing.line,part)));
+  }
+  // An explicitly supplied path wins even if its catalog identity normally crosses.
+  state.routes=[{definitionId:profile.routes.find(r=>model.definitions.find(d=>d.name==='V3').crossing.routeIds.includes(r.id)).id,flow:[],label:'annan väg'}];
+  assert.equal(model.snapshot(state).V3.warning.value,false);
+});

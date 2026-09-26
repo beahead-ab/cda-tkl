@@ -166,6 +166,18 @@ export class Engine extends EventEmitter {
     const def = this.profile.routes.find(r => r.from === from && r.to === to);
     if (!def) throw Error('Tågvägens fullständiga koppling är ännu inte verifierad i den aktiva profilen.');
     if(def.adminDisabled)throw Error('Tågvägen är avstängd i driftinställningarna.');
+    const candidates=[def,...(this.profile.routeAlternatives||[]).filter(r=>r.id===def.id)];
+    let selected,firstError;
+    for(const candidate of candidates) {
+      try { this.checkRoute(candidate); selected=candidate; break; }
+      catch(error) { firstError ||= error; }
+    }
+    if(!selected) throw firstError;
+    return this.establishRoute(selected);
+  }
+  // Candidate checks are read-only. Reserve and issue commands exactly once,
+  // after a complete source-approved path has passed every live interlock.
+  checkRoute(def) {
     const operatingReason=this.operating.routeReason(def);if(operatingReason)throw Error(operatingReason);
     const blocked = def.blocks.find(b => this.trackBlocked(b));
     if (blocked) throw Error(`${blocked} är administrativt spärrat.`);
@@ -175,12 +187,14 @@ export class Engine extends EventEmitter {
     for (const route of this.routes) {
       const occupiedResources = new Set(route.blocks.map(b => this.profile.blocks[b].address));
       const hit = def.blocks.find(b => occupiedResources.has(this.profile.blocks[b].address));
-      if (hit || def.crossings.some(x => route.crossings.includes(x))) throw Error('Tågvägen korsar en reserverad väg. Ingen godkänd alternativ väg finns i denna profil.');
+      if (hit || def.crossings.some(x => route.crossings.includes(x))) throw Error('Tågvägen korsar en reserverad väg. Ingen godkänd alternativ väg är ledig.');
       if (def.signals.some(n=>this.guardSignals(route).includes(n)&&!this.isContinuation(route,def,n)) || route.signals.some(n=>this.guardSignals(def).includes(n)&&!this.isContinuation(def,route,n))) throw Error('Signal skyddar en annan tågväg och är inte en anslutande fortsättning.');
       if (def.signals.some(s => route.signals.includes(s))) throw Error('Signal används av en annan tågväg.');
       if (Object.entries(def.turnouts).some(([n, p]) => route.turnouts[n] && route.turnouts[n] !== p)) throw Error('En kopplad växel är låst i motsatt läge.');
     }
     const movementReason=this.turnoutMovementReason(def);if(movementReason)throw Error(movementReason);
+  }
+  establishRoute(def) {
     const r = { ...structuredClone(def), definitionId: def.id, id: randomUUID(), state: 'setting', createdAt: this.now(), cancelRequested: false, nextSignal: def.signals.length - 1, reason: 'Inväntar växlarnas återrapporter.' };
     if(r.autoRelease) r.passage=[...new Set(r.blocks.map(b=>this.profile.blocks[b].address))].map(address=>({address,state:'pending'}));
     this.routes.push(r); this.persist(); // Locks are durable BEFORE any field commands.

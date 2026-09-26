@@ -576,3 +576,37 @@ Release `8bef196` publicerad utan omstart. Samma fasta vänstermeny och svarta L
 Syntax och elva riktade prov inklusive lösenordsintegration godkända lokalt och på servern. Responsiv kontroll vid 1280/650/390 px, undersidor och skydd för osparat kalkylblad verifierade. Backup `/root/charlottendal-backups/ui-8bef196-20260926T005150Z`. Current pekar på 8bef196; körande backend finns fortfarande i c605c16 och serverar överlagda statiska filer. Routes, controls, configuration, TrainMeet och tidtabell oförändrade; båda tjänsternas process-id oförändrade och skyddade API:er kräver fortsatt inloggning.
 
 Rollback utan omstart: återlägg sex filer från backupens public (admin-line.css, app.js, index.html, auth.html, auth.css, auth.js) i c605c16/public, ta bort endast den nytillkomna admin-navigation.js där och peka current på afe9e99. Återställ inga driftfiler.
+
+## 2026-09-26 — alternativa vägar vid befintliga reservationer (0.37.0)
+
+Bildfallet Au → spår 1a följt av Bu → spår 2b avvisades eftersom motorn
+bara provade det statiska förstahandsvalet. Den vägen använde spår 1a och
+växelgruppen 140–142, trots att vägen via 165/163 var fri.
+
+Profilgeneratorn sparar nu även de andra källgranskade grafvägarna, i samma
+prioritetsordning. Motorn provar alternativen med alla befintliga kontroller
+av spårledningar, linje-/programmeringsspärrar, signaler, korsningar och
+kompisväxlar. Prövningen skickar inga order. Först när en hel väg godkänts
+sparas just dess lås och order skickas. En befintlig väg ändras aldrig.
+Katalogidentiteten är kvar så samma pluppar återtar även en alternativ väg.
+Sparade reservationer innehåller den faktiskt valda vägen vid omstart.
+
+Simulatorns statiska signalvillkor och körscenarier omfattar alternativen.
+Simulatorn väljer körscenario från sina egna växellägen och signalbesked,
+inte från TKL:s tillstånd. Övergångsindikering följer reservationens verkliga
+geometri. De stora alternativa grafvägarna skickas inte till webbläsarens
+konfigurationssvar; den får den aktiva reservationens geometri som tidigare.
+
+Verifiering: samtliga 402 alternativa vägar har provats med etablering,
+oberoende fältåterrapporter, tågpassage och automatisk upplåsning. Separata
+regressionsprov täcker bildfallet med AN/BN spärrade, belagd/spärrad alternativ
+väg utan sidoeffekter, kvarvarande grön väg, omstart och återtagning.
+
+Inte aktiverad i produktion. Ersätter de förberedda versionerna 0.36.0/0.36.1.
+Denna version ändrar även simulatorprofilen, så vid publicering måste både
+TKL och simulator uppdateras tillsammans efter backup och kontroll av att
+alla vägar återtagits och inga simulerade tåg går. Omstart inväntar uttryckligt
+godkännande; tidigare automatiska godkännandegranskningen nekade omstart.
+
+Slutkontroll: 232 enhetstester och 3 processtester godkända. Genererade
+profiler och övrigt operationsunderlag stämmer med källfilerna.

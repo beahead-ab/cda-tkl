@@ -4,7 +4,7 @@ export class PanelIndications {
   constructor(catalog,profile) {
     if(profile.sourceHash&&profile.sourceHash!==catalog.sourceHash)throw Error('Indikeringarnas källa stämmer inte med driftprofilen.');
     this.source=catalog;this.profile=profile;
-    this.coveredNX=new Set(profile.routes.flatMap(r=>r.nxIds||[]));
+    this.coveredNX=new Set([...profile.routes,...(profile.routeAlternatives||[])].flatMap(r=>r.nxIds||[]));
     this.definitions=catalog.indicators.map(indicator=>({...indicator,...(indicator.crossing?{crossing:prepareCrossing(indicator.crossing,profile)}:{}),conditions:indicator.conditions.map(condition=>({...condition,
       blocks:condition.kind==='sensor'?Object.entries(profile.blocks).filter(([,b])=>[condition.id,condition.sourceSystem].includes(b.sourceSensor)).map(([name])=>name):[],
       connected:condition.kind==='nx'?this.coveredNX.has(condition.id):Object.values(profile.blocks).some(b=>[condition.id,condition.sourceSystem].includes(b.sourceSensor))

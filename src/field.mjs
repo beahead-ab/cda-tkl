@@ -81,7 +81,9 @@ export class Field extends EventEmitter {
     this.faults[kind] = name; this.tick(); this.allReports();
   }
   startTrain(id) {
-    const path = this.profile.scenarios.find(s => s.id === id);
+    const candidates=[...this.profile.scenarios,...(this.profile.scenarioAlternatives||[])].filter(s=>s.id===id);
+    // Select from field positions and signal feedback, never TKL runtime state.
+    const path = candidates.find(s=>Object.entries(s.turnouts||{}).every(([n,p])=>this.turnouts[n].position===p)&&(s.signals||[s.signal]).every(n=>this.signals[n].code)) || candidates[0];
     if (!path) throw Error('Okänd färd.');
     const stop = (path.signals || [path.signal]).find(n => !this.signals[n].code);
     if (stop) throw Error(`Signal ${stop} visar inte kör i anläggningen.`);

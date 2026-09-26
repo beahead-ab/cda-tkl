@@ -494,3 +494,53 @@ test('every connected line exit clears its outward signal only with the line det
   assert(shuntRoutes.every(r=>!r.exitSignal),'Shunting targets remain STOP boundaries');
   assert(mainRoutes.filter(r=>!Object.keys(exits).includes(r.to)).every(r=>!r.exitSignal));
 });
+
+test('Vagnsta can enter track 2b via the eastern crossover while Kungsfors holds track 1a',()=>{
+  const r=rig();r.engine.operating.blockLine('AN',true);r.engine.operating.blockLine('BN',true);
+  const green=r.request('htvAu','htvSpIC');r.advance(6500);
+  assert.equal(green.state,'active',green.reason);
+  const retained=structuredClone(green);
+  const incoming=r.request('htvBu','htvSpIIB');
+  assert.ok(incoming.variantId);assert.equal(incoming.turnouts.Vx165,'T');
+  assert.ok(!incoming.blocks.some(n=>green.blocks.some(b=>profile.blocks[b].address===profile.blocks[n].address)));
+  r.advance(6500);assert.equal(incoming.state,'active',incoming.reason);assert.equal(green.state,'active',green.reason);
+  assert.deepEqual(green.blocks,retained.blocks);assert.deepEqual(green.turnouts,retained.turnouts);
+  r.field.startTrain(incoming.definitionId);r.advance((incoming.passage.length+3)*850);
+  assert.deepEqual(r.engine.routes.map(x=>x.id),[green.id]);assert.equal(green.state,'active');
+});
+
+test('all compiled alternatives establish, carry trains and release with independent field feedback',{timeout:120000},()=>{
+  for(const alternative of profile.routeAlternatives){
+    const r=rig();
+    // Prefer this compiled candidate in the test, without bypassing live guards.
+    r.engine.profile={...profile,routes:profile.routes.map(d=>d.id===alternative.id?alternative:d),routeAlternatives:[]};
+    const route=r.request(alternative.from,alternative.to);r.advance(6500);
+    assert.equal(route.state,'active',alternative.variantId+': '+route.reason);
+    r.field.startTrain(route.definitionId);r.advance((route.passage.length+3)*850);
+    assert.equal(r.engine.routes.length,0,alternative.variantId+': '+route.reason);
+  }
+});
+
+test('blocked or occupied fallback refuses without orders or changes to the existing route',()=>{
+  for(const blocked of [false,true]){
+    const r=rig(),green=r.request('htvAu','htvSpIC');r.advance(6500);
+    const alternative=profile.routeAlternatives.find(d=>d.id==='htvBu--htvSpIIB');
+    const block=alternative.blocks.find(n=>!green.blocks.some(b=>profile.blocks[b].address===profile.blocks[n].address));
+    if(blocked)r.engine.controls.blocked.push(block);else {r.field.setBlock(block,true);r.drain();}
+    const before=r.commands.length;
+    assert.throws(()=>r.request('htvBu','htvSpIIB'),/belagt|spärrat|reserverad/);
+    assert.equal(r.commands.length,before);assert.deepEqual(r.engine.routes.map(x=>x.id),[green.id]);
+    assert.equal(green.state,'active');
+  }
+});
+
+test('alternative reservations persist their actual path and cancel by the original endpoint pair',()=>{
+  const saved=new Map(),storage={load:(name,fallback)=>saved.get(name)||fallback,save:(name,data)=>saved.set(name,structuredClone(data)),event:()=>{}};
+  const r=rig(storage);r.request('htvAu','htvSpIC');r.advance(6500);
+  const alternative=r.request('htvBu','htvSpIIB');r.advance(6500);
+  const restarted=new Engine(profile,{storage});
+  const held=restarted.routes.find(x=>x.id===alternative.id);
+  assert.equal(held.state,'held');assert.equal(held.variantId,alternative.variantId);assert.deepEqual(held.turnouts,alternative.turnouts);assert.deepEqual(held.blocks,alternative.blocks);
+  r.request('htvBu','htvSpIIB');r.advance(1000);
+  assert.equal(r.engine.routes.length,1);assert.equal(r.engine.routes[0].from,'htvAu');
+});
