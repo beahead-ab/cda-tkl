@@ -1,3 +1,4 @@
+import {createRouteConfirmation} from './route-confirmation.js';
 import {trackRestrictions,restrictionMarkers,lineRestrictionExtents} from './track-restrictions.js';
 import {signalRouteControls,signalImage} from './signal-route-controls.js';
 import {createAdminNavigation} from './admin-navigation.js';
@@ -38,6 +39,7 @@ $('crossing-display').onchange=()=>{setCrossingDisplay($('crossing-display').val
 
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
+let routeConfirmation;
 let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport,signalControls,chosenKind=null;
 const pageFromHash=()=>{
   if(location.hash==='#tools/zoom')history.replaceState(null,'','#tools/appearance');
@@ -99,22 +101,23 @@ function objectDetails(node,kind,name) {
     if(e.key==='ContextMenu'||e.key==='F10'&&e.shiftKey){e.preventDefault();showInspector(kind,name,e);}
   });
 }
-let messageTimer,messageHideTimer,messageDuration=8000;
+let messageTimer,messageHideTimer,messageDuration=4000,messageCanPause=true;
 function pauseMessage(){clearTimeout(messageTimer);clearTimeout(messageHideTimer);$('message').classList.remove('toast-leaving');}
 function resumeMessage(){
   pauseMessage();const toast=$('message');
-  if(toast.hidden||(messageDuration!==2000&&(toast.matches(':hover')||toast.contains(document.activeElement))))return;
+  if(toast.hidden||(messageCanPause&&(toast.matches(':hover')||toast.contains(document.activeElement))))return;
   messageTimer=setTimeout(()=>{toast.classList.add('toast-leaving');messageHideTimer=setTimeout(()=>{toast.hidden=true;toast.classList.remove('toast-leaving');},180);},messageDuration);
 }
-function message(text,{error=true,duration=8000}={}) {
-  messageDuration=duration;
+function message(text,{error=true,duration=4000}={}) {
+  messageDuration=duration;messageCanPause=error;
+  $('message').dataset.tone=error?'error':'success';
   pauseMessage();if(text&&error)feedback?.error();$('message-text').textContent=text;$('message').hidden=!text;
   if(text)resumeMessage();
 }
-$('message').addEventListener('pointerenter',()=>{if(messageDuration!==2000)pauseMessage();});
-$('message').addEventListener('pointerleave',()=>{if(messageDuration!==2000)resumeMessage();});
-$('message').addEventListener('focusin',()=>{if(messageDuration!==2000)pauseMessage();});
-$('message').addEventListener('focusout',e=>{if(messageDuration!==2000&&!$('message').contains(e.relatedTarget))resumeMessage();});
+$('message').addEventListener('pointerenter',()=>{if(messageCanPause)pauseMessage();});
+$('message').addEventListener('pointerleave',()=>{if(messageCanPause)resumeMessage();});
+$('message').addEventListener('focusin',()=>{if(messageCanPause)pauseMessage();});
+$('message').addEventListener('focusout',e=>{if(messageCanPause&&!$('message').contains(e.relatedTarget))resumeMessage();});
 async function api(path, data) {
   const urgent=path==='panel-reset'||path==='emergency-cancel'||(path==='all-stop'&&data.enabled===true);
   if (pending&&!urgent) return; pending++;
@@ -125,20 +128,20 @@ async function api(path, data) {
     if(path!=='panel-reset')message(''); return answer;
   } catch (e) { message(e.message); } finally { pending--; paint(); }
 }
-function clearChoice(repaint=true) { chosen = null; chosenKind=null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('selection-hint').hidden=true; $('clear-selection').disabled = true; if(repaint)paint(); }
+function clearChoice(repaint=true) { routeConfirmation?.cancel(); chosen = null; chosenKind=null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('selection-hint').hidden=true; $('clear-selection').disabled = true; if(repaint)paint(); }
 function choose(id,kind='main') {
   manualFeedback?.clear();
   if (!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
   if (['waiting','interrupted'].includes(state.panelReset?.phase)) return message(state.panelReset.reason);
   if(state.controls?.mode==='remote') return message('Fjärrläge: lokal tågvägsläggning är spärrad.');
-  if(pending)return;
+  if(pending||routeConfirmation?.selection)return;
   if(chosen&&chosenKind!==kind)clearChoice(false);
   if(kind==='shunt'&&chosen&&chosen!==id&&!signalControls.targets(chosen,state.routes).has(id))return message('Den signalen är inte ett möjligt slut för den valda växeltågvägen.');
   if (!chosen) {
     if(kind==='shunt'&&!signalControls.starts.has(id))return message('Signalen kan väljas som mål men saknar en ansluten växeltågväg som start.');
     chosenKind=kind;chosen = id; $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + (kind==='shunt'?' → välj markerad slutsignal':' → välj slutplupp'); $('clear-selection').disabled = false; paint();
   } else if (chosen === id) clearChoice();
-  else { const from = chosen; clearChoice(); api('route', { from, to: id }); }
+  else { routeConfirmation.start({from:chosen,to:id,kind}); }
 }
 function label(id) {
   if(config.buttons?.[id]) return displayName('buttons',id,config.buttons[id].label);
@@ -321,6 +324,8 @@ function paintPlan() {
     style(s.unknown,'display',selected !== 2 ? 'none' : '');
     s.g.classList.toggle('unconfigured', !config.signals[s.mast]);
     s.g.classList.toggle('signal-chosen',chosenKind==='shunt'&&s.routeButton===chosen);
+    s.g.classList.toggle('route-choice-start',chosenKind==='shunt'&&s.routeButton===chosen);
+    s.g.classList.toggle('route-choice-end',routeConfirmation.selection?.kind==='shunt'&&s.routeButton===routeConfirmation.selection.to);
     s.g.classList.toggle('signal-destination',!!s.routeButton&&signalTargets.has(s.routeButton));
     const preparing=s.routeButton&&signalPreparing.get(s.routeButton);
     s.g.classList.toggle('signal-preparing',!!preparing);
@@ -353,8 +358,11 @@ function paintPlan() {
     b.g.classList.toggle('route-preparing',!!preparingRole);
     attribute(b.g,'data-preparing-endpoint',preparingRole||'');
     if(b.isRoute){
-      attribute(b.g,'aria-busy',!!preparingRole);
-      attribute(b.g,'aria-description',preparingRole?(preparingRole==='start'?'Startpunkt':'Slutpunkt')+' · Tågvägen förbereds.':'');
+      const selectedStart=chosenKind==='main'&&b.id===chosen,selectedEnd=routeConfirmation.selection?.kind==='main'&&b.id===routeConfirmation.selection.to;
+      b.g.classList.toggle('route-choice-start',selectedStart);b.g.classList.toggle('route-choice-end',selectedEnd);
+      attribute(b.g,'aria-pressed',selectedStart||selectedEnd);
+      attribute(b.g,'aria-busy',!!preparingRole||!!routeConfirmation.selection&&(selectedStart||selectedEnd));
+      attribute(b.g,'aria-description',selectedEnd?'Vald slutpunkt · bekräftar tågvägsval.':selectedStart?'Vald startpunkt · välj slutplupp.':preparingRole?(preparingRole==='start'?'Startpunkt':'Slutpunkt')+' · Tågvägen förbereds.':'');
     }
     b.g.classList.toggle('chosen', b.id === chosen); b.g.classList.toggle('unavailable', !b.available || (b.names.length && state.manual?.[b.names[0]]?.allowed===false));
     b.g.classList.toggle('in-route', !!state?.routes.some(r => r.from === b.id || r.to === b.id));
@@ -401,6 +409,7 @@ function animateFlow(now=performance.now()) {
 }
 const statuses = { setting: 'Lägger växlar', establishing: 'Etablerar', clearing: 'Klarsätter', active: 'Klar', traversing:'Tåg passerar', held: 'Stopp · lås kvar', occupied: 'Lås kvar', cancelling: 'Återtar' };
 const frames=createPanelFrames({render:renderPanel,animate:animateFlow});
+routeConfirmation=createRouteConfirmation({submit:({from,to})=>api('route',{from,to}),valid:()=>usable()&&!pending&&state.controls?.mode!=='remote'&&!['waiting','interrupted'].includes(state.panelReset?.phase),onChange:finished=>{if(finished)clearChoice(false);paint();}});
 function paint(){frames.paint();}
 function renderPanel() {
   if (!state) return;
@@ -491,7 +500,7 @@ async function start() {
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
   timetableImport=createTimetableImport();modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable')});feedback=createFeedback();
-  panelConsole=createPanelConsole({onOpen:()=>{appMenu?.close();},onResetComplete:text=>message(text,{error:false,duration:2000})});
+  panelConsole=createPanelConsole({onOpen:()=>{appMenu?.close();},onResetComplete:text=>message(text,{error:false,duration:4000})});
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.
