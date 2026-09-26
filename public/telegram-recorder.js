@@ -1,8 +1,10 @@
+import {createCommunicationView} from './communication-view.js';
 import {createAdminDialog} from './admin-ui.js';
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const reason={operator:'Stoppad',disconnected:'Avslutad vid avbrott','time-limit':'Tidsgräns nådd','size-limit':'Storleksgräns nådd','event-limit':'Radgräns nådd','server-shutdown':'Avslutad vid serverstopp','capture-error':'Avbruten vid inspelningsfel'};
 export function createTelegramRecorder() {
+  const diagnostics=createCommunicationView(document.getElementById('advanced-protocol'));
   let state=null,online=false,busy=false,lastHistory='',requestError='';
   $('recording-tools').innerHTML=`<p class="muted">Spela in båda riktningarna för jämförelse och felsökning. Inspelningen skickar inga manövrer.</p>
     <div class="recording-actions"><label>Namn på inspelningen<input id="recording-label" maxlength="80" placeholder="Till exempel växel 123" autocomplete="off"></label><button id="recording-start">Starta inspelning</button><button id="recording-stop" disabled>Stoppa och spara</button><a id="recording-current" hidden>Hämta pågående logg</a></div>
@@ -36,5 +38,5 @@ export function createTelegramRecorder() {
     finally {busy=false;paint();}
   }
   form.onsubmit=e=>{e.preventDefault();send('start');};$('recording-stop').onclick=()=>send('stop');
-  return {update(next,connected){state=next;online=connected;paint();}};
+  return {update(next,connected){state=next;online=connected;diagnostics.update(next,connected);paint();}};
 }

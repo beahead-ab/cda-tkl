@@ -1,3 +1,4 @@
+import {connectionInfo,commandExpectations,protocolObjects} from './communication-diagnostics.mjs';
 import http from 'node:http';
 import {Destinations} from './destinations.mjs';
 import fs from 'node:fs';
@@ -18,7 +19,7 @@ import { TrainMeet } from './trainmeet.mjs';
 import { TimetableImport, IMPORT_LIMITS } from './timetable-import.mjs';
 import { TimetableAI } from './timetable-ai.mjs';
 import { ModelClock } from './model-clock.mjs';
-import { TelegramRecorder } from './telegram-recorder.mjs';
+import { describeProtocol, TelegramRecorder } from './telegram-recorder.mjs';
 
 const baseProfile=loadProfile();
 const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
@@ -42,38 +43,43 @@ function activationStatus(proposed){
   return {allowed:true,reason:'AIS aktiv och inga lås. Föreslagna adresser måste ha färska fria lägen och stoppbesked vid aktivering.'};
 }
 function createRuntime(p){
-  const c=new LocoNetClient({...p.transport,port:Number(process.env.CHARLOTTENDAL_WIRE_PORT||p.transport.port),silenceMs:p.staleMs});
+  const target=connectionInfo(p);
+  const c=new LocoNetClient({host:target.host,port:target.port,silenceMs:p.staleMs});
   const e=new Engine(p,{storage,send:bytes=>c.send(bytes)});if(e.storageFault)throw Error(e.storageFault);
   return {profile:p,client:c,engine:e,
     configuration:new Configuration(p,{storage,canActivate:()=>!e.routes.length&&!e.controls.programming.reserved&&!e.yard.delegated&&!e.storageFault}),
     trainInformation:new TrainInformation(JSON.parse(fs.readFileSync(new URL('../public/data/train-fields.json',import.meta.url))),p,{storage}),
     panelIndications:new PanelIndications(JSON.parse(fs.readFileSync(new URL('../public/data/indications.json',import.meta.url))),p),
-    recorder:new TelegramRecorder(storage.directory,p)};
+    recorder:new TelegramRecorder(storage.directory,p,{connectionInfo:target})};
 }
 const bindings=new BindingConfiguration(baseProfile,{storage,canActivate:activationStatus,prepare:p=>{const next=createRuntime(p);return ()=>installRuntime(next);}});
 const trainMeet=new TrainMeet({storage,origin:process.env.CHARLOTTENDAL_TRAINMEET_ORIGIN||''});
 const timetableImport=new TimetableImport({storage,reader:new TimetableAI()});let importUploading=false;
 const destinations=new Destinations(storage);
 const modelClock=new ModelClock(storage);let clockPublished=0;
-let notes = storage.load('notes.json', {}); const streams = new Set(), trace = []; let dirty = true;
+let notes = storage.load('notes.json', {}); const streams = new Set(), trace = [], protocolTrace=[]; let dirty = true;
 auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
 function protect(action) { try { return action(); } catch (e) { engine.log('error', e.message); } }
 function installRuntime(next,start=true){
   if(client){client.removeAllListeners();client.stop();engine.removeAllListeners();recorder.removeAllListeners();}
-  ({profile,client,engine,configuration,trainInformation,panelIndications,recorder}=next);trace.length=0;
+  ({profile,client,engine,configuration,trainInformation,panelIndications,recorder}=next);trace.length=0;protocolTrace.length=0;
   const {client:c,engine:e,trainInformation:book,recorder:recording}=next;
-  e.on('change',()=>{book.observe(e.blocks,e.connected,e.routes);dirty=true;});
+  let recordedRevision=e.revision;
+  e.on('change',()=>{
+    for(const event of e.events.filter(event=>event.id>recordedRevision).reverse()){recordedRevision=event.id;recording.add({kind:'engine-event',event});}
+    book.observe(e.blocks,e.connected,e.routes);dirty=true;
+  });
   c.on('connection',connected=>{bindingReports.clear();recording.connection(connected);protect(()=>e.connection(connected));});
   c.on('frame',bytes=>protect(()=>{const d=decode(bytes);if(['turnout','sensor','signal'].includes(d.kind)){const key=d.kind+':'+d.address;if(!bindingReports.has(key)&&bindingReports.size>=6000)bindingReports.delete(bindingReports.keys().next().value);bindingReports.set(key,{at:Date.now(),data:d});}e.receive(bytes);}));
   c.on('fault',message=>{recording.fault(message);e.log('transport',String(message));});
-  c.on('protocol',line=>recording.protocol(line));recording.on('change',()=>{dirty=true;});
+  c.on('protocol',event=>{const decoded=describeProtocol(event.direction,event.line),objects=protocolObjects(next.profile,decoded.decoded);recording.protocol({...event,objects});protocolTrace.unshift({...event,at:Date.now(),...decoded,objects});protocolTrace.length=Math.min(protocolTrace.length,100);dirty=true;});recording.on('change',()=>{dirty=true;});
   c.on('wire',event=>{trace.unshift({...event,at:Date.now()});trace.length=Math.min(trace.length,100);dirty=true;});
   if(start)c.start();dirty=true;
 }
 trainMeet.on('change',()=>{dirty=true;});
 timetableImport.on('change',()=>{dirty=true;});
 installRuntime(createRuntime(bindings.profile()),false);
-const snapshot = () => {const state=engine.snapshot();return { ...state,destinations:destinations.view(),bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),timetableImport:timetableImport.summary(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
+const snapshot = () => {const state=engine.snapshot();return { ...state,connectionInfo:connectionInfo(profile),destinations:destinations.view(),bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),timetableImport:timetableImport.summary(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -81,6 +87,7 @@ const server = http.createServer(async (req, res) => {
     const expires = await auth.authenticate(req);
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
+      if(url.pathname==='/api/communication')return json(res,{connection:connectionInfo(profile),connectionState:engine.connected?'connected':'disconnected',expectations:commandExpectations(profile,engine.snapshot()),trace:protocolTrace});
       if(url.pathname==='/api/route-targets')return json(res,{targets:engine.routeTargets(url.searchParams.get('from'),url.searchParams.get('kind')||'main')});
       if(url.pathname==='/api/timetable-import')return json(res,timetableImport.view());
       const templateMatch=url.pathname.match(/^\/api\/timetable-import\/template\.(csv|xlsx)$/);

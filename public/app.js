@@ -493,7 +493,7 @@ function renderPanel() {
   trainMeet?.update(state.trainMeet,online,state.timetableImport);
   timetableImport?.update(state.timetableImport,online);
   if(chosen && (!usable() || state.controls?.mode==='remote')) clearChoice(false);
-  const c = $('connection'); setText(c,!online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? 'LocoNet ansluten' : 'LocoNet frånkopplad');
+  const c = $('connection'); setText(c,!online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? (state.connectionInfo?.mode==='simulator'?'Simulator ansluten':'LocoNet ansluten') : (state.connectionInfo?.mode==='simulator'?'Simulator frånkopplad':'LocoNet frånkopplad'));
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
   setText($('panel-connection'),c.textContent);attribute($('panel-connection'),'class',c.className);
   if(currentPage==='panel')paintPlan();
@@ -544,7 +544,7 @@ function paintInspector() {
   if(inspected.kind==='indication')return paintIndication(inspected.name);
   const { kind, name } = inspected, b = kind === 'signal' ? config.signals[name] : config.turnouts[name];
   const sourceKind = kind === 'signal' ? 'signals' : 'layoutTurnouts';
-  const sourceButton = `<button class="source-inspect" data-source-kind="${sourceKind}" data-source-name="${esc(name)}">${kind === 'signal' ? 'Signalbesked och källuppgifter' : 'Visa alla källuppgifter'} →</button>`;
+  const sourceButton = `<a href="#register/station?object=${encodeURIComponent((kind==='signal'?'signals:':'turnouts:')+name)}">Visa i anläggningsöversikten →</a><button class="source-inspect" data-source-kind="${sourceKind}" data-source-name="${esc(name)}">${kind === 'signal' ? 'Signalbesked och källuppgifter' : 'Visa alla källuppgifter'} →</button>`;
   const original = kind === 'signal' ? registry.signals.find(r=>r.id===name) : null;
   const presentationKind=kind==='signal'?'signals':'turnouts', display=displayName(presentationKind,name), description=presentationDescription(presentationKind,name);
   const sourceInfo = (display!==name?`<h2>${esc(display)}</h2>`:'')+(description?`<p>${esc(description)}</p>`:'')+(original ? `<p class="muted">${esc(original.type)} · Besked i XML: ${esc(original.aspects.join(', '))}</p>` : '');
@@ -586,7 +586,7 @@ async function start() {
   let preloadTimer;
   await Promise.race([preload,new Promise(resolve=>{preloadTimer=setTimeout(resolve,2000);})]);
   clearTimeout(preloadTimer);
-  sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
+  sourceRegister = createSourceRegister({config,panel,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   signalControls=signalRouteControls(config,registry,signalEndpoints);
   buildPlan();
   trainInformation=createTrainInformation({catalog:config.trainFields,controls:layout.controls,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
@@ -640,6 +640,7 @@ async function start() {
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}
     const link=e.target.closest('a[href^="#"]');
+    if(link?.getAttribute('href')?.startsWith('#register/station'))closeInspector(false);
     const page={'#panel':'panel','#tools':'tools','#register':'admin','#trainmeet':'trainmeet','#import':'import','#advanced':'advanced'}[link?.getAttribute('href')];
     if(page){e.preventDefault();setPage(page);}
   });

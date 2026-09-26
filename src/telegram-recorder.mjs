@@ -21,11 +21,11 @@ export function describeProtocol(direction,line) {
   return {kind:'transport-line'};
 }
 export class TelegramRecorder extends EventEmitter {
-  constructor(directory,profile,{now=Date.now,clock=()=>performance.now(),maxEvents=10000,maxBytes=4_000_000,maxDurationMs=120000,maxFiles=100}={}) {
+  constructor(directory,profile,{now=Date.now,clock=()=>performance.now(),maxEvents=10000,maxBytes=4_000_000,maxDurationMs=120000,maxFiles=100,connectionInfo=null}={}) {
     super();this.directory=path.join(directory,'telegram-recordings');this.now=now;this.clock=clock;
     this.limits={maxEvents,maxBytes,maxDurationMs,maxFiles};this.sessionId=randomUUID();this.active=null;this.history=new Map();this.error=null;this.pending=null;
     this.provenance={profile:{id:profile.id,title:profile.title,sourceHash:profile.sourceHash||null,fingerprint:createHash('sha256').update(JSON.stringify(profile)).digest('hex')},
-      transport:'LocoNet-over-TCP',capturePoint:'TKL transport, complete ASCII protocol lines after whitespace/CR/LF normalization',
+      connection:connectionInfo,transport:'LocoNet-over-TCP',capturePoint:'TKL transport, complete ASCII protocol lines after whitespace/CR/LF normalization',
       verification:'Fysisk MGP/LocoBuffer ej verifierad. Filerna är observationer från vald anslutning, inte bevis för svensk beskedsmappning.',
       bindings:{turnouts:profile.turnouts,blocks:profile.blocks,signals:profile.signals,operatingControls:profile.operatingControls}};
     try {
@@ -62,9 +62,9 @@ export class TelegramRecorder extends EventEmitter {
     if(this.active.events.length>=this.limits.maxEvents)void this.finish('event-limit');
     this.emit('change');
   }
-  protocol({direction,line}) {
+  protocol({direction,line,objects=[]}) {
     if(!this.active||this.active.stoppedAt)return;
-    try {this.add({direction,line:String(line).slice(0,4096),...describeProtocol(direction,String(line).slice(0,4096))});}
+    try {this.add({direction,objects:structuredClone(objects),line:String(line).slice(0,4096),...describeProtocol(direction,String(line).slice(0,4096))});}
     catch(e){this.error='Inspelningen avbröts: '+e.message;void this.finish('capture-error');}
   }
   connection(connected){this.add({kind:'connection',connected});if(!connected&&this.active&&!this.active.stoppedAt)void this.finish('disconnected');}

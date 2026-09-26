@@ -1,3 +1,4 @@
+import {createStationWorkspace} from './station-workspace.js';
 import {createDestinations} from './destinations.js';
 import {createAdminDialog,registerAdminWorkspace} from './admin-ui.js';
 import { createBindingConfiguration } from './binding-configuration.js';
@@ -36,8 +37,8 @@ function sourceXML(node, depth=0) {
   if(!node.children.length && !node.text) return `${indent}<${node.tag}${attrs} />`;
   return `${indent}<${node.tag}${attrs}>${node.text?.trim()?esc(node.text.trim()):''}${node.children.length?'\n'+node.children.map(c=>sourceXML(c,depth+1)).join('\n')+'\n'+indent:''}</${node.tag}>`;
 }
-export function createSourceRegister({config, saveNote, onActive}) {
-  let destinations, configuration, bindingConfiguration, signalCatalog, signalDetails, lastState, lastOnline=false;
+export function createSourceRegister({config, panel, saveNote, onActive}) {
+  let station, destinations, configuration, bindingConfiguration, signalCatalog, signalDetails, lastState, lastOnline=false;
   let index, migration, ready, treeReady, nodeMap, category='signals', page=0, selected, query='', status='all';
   const $=id=>document.getElementById(id), pageSize=50;
   const binding=r=> {
@@ -104,7 +105,7 @@ export function createSourceRegister({config, saveNote, onActive}) {
   function initialize() {
     $('admin-view').innerHTML=`<div class="toolbar"><div><span class="admin-scope">Hela anläggningen</span><h1>Anläggningsregister</h1></div><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div>
       <section class="card"><h2>Anläggningsprofil</h2><p id="profile-summary"></p></section>
-      <div id="destinations-editor"></div><div id="configuration-editor"></div><div id="binding-editor"></div><div class="source-filters"><label>Visa <select id="registry-category"><option value="">Alla kategorier</option><option value="_addresses">Adressmappning (${index.meta.categories.filter(c=>['turnouts','sensors'].includes(c.key)).reduce((n,c)=>n+c.count,0)})</option>${index.meta.categories.map(c=>`<option value="${c.key}">${esc(c.label)} (${c.count})</option>`).join('')}</select></label><label class="source-search">Sök i alla källfält<input id="search" type="search" placeholder="Namn, adress, regel, värde…"></label><label>Funktion <select id="registry-status"><option value="all">Alla</option><option value="connected">Inkopplad i provprofil</option><option value="imported">Endast importerad</option><option value="noted">Med egen anteckning</option></select></label><button id="source-export-notes">Exportera anteckningar</button></div>
+      <section class="card"><h2>Anläggningsöversikt</h2><p>Spårplan, objekt, adresser och samband.</p><a href="#register/station">Öppna anläggningsöversikten →</a></section><div id="station-editor"></div><div id="destinations-editor"></div><div id="configuration-editor"></div><div id="binding-editor"></div><div class="source-filters"><label>Visa <select id="registry-category"><option value="">Alla kategorier</option><option value="_addresses">Adressmappning (${index.meta.categories.filter(c=>['turnouts','sensors'].includes(c.key)).reduce((n,c)=>n+c.count,0)})</option>${index.meta.categories.map(c=>`<option value="${c.key}">${esc(c.label)} (${c.count})</option>`).join('')}</select></label><label class="source-search">Sök i alla källfält<input id="search" type="search" placeholder="Namn, adress, regel, värde…"></label><label>Funktion <select id="registry-status"><option value="all">Alla</option><option value="connected">Inkopplad i provprofil</option><option value="imported">Endast importerad</option><option value="noted">Med egen anteckning</option></select></label><button id="source-export-notes">Exportera anteckningar</button></div>
       <section class="card"><div class="card-heading"><h2 id="registry-count"></h2><span class="muted">Välj ett objekt för samtliga källfält</span></div><div class="table-wrap"><table><thead><tr><th>Objekt</th><th>Kategori</th><th>Källidentitet</th><th>Status</th><th></th></tr></thead><tbody id="registry-rows"></tbody></table></div><div class="source-pagination"><button id="registry-prev">← Föregående</button><span id="registry-page"></span><button id="registry-next">Nästa →</button></div></section>
       <section id="source-detail" class="card source-detail" hidden><div class="card-heading"><h2 id="source-detail-heading"></h2><button id="source-close">Stäng detaljer</button></div><div id="source-detail-body"></div><p id="source-path" class="source-path"></p><button id="source-xml-button">Visa XML för objektet</button><pre id="source-xml" hidden></pre><div class="source-note"><label for="source-note">Egen anteckning</label><textarea id="source-note" maxlength="4000" rows="3"></textarea><button id="source-save">Spara anteckning</button><span id="source-note-status" role="status"></span></div></section>`;
     $('profile-summary').textContent=`${config.routes.filter(r=>r.kind!=='shunt').length} huvudtågvägar och ${config.routes.filter(r=>r.kind==='shunt').length} växeltågvägar · ${Object.keys(config.turnouts).length} växlar · ${Object.keys(config.signals).length} signaler i provanläggningen.`;
@@ -114,6 +115,7 @@ export function createSourceRegister({config, saveNote, onActive}) {
     const note=$('source-note').closest('.source-note');note.insertAdjacentHTML('beforebegin','<h3>Egen anteckning</h3><p id="source-note-display"></p><button id="source-note-edit">Redigera anteckning</button>');
     noteModal=createAdminDialog({title:'Egen anteckning',body:note,saveButton:$('source-save'),dirty:()=>$('source-note').value!==noteBaseline,busy:()=>$('source-save').disabled});
     $('source-note-edit').onclick=()=>{if(!selected)return;$('source-note').value=config.notes[selected.noteKey||'xml:'+selected.key]||'';noteBaseline=$('source-note').value;noteModal.open();};
+    station=createStationWorkspace({root:$('station-editor'),index,panel,config,openRecord:key=>{const r=recordByKey(key);if(r)showRecord(r);}});station.update(lastState,lastOnline);
     destinations=createDestinations($('destinations-editor'));destinations.update(lastState,lastOnline);
     configuration=createConfiguration({root:$('configuration-editor'),config,onActive});
     configuration.updateState(lastState,lastOnline);
@@ -148,5 +150,5 @@ export function createSourceRegister({config, saveNote, onActive}) {
     if(!kind&&location.hash.startsWith('#register/object')){const key=new URLSearchParams(location.hash.split('?')[1]||'').get('record'),record=recordByKey(key);if(record&&selected!==record)await showRecord(record);else if(!record)detailPage.close();}
     if(kind){category=kind;query='';status='all';page=0;$('search').value='';$('registry-status').value='all';render();if(name){const record=index.records.find(r=>r.category===kind&&r.name===name);if(record)await showRecord(record);}}
   }
-  return {open,presentationChanged(){if(index){render();if(selected)$('source-detail-heading').textContent=presentation(selected).name||selected.name;}},updateState(state,online){lastState=state;lastOnline=online;destinations?.update(state,online);configuration?.updateState(state,online);bindingConfiguration?.updateState(state,online);signalDetails?.update(state,online);}};
+  return {open,presentationChanged(){if(index){render();if(selected)$('source-detail-heading').textContent=presentation(selected).name||selected.name;}},updateState(state,online){lastState=state;lastOnline=online;station?.update(state,online);destinations?.update(state,online);configuration?.updateState(state,online);bindingConfiguration?.updateState(state,online);signalDetails?.update(state,online);}};
 }

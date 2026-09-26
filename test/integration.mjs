@@ -13,7 +13,7 @@ async function until(fn, timeout = 10000) { const end = Date.now() + timeout; le
 test('network profile runs parallel trains across separate processes and releases only after passage', { timeout: 45000 }, async () => {
   const [httpPort, simPort, wirePort] = await Promise.all([freePort(), freePort(), freePort()]);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'charlottendal-network-'));
-  const env = { ...process.env, CHARLOTTENDAL_PROFILE: 'network', CHARLOTTENDAL_AUTH_MODE: 'cloudflare', CHARLOTTENDAL_PUBLIC_ORIGIN: '',
+  const env = { ...process.env, CHARLOTTENDAL_PROFILE: 'network', CHARLOTTENDAL_CONNECTION_MODE:'simulator', CHARLOTTENDAL_AUTH_MODE: 'cloudflare', CHARLOTTENDAL_PUBLIC_ORIGIN: '',
     CHARLOTTENDAL_PORT: String(httpPort), CHARLOTTENDAL_SIM_PORT: String(simPort), CHARLOTTENDAL_WIRE_PORT: String(wirePort), CHARLOTTENDAL_STATE_DIR: dir };
   let output = ''; const children = [];
   const launch = file => { const child = spawn(process.execPath, [file], { cwd: root, env }); children.push(child); child.stdout.on('data', d => output += d); child.stderr.on('data', d => output += d); return child; };
@@ -25,6 +25,9 @@ test('network profile runs parallel trains across separate processes and release
   try {
     launch('src/simulator.mjs'); launch('src/server.mjs');
     await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && s.blocks.S100.occupied === false && s.panelIndications.V1.complete; });
+    const comm=await (await fetch(`http://127.0.0.1:${httpPort}/api/communication`)).json();
+    assert.equal(comm.connection.mode,'simulator');assert.equal(comm.connectionState,'connected');
+    assert.ok(comm.trace.some(r=>r.kind==='report'&&r.objects.length));
     const targetResponse=await fetch(`http://127.0.0.1:${httpPort}/api/route-targets?from=htvCu&kind=main`);
     assert.equal(targetResponse.status,200);
     assert.ok((await targetResponse.json()).targets.some(t=>t.id==='htvSpIA'));
@@ -99,7 +102,11 @@ test('network profile runs parallel trains across separate processes and release
     assert.equal(captureResponse.status,200);assert.match(captureResponse.headers.get('content-disposition'),/attachment/);
     assert.equal(captureResponse.headers.get('cache-control'),'no-store');
     const capture=await captureResponse.json();
-    assert.equal(capture.reason,'operator');assert.equal(capture.profile.id,'charlottendal-network-v1');
+    assert.equal(capture.reason,'operator');
+    assert.equal(capture.connection.mode,'simulator');
+    assert.ok(capture.events.some(e=>e.kind==='engine-event'&&e.event.kind==='established'),'recording retains actual engine decisions');
+    assert.ok(capture.events.some(e=>e.kind==='engine-event'&&e.event.kind==='report'),'recording retains interpreted reports');
+    assert.ok(capture.events.some(e=>e.direction==='out'&&e.objects?.some(o=>o.expected?.length)),'sent orders retain exact expected frames');assert.equal(capture.profile.id,'charlottendal-network-v1');
     assert.ok(capture.events.some(e=>e.direction==='out'&&e.kind==='order'));
     assert.ok(capture.events.some(e=>e.direction==='in'&&e.kind==='received-order'));
     assert.ok(capture.events.some(e=>e.kind==='transport-ack'));

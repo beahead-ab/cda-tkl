@@ -6,6 +6,8 @@ Webbversionen finns på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/),
 
 Privat källkod finns i [beahead-ab/cda-tkl](https://github.com/beahead-ab/cda-tkl). Se [serveruppgifter och aktuell driftstatus](docs/drift.md).
 
+Ny lokal arbetsvy: [anläggningsöversikt, utvecklingsläge och kommunikationsdiagnostik](docs/anlaggningsoversikt-kommunikation.md).
+
 ## Starta och prova
 
 Dubbelklicka **Starta Charlottendal.command** i den här mappen. Låt terminalfönstret vara öppet medan appen körs. Node.js 22 eller senare behövs. Första starten installerar det låsta beroendet `jose`, som verifierar Cloudflare-inloggning vid webbdrift. Lokal körning behöver inget Cloudflare-konto.
