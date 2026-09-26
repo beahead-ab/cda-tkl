@@ -720,3 +720,24 @@ Sex ortstester och fyra renderingstester godkända; syntaxkontroll godkänd.
 Webbläsarprov i separat lokal drift: fyra märkningar med vänstertrafik,
 byte Cn → Cu via admin, sparande och omladdning med bevarat val. Övriga linjer
 oförändrade. Ingen driftmanöver utförd.
+
+## 0.39.3 · sammanhängande tågvägsmarkering
+
+Alla huvudtågvägspluppar på den faktiskt ritade sträckan får samma färg,
+även mellanpluppar. Val- och förberedelsemarkeringar kvarstår. Rött belagt
+spår, kvarhållna lås och frånkopplat läge behåller sina särskilda indikeringar.
+
+Enbart i presentationen binds ändpluppen ihop med närmaste tågvägsgräns längs
+befintliga raka XML-segment i pluppens eget block. Det fyller exempelvis
+Au → signal 1/1 och den sista lilla biten till Au vid motsatt färdriktning.
+Inga nya vägar, blockreservationer eller signalbesked skapas. Saknas sammanhängande
+källgeometri lämnas glappet kvar. Samma visningslogik används efter delåtertagning.
+
+Sex nya tester täcker mellanpluppar, båda färdriktningar, saknad/felaktig
+anslutningsgeometri, samtliga huvudtågvägars bevarade grundgeometri, delåtertagning
+samt beläggning/frånkoppling/etablering. Fyra befintliga renderingstester godkända.
+
+Lokalt webbläsarprov: Au → Spår 1b gav identisk grön fyllning på Au, 1c och
+1b samt en sammanhängande startmarkering. Delåtertagning Au → 1c lämnade
+bara 1c och 1b gröna, med kvarvarande linje från x=856. Driftskod och profiler
+är oförändrade; publicering kan göras som gränssnittsuppdatering utan omstart.

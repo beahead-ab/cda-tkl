@@ -1,3 +1,4 @@
+import {routePresentation,routeButtonPhase} from './route-presentation.js';
 import {createRouteTargets} from './route-targets.js';
 import {turnoutDisplay} from './turnout-display.js';
 import {destinationDisplay,destinationDefaults,isOutgoingDestination} from './destination-data.js';
@@ -425,7 +426,6 @@ function paintPlan() {
       attribute(b.g,'aria-description',selectedEnd?'Vald slutpunkt · bekräftar tågvägsval.':selectedStart?'Vald startpunkt · välj slutplupp.':preparingRole?(preparingRole==='start'?'Startpunkt':'Slutpunkt')+' · Tågvägen förbereds.':'');
     }
     b.g.classList.toggle('chosen', b.id === chosen); b.g.classList.toggle('unavailable', !b.available || (b.names.length && state.manual?.[b.names[0]]?.allowed===false));
-    b.g.classList.toggle('in-route', !!state?.routes.some(r => r.from === b.id || r.to === b.id));
     b.g.classList.toggle('locked',!!state?.routes.some(r=>b.names.some(n=>r.turnouts[n]))||(state.operating?.programming?.reserved&&b.names.includes('Vx133')));
     b.g.classList.toggle('line-is-blocked',!!state.operating?.lines.some(l=>l.blocked&&l.button===b.id));
   }
@@ -433,14 +433,15 @@ function paintPlan() {
   for (const r of state?.routes || []) {
     if (!routeNodes.has(r.id)) {
       const g = svg('g', {}, $('flow-layer'));
-      const parts = r.flow.map(part => {
+      const presentation=routePresentation(r,panel,config,layout.controls);
+      const parts = presentation.parts.map(part => {
         const node = svg('line', { x1: part.x1, y1: part.y1, x2: part.x2, y2: part.y2, class: 'route-flow' }, g);
         const lamps = [];
         const count=part.length<26?1:Math.max(1,Math.round(part.length/78));
         for(let j=0;j<count;j++){const dist=(j+.5)/count*part.length; lamps.push({at:part.distance+dist,node:svg('circle',{cx:part.x1+(part.x2-part.x1)*(j+.5)/count,cy:part.y1+(part.y2-part.y1)*(j+.5)/count,r:3.4,class:'lamp'},g)});}
         return { ...part, node, lamps };
       });
-      routeNodes.set(r.id, { g, parts, timing:{} });
+      routeNodes.set(r.id, { g, parts, members:presentation.members, total:presentation.total, timing:{} });
     }
   }
 }
@@ -448,13 +449,18 @@ const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 function animateFlow(now=performance.now()) {
   if(currentPage!=='panel'||document.hidden)return false;
   let moving=false;
+  const buttonPhases=new Map(),priority={active:1,held:2,occupied:3};
   for (const r of state?.routes || []) {
     const entry = routeNodes.get(r.id); if (!entry) continue;
-    const total = r.flow.at(-1)?.distance + r.flow.at(-1)?.length || 1;
+    const total = entry.total;
     const fresh=online&&state.connection==='connected';
     const fraction = fresh ? flowProgress(r,entry.timing,now,state.serverTime,reducedMotion.matches) : 1;
     if(fresh&&r.state==='establishing'&&fraction<1&&!reducedMotion.matches)moving=true;
     const status = !fresh ? 'held' : r.state;
+    for(const member of entry.members){
+      const phase=routeButtonPhase(r,member,{connection:fresh?'connected':'disconnected',blocks:state.blocks},fraction,total);
+      if(!buttonPhases.has(member.id)||priority[phase]>priority[buttonPhases.get(member.id)])buttonPhases.set(member.id,phase);
+    }
     for (const part of entry.parts) {
       const lit = Math.max(0, Math.min(part.length, fraction * total - part.distance));
       const occupied = fresh && state.blocks[part.block]?.occupied === true;
@@ -464,6 +470,10 @@ function animateFlow(now=performance.now()) {
       else if(part.node.hasAttribute('stroke-dasharray'))part.node.removeAttribute('stroke-dasharray');
       for (const lamp of part.lamps) style(lamp.node,'visibility',!occupied && !hasTrackRestriction(part.block) && !blockedLineParts.has(part.id) && ['establishing', 'clearing', 'active', 'traversing'].includes(status) && lamp.at <= fraction * total ? 'visible' : 'hidden');
     }
+  }
+  for(const b of buttons){
+    const phase=buttonPhases.get(b.id);
+    b.g.classList.toggle('in-route',!!phase);attribute(b.g,'data-route-phase',phase||'');
   }
   return moving;
 }

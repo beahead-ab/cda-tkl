@@ -147,3 +147,10 @@ body.panel-app #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-r
 .turntable[data-position=unknown] .turntable-bridge{opacity:.55}
 .turntable-unknown{fill:var(--ink);font-size:10px;opacity:.65}
 .turntable:focus-visible .turntable-pit{stroke:#fff;stroke-width:3}
+
+/* Every NX dot along a reserved path follows the line's indication.
+   Choice/preparation animations retain their existing precedence. */
+#track-plan .route-button.in-route{--route-dot:var(--route)}
+#track-plan .route-button[data-route-phase=held]{--route-dot:var(--amber)}
+#track-plan .route-button[data-route-phase=occupied]{--route-dot:var(--red)}
+#track-plan .route-button.in-route:not(.line-is-blocked):not(.route-choice-end) .dot{fill:var(--route-dot)}
