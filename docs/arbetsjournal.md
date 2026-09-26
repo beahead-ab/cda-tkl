@@ -556,3 +556,14 @@ Publiceringen lade sex gränssnittsfiler på den redan körande processens publi
 Backup: `/root/charlottendal-backups/ui-f917153-20260925T235458Z`. Återgång utan omstart: återlägg app.js, index.html, admin-appearance.js, panel-fixed.css och panel-layout.js från backupens public till `/opt/charlottendal/releases/c605c16/public`; ta bort den i denna release nytillkomna panel-zoom.js där och peka current på e91f4da. Återställ inte driftdata. Vid nästa vanliga omstart används hela f917153-releasen.
 
 Tre ytterligare svartvita adminförslag (Linje, Register, Menyfack) framtagna som separat klickbar förhandsvisning. Inget av dessa utseenden är valt eller infört i produktion.
+
+
+## 26 september 2026 kl. 02:26 · Linje 0.32.0
+
+Release `afe9e99` publicerad efter Caspers uttryckliga godkännande att genomföra samtliga diskuterade ändringar. [Linje och redigeringsprinciperna](admin-linje.md) är införda: svartvit admin, smal sidomeny på breda skärmar, översikter, modaler och separata arbetsytor, fältnära validering, fast dialogfot och tydliga utkast/aktiveringssteg. Visningsinställningarna är nu en egen arbetsyta. Panelheader borttagen, vänster trepunktsmeny med LocoNet-status, ortsnamn utan ramar och med vektorpilar, tom tidtabell utan onödig text/bläddring samt återställningsknapp förankrad nere till höger.
+
+Syntax och tio riktade rendering-/zoom-/kalkylbladsprov godkända både lokalt och på servern. Webbprov av Spara/Avbryt, osparade formulär/celler, bibehållen inmatning vid fel, anläggningsarbetsyta, TrainMeet, Avancerat och responsiv layout. Noll respektive tre rader ger ingen bläddrare; 37 rader ger fungerande sidbyte utan ändrad spårplanshöjd. Livekontroll visar 0.32.0, LocoNet ansluten, den nya menyn, rätt ortsetiketter och fungerande inställningsdialog. Inga konsolfel eller provmanövrer i produktion; zoom 95 % bevarad i användarens webbläsare.
+
+`current` pekar på `/opt/charlottendal/releases/afe9e99`. Backend och simulator kör vidare med samma process-id, utan omstart. Körande backend serverar statiska filer ur `c605c16/public`; tretton befintliga filer och nya `admin-line.css` är överlagda där. Backend, profiler, deploymentkonfiguration och beroenden är byte-identiska. Skyddade API:er kräver fortsatt inloggning. Routes, controls, configuration, TrainMeet och tidtabell var oförändrade efter publiceringen.
+
+Backup: `/root/charlottendal-backups/ui-afe9e99-20260926T002655Z`. Återgång utan omstart: återlägg backupens tretton public-filer i `/opt/charlottendal/releases/c605c16/public`, ta bort endast den nytillkomna `admin-line.css` där och peka current på `/opt/charlottendal/releases/f917153`. Återställ inga driftfiler. Nästa ordinarie omstart använder hela afe9e99-releasen.
