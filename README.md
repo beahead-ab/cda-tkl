@@ -1,4 +1,4 @@
-# Charlottendal TKL · version 0.25.0
+# Charlottendal TKL · version 0.41.0
 
 En första körbar lokal applikation med egen TKL-kärna och en separat anläggningssimulator. Den använder Charlottendals exporterade geometri och JMRI mod59-signalbilder. Claude Design behövs inte för att köra den.
 
@@ -6,7 +6,7 @@ Webbversionen finns på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/),
 
 Privat källkod finns i [beahead-ab/cda-tkl](https://github.com/beahead-ab/cda-tkl). Se [serveruppgifter och aktuell driftstatus](docs/drift.md).
 
-Ny lokal arbetsvy: [anläggningsöversikt, utvecklingsläge och kommunikationsdiagnostik](docs/anlaggningsoversikt-kommunikation.md).
+Anläggningsöversikt och diagnostik: [anläggningsöversikt, utvecklingsläge och kommunikationsdiagnostik](docs/anlaggningsoversikt-kommunikation.md).
 
 ## Starta och prova
 

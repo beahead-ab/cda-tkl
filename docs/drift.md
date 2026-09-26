@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `7c1e422` · version 0.40.0 (26 september 2026, 10:52) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/7c1e422` |
+| Driftsatt kodversion | `381a9ea` · version 0.41.0 (26 september 2026, 12:07) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/381a9ea` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -578,3 +578,30 @@ kollapsade grupper, rangerknapp med TKL som ägare och inga JavaScript-fel.
 
 Den nya rangerfunktionen körs utan JMRI-skript. Fysiskt rangerställverk är
 fortfarande inte anslutet; dess order måste anslutas till samma manöverkärna.
+
+
+## Version 0.41.0 · simuleringsläge och anläggningsöversikt
+
+`381a9ea` aktiverad 26 september 2026, 12:07 svensk tid. Fortsatt utveckling
+och webbdrift sker på användarens begäran helt mot simulatorn. Fysisk MGP
+skjuts till den senare hårdvarufasen. Inga JMRI-skript krävs för de nya vyerna.
+
+Översikt med sökning, zoom, etiketter, adresser och objektens samband finns
+under Anläggningsregister. Kommunikationsvyn visar beräknad order, förväntade
+återrapporter, faktiska protokollrader och anslutningsläge. Inspelningar sparar
+även TKL:s händelser och beslut. Nya lägestabeller för ännu olösta växelgrupper
+är fortsatt ett separat arbete; inga rörelsemönster har gissats.
+
+`CHARLOTTENDAL_CONNECTION_MODE=simulator`, host `127.0.0.1`, port `8912`
+är uttryckligen sparade i serverns driftinställningar. Endast TKL startades om.
+Simulatorns process 140318 och dess tillstånd bevarades. Inga tågvägslås,
+programmeringsreservationer eller överlämnade rangerlås fanns vid bytet.
+Sparade JSON-driftdata jämfördes oförändrade. Ingen automatisk fallback från
+hårdvara till simulerade svar finns.
+
+Backup: `/root/charlottendal-backups/network-381a9ea-20260926T100657Z`.
+Tidigare release `7c1e422` finns kvar. 281 enhetsprov och nio integrationsprov
+godkända lokalt. Serverns 15 riktade prov, syntax och alla nio integrationsprov
+godkända före aktivering. Efterkontroll: tjänster aktiva, ansluten simulator,
+skyddade API:er inklusive kommunikationsvyn, inloggad 0.41.0 och inga
+JavaScript-fel. Protokollvyn visar matchande U4-återrapport från simulatorn.
