@@ -445,3 +445,14 @@ Ingen backup eller omstart för 0.39.0 har utförts. Vid godkännande ska
 driftläget kontrolleras igen innan `/root/switch-network-8d36b4e.sh` körs;
 scriptet behöver först överföras från arbetskatalogen eftersom överföringen
 ingick i det nekade kommandot.
+
+### Aktiverad 07:44 svensk tid
+
+Efter uttryckligt svar ”Ja, publicera och starta om båda nu” publicerades
+`8d36b4e` (0.39.0). Backup:
+`/root/charlottendal-backups/network-8d36b4e-20260926T054444Z`.
+Föregående release `6680ea6`. Båda tjänster aktiva och LocoNet anslutet;
+driftdata och inloggning bevarade, inklusive kontroll av skyddet på nya
+`/api/route-targets`. Inloggad produktionspanel verifierad: Au-val tillåter
+Spår 1c, spärrar Spår 10 och samtliga 66 signaler, utan ändrad pluppljusstyrka.
+Startvalet avbrutet; inga tågvägar skapades under efterkontrollen.
