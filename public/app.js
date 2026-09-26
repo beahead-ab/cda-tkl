@@ -1,3 +1,4 @@
+import {trackRestrictions,restrictionMarkers} from './track-restrictions.js';
 import {signalRouteControls,signalImage} from './signal-route-controls.js';
 import {createAdminNavigation} from './admin-navigation.js';
 import {createAdminAppearance} from './admin-appearance.js';
@@ -67,6 +68,8 @@ function openTools(section) {
   const target=$(section);if(target)location.hash='#tools/'+section.replace('-tools','');
 }
 async function openSource(kind,name) { await setPage('admin'); await sourceRegister.open(kind,name); }
+let blockedTracks=new Map();
+const blockMarkers=[];
 const rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], sourceLamps=[],routeNodes = new Map();
 const iconTypes = {
   hsi_2: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_4: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_5: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32],
@@ -185,6 +188,13 @@ function buildPlan() {
     // The source manoeuvre dot already occupies this position. A second,
     // invisible button underneath it gave pointer and keyboard different actions.
   }
+  const restrictions=svg('g',{id:'track-restrictions'},root);
+  for(const marker of restrictionMarkers(panel,config)){
+    const g=svg('g',{class:'track-restriction',transform:`translate(${marker.x} ${marker.y}) rotate(${marker.angle})`,visibility:'hidden',role:'img',tabindex:'-1','aria-label':'Spärrat spår '+marker.block,'data-block':marker.block},restrictions);
+    svg('rect',{x:-12,y:-12,width:24,height:24,class:'restriction-hit'},g);
+    svg('path',{d:'M-4 -6V6M4 -6V6',class:'restriction-bars','aria-hidden':'true'},g);
+    objectDetails(g,'block',marker.block);blockMarkers.push({...marker,g});
+  }
   for (const l of panel.labels.filter(l => !l.hidden && l.y < 840)) {
     const destination=/Lekby|Vagnsta|Kungsfors/i.test(l.text), size=destination?11:l.size||12;
     if(destination){
@@ -272,7 +282,7 @@ function showInspector(kind,name,event) {
   appMenu?.close();
   if(kind==='turnout')manualFeedback.select(name);else manualFeedback.clear();
   inspected={kind,name};paintInspector();
-  $('inspector-heading').textContent=({turnout:'Växel',signal:'Signal',indication:'Indikering'})[kind]+' '+name;
+  $('inspector-heading').textContent=({turnout:'Växel',signal:'Signal',indication:'Indikering',block:'Spårspärr'})[kind]+' '+name;
   $('inspector-host').append($('inspector-card'));
   contextDialog.open(event);
 }
@@ -281,18 +291,21 @@ function closeInspector(restoreFocus=true) {
 }
 function inspectIndication(name){showInspector('indication',name);}
 function isBlocked(name) { const address=config.blocks[name]?.address;return address!=null && (state?.controls?.blocked || []).some(n=>config.blocks[n]?.address===address); }
+function hasTrackRestriction(name){return blockedTracks.has(config.blocks[name]?.address);}
 function usable() { return online && state?.connection === 'connected' && !state.storageFault; }
 function paintPlan() {
+  blockedTracks=trackRestrictions(config,state);
+  for(const marker of blockMarkers){const blocked=blockedTracks.has(marker.address);attribute(marker.g,'visibility',blocked?'visible':'hidden');attribute(marker.g,'tabindex',blocked?'0':'-1');}
   const fresh = online && state?.connection === 'connected';
   for (const r of rails) {
     const value = fresh ? state.blocks[r.block]?.occupied : null;
-    attribute(r.node,'class', 'rail ' + (isBlocked(r.block)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
+    attribute(r.node,'class', 'rail ' + (hasTrackRestriction(r.block)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
   }
   for (const t of switches) {
     const value = fresh ? state.turnouts[t.name]?.position : 'unknown';
     const continuing = t.continuing === 2 ? 'B' : 'C', active = value === 'C' ? continuing : value === 'T' ? (continuing === 'B' ? 'C' : 'B') : null;
     const occupied = fresh && state.blocks[t.block]?.occupied;
-    for (const [leg, node] of Object.entries(t.legs)) attribute(node,'class', 'rail ' + (occupied ? 'occupied ' : '') + (!active ? 'unknown' : leg === 'A' || leg === active ? '' : 'branch-off'));
+    for (const [leg, node] of Object.entries(t.legs)) attribute(node,'class', 'rail ' + (hasTrackRestriction(t.block)?'blocked ':'') + (occupied ? 'occupied ' : '') + (!active ? 'unknown' : leg === 'A' || leg === active ? '' : 'branch-off'));
   }
   const signalTargets=chosenKind==='shunt'?signalControls.targets(chosen,state.routes):new Set();
   const signalPreparing=preparingEndpoints(state.routes,usable()&&!state.controls?.stopAll);
@@ -375,10 +388,10 @@ function animateFlow(now=performance.now()) {
       const lit = Math.max(0, Math.min(part.length, fraction * total - part.distance));
       const occupied = fresh && state.blocks[part.block]?.occupied === true;
       attribute(part.node,'class','route-flow ' + status);
-      style(part.node,'visibility',occupied ? 'hidden' : '');
+      style(part.node,'visibility',occupied||hasTrackRestriction(part.block) ? 'hidden' : '');
       if (r.state === 'establishing' && fresh) attribute(part.node,'stroke-dasharray',`${lit} ${part.length + 1}`);
       else if(part.node.hasAttribute('stroke-dasharray'))part.node.removeAttribute('stroke-dasharray');
-      for (const lamp of part.lamps) style(lamp.node,'visibility',!occupied && ['establishing', 'clearing', 'active', 'traversing'].includes(status) && lamp.at <= fraction * total ? 'visible' : 'hidden');
+      for (const lamp of part.lamps) style(lamp.node,'visibility',!occupied && !hasTrackRestriction(part.block) && ['establishing', 'clearing', 'active', 'traversing'].includes(status) && lamp.at <= fraction * total ? 'visible' : 'hidden');
     }
   }
   return moving;
@@ -434,6 +447,12 @@ function renderPanel() {
 function paintInspector() {
   if (!inspected || !state) return;
   $('inspect-turnout').value=inspected.kind==='turnout'?inspected.name:'';
+  if(inspected.kind==='block'){
+    const name=inspected.name,reasons=trackRestrictions(config,state).get(config.blocks[name]?.address)||[];
+    const occupied=online&&state.connection==='connected'?state.blocks[name]?.occupied:null;
+    html('inspector',`<dl><dt>Spårledning</dt><dd>${esc(displayName('blocks',name))}</dd><dt>Spärr</dt><dd>${esc(reasons.join(' · ')||'Ingen spärr')}</dd><dt>Beläggning</dt><dd>${occupied===true?'Belagt':occupied===false?'Fritt':'Okänd · återrapport saknas'}</dd></dl><p class="muted">Streckat spår med dubbla tvärstreck visar spärr. Rött visar beläggning även när spåret är spärrat. Spärren ändras under Driftverktyg.</p>`);
+    return;
+  }
   if(inspected.kind==='indication')return paintIndication(inspected.name);
   const { kind, name } = inspected, b = kind === 'signal' ? config.signals[name] : config.turnouts[name];
   const sourceKind = kind === 'signal' ? 'signals' : 'layoutTurnouts';

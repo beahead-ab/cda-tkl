@@ -95,3 +95,13 @@ body.panel-app #panel-console{display:flex;flex-direction:column;justify-content
 #panel-reset:disabled:not([aria-busy=true]){opacity:.4}
 @media(max-width:700px){#panel-bottom{grid-template-rows:minmax(0,1fr) 64px}body.panel-app #panel-console{flex-direction:row;align-items:center;padding:0;gap:10px}#panel-console .panel-runtime-info{order:0;margin:0;text-align:left;flex:1}#panel-quick-actions{order:1;margin-left:auto;flex:none}#panel-quick-actions #panel-reset{min-height:60px;padding:0 8px 3px;gap:0}#panel-reset .reset-switch{width:54px;height:44px}}
 @media(prefers-reduced-motion:reduce){.reset-switch-lever{transition:none}}
+
+/* Reservation and detection are independent: red still means occupied. */
+#track-plan .rail.blocked{stroke-dasharray:9 6;stroke-linecap:butt}
+#track-plan .rail.blocked:not(.occupied){stroke:#b59ce8!important}
+#track-plan .rail.blocked.occupied{stroke:var(--red)!important;stroke-dasharray:9 6}
+#track-plan .rail.blocked.branch-off{opacity:.45}
+.track-restriction{outline:none;cursor:context-menu}
+.restriction-hit{fill:transparent;stroke:none}
+.restriction-bars{fill:none;stroke:#cab5ef;stroke-width:2;stroke-linecap:square;paint-order:stroke}
+.track-restriction:focus-visible .restriction-hit{stroke:#deded1;stroke-width:1;rx:3}
