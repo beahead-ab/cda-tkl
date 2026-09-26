@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `32fa1a3` · version 0.28.2 (25 september 2026, 21:44) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/32fa1a3` |
+| Driftsatt kodversion | `7c1e422` · version 0.40.0 (26 september 2026, 10:52) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/7c1e422` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -554,3 +554,27 @@ utan JavaScript-fel. Inga inkommande nummer fanns registrerade vid kontrollen,
 så inga tomma rutor visas. Registrering, högerklick, spårbyte, omladdning och
 återgång till normal infart provades separat lokalt med tåg 421.
 Ingen produktionsmanöver eller ändring av produktionsnummer utfördes.
+
+## Version 0.40.0 · rangeröverlämning och öppen adminmeny
+
+`7c1e422` aktiverad 26 september 2026, 10:52 svensk tid efter användarens
+”kör”. Au → Spår 1a återtogs via den inloggade panelen. Noll kvarvarande
+tågvägar, noll belagda detektorer och stopp på samtliga signaler verifierades.
+Endast TKL startades om; simulatorns process 140318 och väntande P421
+(Spår 2c → Cn, stopp vid 2/12) behölls. Simulatorns kod och profil är oförändrade.
+
+Backup: `/root/charlottendal-backups/network-7c1e422-20260926T085232Z`.
+Tidigare release `95fcf2f` finns kvar. Alla sparade JSON-driftdata jämfördes
+oförändrade, förutom det avsiktliga nya profilfingeravtrycket i den tomma
+låsfilen. Ett första försök återgick automatiskt eftersom efterkontrollen
+felaktigt krävde även detta fingeravtryck oförändrat. Kontrollen rättades
+till exakt ny profil och fortsatt tomma lås; inga driftdata återlästes.
+
+273 enhetstester och nio integrationsprov godkända lokalt. På servern
+godkändes syntax, XML, reproducerbar generering, elva rangerprov och alla
+nio integrationsprov före aktivering. Efterkontroll: ansluten TKL,
+inloggningsskydd kvar, version 0.40.0, 21 synliga adminsidlänkar utan
+kollapsade grupper, rangerknapp med TKL som ägare och inga JavaScript-fel.
+
+Den nya rangerfunktionen körs utan JMRI-skript. Fysiskt rangerställverk är
+fortfarande inte anslutet; dess order måste anslutas till samma manöverkärna.

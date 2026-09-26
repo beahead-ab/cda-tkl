@@ -804,3 +804,11 @@ Byte av sida ändrar bara aktuell markering, inte menystruktur eller rullningsl�
 Syntaxkontroll och webbläsarprov godkända: 21 sidlänkar synliga i menyn, inga
 kollapsade grupper, byte mellan XML och protokoll med bevarat rullningsläge,
 utkastlänk utan befintligt utkast och inga JavaScript-fel.
+
+## Publicering 0.40.0
+
+Alla färdiga ändringar publicerade som `7c1e422` efter uttryckligt godkännande
+av återtagning av Au → Spår 1a och omstart av TKL. Simulatorn och P421 behölls.
+Backup, provning, automatisk återgång vid första efterkontrollen och verifierad
+slutlig aktivering dokumenterade i drift.md. Produktionspanelen visar den nya
+menyn och rangeröverlämningsknappen utan webbläsarfel.

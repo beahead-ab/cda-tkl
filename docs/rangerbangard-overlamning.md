@@ -1,6 +1,6 @@
 # Rangerbangårdens manöverrätt
 
-Implementerad och provad lokalt 26 september 2026. Ännu inte driftsatt.
+Driftsatt 26 september 2026 i version 0.40.0 (`7c1e422`). Fysisk rangerpanel är ännu inte ansluten.
 
 ## Egen manöverkärna – inget JMRI-program behövs
 
