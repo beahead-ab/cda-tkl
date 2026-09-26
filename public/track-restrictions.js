@@ -24,3 +24,33 @@ export function restrictionMarkers(panel,config) {
   for(const t of Object.values(panel.turnouts))if(t.cy<=850)for(const [x,y] of [[t.ax,t.ay],[t.bx,t.by],[t.ccx,t.ccy]])add(t.block,t.cx,t.cy,x,y,true);
   return [...candidates.values()];
 }
+
+// Trace each line back through XML-connected segments, stopping at the first
+// turnout. Never cross a turnout or guess connectivity from screen positions.
+export function lineRestrictionExtents(panel,config) {
+  const segments=panel.segs.filter(s=>s.b!=='frame'&&Math.min(s.y1,s.y2)<850),byId=new Map(segments.map(s=>[s.id,s])),points=new Map(),result=new Map();
+  for(const s of segments)for(const end of [1,2])if(s['t'+end]==='POS_POINT'){
+    const key=s['c'+end],list=points.get(key)||[];list.push(s);points.set(key,list);
+  }
+  for(const line of Object.values(config.operatingControls?.lines||{})){
+    const addresses=new Set(line.blocks.map(b=>config.blocks[b]?.address).filter(a=>a!=null));
+    const queue=segments.filter(s=>addresses.has(config.blocks[s.b]?.address)),parts=new Set();
+    for(let i=0;i<queue.length;i++){
+      const s=queue[i];if(parts.has(s.id))continue;parts.add(s.id);
+      for(const end of [1,2]){
+        const type=s['t'+end],key=s['c'+end],leg=/^TURNOUT_([ABC])$/.exec(type);
+        if(leg){const t=panel.turnouts[key];if(t)parts.add('VX:'+t.name+':'+leg[1]);}
+        else if(type.startsWith('LEVEL_XING_')){
+          const opposite={A:'C',C:'A',B:'D',D:'B'}[type.slice(-1)],id=panel.xings?.[key]?.['c'+opposite?.toLowerCase()],next=byId.get(id);
+          if(next&&!parts.has(id))queue.push(next);
+        }
+        else if(type==='POS_POINT'){
+          const neighbors=points.get(key)||[];
+          if(neighbors.length===2)for(const next of neighbors)if(!parts.has(next.id))queue.push(next);
+        }
+      }
+    }
+    result.set(line.id,parts);
+  }
+  return result;
+}

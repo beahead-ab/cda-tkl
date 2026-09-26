@@ -1,4 +1,4 @@
-import {trackRestrictions,restrictionMarkers} from './track-restrictions.js';
+import {trackRestrictions,restrictionMarkers,lineRestrictionExtents} from './track-restrictions.js';
 import {signalRouteControls,signalImage} from './signal-route-controls.js';
 import {createAdminNavigation} from './admin-navigation.js';
 import {createAdminAppearance} from './admin-appearance.js';
@@ -68,7 +68,7 @@ function openTools(section) {
   const target=$(section);if(target)location.hash='#tools/'+section.replace('-tools','');
 }
 async function openSource(kind,name) { await setPage('admin'); await sourceRegister.open(kind,name); }
-let blockedTracks=new Map();
+let blockedTracks=new Map(),blockedLineParts=new Set(),lineExtents=new Map();
 const blockMarkers=[];
 const rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], sourceLamps=[],routeNodes = new Map();
 const iconTypes = {
@@ -99,21 +99,22 @@ function objectDetails(node,kind,name) {
     if(e.key==='ContextMenu'||e.key==='F10'&&e.shiftKey){e.preventDefault();showInspector(kind,name,e);}
   });
 }
-let messageTimer,messageHideTimer;
+let messageTimer,messageHideTimer,messageDuration=8000;
 function pauseMessage(){clearTimeout(messageTimer);clearTimeout(messageHideTimer);$('message').classList.remove('toast-leaving');}
 function resumeMessage(){
   pauseMessage();const toast=$('message');
-  if(toast.hidden||toast.matches(':hover')||toast.contains(document.activeElement))return;
-  messageTimer=setTimeout(()=>{toast.classList.add('toast-leaving');messageHideTimer=setTimeout(()=>{toast.hidden=true;toast.classList.remove('toast-leaving');},180);},8000);
+  if(toast.hidden||(messageDuration!==2000&&(toast.matches(':hover')||toast.contains(document.activeElement))))return;
+  messageTimer=setTimeout(()=>{toast.classList.add('toast-leaving');messageHideTimer=setTimeout(()=>{toast.hidden=true;toast.classList.remove('toast-leaving');},180);},messageDuration);
 }
-function message(text,{error=true}={}) {
+function message(text,{error=true,duration=8000}={}) {
+  messageDuration=duration;
   pauseMessage();if(text&&error)feedback?.error();$('message-text').textContent=text;$('message').hidden=!text;
   if(text)resumeMessage();
 }
-$('message').addEventListener('pointerenter',pauseMessage);
-$('message').addEventListener('pointerleave',resumeMessage);
-$('message').addEventListener('focusin',pauseMessage);
-$('message').addEventListener('focusout',e=>{if(!$('message').contains(e.relatedTarget))resumeMessage();});
+$('message').addEventListener('pointerenter',()=>{if(messageDuration!==2000)pauseMessage();});
+$('message').addEventListener('pointerleave',()=>{if(messageDuration!==2000)resumeMessage();});
+$('message').addEventListener('focusin',()=>{if(messageDuration!==2000)pauseMessage();});
+$('message').addEventListener('focusout',e=>{if(messageDuration!==2000&&!$('message').contains(e.relatedTarget))resumeMessage();});
 async function api(path, data) {
   const urgent=path==='panel-reset'||path==='emergency-cancel'||(path==='all-stop'&&data.enabled===true);
   if (pending&&!urgent) return; pending++;
@@ -160,6 +161,7 @@ function applyPresentation(value) {
 }
 function buildPlan() {
   layout = panelLayout(panel);
+  lineExtents=lineRestrictionExtents(panel,config);
   const {x,y,width,height}=layout.crop;
   $('track-plan').setAttribute('viewBox',`${x} ${y} ${width} ${height}`);
   manualFeedback=createManualFeedback({config,plan:$('track-plan'),scroll:document.querySelector('.panel-scroll'),panelView:$('manual-feedback-host'),stateOf:()=>state,online:()=>online,isBlocked,esc,revealPlan:()=>{if(currentPage!=='panel')setPage('panel');}});
@@ -168,7 +170,7 @@ function buildPlan() {
   for (const s of panel.segs.filter(s => s.b !== 'frame' && !s.hide && Math.min(s.y1, s.y2) < 850)) {
     const node = svg('line', { x1: s.x1, y1: s.y1, x2: s.x2, y2: s.y2, class: 'rail unconfigured' }, track);
     svg('title', {}, node, 'Spårsegment '+s.id+' · '+s.b);
-    rails.push({ node, block: s.b });
+    rails.push({ node, block: s.b, id:s.id });
     if (s.d) node.setAttribute('stroke-dasharray','7 5');
     const length=Math.hypot(s.x2-s.x1,s.y2-s.y1), count=length<26?0:Math.max(1,Math.round(length/78));
     for(let i=0;i<count;i++){ const fraction=(i+.5)/count;
@@ -295,17 +297,18 @@ function hasTrackRestriction(name){return blockedTracks.has(config.blocks[name]?
 function usable() { return online && state?.connection === 'connected' && !state.storageFault; }
 function paintPlan() {
   blockedTracks=trackRestrictions(config,state);
+  blockedLineParts=new Set((state.operating?.lines||[]).filter(l=>l.blocked).flatMap(l=>[...(lineExtents.get(l.id)||[])]));
   for(const marker of blockMarkers){const blocked=blockedTracks.has(marker.address);attribute(marker.g,'visibility',blocked?'visible':'hidden');attribute(marker.g,'tabindex',blocked?'0':'-1');}
   const fresh = online && state?.connection === 'connected';
   for (const r of rails) {
     const value = fresh ? state.blocks[r.block]?.occupied : null;
-    attribute(r.node,'class', 'rail ' + (hasTrackRestriction(r.block)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
+    attribute(r.node,'class', 'rail ' + (hasTrackRestriction(r.block)||blockedLineParts.has(r.id)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
   }
   for (const t of switches) {
     const value = fresh ? state.turnouts[t.name]?.position : 'unknown';
     const continuing = t.continuing === 2 ? 'B' : 'C', active = value === 'C' ? continuing : value === 'T' ? (continuing === 'B' ? 'C' : 'B') : null;
     const occupied = fresh && state.blocks[t.block]?.occupied;
-    for (const [leg, node] of Object.entries(t.legs)) attribute(node,'class', 'rail ' + (hasTrackRestriction(t.block)?'blocked ':'') + (occupied ? 'occupied ' : '') + (!active ? 'unknown' : leg === 'A' || leg === active ? '' : 'branch-off'));
+    for (const [leg, node] of Object.entries(t.legs)) attribute(node,'class', 'rail ' + (hasTrackRestriction(t.block)||blockedLineParts.has('VX:'+t.name+':'+leg)?'blocked ':'') + (occupied ? 'occupied ' : '') + (!active ? 'unknown' : leg === 'A' || leg === active ? '' : 'branch-off'));
   }
   const signalTargets=chosenKind==='shunt'?signalControls.targets(chosen,state.routes):new Set();
   const signalPreparing=preparingEndpoints(state.routes,usable()&&!state.controls?.stopAll);
@@ -388,10 +391,10 @@ function animateFlow(now=performance.now()) {
       const lit = Math.max(0, Math.min(part.length, fraction * total - part.distance));
       const occupied = fresh && state.blocks[part.block]?.occupied === true;
       attribute(part.node,'class','route-flow ' + status);
-      style(part.node,'visibility',occupied||hasTrackRestriction(part.block) ? 'hidden' : '');
+      style(part.node,'visibility',occupied||hasTrackRestriction(part.block)||blockedLineParts.has(part.id) ? 'hidden' : '');
       if (r.state === 'establishing' && fresh) attribute(part.node,'stroke-dasharray',`${lit} ${part.length + 1}`);
       else if(part.node.hasAttribute('stroke-dasharray'))part.node.removeAttribute('stroke-dasharray');
-      for (const lamp of part.lamps) style(lamp.node,'visibility',!occupied && !hasTrackRestriction(part.block) && ['establishing', 'clearing', 'active', 'traversing'].includes(status) && lamp.at <= fraction * total ? 'visible' : 'hidden');
+      for (const lamp of part.lamps) style(lamp.node,'visibility',!occupied && !hasTrackRestriction(part.block) && !blockedLineParts.has(part.id) && ['establishing', 'clearing', 'active', 'traversing'].includes(status) && lamp.at <= fraction * total ? 'visible' : 'hidden');
     }
   }
   return moving;
@@ -488,7 +491,7 @@ async function start() {
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
   timetableImport=createTimetableImport();modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable')});feedback=createFeedback();
-  panelConsole=createPanelConsole({onOpen:()=>{appMenu?.close();},onResetComplete:text=>message(text,{error:false})});
+  panelConsole=createPanelConsole({onOpen:()=>{appMenu?.close();},onResetComplete:text=>message(text,{error:false,duration:2000})});
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.
