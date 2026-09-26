@@ -196,3 +196,8 @@ body.admin-shell-app{overflow:hidden;--navigation-width:224px}
 body[data-admin-window] #global-status{z-index:112;top:64px;right:40px}
 @media(max-width:900px){body.admin-shell-app{--navigation-width:190px}#admin-shell{inset:12px auto;left:50%;width:calc(100vw - 24px)}#admin-shell-content>main{padding:28px 24px 20px}#admin-shell-content>footer{padding-inline:24px}}
 @media(max-width:539px){body.admin-shell-app{--navigation-width:142px}#admin-shell{inset:6px auto;left:50%;width:calc(100vw - 12px);border-radius:9px}#admin-shell .app-header{padding-inline:12px;height:54px;min-height:54px}#admin-shell .app-header .brand>span{font-size:9px;letter-spacing:.8px}#admin-shell #admin-sidebar{padding-inline:5px!important}#admin-shell #admin-sidebar a{padding:9px 7px;font-size:11px;overflow-wrap:anywhere}#admin-shell-content>main{padding:54px 12px 18px}#admin-shell-content>footer{padding-inline:12px}#admin-shell-content :is(.tools-heading,.admin-workspace-heading,.toolbar){padding-right:0}#admin-shell-content h1{font-size:20px}#admin-shell-close{right:8px;top:8px}}
+
+/* Hover outlines are transient; retain an explicit cue for keyboard navigation. */
+body:not([data-nav-keyboard]) :is(#menu-toggle,#admin-shell-close,.admin-dialog [data-close]):focus{outline:none;box-shadow:none}
+body[data-nav-keyboard] :is(#menu-toggle,#admin-shell-close,.admin-dialog [data-close]):focus-visible{outline:2px solid #d5d5d1;outline-offset:3px}
+.admin-dialog [data-close]:hover{background:#30302e}

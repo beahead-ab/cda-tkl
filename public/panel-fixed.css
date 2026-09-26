@@ -15,8 +15,8 @@ body:not([data-page=panel]) #global-status{top:88px;max-height:calc(100dvh - 112
 @keyframes toast-appear{from{opacity:0;transform:translateX(calc(100% + 28px))}to{opacity:1;transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){#global-status>div:not([hidden]){animation:none;transition:none}}
 #panel-menu-slot{position:absolute;z-index:60;top:8px;left:8px}
-#panel-menu-slot #menu-toggle{width:34px;height:32px;min-height:32px;border-color:transparent;background:var(--panel);color:var(--ink)}
-#panel-menu-slot #menu-toggle:hover,#panel-menu-slot #menu-toggle[aria-expanded=true]{background:#252524;border-color:#454543}
+#panel-menu-slot #menu-toggle{width:34px;height:32px;min-height:32px;border-color:transparent;background:transparent;color:var(--ink)}
+#panel-menu-slot #menu-toggle:hover{background:#252524;border-color:#454543}
 #panel-view .panel-scroll{position:relative;min-height:0;overflow:auto;overscroll-behavior:contain;overflow-anchor:none;scroll-behavior:auto;contain:layout paint}
 #panel-view #track-plan{width:100%;height:100%;min-height:0;min-width:0;overflow:hidden;user-select:none;-webkit-user-select:none}
 body:not([data-panel-ready=true]) #track-plan{visibility:hidden}

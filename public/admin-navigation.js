@@ -2,6 +2,9 @@
 export function createAdminNavigation({account=false}={}) {
   const sidebar=document.getElementById('admin-sidebar'),button=document.getElementById('admin-nav-toggle'),panelButton=document.getElementById('menu-toggle');
   const prefix=account?'/':'';
+  // Programmatic return/initial focus must not leave a mouse-operated control lit.
+  document.addEventListener('pointerdown',()=>document.body.removeAttribute('data-nav-keyboard'),true);
+  document.addEventListener('keydown',e=>{if(e.key==='Tab')document.body.setAttribute('data-nav-keyboard','');},true);
   const popup=document.getElementById('app-menu')||document.createElement('div');popup.id='app-menu';popup.className='shared-menu';popup.hidden=false;
   popup.innerHTML=`<div class="admin-nav-items"></div><div class="admin-nav-footer"><a id="open-panel-zoom" href="${prefix}#tools/zoom">Zoom <span id="menu-zoom-value"></span></a><button id="toggle-fullscreen" type="button" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="fullscreen-expand" d="M7 3H3v4m10-4h4v4M3 13v4h4m10-4v4h-4"/><path class="fullscreen-contract" d="M3 7h4V3m6 0v4h4M7 17v-4H3m10 4v-4h4"/></svg><span>Fullskärm</span></button><a id="field-link" hidden target="_blank" rel="noopener">Anläggningssimulator ↗</a><a id="account-link" href="/account" hidden>Byt lösenord</a><div id="admin-nav-status"></div><span id="panel-connection" hidden></span></div>`;
   sidebar.replaceChildren(popup);
