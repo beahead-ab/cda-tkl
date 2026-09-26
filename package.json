@@ -1,6 +1,6 @@
 {
   "name": "charlottendal-tkl",
-  "version": "0.39.5",
+  "version": "0.40.0",
   "private": true,
   "type": "module",
   "description": "Charlottendal TKL och en separat LocoNet-anläggningssimulator",
