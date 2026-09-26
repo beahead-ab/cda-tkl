@@ -610,3 +610,13 @@ godkännande; tidigare automatiska godkännandegranskningen nekade omstart.
 
 Slutkontroll: 232 enhetstester och 3 processtester godkända. Genererade
 profiler och övrigt operationsunderlag stämmer med källfilerna.
+
+### 2026-09-26 · Vändskivans symbol
+
+Ersatt de fyra dekorativa diamantlinjerna med rund grop, kant och en separat
+spårbrygga. Originalets elva anslutningar och XML-underlaget är bevarade.
+Bryggan är dämpad och märkt med frågetecken: schematisk orientering, ingen
+bekräftad anslutning. Högerklick och tangentbord öppnar lägesinformation.
+Sensoradresser, lägesmappning och faktisk återrapport är ännu inte inkopplade.
+Verifierat lokalt i webbläsare, inklusive högerklicksdetaljer, samt syntax och
+diffkontroll. Inte publicerat; tidigare omstartsgodkännande är fortfarande öppet.

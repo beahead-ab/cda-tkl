@@ -133,3 +133,14 @@ body.panel-app #panel-console{display:flex;flex-direction:column;justify-content
 /* Keep the small reset control attached to the fitted drawing, above the timetable. */
 #plan-face{display:flex;flex-direction:column;align-items:center;width:max-content;max-width:none}
 body.panel-app #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+
+/* Turntable pit and bridge, independent of the source's decorative diamond. */
+.turntable{cursor:context-menu;outline:none}
+.turntable-pit{fill:var(--panel);stroke:var(--rail);stroke-width:2}
+.turntable-rim{fill:none;stroke:var(--rail);stroke-width:.8;opacity:.45}
+.turntable-deck{fill:#282625;stroke:var(--rail);stroke-width:.7}
+.turntable-sleeper{fill:none;stroke:var(--rail);stroke-width:1;opacity:.45}
+.turntable-rails{fill:none;stroke:var(--rail);stroke-width:1.5}
+.turntable[data-position=unknown] .turntable-bridge{opacity:.55}
+.turntable-unknown{fill:var(--ink);font-size:10px;opacity:.65}
+.turntable:focus-visible .turntable-pit{stroke:#fff;stroke-width:3}

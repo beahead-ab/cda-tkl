@@ -173,7 +173,7 @@ function buildPlan() {
   manualFeedback=createManualFeedback({config,plan:$('track-plan'),scroll:document.querySelector('.panel-scroll'),panelView:$('manual-feedback-host'),stateOf:()=>state,online:()=>online,isBlocked,esc,revealPlan:()=>{if(currentPage!=='panel')setPage('panel');}});
   const root = $('track-plan'), track = svg('g', {}, root), turnouts = svg('g', {}, root);
   const flow = svg('g', { id: 'flow-layer', 'pointer-events': 'none' }, root), labels = svg('g', {}, root), icons = svg('g', {}, root), controls = svg('g', {}, root);
-  for (const s of panel.segs.filter(s => s.b !== 'frame' && !s.hide && Math.min(s.y1, s.y2) < 850)) {
+  for (const s of panel.segs.filter(s => s.b !== 'frame' && s.b !== 'turntable' && !s.hide && Math.min(s.y1, s.y2) < 850)) {
     const node = svg('line', { x1: s.x1, y1: s.y1, x2: s.x2, y2: s.y2, class: 'rail unconfigured' }, track);
     svg('title', {}, node, 'Spårsegment '+s.id+' · '+s.b);
     rails.push({ node, block: s.b, id:s.id });
@@ -219,8 +219,20 @@ function buildPlan() {
     const badge=svg('g',{'aria-hidden':'true'},group),box=svg('rect',{y:y-13,height:18,rx:2,fill:'#fff'},badge),number=svg('text',{y:y, class:'destination-phone',style:'font-size:12px'},badge);
     destinationNodes.push({id:fallback.id,fallback:{...fallback,source:'local'},group,nameNode,badge,box,number,right,x:right?arrowX-8:arrowX+22});
   }
-  const tt = panel.turntable; svg('circle', { cx: tt.cx, cy: tt.cy, r: tt.r, class: 'rail unconfigured' }, track);
-  svg('line', { x1: tt.cx - tt.r, y1: tt.cy, x2: tt.cx + tt.r, y2: tt.cy, class: 'rail unconfigured' }, track);
+  const tt = panel.turntable;
+  const table=svg('g',{id:'turntable',class:'turntable',transform:`translate(${tt.cx} ${tt.cy})`,'data-position':'unknown'},track);
+  // Cover incoming rays inside the pit; retain the original source geometry outside it.
+  svg('circle',{r:tt.r,class:'turntable-pit'},table);
+  svg('circle',{r:tt.r-3,class:'turntable-rim'},table);
+  // A neutral schematic bridge until commissioned position sensors provide feedback.
+  // This is not a commanded or confirmed connection to any of the approach tracks.
+  const bridge=svg('g',{class:'turntable-bridge',transform:'rotate(-35)','aria-hidden':'true'},table);
+  svg('rect',{x:-tt.r+4,y:-5,width:2*tt.r-8,height:10,rx:1,class:'turntable-deck'},bridge);
+  for(const x of [-14,0,14])svg('path',{d:`M${x} -5V5`,class:'turntable-sleeper'},bridge);
+  svg('path',{d:`M${-tt.r+3} -3H${tt.r-3}M${-tt.r+3} 3H${tt.r-3}`,class:'turntable-rails'},bridge);
+  svg('text',{x:tt.r+6,y:-tt.r+6,class:'turntable-unknown','aria-hidden':'true'},table,'?');
+  accessible(table,'Vändskiva · läge okänt',e=>showInspector('turntable',tt.id,e));
+  objectDetails(table,'turntable',tt.id);
   for (const m of panel.micons.filter(m => m.y < 850)) {
     const type = iconTypes[m.type] || iconTypes.hsi_2;
     const w = type[3] * (m.scale || 1), h = type[4] * (m.scale || 1);
@@ -293,7 +305,7 @@ function showInspector(kind,name,event) {
   appMenu?.close();
   if(kind==='turnout')manualFeedback.select(name);else manualFeedback.clear();
   inspected={kind,name};paintInspector();
-  $('inspector-heading').textContent=({turnout:'Växel',signal:'Signal',indication:'Indikering',block:'Spårspärr'})[kind]+' '+name;
+  $('inspector-heading').textContent=({turnout:'Växel',signal:'Signal',indication:'Indikering',block:'Spårspärr',turntable:'Vändskiva'})[kind]+' '+name;
   $('inspector-host').append($('inspector-card'));
   contextDialog.open(event);
 }
@@ -476,6 +488,10 @@ function renderPanel() {
 function paintInspector() {
   if (!inspected || !state) return;
   $('inspect-turnout').value=inspected.kind==='turnout'?inspected.name:'';
+  if(inspected.kind==='turntable'){
+    html('inspector','<dl><dt>Läge</dt><dd>Okänt · lägesåterkoppling saknas</dd></dl><p class="muted">Spårbryggan visas schematiskt. Sensorerna behöver kopplas till vändskivans lägen innan panelen kan visa vilken spåranslutning som är bekräftad.</p>');
+    return;
+  }
   if(inspected.kind==='block'){
     const name=inspected.name,reasons=trackRestrictions(config,state).get(config.blocks[name]?.address)||[];
     const occupied=online&&state.connection==='connected'?state.blocks[name]?.occupied:null;
