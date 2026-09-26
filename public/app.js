@@ -1,3 +1,4 @@
+import {signalRouteControls,signalImage} from './signal-route-controls.js';
 import {createAdminNavigation} from './admin-navigation.js';
 import {createAdminAppearance} from './admin-appearance.js';
 import {createPanelZoom,createZoomDialog,zoomLabel} from './panel-zoom.js';
@@ -36,7 +37,7 @@ $('crossing-display').onchange=()=>{setCrossingDisplay($('crossing-display').val
 
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
-let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport;
+let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport,signalControls,chosenKind=null;
 const pageFromHash=()=>{
   if(location.hash==='#tools/zoom')history.replaceState(null,'','#tools/appearance');
   if(location.hash==='#tools')history.replaceState(null,'','#tools/appearance');
@@ -120,14 +121,18 @@ async function api(path, data) {
     if(path!=='panel-reset')message(''); return answer;
   } catch (e) { message(e.message); } finally { pending--; paint(); }
 }
-function clearChoice(repaint=true) { chosen = null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('selection-hint').hidden=true; $('clear-selection').disabled = true; if(repaint)paint(); }
-function choose(id) {
+function clearChoice(repaint=true) { chosen = null; chosenKind=null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('selection-hint').hidden=true; $('clear-selection').disabled = true; if(repaint)paint(); }
+function choose(id,kind='main') {
   manualFeedback?.clear();
   if (!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
   if (['waiting','interrupted'].includes(state.panelReset?.phase)) return message(state.panelReset.reason);
   if(state.controls?.mode==='remote') return message('Fjärrläge: lokal tågvägsläggning är spärrad.');
+  if(pending)return;
+  if(chosen&&chosenKind!==kind)clearChoice(false);
+  if(kind==='shunt'&&chosen&&chosen!==id&&!signalControls.targets(chosen,state.routes).has(id))return message('Den signalen är inte ett möjligt slut för den valda växeltågvägen.');
   if (!chosen) {
-    chosen = id; $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + ' → välj slutpunkt'; $('clear-selection').disabled = false; paint();
+    if(kind==='shunt'&&!signalControls.starts.has(id))return message('Signalen kan väljas som mål men saknar en ansluten växeltågväg som start.');
+    chosenKind=kind;chosen = id; $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + (kind==='shunt'?' → välj markerad slutsignal':' → välj slutplupp'); $('clear-selection').disabled = false; paint();
   } else if (chosen === id) clearChoice();
   else { const from = chosen; clearChoice(); api('route', { from, to: id }); }
 }
@@ -199,13 +204,17 @@ function buildPlan() {
     const type = iconTypes[m.type] || iconTypes.hsi_2;
     const w = type[3] * (m.scale || 1), h = type[4] * (m.scale || 1);
     const rad = m.deg * Math.PI / 180, rw = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad)), rh = Math.abs(h * Math.cos(rad)) + Math.abs(w * Math.sin(rad));
-    const g = svg('g', { transform: `translate(${m.x + rw / 2},${m.y + rh / 2})`, class: 'touch-target signal-target' }, icons);
-    svg('rect', { x: -rw / 2 - 5, y: -rh / 2 - 6, width: rw + 10, height: rh + 12, class: 'hit' }, g);
-    const images=type.slice(0,3).map((file,i)=>svg('image',{x:-w/2,y:-h/2,width:w,height:h,transform:`rotate(${m.deg})`,href:icon(file),visibility:i===2?'visible':'hidden','pointer-events':'none'},g));
+    const g = svg('g', { transform: `translate(${m.x + rw / 2},${m.y + rh / 2})`, class: 'touch-target signal-target','data-signal':m.mast }, icons);
+    svg('rect', { x: -rw / 2 - 7, y: -rh / 2 - 8, width: rw + 14, height: rh + 16, class: 'hit' }, g);
+    const files=type.slice(0,3);
+    if(m.type==='hdvsi_8')files.push('Hdvsi0+Sh1');
+    if(m.type==='hsi_3+dvsi')files.push('Hsi0+Sh1');
+    const images=files.map((file,i)=>svg('image',{x:-w/2,y:-h/2,width:w,height:h,transform:`rotate(${m.deg})`,href:icon(file),visibility:i===2?'visible':'hidden','pointer-events':'none'},g));
     const unknown = svg('text', { x: rw / 2 + 1, y: 3, class: 'signal-unknown' }, g, '?');
-    accessible(g, `Signal ${m.mast}`, e => {if(e.type==='keydown')showInspector('signal',m.mast,e);});
+    const routeButton=signalControls.buttons.get(m.mast);
+    accessible(g, `Signal ${m.mast}${routeButton?' · växeltågväg':''}`, e => {if(routeButton)choose(routeButton,'shunt');else if(e.type==='keydown')showInspector('signal',m.mast,e);});
     objectDetails(g,'signal',m.mast);
-    signals.push({ ...m, g, images, unknown, type });
+    signals.push({ ...m, g, images, unknown, type, signalType:m.type, files, routeButton });
   }
   const used = new Set(config.routes.flatMap(r => [r.from, r.to]));
   for (const b of layout.controls) {
@@ -232,7 +241,7 @@ function buildPlan() {
     }
     let manualName=names[0];
     accessible(g,isRoute?`${label(b.sensor)} · ${isShunt?'växeltågväg':'tågvägsknapp'}`:names.length?`Manövrera växel ${names.join(' / ')}`:b.sensor,e=>{
-      if(isRoute) return choose(b.sensor);
+      if(isRoute) return choose(b.sensor,isShunt?'shunt':'main');
       const indication=sourceLamps.find(l=>l.g===g);
       if(indication){if(e.type==='keydown')showInspector('indication',indication.name,e);return;}
       if(names.length){
@@ -285,13 +294,23 @@ function paintPlan() {
     const occupied = fresh && state.blocks[t.block]?.occupied;
     for (const [leg, node] of Object.entries(t.legs)) attribute(node,'class', 'rail ' + (occupied ? 'occupied ' : '') + (!active ? 'unknown' : leg === 'A' || leg === active ? '' : 'branch-off'));
   }
+  const signalTargets=chosenKind==='shunt'?signalControls.targets(chosen,state.routes):new Set();
+  const signalPreparing=preparingEndpoints(state.routes,usable()&&!state.controls?.stopAll);
   for (const s of signals) {
     const value = fresh ? state.signals[s.mast]?.aspect : 'unknown';
-    const requested=value==='stop'?0:value==='go'?1:2;
-    const selected=decodedIcons.has(s.type[requested])?requested:2;
+    const shunting=state.routes.some(r=>r.kind==='shunt'&&r.signals.includes(s.mast));
+    const requested=signalImage(s.signalType,value,shunting);
+    const selected=decodedIcons.has(s.files[requested])?requested:2;
     s.images.forEach((image,i)=>attribute(image,'visibility',i===selected?'visible':'hidden'));
     style(s.unknown,'display',selected !== 2 ? 'none' : '');
     s.g.classList.toggle('unconfigured', !config.signals[s.mast]);
+    s.g.classList.toggle('signal-chosen',chosenKind==='shunt'&&s.routeButton===chosen);
+    s.g.classList.toggle('signal-destination',!!s.routeButton&&signalTargets.has(s.routeButton));
+    const preparing=s.routeButton&&signalPreparing.get(s.routeButton);
+    s.g.classList.toggle('signal-preparing',!!preparing);
+    attribute(s.g,'aria-busy',!!preparing);
+    if(s.routeButton)attribute(s.g,'aria-pressed',chosenKind==='shunt'&&s.routeButton===chosen);
+    attribute(s.g,'aria-description',(s.routeButton?(s.routeButton===chosen?'Vald startsignal. ':signalTargets.has(s.routeButton)?'Möjlig slutsignal. ':'Klicka för växeltågväg. '):'')+'Högerklicka eller tryck Skift+F10 för information.');
   }
   for(const lamp of indicatorLamps) lamp.node.classList.toggle('occupied',fresh&&state.blocks[lamp.block]?.occupied===true);
   for(const lamp of sourceLamps) {
@@ -461,6 +480,7 @@ async function start() {
   await Promise.race([preload,new Promise(resolve=>{preloadTimer=setTimeout(resolve,2000);})]);
   clearTimeout(preloadTimer);
   sourceRegister = createSourceRegister({config,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
+  signalControls=signalRouteControls(config,registry);
   buildPlan();
   trainInformation=createTrainInformation({catalog:config.trainFields,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
   $('close-inspector').onclick=()=>closeInspector();

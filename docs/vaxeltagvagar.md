@@ -1,6 +1,14 @@
 # Utökade växeltågvägar · version 0.8
 
-Välj **Växeltågväg** över spårplanen. Start- och mållistan är sorterad efter signalnummer. De 70 nya vägarna nås via listan; en hjälptext visas när ett val saknar synlig knapp i originalpanelen. **Lägg / återta tågväg** används för båda åtgärderna, eller Återta på den aktiva vägen.
+Från version 0.34.1 kan 71 befintliga växeltågvägar väljas genom att klicka på startsignalen och en markerad slutsignal. Det gäller dvärgar, huvuddvärgar och kombinerade huvud-/dvärgsignaler med entydigt kopplade källgränser. Virtuella JMRI-master ärver sin definierade signaltyp; frånvaro av individuella utgångar innebär inte att de saknar växlingsbild. Ingen ny tågväg eller signalriktning införs av gränssnittet.
+
+Klick på samma start eller Escape avbryter valet. Högerklick/Skift+F10 visar information. Klick på en huvudtågvägsplupp ersätter ett pågående signalval och väljer huvudtågväg. Plupparna finns alltid kvar oavsett listverktygets läge. De tidigare separata växlingspilarna visas inte längre.
+
+Vägen kan utökas från sin slutsignal. Ursprunglig start och kedjans senaste slut begär återtagning av hela kedjan; kärnans vanliga beläggnings- och stoppkontroller gäller fortfarande. Markerade mål visar godkända val i katalogen, inte ett löfte om att vägen kan läggas i det aktuella driftläget. Backend prövar samtliga lås och villkor när beställningen görs.
+
+Markeringen runt signalen ändrar aldrig signalbeskedet. När kör är återrapporterat för en växeltågväg används den förladdade växlingsbilden (huvudsignal i stopp och dvärg i växling för kombinerade typer). Den fysiska MGP-mappningen är fortsatt preliminär enligt signalregistret.
+
+Alla 130 växeltågvägar finns också under **Driftverktyg → Tågvägar → Växeltågväg**. Där finns de återstående vägarna med andra sorters slutpunkter. **Lägg / återta tågväg** används för båda åtgärderna, eller Återta på den aktiva vägen.
 
 Profilen omfattar nu 210 huvudtågvägar och 130 växeltågvägar. De 70 nya vägarna använder 30 källsensorer med dolda eller saknade originalikoner. Ingen gissad kartplacering, ändrad signalriktning eller omskrivning av XML har införts. [Den explicita granskningslistan](../profiles/shunt-catalog-review.json) innehåller regler, NX-par, signaler, målsignal och källsensorer. Importen vägrar fortsätta om källfilens kontrollsumma eller de granskade sambanden ändras.
 
