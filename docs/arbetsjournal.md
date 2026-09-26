@@ -654,3 +654,11 @@ alternativ geometri, väntan på stopp/fria spår, omstart och lagringsfel.
 Lokalt webbläsarprov med separat TKL- och simulatorprocess bekräftade att
 Au → Spår 1c återtas och Spår 1c → Spår 1a ligger kvar grön. Den kvarvarande
 provsträckan återtogs därefter via samma klickpar; ingen aktiv provväg kvar.
+
+### 2026-09-26 · Toast högre upp
+
+Panelens toast flyttad från 52 till 10 px från överkanten (med hänsyn till
+enhetens safe area). På smala skärmar lämnas utrymme åt menyknappen till
+vänster. Fyra sekunders visning och in-/utglidning från höger bevaras.
+Verifierat med faktisk återställning i lokal webbläsare och kontrollerad
+placering: top 10 px, höger 14 px. Diffkontroll godkänd. Inte driftsatt.
