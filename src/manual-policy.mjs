@@ -1,7 +1,7 @@
 // Compile only the explicit AND/button/toggle subset of Logix 0007.
 // JMRI 5.8 ALL_AND evaluates every listed variable; the saved antecedent text
 // is only authoritative for MIXED, so its stale R-numbers are not executed.
-export function compileManualPolicies(source, {turnouts,blocks,coupled,protection}) {
+export function compileManualPolicies(source, {turnouts,blocks,coupled,protection,yardBoundaries={},yardTurnouts=[]}) {
   const rules=[],byTurnout={}, nxIds=new Set(source.nxPairs.map(n=>n.id));
   const enabled=source.groups.find(g=>g.id==='IX:AUTO:0007')?.enabled===true;
   for(const rule of source.rules.filter(r=>r.id.startsWith('IX:AUTO:0007'))) {
@@ -16,6 +16,9 @@ export function compileManualPolicies(source, {turnouts,blocks,coupled,protectio
     if(names.some(n=>!turnouts[n]) || [...names].sort().join('|')!==[...actual].sort().join('|')) problems.push('Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten.');
     const requiredBlocks=new Set(names.map(n=>turnouts[n]?.block).filter(Boolean));
     for(const sensor of freeSensors) {
+      // The new kernel's owner reservation replaces the old JMRI handover
+      // condition. Never wait for or manufacture the old script's sensor.
+      if(sensor==='rsAckRangeFri'&&names.every(n=>yardTurnouts.includes(n)))continue;
       const matching=Object.entries(blocks).filter(([,b])=>b.sourceSensor===sensor).map(([n])=>n);
       if(!matching.length) problems.push(sensor==='rsAckRangeFri'?'Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.':`Villkoret ${sensor} saknar verifierad återrapport eller ersättningsfunktion.`);
       matching.forEach(n=>requiredBlocks.add(n));
@@ -31,5 +34,14 @@ export function compileManualPolicies(source, {turnouts,blocks,coupled,protectio
     }
   }
   for(const name of Object.keys(turnouts)) if(!byTurnout[name]) byTurnout[name]={names:coupled[name]||[name],status:'unresolved',reason:'Ingen entydig manöverregel är ansluten för växeln.'};
-  return {rules,byTurnout};
+  const boundaryOverrides={};
+  for(const [name,boundary] of Object.entries(yardBoundaries)) {
+    const original=byTurnout[name];
+    // Replace only the unresolved grouped button, retaining ALL its detector,
+    // signal, NX and peer-turnout guards. Do not guess a mechanical coupling.
+    if(original?.button!==boundary.sourceButton||original.reason!=='Knappgruppens fullständiga växelkoppling är inte verifierad i XML-layouten.'||coupled[name]?.length!==1)throw Error('Rangergränsens manuella källvillkor har ändrats: '+name);
+    const replacement={...original,names:[name],guardTurnouts:original.names,status:'ready',reason:'',reviewedBoundary:true};
+    byTurnout[name]=replacement;boundaryOverrides[name]=replacement;
+  }
+  return {rules,byTurnout,...(Object.keys(boundaryOverrides).length?{boundaryOverrides}:{})};
 }

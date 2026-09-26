@@ -185,8 +185,8 @@ test('AIS requires new STOP acknowledgements, survives restart and never resumes
   assert.ok(Object.values(r.engine.signals).every(s=>s.desired==='STOP'));
 });
 
-test('all 20 resolved XML manual rules move exactly the confirmed coupled group',()=>{
-  const ready=profile.manualPolicies.rules.filter(p=>p.status==='ready');assert.equal(ready.length,20);
+test('all 30 resolved manual rules move exactly the confirmed coupled group',()=>{
+  const ready=profile.manualPolicies.rules.filter(p=>p.status==='ready');assert.equal(ready.length,30);
   for(const policy of ready) {
     const r=rig();assert.equal(r.engine.manualStatus(policy.names[0]).allowed,true,policy.rule);
     const before=r.commands.length;r.engine.manual(policy.names[0],'T');
@@ -194,10 +194,11 @@ test('all 20 resolved XML manual rules move exactly the confirmed coupled group'
     r.drain();r.advance(300);for(const n of policy.names)assert.equal(r.engine.turnouts[n].position,'T',policy.rule+' '+n);
   }
 });
-test('unresolved manual groups and shunting permissions cannot be bypassed through individual turnout names',()=>{
-  const unresolved=profile.manualPolicies.rules.filter(p=>p.status==='unresolved');assert.equal(unresolved.length,15);
+test('unresolved groups remain blocked except for explicitly reviewed boundary replacements',()=>{
+  const unresolved=profile.manualPolicies.rules.filter(p=>p.status==='unresolved');assert.equal(unresolved.length,5);
   const r=rig();
   for(const policy of unresolved) for(const name of policy.names) {
+    if(profile.manualPolicies.boundaryOverrides?.[name])continue;
     const before=r.commands.length;assert.throws(()=>r.engine.manual(name,'T'),/verifierad|saknar|Rangeröverlämningen/);assert.equal(r.commands.length,before,name);
   }
 });

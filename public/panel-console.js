@@ -3,6 +3,9 @@ import {registerAdminWorkspace} from './admin-ui.js';
 export function createPanelConsole({onOpen,onResetComplete}) {
   const $=id=>document.getElementById(id),root=$('panel-console');
   root.innerHTML='<div id="panel-quick-actions"><button type="button" id="panel-reset" aria-label="Återställ panel"><span id="panel-reset-label">Återställ panel</span><svg class="reset-switch" viewBox="0 0 64 72" aria-hidden="true" focusable="false"><defs><radialGradient id="reset-key-white" cx="36%" cy="27%" r="75%"><stop offset="0" stop-color="#fff"/><stop offset=".48" stop-color="#eeeeea"/><stop offset="1" stop-color="#92938e"/></radialGradient><radialGradient id="reset-key-down" cx="55%" cy="65%" r="80%"><stop offset="0" stop-color="#e4e4de"/><stop offset="1" stop-color="#92938e"/></radialGradient></defs><circle class="reset-indicator-rim" cx="32" cy="13" r="7"/><circle class="reset-indicator" cx="32" cy="13" r="5"/><circle class="reset-key-rim" cx="32" cy="48" r="19"/><circle class="reset-key-face" cx="32" cy="48" r="16"/></svg></button></div><div class="panel-runtime-info"><span id="panel-reset-status" role="status"></span><span id="panel-mode-status"></span><span id="panel-selection-slot"></span></div>';
+  const yard=$('panel-reset').cloneNode(true);yard.id='yard-authority';yard.hidden=true;
+  yard.querySelector('defs').remove();yard.querySelector('#panel-reset-label').id='yard-authority-label';
+  yard.removeAttribute('aria-label');$('panel-quick-actions').append(yard);
   const drawer=document.createElement('div');drawer.id='operations-workspaces';$('tools-view').append(drawer);
   $('all-stop').textContent='Alla signaler i stopp';$('reset-ais').textContent='Återställ stopp';$('reset-ais').hidden=true;
   $('panel-selection-slot').append($('selection-hint'));
@@ -54,6 +57,12 @@ export function createPanelConsole({onOpen,onResetComplete}) {
   }
   drawer.addEventListener('click',e=>{const id=e.target.closest('[data-panel-tool]')?.dataset.panelTool;if(id)open(id);});
   return {open,close,update(state,online){
+    const authority=state.yard,delegated=authority?.owner==='ranger';
+    yard.hidden=!authority;yard.disabled=!online||!authority?.change.allowed;
+    yard.setAttribute('aria-pressed',String(delegated));
+    const action=delegated?'Återta rangerbangården':'Lämna över rangerbangården';
+    $('yard-authority-label').textContent=action;yard.setAttribute('aria-label',action);
+    yard.title='Manöverrätt: '+(delegated?'Rangerställverket':'TKL')+'. '+(authority?.change.reason||'');
     const stopped=!!state.controls?.stopAll,remote=state.controls?.mode==='remote',shunt=$('route-mode').value==='shunt';
     const reset=state.panelReset,waiting=reset?.phase==='waiting';
     $('panel-reset').setAttribute('aria-label',waiting?'Återställer…':'Återställ panel');

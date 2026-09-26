@@ -69,7 +69,11 @@ test('network profile runs parallel trains across separate processes and release
     await post(httpPort, 'turnout', { name:'Vx102', position:'T' }, 400);
     await post(httpPort, 'turnout', { name:'Vx170', position:'T' });
     await until(async () => (await get(httpPort)).turnouts.Vx170.position==='T');
-    await post(httpPort, 'turnout', { name:'Vx114', position:'T' }, 400);
+    // TKL now owns the local yard by default; no old JMRI release sensor is needed.
+    await post(httpPort, 'turnout', { name:'Vx114', position:'T' });
+    await until(async () => (await get(httpPort)).turnouts.Vx114.position==='T');
+    await post(httpPort, 'turnout', { name:'Vx114', position:'C' });
+    await until(async () => (await get(httpPort)).turnouts.Vx114.position==='C');
     await post(httpPort, 'route', { from:'htvAn', to:'htvSpIA' }, 400);
     const ready = await get(httpPort);
     assert.equal(ready.panelIndications.V1.value,true);assert.equal(ready.panelIndications.V1.derived,true);

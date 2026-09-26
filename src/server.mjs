@@ -30,7 +30,7 @@ function activationStatus(proposed){
   const deny=reason=>({allowed:false,reason});
   if(!engine||!engine.controls.stopAll)return deny('Aktivera Alla signaler i stopp före profilbyte.');
   if(!engine.connected||engine.storageFault)return deny('Anslutning och fungerande lagring krävs.');
-  if(engine.routes.length||engine.controls.programming.reserved)return deny('Återta alla tågvägs- och programmeringslås först.');
+  if(engine.routes.length||engine.controls.programming.reserved||engine.yard.delegated)return deny('Återta tågvägar, programmeringslås och rangerbangårdens manöverrätt först.');
   if(recorder.active||recorder.pending)return deny('Avsluta och spara telegraminspelningen först.');
   if(proposed){
     const report=(kind,address)=>{const r=bindingReports.get(kind+':'+address);return r&&Date.now()-r.at<=proposed.staleMs?r.data:null;};
@@ -45,7 +45,7 @@ function createRuntime(p){
   const c=new LocoNetClient({...p.transport,port:Number(process.env.CHARLOTTENDAL_WIRE_PORT||p.transport.port),silenceMs:p.staleMs});
   const e=new Engine(p,{storage,send:bytes=>c.send(bytes)});if(e.storageFault)throw Error(e.storageFault);
   return {profile:p,client:c,engine:e,
-    configuration:new Configuration(p,{storage,canActivate:()=>!e.routes.length&&!e.controls.programming.reserved&&!e.storageFault}),
+    configuration:new Configuration(p,{storage,canActivate:()=>!e.routes.length&&!e.controls.programming.reserved&&!e.yard.delegated&&!e.storageFault}),
     trainInformation:new TrainInformation(JSON.parse(fs.readFileSync(new URL('../public/data/train-fields.json',import.meta.url))),p,{storage}),
     panelIndications:new PanelIndications(JSON.parse(fs.readFileSync(new URL('../public/data/indications.json',import.meta.url))),p),
     recorder:new TelegramRecorder(storage.directory,p)};
@@ -153,6 +153,7 @@ const server = http.createServer(async (req, res) => {
     else if (url.pathname === '/api/track-block') engine.blockTrack(data.name, data.blocked);
     else if (url.pathname === '/api/line-block') {engine.operating.checkCommand(data);engine.operating.blockLine(data.id,data.blocked);}
     else if (url.pathname === '/api/programming') {engine.operating.checkCommand(data);engine.operating.setProgramming(data.enabled);}
+    else if (url.pathname === '/api/yard-authority') {engine.operating.checkCommand(data);engine.yard.setOwner(data.owner);}
     else if (url.pathname === '/api/all-stop') engine.allStop(data.enabled);
     else if (url.pathname === '/api/panel-reset') engine.resetPanel();
     else if (url.pathname === '/api/emergency-cancel') engine.emergencyCancelAll();

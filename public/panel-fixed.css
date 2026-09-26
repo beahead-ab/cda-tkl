@@ -82,20 +82,20 @@ body.panel-app .tt-values{font-size:13px;line-height:24px;color:inherit}body.pan
 body.panel-app #panel-console{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:4px 0 0;height:64px;min-height:64px;flex:none;width:100%}
 #panel-quick-actions{order:0;justify-content:center;margin:0}
 #panel-console .panel-runtime-info{order:1;margin:8px 0 0;text-align:right}
-#panel-quick-actions #panel-reset{display:flex;flex-direction:column;align-items:center;gap:0;min-width:80px;min-height:56px;padding:0 10px 1px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--ink);font:400 9px/1.3 "Helvetica Neue",Arial,sans-serif;letter-spacing:.1px;touch-action:manipulation}
-#panel-reset-label{order:-1;max-width:100px;text-align:center}
-#panel-reset .reset-switch{display:block;width:40px;height:45px;overflow:visible}
+#panel-quick-actions :is(#panel-reset,#yard-authority){display:flex;flex-direction:column;align-items:center;gap:0;min-width:80px;min-height:56px;padding:0 10px 1px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--ink);font:400 9px/1.3 "Helvetica Neue",Arial,sans-serif;letter-spacing:.1px;touch-action:manipulation}
+:is(#panel-reset-label,#yard-authority-label){order:-1;max-width:140px;text-align:center}
+:is(#panel-reset,#yard-authority) .reset-switch{display:block;width:40px;height:45px;overflow:visible}
 .reset-indicator-rim{fill:#161415;stroke:#99999a;stroke-width:1.2}
 .reset-indicator{fill:#321b1d;stroke:#70464a;stroke-width:.7}
 .reset-key-rim{fill:#090909;stroke:#41413f;stroke-width:1}
 .reset-key-face{fill:url(#reset-key-white);stroke:#96978f;stroke-width:.8;transform-origin:32px 48px;transition:transform 100ms ease-out}
-#panel-quick-actions #panel-reset:hover:not(:disabled){background:transparent;border-color:transparent}
-#panel-reset:hover:not(:disabled) .reset-key-rim{stroke:#bdbdb5}
-#panel-quick-actions #panel-reset:focus-visible{outline:2px solid #deded1;outline-offset:2px}
-#panel-reset:active:not(:disabled) .reset-key-face{fill:url(#reset-key-down);transform:scale(.92)}
-#panel-reset[aria-busy=true] .reset-indicator{fill:#dd684f;stroke:#e0a493}
-#panel-quick-actions #panel-reset[aria-busy=true]{opacity:1;border-color:transparent;cursor:wait}
-#panel-reset:disabled:not([aria-busy=true]){opacity:.4}
+#panel-quick-actions :is(#panel-reset,#yard-authority):hover:not(:disabled){background:transparent;border-color:transparent}
+:is(#panel-reset,#yard-authority):hover:not(:disabled) .reset-key-rim{stroke:#bdbdb5}
+#panel-quick-actions :is(#panel-reset,#yard-authority):focus-visible{outline:2px solid #deded1;outline-offset:2px}
+:is(#panel-reset,#yard-authority):active:not(:disabled) .reset-key-face{fill:url(#reset-key-down);transform:scale(.92)}
+:is(#panel-reset,#yard-authority)[aria-busy=true] .reset-indicator{fill:#dd684f;stroke:#e0a493}
+#panel-quick-actions :is(#panel-reset,#yard-authority)[aria-busy=true]{opacity:1;border-color:transparent;cursor:wait}
+:is(#panel-reset,#yard-authority):disabled:not([aria-busy=true]){opacity:.4}
 @media(prefers-reduced-motion:reduce){.reset-key-face{transition:none}}
 
 /* Reservation and detection are independent: red still means occupied. */
@@ -178,3 +178,6 @@ body.panel-app #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-r
 .incoming-train-menu p{font-size:12px;line-height:1.5;color:#bcc4c9}
 .incoming-train-menu button{display:block;width:100%;text-align:left;margin:6px 0}
 .incoming-train-menu [data-arrival-message]{color:#d9c7a2}
+
+#yard-authority[aria-pressed=true] .reset-indicator{fill:#7fa7bb;stroke:#a2c7d8}
+.rail.yard-delegated:not(.occupied):not(.unknown):not(.blocked){stroke:#7894a2}

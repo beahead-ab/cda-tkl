@@ -4,6 +4,8 @@ import { decode, hex, switchOrder } from './protocol.mjs';
 import { RoutePolicy } from './route-policy.mjs';
 import { OperatingControls } from './operating-controls.mjs';
 import { splitRouteAt } from './route-sections.mjs';
+import { boundaryCommandReason } from './yard-boundaries.mjs';
+import { YardControl } from './yard-control.mjs';
 
 export class Engine extends EventEmitter {
   constructor(profile, { send = () => {}, storage, now = Date.now } = {}) {
@@ -30,6 +32,7 @@ export class Engine extends EventEmitter {
     // A restart must never silently resume an unfinished operator reset.
     if(reset?.completedAt===null){this.controls.stopAll=true;reset.interrupted=true;}
     this.operating=new OperatingControls(this);
+    this.yard=new YardControl(this);
     this.log('startup', this.routes.length ? `${this.routes.length} tågvägslås återställda; inget körmedgivande återupptas.` : 'TKL startad. Väntar på återrapporter.');
   }
   log(kind, message, details) {
@@ -302,15 +305,19 @@ export class Engine extends EventEmitter {
     }
     this.tick();
   }
-  manual(name, position) {
+  manual(name, position, {operator='tkl'}={}) {
     if (!this.profile.turnouts[name] || !['C', 'T'].includes(position)) throw Error('Okänd växel eller manöver.');
-    const condition=this.manualStatus(name); if(!condition.allowed) throw Error(condition.reason);
+    const names=this.profile.coupled?.[name]||[name];
+    const boundaryReason=boundaryCommandReason(this.profile.yardBoundaries,names,position,operator,this.profile.yardArea?.turnouts);
+    if(boundaryReason)throw Error(boundaryReason);
+    const condition=this.manualStatus(name,operator); if(!condition.allowed) throw Error(condition.reason);
     for (const n of condition.names) this.turnoutOrder(n, position);
   }
-  manualStatus(name) {
+  manualStatus(name,operator='tkl') {
     const refuse=reason=>({allowed:false,reason});
     if(!this.profile.turnouts[name]) return refuse('Okänd växel.');
     const names=this.profile.coupled?.[name]||[name];
+    const yardReason=this.yard.manualReason(names,operator);if(yardReason)return refuse(yardReason);
     if(names.some(n=>this.profile.manualDisabled?.includes(n)))return refuse('Direktmanövern är avstängd i driftinställningarna.');
     const programReason=this.operating.manualReason(names,this.profile.manualPolicies?.byTurnout[name]?.blocks);if(programReason)return refuse(programReason);
     if(!this.connected||this.storageFault||this.controls.stopAll) return refuse('Manövrering spärrad: anslutning, lagring eller AIS.');
@@ -319,6 +326,7 @@ export class Engine extends EventEmitter {
     const policy=this.profile.manualPolicies?.byTurnout[name];
     if(this.profile.manualPolicies) {
       if(policy?.status!=='ready') return refuse(policy?.reason||'Ingen manöverregel är ansluten.');
+      if(policy.guardTurnouts?.some(n=>this.routes.some(r=>Object.hasOwn(r.turnouts,n))))return refuse('En växel i den ursprungliga knappgruppen är låst av tågväg.');
       const addresses=new Set(policy.blocks.map(n=>this.profile.blocks[n].address));
       if(this.routes.some(r=>r.blocks.some(n=>addresses.has(this.profile.blocks[n].address)) || r.nxIds?.some(id=>policy.inactiveNX.includes(id)))) return refuse('En skyddande tågväg eller ett berört spåravsnitt är fortfarande låst.');
       for(const n of policy.blocks) {
@@ -326,7 +334,7 @@ export class Engine extends EventEmitter {
         if(!this.fresh(this.blocks[n])||this.blocks[n].occupied!==false) return refuse(`${n} är belagt eller saknar aktuell återrapport.`);
       }
       for(const n of policy.signals) if(!this.fresh(this.signals[n])||this.signals[n].aspect!=='stop'||this.signals[n].desired!=='STOP') return refuse(`Skyddande signal ${n} är inte bekräftat i stopp.`);
-      for(const n of names) if(!this.fresh(this.turnouts[n])||this.turnouts[n].position==='unknown') return refuse(`${n} saknar aktuellt växelläge eller håller på att läggas om.`);
+      for(const n of policy.guardTurnouts||names) if(!this.fresh(this.turnouts[n])||this.turnouts[n].position==='unknown') return refuse(`${n} saknar aktuellt växelläge eller håller på att läggas om.`);
       return {allowed:true,names,rule:policy.rule,reason:'Lokala spårledningar fria, skyddande signaler i stopp och inga berörda tågvägslås.'};
     }
     // The small legacy test profile retains its conservative commissioning rule.
@@ -552,7 +560,7 @@ export class Engine extends EventEmitter {
     return { serverTime: this.now(), revision: this.revision, connection: this.connected ? 'connected' : 'disconnected', storageFault: this.storageFault,
       profile: { id: this.profile.id, title: this.profile.title, commissioned: this.profile.commissioned, description: this.profile.description },
       turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, routes: this.routes, controls:this.controls, events: this.events,
-      operating:this.operating.snapshot(),
+      operating:this.operating.snapshot(),yard:this.yard.snapshot(),
       manual:Object.fromEntries(Object.keys(this.turnouts).map(n=>[n,this.manualStatus(n)])),
       modeChange:this.modeStatus(),allStopReset:this.allStopResetStatus(),panelReset:this.panelResetStatus(),emergencyRemaining:this.emergencyRemaining().map(r=>r.id),
       catalog: this.profile.routes.map(r => ({ id: r.id, from: r.from, to: r.to, label: r.label })) };

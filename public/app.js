@@ -354,13 +354,14 @@ function paintPlan() {
     const entry=state.destinations?.entries.find(d=>d.id===n.id)||n.fallback,d=destinationDisplay(entry,state.trainMeet),width=Math.max(30,d.phone.length*7.4+14);
     setText(n.nameNode,d.name.toUpperCase());const x=n.right?n.x-width:n.x+n.nameNode.getComputedTextLength()+8;attribute(n.nameNode,'x',n.right?n.x-(d.phone?width+8:0):n.x);setText(n.number,d.phone);attribute(n.box,'x',x);attribute(n.box,'width',width);attribute(n.number,'x',x+width/2);attribute(n.number,'text-anchor','middle');attribute(n.badge,'visibility',d.phone?'visible':'hidden');attribute(n.group,'aria-label',d.name+(d.phone?' · telefon '+d.phone:'')+' · '+d.sourceLabel);
   }
+  const yardParts=new Set(state.yard?.owner==='ranger'?config.yardArea?.segments:[]),yardPoints=new Set(state.yard?.owner==='ranger'?config.yardArea?.turnouts:[]);
   blockedTracks=trackRestrictions(config,state);
   blockedLineParts=new Set((state.operating?.lines||[]).filter(l=>l.blocked).flatMap(l=>[...(lineExtents.get(l.id)||[])]));
   for(const marker of blockMarkers){const blocked=blockedTracks.has(marker.address);attribute(marker.g,'visibility',blocked?'visible':'hidden');attribute(marker.g,'tabindex',blocked?'0':'-1');}
   const fresh = online && state?.connection === 'connected';
   for (const r of rails) {
     const value = fresh ? state.blocks[r.block]?.occupied : null;
-    attribute(r.node,'class', 'rail ' + (hasTrackRestriction(r.block)||blockedLineParts.has(r.id)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
+    attribute(r.node,'class', 'rail ' + (yardParts.has(r.id)?'yard-delegated ':'') + (hasTrackRestriction(r.block)||blockedLineParts.has(r.id)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
   }
   for (const t of switches) {
     const display=turnoutDisplay(t,state.turnouts[t.name],{fresh:fresh&&!state.storageFault,now:state.serverTime,timeout:config.commandTimeoutMs});
@@ -369,7 +370,7 @@ function paintPlan() {
     attribute(t.group,'data-instant',!t.seenConfirmed||display.phase==='unknown');
     if(display.active)t.seenConfirmed=true;
     for(const [leg,node] of Object.entries(t.legs)){
-      const restricted=hasTrackRestriction(t.block)||blockedLineParts.has('VX:'+t.name+':'+leg),flags=(restricted?'blocked ':'')+(occupied?'occupied ':'');
+      const restricted=hasTrackRestriction(t.block)||blockedLineParts.has('VX:'+t.name+':'+leg),flags=(yardPoints.has(t.name)?'yard-delegated ':'')+(restricted?'blocked ':'')+(occupied?'occupied ':'');
       attribute(node,'class','rail turnout-base '+flags+(display.phase==='unknown'?'unknown':leg==='A'&&display.active?'turnout-stem':'branch-off'));
       attribute(t.litLegs[leg],'class','rail turnout-lit '+flags);
       style(t.litLegs[leg],'opacity',display.active&&(leg==='A'||leg===display.active)?'1':'0');
@@ -619,6 +620,7 @@ async function start() {
     // viewport, appearance and any unfinished administrative edits intact.
     if($('track-plan').contains(document.activeElement))document.activeElement.blur();
   }
+  $('yard-authority').onclick=()=>api('yard-authority',{owner:state.yard.owner==='ranger'?'tkl':'ranger',sessionId:state.operating.sessionId,revision:state.operating.revision});
   $('panel-reset').onclick=()=>{message('');resetPanelChoices();return api('panel-reset',{});};
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
   $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };

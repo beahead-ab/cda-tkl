@@ -5,6 +5,8 @@ import { RoutePolicy, signalPlan, attachSourceEndpoints } from '../src/route-pol
 import { selectRoutePaths } from '../src/route-selection.mjs';
 import { compileManualPolicies } from '../src/manual-policy.mjs';
 import { compileOperatingControls } from '../src/operating-policy.mjs';
+import { compileYardBoundaries } from '../src/yard-boundaries.mjs';
+import { compileYardArea,yardTurnoutNames } from '../src/yard-area.mjs';
 const read = file => JSON.parse(fs.readFileSync(new URL('../' + file, import.meta.url)));
 const write = (file, data) => {
   const target = new URL('../' + file, import.meta.url), content = JSON.stringify(data, null, 2) + '\n';
@@ -126,7 +128,8 @@ for (const route of allRoutes) for (let i=0;i<route.boundaries.length;i++) {
   const list=protection[boundary.mast].alternatives;
   if(!list.some(o=>JSON.stringify(o)===JSON.stringify(option))) list.push(option);
 }
-const manualPolicies=compileManualPolicies(source,{turnouts,blocks,coupled,protection});
+const yardBoundaries=compileYardBoundaries(panel,source);
+const manualPolicies=compileManualPolicies(source,{turnouts,blocks,coupled,protection,yardBoundaries,yardTurnouts:yardTurnoutNames});
 for(const line of Object.values(operatingControls.lines)) {
   const block=topology.segments[topology.buttons[line.button]?.segment]?.b;
   if(!block||!blocks[block])throw Error('Linjeknappen saknar spåranknytning: '+line.id);
@@ -135,8 +138,9 @@ for(const line of Object.values(operatingControls.lines)) {
 const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:false,sourceHash:source.sourceHash,
   description:'Utökad anläggningsmodell med källstyrda tågvägsval och signalriktningar. Fysiska MGP-bindningar återstår att verifiera.',
   transport:{host:'127.0.0.1',port:8912},staleMs:7000,commandTimeoutMs:6000,signalStepMs:300,
-  turnouts,blocks,signals,routes,routeAlternatives,coupled,manualPolicies,operatingControls,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),
+  turnouts,blocks,signals,routes,routeAlternatives,coupled,manualPolicies,yardBoundaries,operatingControls,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),
   sourcePolicy:[...source.mainRoutePolicies,...source.shuntRoutePolicies],excluded,releasePolicy:'whole-route-after-ordered-passage-and-stop-feedback'};
+profile.yardArea=compileYardArea(panel,profile);
 const scenario=r=>({id:r.id,...(r.variantId?{variantId:r.variantId}:{}),label:r.label,blocks:r.blocks,signal:r.signals[0],signals:r.signals,signalEntries:r.signalEntries,turnouts:r.turnouts});
 const simulator={id:'charlottendal-independent-network-field',turnouts,blocks,signals,coupled,protection,programming:operatingControls.programming,
   scenarios:routes.map(scenario),scenarioAlternatives:routeAlternatives.map(scenario),

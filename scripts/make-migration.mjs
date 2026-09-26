@@ -6,8 +6,8 @@ const notes={
   '0003':['pending','Medgivandedvärgarnas särskilda beroenden återstår.'],
   '0004':['pending','Stopplyktornas särskilda beroenden återstår.'],
   '0005':['pending','Vändskivans 11 källfall är importerade; manöver och positionsåterrapport återstår.'],
-  '0006':['partial','Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår.'],
-  '0007':['partial','20 knappregler använder lokala fria spårledningar, NX-/resurslås och skyddande signaler. 15 regler spärras av ofullständiga växelkopplingar eller saknad rangeråterrapport. De två automatiska Vx95/Vx96-reglerna återstår.'],
+  '0006':['partial','Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår.'],
+  '0007':['partial','30 knappregler använder lokala fria spårledningar, NX-/resurslås och skyddande signaler. Egen manöverrätt ersätter rangeråterrapporten. Fem gruppregler har ofullständiga växelkopplingar; individuella granskade ersättningar finns för 112, 131 och 154. De två automatiska Vx95/Vx96-reglerna återstår.'],
   '0008':['pending','Synkronisering med godsställverk återstår.'],
   '0009':['pending','Särskilda Sh2-regler är importerade; full svensk beskedsmappning återstår.'],
   '0010':['pending','Särskilda Sh3-regler är importerade; full svensk beskedsmappning återstår.'],
@@ -47,7 +47,7 @@ for(const rule of [...source.mainRoutePolicies,...source.shuntRoutePolicies]) {
   byRule[rule.rule]={...byRule[rule.rule],status:routes.length?'tested':rule.status==='denied'?'denied':rule.status==='unresolved'?'unresolved':'excluded',behavior:routes.length?'Tågvägens etablering och ordnade passage är provade i den separata anläggningsmodellen.':excluded?.reason || rule.problems.join(' ') || 'Knappkombinationen avvisas enligt källregeln.',routes:routes.map(r=>r.id)};
 }
 if(Object.keys(byRule).length!==source.rules.length)throw Error('Every source rule must have a migration status');
-const content=JSON.stringify({sourceHash:source.sourceHash,groups,byRule,limitations:['Fysisk MGP/LocoBuffer ej verifierad.','12 externa Jython-skript saknas.','Spårvis delutlösning återstår; hela vägen låses genom passagen.','TrainMeet är ännu inte anslutet.']},null,2)+'\n';
+const content=JSON.stringify({sourceHash:source.sourceHash,groups,byRule,limitations:['Fysisk MGP/LocoBuffer ej verifierad.','12 externa Jython-skript saknas i källunderlaget; ersatta funktioner körs av den egna kärnan.','Spårvis delutlösning återstår; hela vägen låses genom passagen.','TrainMeet är ännu inte anslutet.']},null,2)+'\n';
 const target=new URL('../public/data/migration.json',import.meta.url);
 if(process.argv.includes('--check')) {if(fs.readFileSync(target,'utf8')!==content)throw Error('Migration matrix is stale');}
 else fs.writeFileSync(target,content);

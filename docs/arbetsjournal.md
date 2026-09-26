@@ -769,3 +769,27 @@ alla sju källbindningar, ankargeometri, varaktig flytt, upptaget målfält,
 gamla revisioner och befintlig nummerföljning. Lokalt webbläsarprov:
 linje A valde Au automatiskt; 421 registrerades, högerklick flyttade till An,
 omladdning behöll An och återgång flyttade tillbaka till Au. Inga JavaScript-fel.
+
+## 26 september – egen manöverrätt för rangerbangården (lokalt, ej publicerad)
+
+Överlämning och återtagning sköts av den nya TKL-kärnan. Ingen JMRI-körning,
+gammalt Python-skript eller intern JMRI-frigivningssensor behövs. Knappen ligger
+under spårplanen och områdets fria spår blir blågrå när manöverrätten lämnats över.
+Rätten sparas över avbrott, omstart och panelåterställning.
+
+TKL behåller växlarna 112, 131 och 154 i båda riktningarna samt huvudtågvägar
+till och från 11–13. Rangeraren får bara återställa gränsväxlarna till isolerande
+läge: 112=T, 131=T, 154=C. Alla spår-, signal- och tågvägslås gäller även då.
+Växel 131:s elektriska inversion tillämpas efter behörighetskontrollen.
+
+Gränsregeln granskas mot källhash och portanslutningar. Individuella ersättningar
+behåller originalgruppernas skydd utan att gissa gemensamma order. Övriga olösta
+gruppmanövrer är fortsatt spärrade. Det externa rangerställverket är inte anslutet;
+dess order måste gå genom samma kärna med betrodd serverbestämd roll.
+Se rangerbangard-overlamning.md för regler, avgränsning och provning.
+
+Verifiering: 273 enhetstester och nio integrationstester godkända. Skärpta
+stoppkvittensvillkor provades därefter med de elva riktade rangerproven och
+processprovet för överlämning. Syntax och reproducerbar profilgenerering godkända.
+Lokalt webbläsarprov visar överlämning, blågrå områdesfärg inklusive lokstallsfläkt,
+återtagning och inga JavaScript-fel. Ingen produktionsdrift ändrad.

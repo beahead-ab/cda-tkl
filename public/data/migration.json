@@ -177,7 +177,7 @@
       "name": "Hantering Ställverk",
       "enabled": true,
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår.",
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår.",
       "rules": [
         "IX:AUTO:0006C3",
         "IX:AUTO:0006C5",
@@ -198,7 +198,7 @@
       "name": "Lägga växlar",
       "enabled": true,
       "status": "partial",
-      "behavior": "20 knappregler använder lokala fria spårledningar, NX-/resurslås och skyddande signaler. 15 regler spärras av ofullständiga växelkopplingar eller saknad rangeråterrapport. De två automatiska Vx95/Vx96-reglerna återstår.",
+      "behavior": "30 knappregler använder lokala fria spårledningar, NX-/resurslås och skyddande signaler. Egen manöverrätt ersätter rangeråterrapporten. Fem gruppregler har ofullständiga växelkopplingar; individuella granskade ersättningar finns för 112, 131 och 154. De två automatiska Vx95/Vx96-reglerna återstår.",
       "rules": [
         "IX:AUTO:0007C1",
         "IX:AUTO:0007C2",
@@ -2283,12 +2283,12 @@
     "IX:AUTO:0006C3": {
       "group": "IX:AUTO:0006",
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår."
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår."
     },
     "IX:AUTO:0006C5": {
       "group": "IX:AUTO:0006",
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår."
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår."
     },
     "IX:AUTO:0006C15": {
       "group": "IX:AUTO:0006",
@@ -2303,42 +2303,42 @@
     "IX:AUTO:0006C13": {
       "group": "IX:AUTO:0006",
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår."
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår."
     },
     "IX:AUTO:0006C14": {
       "group": "IX:AUTO:0006",
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår."
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår."
     },
     "IX:AUTO:0006C17": {
       "group": "IX:AUTO:0006",
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår."
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår."
     },
     "IX:AUTO:0006C18": {
       "group": "IX:AUTO:0006",
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår."
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår."
     },
     "IX:AUTO:0006C19": {
       "group": "IX:AUTO:0006",
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår."
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår."
     },
     "IX:AUTO:0006C20": {
       "group": "IX:AUTO:0006",
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår."
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår."
     },
     "IX:AUTO:0006C21": {
       "group": "IX:AUTO:0006",
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår."
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår."
     },
     "IX:AUTO:0006C22": {
       "group": "IX:AUTO:0006",
       "status": "partial",
-      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Rangeröverlämning och externa panelindikeringar återstår."
+      "behavior": "Panelutseende och huvud-/växeltågvägsläge finns. Beständigt lokal-/fjärrläge ersätter panelens manöverspärr; lägesbyte kräver frigivna lås och aktuella stoppbesked. Beständig rangeröverlämning sköts av den egna kärnan utan JMRI-skript. Extern rangerpanel och övriga panelindikeringar återstår."
     },
     "IX:AUTO:0007C1": {
       "group": "IX:AUTO:0007",
@@ -2526,8 +2526,8 @@
     },
     "IX:AUTO:0007C20": {
       "group": "IX:AUTO:0007",
-      "status": "unresolved",
-      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
       "button": "vxv114",
       "turnouts": [
         "Vx114"
@@ -2535,8 +2535,8 @@
     },
     "IX:AUTO:0007C21": {
       "group": "IX:AUTO:0007",
-      "status": "unresolved",
-      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
       "button": "vxv119",
       "turnouts": [
         "Vx119"
@@ -2544,8 +2544,8 @@
     },
     "IX:AUTO:0007C22": {
       "group": "IX:AUTO:0007",
-      "status": "unresolved",
-      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
       "button": "vxv115",
       "turnouts": [
         "Vx115"
@@ -2553,8 +2553,8 @@
     },
     "IX:AUTO:0007C23": {
       "group": "IX:AUTO:0007",
-      "status": "unresolved",
-      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
       "button": "vxv111/118",
       "turnouts": [
         "Vx111",
@@ -2563,8 +2563,8 @@
     },
     "IX:AUTO:0007C24": {
       "group": "IX:AUTO:0007",
-      "status": "unresolved",
-      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
       "button": "vxv127",
       "turnouts": [
         "Vx127"
@@ -2572,8 +2572,8 @@
     },
     "IX:AUTO:0007C25": {
       "group": "IX:AUTO:0007",
-      "status": "unresolved",
-      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
       "button": "vxv128",
       "turnouts": [
         "Vx128"
@@ -2581,8 +2581,8 @@
     },
     "IX:AUTO:0007C26": {
       "group": "IX:AUTO:0007",
-      "status": "unresolved",
-      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
       "button": "vxv130",
       "turnouts": [
         "Vx130"
@@ -2590,8 +2590,8 @@
     },
     "IX:AUTO:0007C27": {
       "group": "IX:AUTO:0007",
-      "status": "unresolved",
-      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
       "button": "vxv133",
       "turnouts": [
         "Vx133"
@@ -2599,8 +2599,8 @@
     },
     "IX:AUTO:0007C28": {
       "group": "IX:AUTO:0007",
-      "status": "unresolved",
-      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
       "button": "vxv150",
       "turnouts": [
         "Vx150"
@@ -2608,8 +2608,8 @@
     },
     "IX:AUTO:0007C29": {
       "group": "IX:AUTO:0007",
-      "status": "unresolved",
-      "behavior": "Rangeröverlämningen är ännu inte ansluten; manuell omläggning är spärrad.",
+      "status": "tested",
+      "behavior": "Direktmanöver prövas mot lokala fria spårledningar, administrativa spärrar, berörda tågvägslås och stopp i skyddande signaler.",
       "button": "vxv155",
       "turnouts": [
         "Vx155"
@@ -10870,7 +10870,7 @@
   },
   "limitations": [
     "Fysisk MGP/LocoBuffer ej verifierad.",
-    "12 externa Jython-skript saknas.",
+    "12 externa Jython-skript saknas i källunderlaget; ersatta funktioner körs av den egna kärnan.",
     "Spårvis delutlösning återstår; hela vägen låses genom passagen.",
     "TrainMeet är ännu inte anslutet."
   ]
