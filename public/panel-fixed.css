@@ -76,12 +76,12 @@ body.panel-app .tt-values{font-size:13px;line-height:24px;color:inherit}body.pan
 
 .tt-pagination svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 /* Original panel-style white pushbutton and a separate acknowledgement lamp. */
-body.panel-app #panel-console{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-end;padding:4px 0 0}
-#panel-quick-actions{order:0;justify-content:flex-end}
+body.panel-app #panel-console{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:4px 0 0;height:64px;min-height:64px;flex:none;width:100%}
+#panel-quick-actions{order:0;justify-content:center;margin:0}
 #panel-console .panel-runtime-info{order:1;margin:8px 0 0;text-align:right}
-#panel-quick-actions #panel-reset{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:112px;min-height:98px;padding:3px 10px 5px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--ink);font:400 11px/1.3 "Helvetica Neue",Arial,sans-serif;letter-spacing:.2px;touch-action:manipulation}
+#panel-quick-actions #panel-reset{display:flex;flex-direction:column;align-items:center;gap:0;min-width:80px;min-height:56px;padding:0 10px 1px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--ink);font:400 9px/1.3 "Helvetica Neue",Arial,sans-serif;letter-spacing:.1px;touch-action:manipulation}
 #panel-reset-label{order:-1;max-width:100px;text-align:center}
-#panel-reset .reset-switch{display:block;width:64px;height:72px;overflow:visible}
+#panel-reset .reset-switch{display:block;width:40px;height:45px;overflow:visible}
 .reset-indicator-rim{fill:#161415;stroke:#99999a;stroke-width:1.2}
 .reset-indicator{fill:#321b1d;stroke:#70464a;stroke-width:.7}
 .reset-key-rim{fill:#090909;stroke:#41413f;stroke-width:1}
@@ -93,7 +93,6 @@ body.panel-app #panel-console{display:flex;flex-direction:column;justify-content
 #panel-reset[aria-busy=true] .reset-indicator{fill:#dd684f;stroke:#e0a493}
 #panel-quick-actions #panel-reset[aria-busy=true]{opacity:1;border-color:transparent;cursor:wait}
 #panel-reset:disabled:not([aria-busy=true]){opacity:.4}
-@media(max-width:700px){#panel-bottom{grid-template-rows:minmax(0,1fr) 84px}body.panel-app #panel-console{flex-direction:row;align-items:center;padding:0;gap:10px}#panel-console .panel-runtime-info{order:0;margin:0;text-align:left;flex:1}#panel-quick-actions{order:1;margin-left:auto;flex:none}#panel-quick-actions #panel-reset{min-height:80px;padding:0 8px 3px;gap:0}#panel-reset .reset-switch{width:54px;height:61px}}
 @media(prefers-reduced-motion:reduce){.reset-key-face{transition:none}}
 
 /* Reservation and detection are independent: red still means occupied. */
@@ -130,3 +129,7 @@ body.panel-app #panel-console{display:flex;flex-direction:column;justify-content
 #track-plan .turnout-geometry[data-instant=true] .rail{transition:none}
 #track-plan .turnout-geometry[data-phase=unknown] .turnout-lit{visibility:hidden}
 @media(prefers-reduced-motion:reduce){#track-plan .turnout-lit,#track-plan .turnout-base{transition:none}}
+
+/* Keep the small reset control attached to the fitted drawing, above the timetable. */
+#plan-face{display:flex;flex-direction:column;align-items:center;width:max-content;max-width:none}
+body.panel-app #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}

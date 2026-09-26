@@ -5,19 +5,21 @@ export const ZOOM_KEY='charlottendal-panel-zoom-v1';
 export const zoomLabel=value=>value===100?'100 % · Visa hela':`${value} %`;
 
 // Local presentation only. Never subscribe to telemetry or send operating orders.
-export function createPanelZoom({plan,viewport,stage}){
+export function createPanelZoom({plan,viewport,stage,controls}){
   let saved=100;try{saved=normalizeZoom(localStorage.getItem(ZOOM_KEY));}catch{}
   let value=saved,previous=null,frame=null,preview=null,restoreScroll=null;
   const listeners=new Set();
   function render(){
     frame=null;
     const w=viewport.clientWidth,h=viewport.clientHeight,box=plan.viewBox.baseVal;
-    const next=zoomGeometry(w,h,box.width,box.height,value);if(!next)return;
-    const offsetX=(next.stageWidth-next.width)/2,offsetY=(next.stageHeight-next.height)/2;
+    const controlsHeight=controls?.offsetHeight||0;
+    const next=zoomGeometry(w,Math.max(1,h-controlsHeight),box.width,box.height,value);if(!next)return;
+    next.stageHeight+=controlsHeight;
+    const offsetX=(next.stageWidth-next.width)/2,offsetY=(next.stageHeight-controlsHeight-next.height)/2;
     if(previous&&['width','height','stageWidth','stageHeight'].every(k=>Math.abs(next[k]-previous[k])<.01)){restorePosition();return;}
     // Keep the viewed location in place while resizing. At 100% the whole plan fits.
     const x=previous?(viewport.scrollLeft+previous.viewportWidth/2-(previous.stageWidth-previous.width)/2)/previous.width:.5;
-    const y=previous?(viewport.scrollTop+previous.viewportHeight/2-(previous.stageHeight-previous.height)/2)/previous.height:.5;
+    const y=previous?(viewport.scrollTop+previous.viewportHeight/2-(previous.stageHeight-controlsHeight-previous.height)/2)/previous.height:.5;
     stage.style.width=next.stageWidth+'px';stage.style.height=next.stageHeight+'px';
     plan.style.width=next.width+'px';plan.style.height=next.height+'px';
     viewport.scrollLeft=Math.max(0,offsetX+x*next.width-w/2);viewport.scrollTop=Math.max(0,offsetY+y*next.height-h/2);

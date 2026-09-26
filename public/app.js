@@ -569,7 +569,7 @@ async function start() {
   document.addEventListener('keydown', e => { if(e.key==='Escape'){if(document.querySelector('.admin-dialog[open]'))return;if($('inspector-host').open){e.preventDefault();closeInspector();return;}if(fullscreen.active()){fullscreen.exit();return;}manualFeedback.clear();clearChoice();} });
   // Original is the only active panel. Retired skin preferences must not restore it differently.
   try{localStorage.removeItem('charlottendal-skin');}catch{}
-  const panelZoom=createPanelZoom({plan:$('track-plan'),viewport:document.querySelector('.panel-scroll'),stage:$('plan-stage')});
+  const panelZoom=createPanelZoom({plan:$('track-plan'),viewport:document.querySelector('.panel-scroll'),stage:$('plan-stage'),controls:$('panel-console')});
   const zoomDialog=createZoomDialog(panelZoom);
   panelZoom.subscribe(value=>{$('menu-zoom-value').textContent=zoomLabel(value);});
   $('open-panel-zoom').onclick=e=>{e.preventDefault();e.stopPropagation();appMenu.close();zoomDialog.open();};
