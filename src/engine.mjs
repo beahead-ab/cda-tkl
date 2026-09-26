@@ -65,14 +65,14 @@ export class Engine extends EventEmitter {
     const end=upstream.source?.nxButtons?.[1],start=downstream.source?.nxButtons?.[0];
     return Boolean(end && end===start && upstream.kind===downstream.kind && downstream.signals[0]===signal && downstream.boundaries?.[0]?.sensor===start);
   }
-  guardConfirmed(route,name) {
+  guardConfirmed(route,name,routes=this.routes) {
     const signal=this.signals[name];
     if(!this.fresh(signal))return false;
     if(signal.aspect==='stop')return true;
     // Only the forward destination boundary can be cleared by a separately
     // reserved continuation. Opposing/flank guards remain STOP requirements.
     if(signal.aspect!=='go')return false;
-    return this.routes.some(next=>{
+    return routes.some(next=>{
       if(next.id===route.id||!this.isContinuation(route,next,name))return false;
       const stopping=signal.desired==='STOP'&&this.now()-signal.commandAt<=this.profile.commandTimeoutMs;
       if(next.cancelRequested) {
@@ -156,11 +156,28 @@ export class Engine extends EventEmitter {
     return null;
   }
   request(from, to) {
+    const plan=this.planRequest(from,to);
+    if(plan.action==='build')return this.establishRoute(plan.definition);
+    if(plan.action==='section')return this.applySectionCancellation(plan);
+    this.cancelRoutes(plan.chain);return plan.chain[0];
+  }
+  routeTargets(from,kind='main') {
+    if(!['main','shunt'].includes(kind))return [];
+    const ids=new Set(this.profile.routes.filter(r=>r.kind===kind).flatMap(r=>[r.from,r.to]));
+    if(!ids.has(from))return [];
+    const targets=[];
+    for(const to of ids)if(to!==from){
+      try{const plan=this.planRequest(from,to);targets.push({id:to,action:plan.action==='build'?'build':'cancel'});}
+      catch{/* A preview never changes field state or bypasses an interlock. */}
+    }
+    return targets;
+  }
+  planRequest(from, to) {
     const existing = this.routes.find(r => r.from === from && r.to === to);
-    if (existing) return this.cancel(existing.id);
+    if (existing) return {action:'cancel',chain:[existing]};
     const chain=this.findRouteChain(from,to);
-    if(chain.length>1){this.cancelRoutes(chain);return chain[0];}
-    const section=this.cancelSection(from,to);
+    if(chain.length>1)return {action:'cancel',chain};
+    const section=this.planSectionCancellation(from,to);
     if(section)return section;
     if (!this.connected || this.storageFault) throw Error(this.storageFault ? 'Lagringsfel; manövrering spärrad.' : 'Ingen LocoNet-anslutning.');
     if(this.controls.mode!=='local') throw Error('Fjärrläge: lokal tågvägsläggning är spärrad. Inget fjärrsystem är anslutet ännu.');
@@ -176,7 +193,7 @@ export class Engine extends EventEmitter {
       catch(error) { firstError ||= error; }
     }
     if(!selected) throw firstError;
-    return this.establishRoute(selected);
+    return {action:'build',definition:selected};
   }
   // Candidate checks are read-only. Reserve and issue commands exactly once,
   // after a complete source-approved path has passed every live interlock.
@@ -223,7 +240,8 @@ export class Engine extends EventEmitter {
     if(found.length>1)throw Error('Flera anslutande tågvägar hittades. Välj återtagning i tågvägslistan.');
     return found[0]||[];
   }
-  cancelSection(from,to) {
+  planSectionCancellation(from,to) {
+    if(!this.routes.length)return null;
     const origins=new Map();
     let proposed=this.routes.slice();
     for(const button of [from,to])proposed=proposed.flatMap(route=>{
@@ -250,11 +268,13 @@ export class Engine extends EventEmitter {
          r.signals.some(n=>!this.fresh(this.signals[n])||this.signals[n].aspect!=='go'))
         throw Error('Delåtertagning kräver en klar tågväg med fria spår och aktuella lägesbesked. Återta annars hela tågvägen.');
     }
+    // Inspect the proposed boundaries without replacing the live reservation list.
+    for(const r of proposed)if(this.guardSignals(r).some(n=>!this.guardConfirmed(r,n,proposed)))throw Error('Delsträckans skyddssignaler är inte bekräftade.');
+    return {action:'section',proposed,chain};
+  }
+  applySectionCancellation({proposed,chain}) {
     const previous=this.routes;this.routes=proposed;
     try {
-      // All new guard boundaries must already be protected by a confirmed STOP
-      // or by their independently reserved forward continuation.
-      for(const r of proposed)if(this.guardSignals(r).some(n=>!this.guardConfirmed(r,n)))throw Error('Delsträckans skyddssignaler är inte bekräftade.');
       this.cancelRoutes(chain); // Persist the split AND cancellation before STOP.
     } catch(error){
       this.routes=previous;

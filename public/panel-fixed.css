@@ -14,6 +14,11 @@ body:not([data-page=panel]) #global-status{top:88px;max-height:calc(100dvh - 112
 #global-status button{padding:4px 9px;white-space:nowrap}
 @keyframes toast-appear{from{opacity:0;transform:translateX(calc(100% + 28px))}to{opacity:1;transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){#global-status>div:not([hidden]){animation:none;transition:none}}
+/* During endpoint selection, keep indications intact but mute unusable dots. */
+#track-plan .choice-disabled{cursor:default}
+#track-plan .choice-disabled .hit{fill:transparent;stroke:transparent}
+#track-plan .choice-disabled.main-control .dot{opacity:.22;transform:none}
+#track-plan .route-destination.main-control .hit{stroke:var(--ink);stroke-opacity:.65;fill:none}
 #panel-menu-slot{position:absolute;z-index:60;top:8px;left:8px}
 #panel-menu-slot #menu-toggle{width:34px;height:32px;min-height:32px;border-color:transparent;background:transparent;color:var(--ink)}
 #panel-menu-slot #menu-toggle:hover{background:#252524;border-color:#454543}

@@ -662,3 +662,22 @@ enhetens safe area). På smala skärmar lämnas utrymme åt menyknappen till
 vänster. Fyra sekunders visning och in-/utglidning från höger bevaras.
 Verifierat med faktisk återställning i lokal webbläsare och kontrollerad
 placering: top 10 px, höger 14 px. Diffkontroll godkänd. Inte driftsatt.
+
+### 0.39.0 · Endast möjliga slutpunkter under tågvägsval
+
+När en huvudtågvägsplupp valts tillåter spårplanen endast startpluppen
+(avbryt) och nu möjliga målpluppar. Övriga pluppar dämpas; växlar, signaler
+och objektdetaljer går inte att aktivera under valet, även med tangentbord.
+Växeltågvägsval via signaler begränsas på motsvarande sätt till giltiga
+slutsignaler. Escape och ett nytt startklick avbryter.
+
+Ett autentiserat, läsande API använder samma planering och spärrkontroller
+som manövern, inklusive alternativa vägar och hel-/delåtertagning. Ingen
+reservation eller fältorder skapas av förhandskontrollen. Mål uppdateras
+var 600 ms endast medan val pågår; sena svar efter avbrytning ignoreras,
+och misslyckad kontroll spärrar målen. Manövern kontrolleras åter på servern.
+
+Verifierat: 247 tester och tre processtester godkända, inklusive läsande API
+och autentiseringsskydd. Lokalt webbläsarprov av giltiga mål, ignorerade
+växel-/signalklick, hel-/delåtertagning, Escape, startklick och växeltågväg.
+Syntax- och diffkontroll godkända.

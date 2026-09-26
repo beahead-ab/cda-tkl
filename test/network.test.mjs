@@ -634,3 +634,39 @@ test('an alternative path is split only where both reviewed parts match that act
  assert.deepEqual(remaining.flow,parts[1].flow);
  assert.ok(r.engine.routes.every(x=>x.state==='active'));
 });
+
+test('route target preview is read-only and follows live occupancy and locks',()=>{
+ const r=rig(),before=JSON.stringify(r.engine.snapshot()),commands=r.commands.length;
+ const targets=()=>r.engine.routeTargets('htvAu','main');
+ assert.ok(targets().some(x=>x.id==='htvSpIC'&&x.action==='build'));
+ assert.equal(JSON.stringify(r.engine.snapshot()),before);assert.equal(r.commands.length,commands);
+ const def=profile.routes.find(x=>x.from==='htvAu'&&x.to==='htvSpIC');
+ r.field.setBlock(def.blocks.at(-1),true);r.drain();
+ assert.ok(!targets().some(x=>x.id==='htvSpIC'));
+ r.field.setBlock(def.blocks.at(-1),false);r.drain();
+ assert.ok(targets().some(x=>x.id==='htvSpIC'));
+ r.engine.connection(false);assert.deepEqual(targets(),[]);
+});
+test('route target preview preserves full and partial cancellation targets without splitting live routes',()=>{
+ const r=rig(),whole=r.request('htvAu','htvSpIC');r.advance(6500);
+ r.request('htvSpIC','htvBu');r.advance(6500);
+ const before=JSON.stringify(r.engine.snapshot()),commands=r.commands.length;
+ const targets=r.engine.routeTargets('htvAu','main');
+ for(const id of ['htvSpIA','htvSpIB','htvSpIC','htvBu'])assert.ok(targets.some(x=>x.id===id&&x.action==='cancel'),id);
+ assert.equal(JSON.stringify(r.engine.snapshot()),before);assert.equal(r.commands.length,commands);
+ assert.equal(r.engine.routes[0],whole);
+ assert.ok(r.engine.routeTargets('htvSpIA','main').some(x=>x.id==='htvSpIB'&&x.action==='cancel'));
+});
+test('route target preview includes a free alternative and rejects disabled or mixed kinds',()=>{
+ const r=rig();r.request('htvAu','htvSpIC');r.advance(6500);
+ assert.ok(r.engine.routeTargets('htvBu','main').some(x=>x.id==='htvSpIIA'));
+ assert.deepEqual(r.engine.routeTargets('htvBu','shunt'),[]);
+ assert.deepEqual(r.engine.routeTargets('missing','main'),[]);
+ const shunt=shuntRoutes.find(d=>{try{r.engine.planRequest(d.from,d.to);return true;}catch{return false;}});assert(shunt);
+ assert.ok(r.engine.routeTargets(shunt.from,'shunt').every(x=>x.id.startsWith('tvv')));
+ const local=structuredClone(profile),engine=new Engine(local);
+ const def=local.routes.find(x=>x.from==='htvBu'&&x.to==='htvSpIIA');def.adminDisabled=true;
+ engine.connected=r.engine.connected;engine.connectionAt=r.engine.connectionAt;engine.now=r.engine.now;
+ engine.blocks=r.engine.blocks;engine.signals=r.engine.signals;engine.turnouts=r.engine.turnouts;
+ assert.ok(!engine.routeTargets('htvBu','main').some(x=>x.id==='htvSpIIA'));
+});

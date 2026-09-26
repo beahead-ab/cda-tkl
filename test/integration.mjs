@@ -25,6 +25,10 @@ test('network profile runs parallel trains across separate processes and release
   try {
     launch('src/simulator.mjs'); launch('src/server.mjs');
     await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && s.blocks.S100.occupied === false && s.panelIndications.V1.complete; });
+    const targetResponse=await fetch(`http://127.0.0.1:${httpPort}/api/route-targets?from=htvCu&kind=main`);
+    assert.equal(targetResponse.status,200);
+    assert.ok((await targetResponse.json()).targets.some(t=>t.id==='htvSpIA'));
+    assert.equal((await get(httpPort)).routes.length,0,'preview does not reserve a route');
     const c=(await get(httpPort)).clock;
     const changedClock=await post(httpPort,'clock',{...c,timeMs:86399000,rate:4,running:true});assert.equal(changedClock.running,true);
     await post(httpPort,'clock',{...c,running:true},409);
@@ -260,7 +264,7 @@ test('both public servers protect pages and controls even when the edge is bypas
       const url = `http://127.0.0.1:${port}`;
       const headers = { Host: 'cda-tkl.trainmeet.app' };
       await until(async () => (await send(url, { headers })).status === 403);
-      for (const resource of ['/', '/api/config', '/api/state', '/app.css', '/data/source/index.json', '/data/source/Cda60.xml']) {
+      for (const resource of ['/', '/api/config', '/api/state', '/api/route-targets?from=htvCu&kind=main', '/app.css', '/data/source/index.json', '/data/source/Cda60.xml']) {
         assert.equal((await send(url + resource, { headers })).status, 403);
         assert.equal((await send(url + resource, { headers: { ...headers, 'cf-access-jwt-assertion': 'forged' } })).status, 403);
       }

@@ -81,6 +81,7 @@ const server = http.createServer(async (req, res) => {
     const expires = await auth.authenticate(req);
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
+      if(url.pathname==='/api/route-targets')return json(res,{targets:engine.routeTargets(url.searchParams.get('from'),url.searchParams.get('kind')||'main')});
       if(url.pathname==='/api/timetable-import')return json(res,timetableImport.view());
       const templateMatch=url.pathname.match(/^\/api\/timetable-import\/template\.(csv|xlsx)$/);
       if(templateMatch){

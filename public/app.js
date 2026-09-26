@@ -1,3 +1,4 @@
+import {createRouteTargets} from './route-targets.js';
 import {turnoutDisplay} from './turnout-display.js';
 import {destinationDisplay,destinationDefaults} from './destination-data.js';
 import {createRouteConfirmation} from './route-confirmation.js';
@@ -42,6 +43,11 @@ $('crossing-display').onchange=()=>{setCrossingDisplay($('crossing-display').val
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
 let routeConfirmation;
+const routeTargets=createRouteTargets({load:async(from,kind)=>{
+  const response=await fetch('/api/route-targets?'+new URLSearchParams({from,kind}),{cache:'no-store'});
+  if(!response.ok)throw Error('Mål kunde inte kontrolleras.');
+  return response.json();
+},onChange:()=>paint()});
 let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport,signalControls,chosenKind=null;
 const pageFromHash=()=>{
   if(location.hash==='#tools/zoom')history.replaceState(null,'','#tools/appearance');
@@ -131,21 +137,40 @@ async function api(path, data) {
     if(path!=='panel-reset')message(''); return answer;
   } catch (e) { message(e.message); } finally { pending--; paint(); }
 }
-function clearChoice(repaint=true) { routeConfirmation?.cancel(); chosen = null; chosenKind=null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('selection-hint').hidden=true; $('clear-selection').disabled = true; if(repaint)paint(); }
+function clearChoice(repaint=true) { routeConfirmation?.cancel(); routeTargets.clear(); chosen = null; chosenKind=null; $('selection-hint').textContent = 'Välj startplupp och därefter slutplupp'; $('selection-hint').hidden=true; $('clear-selection').disabled = true; if(repaint)paint(); }
 function choose(id,kind='main') {
   manualFeedback?.clear();
   if (!usable()) return message('Panelen saknar aktuell kontakt med anläggningen.');
   if (['waiting','interrupted'].includes(state.panelReset?.phase)) return message(state.panelReset.reason);
   if(state.controls?.mode==='remote') return message('Fjärrläge: lokal tågvägsläggning är spärrad.');
+  if(chosen===id&&chosenKind===kind&&!pending)return clearChoice();
   if(pending||routeConfirmation?.selection)return;
-  if(chosen&&chosenKind!==kind)clearChoice(false);
-  if(kind==='shunt'&&chosen&&chosen!==id&&!signalControls.targets(chosen,state.routes).has(id))return message('Den signalen är inte ett möjligt slut för den valda växeltågvägen.');
+  if(chosen&&chosenKind!==kind)return;
+  if(chosen&&chosen!==id&&!routeTargets.has(id))return;
   if (!chosen) {
     if(kind==='shunt'&&!signalControls.starts.has(id))return message('Signalen kan väljas som mål men saknar en ansluten växeltågväg som start.');
-    chosenKind=kind;chosen = id; $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + (kind==='shunt'?' → välj markerad slutsignal':' → välj slutplupp'); $('clear-selection').disabled = false; paint();
+    chosenKind=kind;chosen = id;routeTargets.select(id,kind); $('selection-hint').hidden=false; $('selection-hint').textContent = label(id) + (kind==='shunt'?' → välj markerad slutsignal':' → välj slutplupp'); $('clear-selection').disabled = false; paint();
   } else if (chosen === id) clearChoice();
   else { routeConfirmation.start({from:chosen,to:id,kind}); }
 }
+function syncChoiceControls() {
+  for(const node of $('track-plan').querySelectorAll('[role="button"]')){
+    const id=chosenKind==='main'&&node.classList.contains('main-control')?node.dataset.button:
+      chosenKind==='shunt'&&node.classList.contains('signal-target')?node.dataset.routeButton:null;
+    const allowed=!chosen||!!id&&(id===chosen||routeTargets.has(id));
+    node.classList.toggle('choice-disabled',!allowed);
+    node.classList.toggle('route-destination',!!chosen&&!!id&&id!==chosen&&routeTargets.has(id));
+    attribute(node,'aria-disabled',!allowed);attribute(node,'tabindex',allowed?'0':'-1');
+    if(chosen&&id&&id!==chosen)attribute(node,'aria-description',allowed?
+      (routeTargets.action(id)==='cancel'?'Möjlig slutpunkt för återtagning.':'Möjlig slutpunkt för tågväg.'):
+      (routeTargets.loading?'Kontrollerar möjliga slutpunkter.':'Inte en möjlig slutpunkt nu.'));
+  }
+}
+for(const event of ['click','contextmenu','keydown'])$('track-plan').addEventListener(event,e=>{
+  if(!chosen||event==='keydown'&&!['Enter',' ','ContextMenu','F10'].includes(e.key))return;
+  const node=e.target.closest('[role="button"]');
+  if(node?.getAttribute('aria-disabled')==='true'){e.preventDefault();e.stopImmediatePropagation();}
+},true);
 function label(id) {
   if(config.buttons?.[id]) return displayName('buttons',id,config.buttons[id].label);
   const found = config.routes.find(r => r.from === id || r.to === id);
@@ -245,6 +270,7 @@ function buildPlan() {
     const images=files.map((file,i)=>svg('image',{x:-w/2,y:-h/2,width:w,height:h,transform:`rotate(${m.deg})`,href:icon(file),visibility:i===2?'visible':'hidden','pointer-events':'none'},g));
     const unknown = svg('text', { x: rw / 2 + 1, y: 3, class: 'signal-unknown' }, g, '?');
     const routeButton=signalControls.buttons.get(m.mast);
+    if(routeButton)g.dataset.routeButton=routeButton;
     accessible(g, `Signal ${m.mast}${routeButton?' · växeltågväg':''}`, e => {if(routeButton)choose(routeButton,'shunt');else if(e.type==='keydown')showInspector('signal',m.mast,e);});
     objectDetails(g,'signal',m.mast);
     signals.push({ ...m, g, images, unknown, type, signalType:m.type, files, routeButton });
@@ -296,6 +322,7 @@ function buildPlan() {
 }
 async function manualTurnout(name,position) {
   if(!usable())return message('Panelen saknar aktuell kontakt med anläggningen.');
+  if(chosen)return;
   if(state.manual?.[name]?.allowed!==true)return message(state.manual?.[name]?.reason||'Ingen verifierad manöverregel är ansluten.');
   if(pending)return;
   manualFeedback.order(name,position);
@@ -342,7 +369,7 @@ function paintPlan() {
       style(t.litLegs[leg],'opacity',display.active&&(leg==='A'||leg===display.active)?'1':'0');
     }
   }
-  const signalTargets=chosenKind==='shunt'?signalControls.targets(chosen,state.routes):new Set();
+  const signalTargets=chosenKind==='shunt'?new Set(signals.filter(s=>routeTargets.has(s.routeButton)).map(s=>s.routeButton)):new Set();
   const signalPreparing=preparingEndpoints(state.routes,usable()&&!state.controls?.stopAll);
   for (const s of signals) {
     const value = fresh ? state.signals[s.mast]?.aspect : 'unknown';
@@ -438,7 +465,7 @@ function animateFlow(now=performance.now()) {
 }
 const statuses = { setting: 'Lägger växlar', establishing: 'Etablerar', clearing: 'Klarsätter', active: 'Klar', traversing:'Tåg passerar', held: 'Stopp · lås kvar', occupied: 'Lås kvar', cancelling: 'Återtar' };
 const frames=createPanelFrames({render:renderPanel,animate:animateFlow});
-routeConfirmation=createRouteConfirmation({submit:({from,to})=>api('route',{from,to}),valid:()=>usable()&&!pending&&state.controls?.mode!=='remote'&&!['waiting','interrupted'].includes(state.panelReset?.phase),onChange:finished=>{if(finished)clearChoice(false);paint();}});
+routeConfirmation=createRouteConfirmation({submit:({from,to})=>api('route',{from,to}),valid:()=>!!routeConfirmation.selection&&routeTargets.has(routeConfirmation.selection.to)&&usable()&&!pending&&state.controls?.mode!=='remote'&&!['waiting','interrupted'].includes(state.panelReset?.phase),onChange:finished=>{if(finished)clearChoice(false);paint();}});
 function paint(){frames.paint();}
 function renderPanel() {
   if (!state) return;
@@ -454,7 +481,7 @@ function renderPanel() {
   c.className = 'connection ' + (usable() ? 'online' : 'offline');
   setText($('panel-connection'),c.textContent);attribute($('panel-connection'),'class',c.className);
   if(currentPage==='panel')paintPlan();
-  paintInspector(); manualFeedback?.update();
+  paintInspector(); manualFeedback?.update(); syncChoiceControls();
   document.body.dataset.panelReady='true';
   const resetting=['waiting','interrupted'].includes(state.panelReset?.phase);
   $('ais-status').hidden = !state.controls?.stopAll||resetting;
