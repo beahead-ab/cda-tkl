@@ -477,3 +477,22 @@ kontrollen rättades utan ändring av autentiseringen.
 Inloggat webbläsarprov i produktion: val av 9/10 lämnar endast 9/10 och
 IIIev klickbara, övriga panelobjekt saknar hover. Startvalet avbrutet utan
 att någon tågväg lades. Befintlig användarflik lämnad orörd.
+
+## Förberedd 0.39.2 · normal utfart
+
+`545e649` är uppladdad och verifierad i separat releasekatalog, med vänstertrafik
+som standard: Cn, An, Bu samt enkelspåriga D. Pil, ort och telefonnummer visas
+bara vid inställd normal utfart. Valet finns i Anläggningsregister → Orter och
+telefonnummer och sparas för hela anläggningen.
+
+Lokalt: syntax, tio riktade tester, inloggningens processtest och admin-/panelprov
+godkända. Servern: syntax, riktade orts-/renderings-/signaltester och samma
+inloggningsprov godkända. Driftprofiler och tjänsteinställningar oförändrade.
+
+Aktiv produktion är fortfarande a0644b6 (gränssnitt 0.39.1, backendprocess från
+8d36b4e). I inloggad produktion finns Au → Spår 1b kvar som lagd tågväg.
+Användaren har tillfrågats om återtagning och kort omstart av endast TKL;
+simulatorn ska behålla sin process. Ingen återtagning eller omstart har gjorts.
+Efter tillstånd: kontrollera aktuellt driftläge, återta via panelen och kör
+/root/switch-network-545e649.sh. Scriptet kräver tom reservationslista, tar
+backup och bevarar sparade data. Ingen omstart av simulatorn ingår.
