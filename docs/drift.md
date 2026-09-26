@@ -539,3 +539,18 @@ Lokalt webbläsarprov verifierade vald startsignal 3/5, tre giltiga mål,
 ofyllda cirklar och tangentbordsfokus utan ändrat signalbesked.
 Inloggad produktionspanel visar version 0.39.4 och cirkelgeometri för samtliga
 66 signaler, utan JavaScript-fel. Ingen driftmanöver gjordes i produktion.
+
+## Publicerad gränssnittsändring 0.39.5 · inkommande nummer
+
+`95fcf2f` publicerad 26 september 08:59 svensk tid utan omstart.
+Backup: `/root/charlottendal-backups/ui-95fcf2f-20260926T065946Z`.
+TKL och simulator behöll sina process-ID. Backend kör från `545e649`.
+Driftkod, profiler och tjänsteinställningar är oförändrade. Samtliga
+kontrollerade datafiler, inklusive tåginformation, var oförändrade.
+
+21 riktade tester, syntaxkontroll och källgenereringskontroll godkända.
+Inloggad produktionspanel visar 0.39.5 och alla sju inkommande ankare,
+utan JavaScript-fel. Inga inkommande nummer fanns registrerade vid kontrollen,
+så inga tomma rutor visas. Registrering, högerklick, spårbyte, omladdning och
+återgång till normal infart provades separat lokalt med tåg 421.
+Ingen produktionsmanöver eller ändring av produktionsnummer utfördes.
