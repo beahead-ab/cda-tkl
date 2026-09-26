@@ -456,3 +456,24 @@ driftdata och inloggning bevarade, inklusive kontroll av skyddet på nya
 `/api/route-targets`. Inloggad produktionspanel verifierad: Au-val tillåter
 Spår 1c, spärrar Spår 10 och samtliga 66 signaler, utan ändrad pluppljusstyrka.
 Startvalet avbrutet; inga tågvägar skapades under efterkontrollen.
+
+## Publicerad gränssnittsändring 0.39.1 · slutsignaler
+
+`a0644b6` publicerad 26 september 07:55 svensk tid utan omstart.
+Backup: `/root/charlottendal-backups/ui-a0644b6-20260926T055551Z`.
+Backend och simulator kör fortsatt från `8d36b4e` med oförändrade process-ID.
+`src`, `profiles` och `deploy` jämförda identiska före publicering. Endast
+app.js, signal-route-controls.js, index.html och den nya genererade
+data/signal-endpoints.json överlagrade i den körande serverns public-katalog;
+current pekar på hela nya releasen för framtida start.
+
+15 riktade tester och genereringskontroll godkända både lokalt och på servern.
+Efterkontrollen verifierade skyddade API:er och inloggningsomdirigering för
+datafilen samt oförändrade reservationer, driftinställningar, konfiguration,
+TrainMeet- och tidtabellsdata. Första försöket återställde gränssnittet när
+kontrollen felaktigt förväntade 401 för en datafil som omdirigeras med 303;
+kontrollen rättades utan ändring av autentiseringen.
+
+Inloggat webbläsarprov i produktion: val av 9/10 lämnar endast 9/10 och
+IIIev klickbara, övriga panelobjekt saknar hover. Startvalet avbrutet utan
+att någon tågväg lades. Befintlig användarflik lämnad orörd.
