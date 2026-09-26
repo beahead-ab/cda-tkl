@@ -120,3 +120,13 @@ body.panel-app #panel-console{display:flex;flex-direction:column;justify-content
 
 #track-plan .destination-phone{fill:#111;stroke:none;font-weight:500;font-family:"Helvetica Neue",Arial,sans-serif}
 .destination-list{overflow-x:auto}
+
+/* Fixed dashed underlay plus a fading confirmed branch: no path swaps or jumps. */
+#track-plan .turnout-lit{opacity:0;transition:opacity 480ms cubic-bezier(.22,.61,.36,1);pointer-events:none}
+#track-plan .turnout-base{transition:opacity 480ms cubic-bezier(.22,.61,.36,1)}
+#track-plan .turnout-base.turnout-stem{opacity:.3}
+#track-plan .turnout-geometry[data-phase=waiting] .rail:not(.occupied):not(.blocked){stroke:#ab9b72;stroke-dasharray:3 6}
+#track-plan .turnout-geometry[data-phase=waiting] .turnout-base{opacity:.5}
+#track-plan .turnout-geometry[data-instant=true] .rail{transition:none}
+#track-plan .turnout-geometry[data-phase=unknown] .turnout-lit{visibility:hidden}
+@media(prefers-reduced-motion:reduce){#track-plan .turnout-lit,#track-plan .turnout-base{transition:none}}

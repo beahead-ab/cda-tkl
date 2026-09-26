@@ -1,3 +1,4 @@
+import {turnoutDisplay} from './turnout-display.js';
 import {destinationDisplay,destinationDefaults} from './destination-data.js';
 import {createRouteConfirmation} from './route-confirmation.js';
 import {trackRestrictions,restrictionMarkers,lineRestrictionExtents} from './track-restrictions.js';
@@ -183,12 +184,13 @@ function buildPlan() {
   }
   for (const t of Object.values(panel.turnouts)) {
     if (t.cy > 850) continue;
-    const legs = {};
+    const legs = {},litLegs={},group=svg('g',{'data-turnout':t.name,class:'turnout-geometry'},turnouts);
     for (const [leg, x, y] of [['A', t.ax, t.ay], ['B', t.bx, t.by], ['C', t.ccx, t.ccy]]) {
-      legs[leg] = svg('line', { x1: t.cx, y1: t.cy, x2: x, y2: y, class: 'rail unknown' }, turnouts);
+      legs[leg] = svg('line', { x1: t.cx, y1: t.cy, x2: x, y2: y, class: 'rail unknown turnout-base' }, group);
+      litLegs[leg]=svg('line',{x1:t.cx,y1:t.cy,x2:x,y2:y,class:'rail turnout-lit','aria-hidden':'true'},group);
       indicatorLamps.push({block:t.block,node:svg('circle',{cx:(t.cx+x)/2,cy:(t.cy+y)/2,r:2.5,class:'relay-lens'},turnouts)});
     }
-    switches.push({ ...t, legs });
+    switches.push({ ...t, legs,litLegs,group,seenConfirmed:false });
     manualFeedback.addTurnout(t);
     svg('text', { x: t.cx + 3, y: t.cy - 11, class: 'turnout-number' }, labels, t.name.replace('Vx', ''));
     // The source manoeuvre dot already occupies this position. A second,
@@ -315,10 +317,17 @@ function paintPlan() {
     attribute(r.node,'class', 'rail ' + (hasTrackRestriction(r.block)||blockedLineParts.has(r.id)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
   }
   for (const t of switches) {
-    const value = fresh ? state.turnouts[t.name]?.position : 'unknown';
-    const continuing = t.continuing === 2 ? 'B' : 'C', active = value === 'C' ? continuing : value === 'T' ? (continuing === 'B' ? 'C' : 'B') : null;
+    const display=turnoutDisplay(t,state.turnouts[t.name],{fresh:fresh&&!state.storageFault,now:state.serverTime,timeout:config.commandTimeoutMs});
     const occupied = fresh && state.blocks[t.block]?.occupied;
-    for (const [leg, node] of Object.entries(t.legs)) attribute(node,'class', 'rail ' + (hasTrackRestriction(t.block)||blockedLineParts.has('VX:'+t.name+':'+leg)?'blocked ':'') + (occupied ? 'occupied ' : '') + (!active ? 'unknown' : leg === 'A' || leg === active ? '' : 'branch-off'));
+    attribute(t.group,'data-phase',display.phase);
+    attribute(t.group,'data-instant',!t.seenConfirmed||display.phase==='unknown');
+    if(display.active)t.seenConfirmed=true;
+    for(const [leg,node] of Object.entries(t.legs)){
+      const restricted=hasTrackRestriction(t.block)||blockedLineParts.has('VX:'+t.name+':'+leg),flags=(restricted?'blocked ':'')+(occupied?'occupied ':'');
+      attribute(node,'class','rail turnout-base '+flags+(display.phase==='unknown'?'unknown':leg==='A'&&display.active?'turnout-stem':'branch-off'));
+      attribute(t.litLegs[leg],'class','rail turnout-lit '+flags);
+      style(t.litLegs[leg],'opacity',display.active&&(leg==='A'||leg===display.active)?'1':'0');
+    }
   }
   const signalTargets=chosenKind==='shunt'?signalControls.targets(chosen,state.routes):new Set();
   const signalPreparing=preparingEndpoints(state.routes,usable()&&!state.controls?.stopAll);
