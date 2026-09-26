@@ -14,7 +14,6 @@ import { createModelClock } from './model-clock.js';
 import { createFeedback } from './feedback.js';
 import { createOperatingControls } from './operating-controls.js';
 import { createFullscreen } from './fullscreen.js';
-import { createAppMenu } from './app-menu.js';
 import { createContextDialog } from './context-dialog.js';
 import { createPanelConsole } from './panel-console.js';
 const $ = id => document.getElementById(id);
@@ -39,6 +38,7 @@ let state, config, panel, registry, chosen = null, inspected = null, online = fa
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
 let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport;
 const pageFromHash=()=>{
+  if(location.hash==='#tools/zoom')history.replaceState(null,'','#tools/appearance');
   if(location.hash==='#tools')history.replaceState(null,'','#tools/appearance');
   if(location.hash==='#tools/connections')history.replaceState(null,'','#register');
   return ({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet','#import':'import','#advanced':'advanced'})[location.hash.split('/')[0]]||'panel';
@@ -51,7 +51,7 @@ function setPage(page,{historyMode='push'}={}) {
   closeInspector(false);manualFeedback?.clear();
   if(currentPage!==page)clearChoice(false);
   currentPage=page;document.body.dataset.page=page;
-  appMenu?.close();panelConsole?.close();
+  appMenu?.close();
   for(const p of ['panel','tools','admin','trainmeet','import','advanced']) {
     $(p+'-view').hidden=p!==page;$(p+'-tab').classList.toggle('selected',p===page);
     if(p===page)$(p+'-tab').setAttribute('aria-current','page');else $(p+'-tab').removeAttribute('aria-current');
@@ -444,13 +444,13 @@ function paintIndication(name) {
   html('inspector',`<h2>${esc(name)} · panelindikering</h2><dl><dt>Beräknat läge</dt><dd>${value===true?'Aktivt underlag · grön lampa':value===false?'Inaktivt underlag · röd lampa':'Okänt underlag · inget fastställt läge'}</dd><dt>Kända villkor</dt><dd>${fresh?s?.known||0:0} av ${s?.total||def.conditions.length}</dd></dl><p class="muted">Indikering från tågvägar och sensorrapporter. Ingen fysisk bomkvittens eller bommanöver.</p><p class="muted">Ett aktivt villkor räcker för grön indikering. Röd kräver att alla villkor är kända och inaktiva. Tågväg som läggs, återtas eller hålls kvar ger okänt NX-villkor.</p>${important.length?`<ul class="indication-causes">${important.map(c=>`<li><strong>${esc(c.label)}</strong> · ${esc(c.reason)}</li>`).join('')}</ul>`:''}<button class="source-inspect" data-source-kind="conditionals" data-source-name="${esc(def.name)}">Visa källregeln och alla villkor →</button>`);
 }
 async function start() {
-  appMenu=createAppMenu({button:$('menu-toggle'),popup:$('app-menu')});
+  appMenu=adminNavigation;
   contextDialog=createContextDialog({dialog:$('inspector-host'),onClose:()=>{$('inspector-home').append($('inspector-card'));manualFeedback?.clear();}});
   const fullscreen = createFullscreen({button: $('toggle-fullscreen'), onError: message});
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
   timetableImport=createTimetableImport();modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable')});feedback=createFeedback();
-  panelConsole=createPanelConsole({onOpen:()=>{if(currentPage!=='panel')setPage('panel');},onResetComplete:text=>message(text,{error:false})});
+  panelConsole=createPanelConsole({onOpen:()=>{appMenu?.close();},onResetComplete:text=>message(text,{error:false})});
   [config, panel, registry] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.
@@ -504,7 +504,7 @@ async function start() {
   const panelZoom=createPanelZoom({plan:$('track-plan'),viewport:document.querySelector('.panel-scroll'),stage:$('plan-stage')});
   const zoomDialog=createZoomDialog(panelZoom);
   panelZoom.subscribe(value=>{$('menu-zoom-value').textContent=zoomLabel(value);});
-  $('open-panel-zoom').onclick=e=>{e.preventDefault();e.stopPropagation();appMenu.close();if(currentPage!=='panel')setPage('panel');zoomDialog.open();};
+  $('open-panel-zoom').onclick=e=>{e.preventDefault();e.stopPropagation();appMenu.close();zoomDialog.open();};
   createAdminAppearance({zoom:panelZoom});
   for(const id of ['appearance','journal'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   for(const id of ['xml','migration','protocol'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));

@@ -23,3 +23,8 @@ Syntax och tio riktade prov för rendering, zoom och kalkylblad godkända. Lokal
 Alla adminområden använder samma sidomeny och innehållskant: tidtabellsöversikt, import, kalkylblad, TrainMeet, anläggningsregister, objektdetaljer, visningsinställningar, driftinställningar, utseende/ljud, händelser, Avancerat med XML-granskning, införandestatus och protokollinspelning samt Byt lösenord. Undersidor visas under sin huvudkategori med aktuell sida markerad. LocoNet-status ligger längst ned i menyn. Kontosidan delar navigationsmodul med huvudappen; inloggningssidan har samma svartvita färger.
 
 Visuellt kontrollerat vid 1280, 650 och 390 px, inklusive mobilens öppna/stänga meny och sidbyte. TrainMeet-dialogen öppnas över innehållsytan. Kalkylbladets navigeringsskydd kontrollerat med både Fortsätt redigera och Kasta ändringarna. Kontolayout kontrollerad med skrivskyddad lokal visningsmodell utan lösenord. Syntax och elva prov för rendering, zoom, kalkylblad och lösenordsskydd godkända. Produktionskontrollen gör inga driftmanövrer och ändrar inga inloggningsuppgifter.
+
+
+## Gemensam meny även för driftverktygen · 0.33.1
+
+Samma monterade meny används nu både bakom panelens tre punkter och som fast vänstermeny i administrationen. Ordning, namn, genvägar och status är samma. Driftverktygens sex avsnitt öppnas som egna arbetsytor bredvid menyn; den separata äldre driftlådan är borttagen. Zoom öppnas ovanpå aktuell sida. Endast själva ställverket får fullbredd när menyn stängs. Inga driftkommandon skickas av navigering.

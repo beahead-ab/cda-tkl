@@ -135,3 +135,39 @@ body:not([data-page=panel]) #global-status{top:14px}
   body:not([data-page=panel]) #global-status{top:56px}
   .admin-dialog>header,.admin-dialog-body{padding:16px}.admin-dialog-actions{padding:12px 16px}
 }
+
+/* The panel and administration use the very same mounted menu, in the same order. */
+#admin-sidebar .shared-menu{display:flex;flex-direction:column;min-height:100%;width:100%;padding:0;background:transparent;border:0;box-shadow:none}
+#admin-sidebar .admin-panel-link{margin-bottom:4px}
+#admin-sidebar .admin-nav-footer{margin-top:auto;padding-top:22px;border-top:1px solid var(--border)}
+#admin-sidebar .admin-nav-footer button{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;min-height:36px;background:transparent;border:0;text-align:left;color:var(--muted);font-size:12px}
+#admin-sidebar :is(#menu-trainmeet-status,#menu-zoom-value){display:none}
+#admin-sidebar .fullscreen-contract{display:none}
+#admin-sidebar #toggle-fullscreen[aria-pressed=true] .fullscreen-contract{display:block}
+#admin-sidebar #toggle-fullscreen[aria-pressed=true] .fullscreen-expand{display:none}
+#admin-sidebar svg{flex:none}
+body[data-page=panel] #admin-sidebar{display:none;position:fixed;left:0;top:48px;bottom:0;width:270px;padding:4px 10px 16px;background:#141212;border-right:1px solid #353534;overflow:auto;z-index:101}
+body[data-page=panel][data-admin-nav-open] #admin-sidebar{display:block}
+body[data-page=panel][data-admin-nav-open]>.app-header{display:flex;position:fixed;left:0;top:0;width:270px;height:48px;min-height:48px;padding:0 16px 0 56px;background:#141212;border:0;border-right:1px solid #353534;z-index:101}
+body[data-page=panel] .app-header .brand>span{font-size:10px;font-weight:500;letter-spacing:1.7px}
+body[data-page=panel] #panel-menu-slot{z-index:102}
+body[data-page=panel] #admin-nav-shade{inset:0;z-index:100}
+body[data-page=panel] #admin-sidebar{--text:#efefed;--muted:#a4a4a1;--border:#353534}
+#operations-workspaces .operation-overview{grid-template-columns:1fr;gap:0}
+#operations-workspaces .operation-overview>button{display:flex;flex-direction:column;gap:8px;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent;padding:20px 0;text-align:left}
+#operations-workspaces .operation-overview>button:hover{background:#1b1919}
+#operations-workspaces .operation-overview strong{font-size:14px;font-weight:500}
+#operations-workspaces .operation-overview span{font-size:13px;color:var(--muted)}
+#operations-workspaces .admin-workspace>details{border-top:0;padding-top:0;margin-top:0}
+#operations-workspaces .admin-workspace>details>summary{display:none}
+#operations-workspaces .admin-workspace>details>summary+*{margin-top:0}
+#operations-workspaces .catalog{padding:12px 0}
+#operations-workspaces .authority-bar{align-items:center}
+#tools-view>.tools-heading{display:none}
+body{--navigation-width:244px}
+body:not([data-page=panel]){--admin-rail:var(--navigation-width)}
+body[data-page]:not([data-page=panel])>.app-header{height:48px;min-height:48px}
+body:not([data-page=panel]) #admin-sidebar{top:48px}
+body[data-page=panel] #admin-sidebar,body[data-page=panel][data-admin-nav-open]>.app-header{width:var(--navigation-width)}
+@media(min-width:540px) and (max-width:900px){body{--navigation-width:204px}}
+@media(max-width:539px){body:not([data-page=panel]){--admin-rail:0px}body:not([data-page=panel]) #admin-sidebar{width:var(--navigation-width)}}

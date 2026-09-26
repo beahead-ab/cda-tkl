@@ -1,14 +1,13 @@
-// Move occasional operations into one dialog; opening it sends no orders.
+// Operating tools share the same navigation/workspaces; opening sends no orders.
+import {registerAdminWorkspace} from './admin-ui.js';
 export function createPanelConsole({onOpen,onResetComplete}) {
   const $=id=>document.getElementById(id),root=$('panel-console');
   root.innerHTML='<div id="panel-quick-actions"><button type="button" id="panel-reset">Återställ panel</button></div><div class="panel-runtime-info"><span id="panel-reset-status" role="status"></span><span id="panel-mode-status"></span><span id="panel-selection-slot"></span></div>';
-  const drawer=document.createElement('dialog');drawer.id='panel-drawer';drawer.setAttribute('aria-labelledby','panel-drawer-title');
-  drawer.innerHTML='<div class="panel-drawer-heading"><button type="button" id="panel-drawer-back">← Driftverktyg</button><h2 id="panel-drawer-title"></h2><button type="button" id="close-panel-drawer" aria-label="Stäng driftverktyg">Stäng</button></div><div id="panel-drawer-content"></div>';
-  document.body.append(drawer);
+  const drawer=document.createElement('div');drawer.id='operations-workspaces';$('tools-view').append(drawer);
   $('all-stop').textContent='Alla signaler i stopp';$('reset-ais').textContent='Återställ stopp';$('reset-ais').hidden=true;
   $('panel-selection-slot').append($('selection-hint'));
   const routes=document.createElement('section');routes.id='panel-route-tools';
-  $('panel-drawer-content').append(routes);
+  drawer.append(routes);
   routes.innerHTML='<p class="muted">Välj huvudtågväg för vanlig trafik eller växeltågväg för växling. Använd start- och slutplupparna på panelen eller listvalet här. Samma val återtar vägen.</p>';
   routes.append($('route-activity'),$('route-catalog').closest('.card'));
   const routeActions=document.createElement('div');routeActions.className='admin-actions';routeActions.append($('clear-selection'),$('all-stop'),$('reset-ais'),$('emergency-cancel'));routes.append(routeActions);
@@ -30,26 +29,30 @@ export function createPanelConsole({onOpen,onResetComplete}) {
   for(const [id,title,description] of descriptions){const button=document.createElement('button');button.type='button';button.dataset.panelTool=id;button.setAttribute('aria-controls',id);button.innerHTML='<strong></strong><span></span>';button.querySelector('strong').textContent=title;button.querySelector('span').textContent=description;overview.append(button);}
   const blocks=$('toggle-block').closest('details');blocks.id='track-block-tools';
   const panes=[overview,routes,blocks,$('operating-controls'),$('train-information'),$('model-clock'),authority];
-  for(const pane of panes){pane.hidden=true;$('panel-drawer-content').append(pane);}
+  for(const pane of panes){pane.hidden=true;drawer.append(pane);}
   $('inspector-home').hidden=true;document.body.append($('inspector-home'));
   $('traffic-tools').remove();$('operating-tools').remove();
-  let active=null,trigger=null,lastReset=null;
-  function close(restore=false){if(drawer.open)drawer.close();for(const pane of panes)pane.hidden=true;active=null;if(restore)trigger?.focus({preventScroll:true});}
-  function open(id,{toggle=false}={}){
-    if(id==='trainmeet-timetable'){onOpen();$('trainmeet-timetable').focus({preventScroll:true});return true;}
-    const pane=panes.find(p=>p.id===id);if(!pane)return false;
-    const wasOpen=drawer.open;if(!wasOpen)trigger=document.activeElement;
-    onOpen();if(toggle&&active===id){close(true);return true;}active=id;
-    $('panel-drawer-title').textContent=id==='panel-operations'?'Driftverktyg':descriptions.find(d=>d[0]===id)[1];
-    $('panel-drawer-back').hidden=id==='panel-operations';
-    for(const p of panes){p.hidden=p!==pane;if(p===pane&&p.tagName==='DETAILS')p.open=true;}
+  let lastReset=null;
+  const hashes=['','#routes','#blocks','#lines','#trains','#clock','#authority'];
+  const workspaces=new Map();
+  for(let i=0;i<panes.length;i++){
+    const pane=panes[i],workspace=document.createElement('section');workspace.hidden=true;
+    const title=i?descriptions[i-1][1]:'Driftverktyg';
+    workspace.innerHTML='<div class="admin-workspace-heading"><h1 tabindex="-1"></h1></div>';
+    workspace.querySelector('h1').textContent=title;
+    drawer.append(workspace);workspace.append(pane);pane.hidden=false;
+    if(pane.tagName==='DETAILS')pane.open=true;
+    workspaces.set(pane.id,registerAdminWorkspace('#tools/operations'+hashes[i].replace('#','/'),workspace));
+  }
+  function close(){return false;}
+  function open(id){
+    if(id==='trainmeet-timetable'){location.hash='#panel';$('trainmeet-timetable').focus({preventScroll:true});return true;}
+    const workspace=workspaces.get(id);if(!workspace)return false;
+    onOpen();workspace.open();
     if(id==='train-information'&&$('train-editor'))$('train-editor').open=true;
-    if(!drawer.open)drawer.showModal();$('close-panel-drawer').focus({preventScroll:true});return true;
+    return true;
   }
   drawer.addEventListener('click',e=>{const id=e.target.closest('[data-panel-tool]')?.dataset.panelTool;if(id)open(id);});
-  $('panel-drawer-back').onclick=()=>open('panel-operations');$('close-panel-drawer').onclick=()=>close(true);
-  drawer.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close(true);}});
-  drawer.addEventListener('cancel',e=>{e.preventDefault();close(true);});
   return {open,close,update(state,online){
     const stopped=!!state.controls?.stopAll,remote=state.controls?.mode==='remote',shunt=$('route-mode').value==='shunt';
     const reset=state.panelReset,waiting=reset?.phase==='waiting';
