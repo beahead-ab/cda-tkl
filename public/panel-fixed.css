@@ -107,3 +107,4 @@ body.panel-app #panel-console{display:flex;flex-direction:column;justify-content
 .track-restriction:focus-visible .restriction-hit{stroke:#deded1;stroke-width:1;rx:3}
 /* The line reservation is drawn on the track, not as a box around its NX button. */
 #track-plan .route-button.line-is-blocked{outline:none}
+#track-plan .route-button.line-is-blocked .dot{fill:#484642;stroke:#77736a}
