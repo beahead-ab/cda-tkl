@@ -201,3 +201,15 @@ body[data-admin-window] #global-status{z-index:112;top:64px;right:40px}
 body:not([data-nav-keyboard]) :is(#menu-toggle,#admin-shell-close,.admin-dialog [data-close]):focus{outline:none;box-shadow:none}
 body[data-nav-keyboard] :is(#menu-toggle,#admin-shell-close,.admin-dialog [data-close]):focus-visible{outline:2px solid #d5d5d1;outline-offset:3px}
 .admin-dialog [data-close]:hover{background:#30302e}
+
+/* All destinations remain in one scrolling list; headings never collapse it. */
+#admin-shell #admin-sidebar{overscroll-behavior:contain;scrollbar-gutter:stable}
+#admin-shell #admin-sidebar .shared-menu{min-height:0;flex:none}
+#admin-shell .admin-nav-group+.admin-nav-group{margin-top:10px}
+#admin-shell .admin-nav-heading{margin:0;font:inherit}
+#admin-shell #admin-sidebar .admin-nav-heading a{min-height:30px;padding-block:6px;font-size:10px;font-weight:500;letter-spacing:.7px;color:var(--muted)}
+#admin-shell #admin-sidebar .admin-nav-heading a:hover,#admin-shell #admin-sidebar .admin-nav-heading a[aria-current=page]{color:var(--text)}
+#admin-shell .admin-nav-children{margin:0;padding:0;border:0}
+#admin-shell #admin-sidebar .admin-nav-children a{min-height:34px;padding:8px 12px;font-size:12px}
+#admin-shell #admin-sidebar .admin-nav-footer{margin-top:18px;padding-top:12px;flex:none}
+@media(max-width:539px){#admin-shell #admin-sidebar .admin-nav-children a{padding-inline:7px;font-size:11px}}

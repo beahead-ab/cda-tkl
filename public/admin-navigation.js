@@ -19,9 +19,10 @@ export function createAdminNavigation({account=false}={}) {
   ];
   for(const [hash,label,id,children] of sections){
     const group=document.createElement('div');group.className='admin-nav-group';group.dataset.section=hash;
-    const link=document.createElement('a');link.href=prefix+hash;link.textContent=label;link.id=id;link.dataset.navHash=hash;group.append(link);
+    const link=document.createElement('a');link.href=prefix+hash;link.textContent=label;link.id=id;link.dataset.navHash=hash;
+    if(children.length){const heading=document.createElement('h2');heading.className='admin-nav-heading';heading.append(link);group.append(heading);}else group.append(link);
     if(hash==='#trainmeet'){const status=document.createElement('span');status.id='menu-trainmeet-status';link.append(status);}
-    if(children.length){const sub=document.createElement('div');sub.className='admin-nav-children';sub.hidden=true;
+    if(children.length){const sub=document.createElement('div');sub.className='admin-nav-children';
       for(const [suffix,title] of children){const a=document.createElement('a');a.href=prefix+hash+'/'+suffix;a.textContent=title;a.dataset.navHash=hash+'/'+suffix;sub.append(a);}group.append(sub);}
     popup.querySelector('.admin-nav-items').append(group);
   }
@@ -56,8 +57,8 @@ export function createAdminNavigation({account=false}={}) {
     if(opened&&!account)lastAdmin=location.hash;
     if(opened&&!wasOpen)queueMicrotask(()=>exit.focus({preventScroll:true}));
     if(!opened&&wasOpen)panelButton?.focus({preventScroll:true});wasOpen=opened;
-    for(const group of sidebar.querySelectorAll('.admin-nav-group')){const hash=group.dataset.section,active=current===hash||current.startsWith(hash+'/');group.classList.toggle('active-group',active);const sub=group.querySelector('.admin-nav-children');if(sub)sub.hidden=!active;}
-    for(const a of sidebar.querySelectorAll('[data-nav-hash]')){if(a.dataset.navHash==='#import/edit')a.hidden=current!=='#import/edit';if(a.dataset.navHash===current)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
+    for(const group of sidebar.querySelectorAll('.admin-nav-group')){const hash=group.dataset.section,active=current===hash||current.startsWith(hash+'/');group.classList.toggle('active-group',active);}
+    for(const a of sidebar.querySelectorAll('[data-nav-hash]')){if(a.dataset.navHash===current)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
     if(account)popup.querySelector('#account-link').setAttribute('aria-current','page');
   }
   function setAccount(enabled){popup.querySelector('#account-link').hidden=!enabled;}

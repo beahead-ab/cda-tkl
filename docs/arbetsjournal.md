@@ -793,3 +793,14 @@ stoppkvittensvillkor provades därefter med de elva riktade rangerproven och
 processprovet för överlämning. Syntax och reproducerbar profilgenerering godkända.
 Lokalt webbläsarprov visar överlämning, blågrå områdesfärg inklusive lokstallsfläkt,
 återtagning och inga JavaScript-fel. Ingen produktionsdrift ändrad.
+
+## 26 september – alla adminval i en lista (lokalt, ej publicerad)
+
+Alla undermenyer är permanent öppna, inklusive Redigera utkast. Små grupprubriker
+behåller länken till respektive översikt; länkarna ligger utan indrag i samma
+rullningsbara vänsterspalt. Visnings- och kontoval följer efter i samma flöde.
+Byte av sida ändrar bara aktuell markering, inte menystruktur eller rullningsläge.
+
+Syntaxkontroll och webbläsarprov godkända: 21 sidlänkar synliga i menyn, inga
+kollapsade grupper, byte mellan XML och protokoll med bevarat rullningsläge,
+utkastlänk utan befintligt utkast och inga JavaScript-fel.
