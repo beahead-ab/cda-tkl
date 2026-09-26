@@ -25,3 +25,35 @@ test('failed storage cannot change displayed destination settings',()=>{
  const storage=store(),book=new Destinations(storage),old=book.view();storage.save=()=>{throw Error('disk');};
  assert.throws(()=>book.save({revision:0,entry:{...old.entries[0],phone:''}}),/disk/);assert.deepEqual(book.view(),old);
 });
+test('legacy destination files default to left-hand exits without changing names or writing on load',()=>{
+ const original=new Destinations(store()).view();delete original.outgoing;
+ original.entries[1].name='Eget namn';original.entries[1].phone='123';
+ let writes=0;const storage={load:()=>structuredClone(original),save:()=>writes++};
+ const migrated=new Destinations(storage).view();
+ assert.deepEqual(migrated.outgoing,{C:'Cn',A:'An',B:'Bu',D:'D'});
+ assert.deepEqual(migrated.entries,original.entries);assert.equal(migrated.revision,original.revision);assert.equal(writes,0);
+});
+test('one normal exit per line is persisted, validated and shared independently of TrainMeet',()=>{
+ const storage=store(),book=new Destinations(storage),initial=book.view();
+ const entry=initial.entries.find(d=>d.id==='Cn');
+ const updated=book.save({revision:0,entry,outgoing:'Cu'});
+ assert.deepEqual(updated.outgoing,{C:'Cu',A:'An',B:'Bu',D:'D'});
+ assert.deepEqual(updated.entries,initial.entries);
+ assert.deepEqual(new Destinations(storage).view(),updated);
+ for(const outgoing of ['Bu','unknown','',null,true,['Cn']])assert.throws(()=>book.save({revision:1,entry,outgoing}),/utgående spår/);
+ assert.deepEqual(book.view(),updated);
+ assert.throws(()=>book.save({revision:0,entry,outgoing:'Cn'}),/ändrats/);
+ // An older client can still edit a name without resetting the chosen track.
+ assert.deepEqual(book.save({revision:1,entry:{...entry,name:'Nytt namn'}}).outgoing,updated.outgoing);
+ storage.save=()=>{throw Error('disk');};const before=book.view();
+ assert.throws(()=>book.save({revision:2,entry,outgoing:'Cn'}),/disk/);assert.deepEqual(book.view(),before);
+});
+test('all label elements share the configured exit visibility, with no train state dependency',async()=>{
+ const {isOutgoingDestination,destinationDefaults}=await import('../public/destination-data.js');
+ const visible=outgoing=>destinationDefaults.filter(d=>isOutgoingDestination(d.id,outgoing)).map(d=>d.id);
+ assert.deepEqual(visible(),['Cn','An','Bu','D']);
+ assert.deepEqual(visible({C:'Cu',A:'Au',B:'Bn',D:'D'}),['Cu','Au','Bn','D']);
+ assert.equal(isOutgoingDestination('unknown'),false);
+ const bad=new Destinations(store()).view();bad.outgoing.C='Bu';
+ assert.throws(()=>new Destinations({load:()=>bad}),/utgående spår/);
+});

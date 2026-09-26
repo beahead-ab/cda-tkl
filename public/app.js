@@ -1,6 +1,6 @@
 import {createRouteTargets} from './route-targets.js';
 import {turnoutDisplay} from './turnout-display.js';
-import {destinationDisplay,destinationDefaults} from './destination-data.js';
+import {destinationDisplay,destinationDefaults,isOutgoingDestination} from './destination-data.js';
 import {createRouteConfirmation} from './route-confirmation.js';
 import {trackRestrictions,restrictionMarkers,lineRestrictionExtents} from './track-restrictions.js';
 import {signalRouteControls,signalImage} from './signal-route-controls.js';
@@ -238,7 +238,7 @@ function buildPlan() {
   for(const fallback of destinationDefaults){
     const b=layout.controls.find(b=>b.sensor==='htv'+fallback.id);if(!b)continue;
     const right=['Bu','Bn','D'].includes(fallback.id),lower=fallback.id.endsWith('n')||fallback.id==='D',y=b.centerY+(lower?38:-36),arrowX=right?2078:50;
-    const group=svg('g',{class:'destination',role:'img','data-destination':fallback.id},labels);
+    const group=svg('g',{class:'destination',role:'img','data-destination':fallback.id,display:isOutgoingDestination(fallback.id)?'inline':'none'},labels);
     svg('path',{class:'destination-arrow',transform:`translate(${arrowX} ${y-4})`,d:right?'M0 0H14M10 -4L14 0L10 4':'M14 0H0M4 -4L0 0L4 4','aria-hidden':'true'},group);
     const nameNode=svg('text',{y,'text-anchor':right?'end':'start',class:'track-label destination-label',style:'font-size:11px','aria-hidden':'true'},group,fallback.name.toUpperCase());
     const badge=svg('g',{'aria-hidden':'true'},group),box=svg('rect',{y:y-13,height:18,rx:2,fill:'#fff'},badge),number=svg('text',{y:y, class:'destination-phone',style:'font-size:12px'},badge);
@@ -345,6 +345,10 @@ function hasTrackRestriction(name){return blockedTracks.has(config.blocks[name]?
 function usable() { return online && state?.connection === 'connected' && !state.storageFault; }
 function paintPlan() {
   for(const n of destinationNodes){
+    const visible=isOutgoingDestination(n.id,state.destinations?.outgoing);
+    attribute(n.group,'display',visible?'inline':'none');
+    attribute(n.group,'aria-hidden',visible?'false':'true');
+    if(!visible)continue;
     const entry=state.destinations?.entries.find(d=>d.id===n.id)||n.fallback,d=destinationDisplay(entry,state.trainMeet),width=Math.max(30,d.phone.length*7.4+14);
     setText(n.nameNode,d.name.toUpperCase());const x=n.right?n.x-width:n.x+n.nameNode.getComputedTextLength()+8;attribute(n.nameNode,'x',n.right?n.x-(d.phone?width+8:0):n.x);setText(n.number,d.phone);attribute(n.box,'x',x);attribute(n.box,'width',width);attribute(n.number,'x',x+width/2);attribute(n.number,'text-anchor','middle');attribute(n.badge,'visibility',d.phone?'visible':'hidden');attribute(n.group,'aria-label',d.name+(d.phone?' · telefon '+d.phone:'')+' · '+d.sourceLabel);
   }

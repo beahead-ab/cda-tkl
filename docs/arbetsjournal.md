@@ -701,3 +701,22 @@ väljas via signalikoner (tidigare 71).
 15 riktade tester, syntax och genereringskontroll godkända. Lokalt
 webbläsarprov: 9/10 → IIIev läggs, slutsignal visar fortsatt stopp, endast
 de två signalerna kan väljas och samma par återtar provvägen.
+
+## 0.39.2 · normal utfart för ortsmärkning
+
+Pil, ort och telefonnummer visas gemensamt bara vid linjens normala utfart.
+Grundinställningen är vänstertrafik: Cn och An på vänstersidan, Bu på
+högersidan samt enkelspåriga D. Anläggningsregister → Orter och telefonnummer
+visar normal utfart och låter administratören välja spår i redigeringsdialogen.
+Valet gäller anläggningen, sparas med revisionskontroll i destinations.json
+och påverkar inte tågvägsval, linjespärrar eller signalbesked.
+
+Äldre ortsfiler får vänstertrafik som förval utan omskrivning vid inläsning.
+Alla befintliga per-spår-namn, TrainMeet-bindningar och telefonnummer bevaras.
+Namn och telefon redigeras fortsatt för den valda anslutningen. En äldre klient
+som bara sparar ortsuppgifter kan inte nollställa den nya inställningen.
+
+Sex ortstester och fyra renderingstester godkända; syntaxkontroll godkänd.
+Webbläsarprov i separat lokal drift: fyra märkningar med vänstertrafik,
+byte Cn → Cu via admin, sparande och omladdning med bevarat val. Övriga linjer
+oförändrade. Ingen driftmanöver utförd.
