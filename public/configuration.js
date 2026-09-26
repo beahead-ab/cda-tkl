@@ -1,4 +1,4 @@
-import {createAdminDialog,confirmAdmin} from './admin-ui.js';
+import {createAdminDialog,confirmAdmin,registerAdminWorkspace} from './admin-ui.js';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const date=value=>value?new Date(value).toLocaleString('sv-SE'):'Grundversion';
 export function createConfiguration({root,config,onActive}) {
@@ -15,11 +15,16 @@ export function createConfiguration({root,config,onActive}) {
     <label>Beskriv ändringen<input id="cfg-reason" maxlength="200" placeholder="Exempel: Förtydligat signalnamnet vid infarten"></label>
     <div class="actions"><button id="cfg-activate" class="primary">Aktivera utkast</button><button id="cfg-discard">Kasta sparat utkast</button></div><p id="cfg-locks" class="muted"></p></section>
     <details class="configuration-history"><summary>Versionshistorik</summary><p class="muted">Hämta en version till ett utkast, granska skillnaderna och aktivera när anläggningen saknar tågvägslås.</p><div id="cfg-history"></div></details></details>`;
+  const contents=root.firstElementChild;contents.open=true;contents.querySelector('summary').hidden=true;
+  const overview=document.createElement('section');overview.className='card';overview.innerHTML='<h2>Visningsinställningar</h2><p class="muted">Namn och beskrivningar för panelens objekt.</p><button type="button">Öppna visningsinställningar</button>';
+  const workspace=document.createElement('section');workspace.innerHTML='<div class="admin-workspace-heading"><h1 tabindex="-1">Visningsinställningar</h1><a href="#register">Tillbaka till registret →</a></div><p class="admin-scope">Hela anläggningen · sparas först i utkast</p>';workspace.append(contents);root.append(overview,workspace);
+  const page=registerAdminWorkspace('#register/presentation',workspace);overview.querySelector('button').onclick=page.open;
   const editorForm=$('editor'),editButton=document.createElement('button');editButton.id='cfg-open-editor';editButton.type='button';editButton.textContent='Redigera valt objekt';const preview=document.createElement('div');preview.className='admin-selected-object';preview.innerHTML='<div id="cfg-preview"></div>';editorForm.before(preview);preview.append(editButton);
   $('reset-editor').hidden=true;$('unsaved').hidden=true;
   const modal=createAdminDialog({title:'Redigera namn och beskrivning',body:editorForm,saveButton:$('save'),dirty:()=>unsaved,busy:()=>busy,onCancel:()=>{unsaved=false;editor();}});
   editButton.onclick=()=>{editor();modal.open();};
   const activationForm=document.createElement('form');activationForm.id='cfg-activation-form';activationForm.append($('reason').closest('label'));$('activate').setAttribute('form',activationForm.id);$('activate').type='submit';
+  const activationInfo=document.createElement('p');activationInfo.className='muted';activationInfo.textContent='De granskade namnen och beskrivningarna börjar användas i alla öppna paneler. Aktivering kräver att inga tågvägslås finns kvar.';activationForm.prepend(activationInfo);
   const activationButton=document.createElement('button');activationButton.id='cfg-open-activation';activationButton.textContent='Granska och aktivera';$('activate').before(activationButton);
   const activationModal=createAdminDialog({title:'Aktivera visningsinställningar',body:activationForm,saveButton:$('activate'),dirty:()=>$('reason').value!=='',busy:()=>busy,onCancel:()=>{$('reason').value='';}});
   activationButton.onclick=()=>{$('reason').value='';controls();activationModal.open();};

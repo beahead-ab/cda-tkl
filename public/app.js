@@ -49,10 +49,15 @@ function setPage(page,{historyMode='push'}={}) {
   if(currentPage!==page)clearChoice(false);
   currentPage=page;document.body.dataset.page=page;
   appMenu?.close();panelConsole?.close();
-  (page==='panel'?document.querySelector('.panel-actions'):$('header-menu-slot')).append($('menu-toggle'));
+  (page==='panel'?$('panel-menu-slot'):$('header-menu-slot')).append($('menu-toggle'));
   for(const p of ['panel','tools','admin','trainmeet','import','advanced']) {
     $(p+'-view').hidden=p!==page;$(p+'-tab').classList.toggle('selected',p===page);
     if(p===page)$(p+'-tab').setAttribute('aria-current','page');else $(p+'-tab').removeAttribute('aria-current');
+  }
+  for(const link of $('admin-sidebar').querySelectorAll('a')) {
+    const href=link.getAttribute('href'),current=location.hash.split('?')[0];
+    const selected=current===href||current.startsWith(href+'/')||(href==='#tools/appearance'&&current==='#tools');
+    if(selected)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');
   }
   document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet',import:'Tidtabell och import',advanced:'Avancerat'})[page]+' · Charlottendal TKL';
   window.scrollTo(0,0);syncAdminWorkspaces();paint();
@@ -179,8 +184,16 @@ function buildPlan() {
   }
   for (const l of panel.labels.filter(l => !l.hidden && l.y < 840)) {
     const destination=/Lekby|Vagnsta|Kungsfors/i.test(l.text), size=destination?11:l.size||12;
-    if(l.br!=null || destination) svg('rect',{x:l.x-3,y:l.y-3,width:l.text.length*size*.58+12,height:size*1.5+3,fill:destination?'#1d211a':`rgb(${l.br},${l.bg},${l.bb})`,class:destination?'destination-plate':''},labels);
-    svg('text', { x: l.x, y: l.y + size, class: 'track-label'+(destination?' destination-label':''), style:`font-size:${size}px` }, labels, destination?l.text.toUpperCase():l.text);
+    if(destination){
+      const text=l.text.replace(/[<>]/g,'').trim().toUpperCase(),right=l.text.includes('>');
+      const arrowX=right?l.x+l.text.length*size*.58-8:l.x;
+      const group=svg('g',{class:'destination',role:'img','aria-label':`${text}, åt ${right?'höger':'vänster'}`},labels);
+      svg('path',{class:'destination-arrow',transform:`translate(${arrowX} ${l.y+size*.6})`,d:right?'M0 0H14M10 -4L14 0L10 4':'M14 0H0M4 -4L0 0L4 4','aria-hidden':'true'},group);
+      svg('text',{x:right?arrowX-8:l.x+22,y:l.y+size,'text-anchor':right?'end':'start',class:'track-label destination-label',style:`font-size:${size}px`,'aria-hidden':'true'},group,text);
+    }else{
+      if(l.br!=null)svg('rect',{x:l.x-3,y:l.y-3,width:l.text.length*size*.58+12,height:size*1.5+3,fill:`rgb(${l.br},${l.bg},${l.bb})`},labels);
+      svg('text',{x:l.x,y:l.y+size,class:'track-label',style:`font-size:${size}px`},labels,l.text);
+    }
   }
   const tt = panel.turntable; svg('circle', { cx: tt.cx, cy: tt.cy, r: tt.r, class: 'rail unconfigured' }, track);
   svg('line', { x1: tt.cx - tt.r, y1: tt.cy, x2: tt.cx + tt.r, y2: tt.cy, class: 'rail unconfigured' }, track);

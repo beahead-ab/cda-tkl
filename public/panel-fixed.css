@@ -1,7 +1,7 @@
 /* A fixed instrument face. Only an explicit viewport/zoom change resizes it. */
 body[data-page=panel]{--panel-bottom-height:184px;height:100dvh;overflow:hidden;overscroll-behavior:none}
 body[data-page=panel] #panel-view{position:fixed;inset:0;margin:0;overflow:hidden}
-body[data-page=panel] #panel-view .panel-shell{height:100%;display:grid;grid-template-rows:40px minmax(0,1fr) var(--panel-bottom-height)}
+body[data-page=panel] #panel-view .panel-shell{height:100%;display:grid;grid-template-rows:minmax(0,1fr) var(--panel-bottom-height)}
 /* Messages float above the instrument face and never reserve layout space. */
 #global-status{position:fixed;z-index:80;top:52px;right:14px;width:min(560px,calc(100vw - 28px));max-height:calc(100dvh - 76px);display:flex;flex-direction:column;gap:8px;overflow:auto;overscroll-behavior:contain;pointer-events:none}
 body:not([data-page=panel]) #global-status{top:88px;max-height:calc(100dvh - 112px)}
@@ -13,9 +13,9 @@ body:not([data-page=panel]) #global-status{top:88px;max-height:calc(100dvh - 112
 #global-status button{padding:4px 9px;white-space:nowrap}
 @keyframes toast-appear{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#global-status>div:not([hidden]){animation:none;transition:none}}
-#panel-view .panel-name{height:40px;min-height:0;display:grid;grid-template-columns:auto minmax(0,1fr) 34px;gap:12px;padding:4px 14px;overflow:hidden}
-#panel-view #panel-connection{min-width:0;overflow:hidden;text-overflow:ellipsis;justify-self:end;margin:0}
-#panel-view .panel-actions{margin:0;display:flex;flex-wrap:nowrap}
+#panel-menu-slot{position:absolute;z-index:60;top:8px;left:8px}
+#panel-menu-slot #menu-toggle{width:34px;height:32px;min-height:32px;border-color:transparent;background:var(--panel);color:var(--ink)}
+#panel-menu-slot #menu-toggle:hover,#panel-menu-slot #menu-toggle[aria-expanded=true]{background:#252524;border-color:#454543}
 #panel-view .panel-scroll{position:relative;min-height:0;overflow:auto;overscroll-behavior:contain;overflow-anchor:none;scroll-behavior:auto;contain:layout paint}
 #panel-view #track-plan{width:100%;height:100%;min-height:0;min-width:0;overflow:hidden;user-select:none;-webkit-user-select:none}
 body:not([data-panel-ready=true]) #track-plan{visibility:hidden}
@@ -72,3 +72,12 @@ body[data-page=panel] .tt-values{font-size:13px;line-height:24px;color:inherit}b
 .touch-target.route-preparing .dot,.touch-target.route-preparing .traffic-dot{animation:route-endpoint-wait 2400ms ease-in-out infinite}
 .touch-target.route-preparing[data-preparing-endpoint=end] .dot,.touch-target.route-preparing[data-preparing-endpoint=end] .traffic-dot{animation-delay:-1200ms}
 @media(prefers-reduced-motion:reduce){.touch-target.route-preparing .dot,.touch-target.route-preparing .traffic-dot{animation:none;fill:#cbb876;stroke:#cbb876}}
+
+.tt-pagination svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+/* The single direct operation is anchored to the lower right edge. */
+body[data-page=panel] #panel-console{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;padding:0}
+#panel-quick-actions{order:1;justify-content:flex-end}
+#panel-console .panel-runtime-info{order:0;margin:0 0 10px;text-align:right}
+#panel-quick-actions #panel-reset{background:transparent;border-color:#494946;color:var(--ink)}
+#panel-quick-actions #panel-reset:hover:not(:disabled){background:#252524;border-color:#858580}
+@media(max-width:700px){body[data-page=panel] #panel-console{flex-direction:row;align-items:center;gap:10px}#panel-console .panel-runtime-info{margin:0;text-align:left;flex:1}#panel-quick-actions{margin-left:auto;flex:none}}

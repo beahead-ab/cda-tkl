@@ -13,7 +13,9 @@ export function createAppMenu({button, popup}) {
     const top = Math.min(bounds.bottom + 8, window.innerHeight - 80);
     popup.style.top = top + 'px';
     popup.style.maxHeight = Math.max(64, window.innerHeight - top - 8) + 'px';
-    popup.style.right = Math.max(8, window.innerWidth - bounds.right) + 'px';
+    const alignLeft=bounds.left+bounds.width/2<window.innerWidth/2;
+    popup.style.left = alignLeft?Math.max(8,bounds.left)+'px':'auto';
+    popup.style.right = alignLeft?'auto':Math.max(8,window.innerWidth-bounds.right)+'px';
     popup.hidden = false;
     button.setAttribute('aria-expanded', 'true');
     button.setAttribute('aria-label', 'Stäng meny');

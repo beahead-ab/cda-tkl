@@ -45,12 +45,12 @@ body[data-crossing-display=steady] .crossing-active .indicator-off{animation:non
 #derived-indications [data-crossing=true][data-value=active] i{background:#c75b50;border-color:#b57d70}
 #derived-indications [data-crossing=true][data-value=unknown] i{background:transparent;border-color:#c5a063;border-style:dashed}
 #menu-toggle{display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:32px;padding:6px;border-radius:4px;background:transparent}
-#menu-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+#menu-toggle svg{width:18px;height:18px;fill:currentColor;stroke:none}
 #menu-toggle:hover,#menu-toggle[aria-expanded=true]{background:#2a393b;border-color:#77918f}
-.app-menu{position:fixed;z-index:100;width:270px;max-width:calc(100vw - 16px);max-height:calc(100dvh - 80px);overflow:auto;background:#172025;border:1px solid #4a6064;border-radius:8px;padding:6px;box-shadow:0 10px 36px #0009}
+.app-menu{position:fixed;z-index:100;width:270px;max-width:calc(100vw - 16px);max-height:calc(100dvh - 80px);overflow:auto;background:#171717;border:1px solid #41413f;border-radius:4px;padding:6px;box-shadow:0 10px 36px #0009}
 .app-menu a,.app-menu button{display:flex;align-items:center;gap:8px;width:100%;min-height:38px;padding:9px 12px;border:0;border-radius:4px;background:transparent;color:var(--text);text-decoration:none;text-align:left;font-size:12px;line-height:1.4}
-.app-menu a:hover,.app-menu button:hover{background:#2c3c3f}.app-menu a.selected{background:#293931}
-.app-menu hr{margin:6px;border:0;border-top:1px solid #34474a}.app-menu #toggle-fullscreen{padding:9px 12px;min-height:38px}
+.app-menu a:hover,.app-menu button:hover{background:#292928}.app-menu a.selected{background:#292928;box-shadow:inset 2px 0 #e4e8e3}
+.app-menu hr{margin:6px;border:0;border-top:1px solid #363635}.app-menu #toggle-fullscreen{padding:9px 12px;min-height:38px}
 #menu-trainmeet-status{margin-left:auto;font-size:10px;color:var(--muted)}
 #header-menu-slot{display:flex}.app-header .connection{margin-left:auto}
 #trainmeet-view{max-width:1150px;margin:auto;padding:24px 20px}#trainmeet-view #trainmeet{margin-top:18px}
@@ -107,3 +107,7 @@ body[data-skin=relay] #trainmeet-timetable{border-color:#8b8973;background:#b3ba
 
 #ti-edit .actions{display:flex;gap:10px;flex-wrap:wrap}#ti-edit-active{margin-left:14px}
 .import-templates{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}.import-templates a{border:1px solid var(--border);border-radius:6px;padding:10px 14px}.import-templates a:hover{background:#293a3b}.import-format{margin:16px 0;font-size:13px;line-height:1.6}.import-format summary{cursor:pointer}.import-format p{overflow-wrap:anywhere}
+
+.app-menu-heading{padding:10px 12px 12px;margin-bottom:5px;border-bottom:1px solid #363635}
+.app-menu-title{font-size:10px;letter-spacing:2px;color:#e4e8e3}
+.app-menu #panel-connection{display:flex;gap:7px;margin:8px 0 0;max-width:100%;font-size:11px;letter-spacing:0;white-space:normal}

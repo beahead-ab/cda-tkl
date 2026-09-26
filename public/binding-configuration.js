@@ -14,6 +14,7 @@ export function createBindingConfiguration({root}) {
   const modal=createAdminDialog({title:'Redigera driftbindning',body:editForm,saveButton:$('save'),dirty:()=>editing,busy:()=>busy,onCancel:()=>{editing=false;editor();}});
   editButton.onclick=()=>{editor();modal.open();};
   const activateForm=document.createElement('form');activateForm.id='bind-activate-form';activateForm.append($('reason').closest('label'));$('activate').setAttribute('form',activateForm.id);$('activate').type='submit';
+  const activationInfo=document.createElement('p');activationInfo.className='muted';activationInfo.textContent='Den granskade driftprofilen börjar gälla för hela anläggningen. Alla paneler läser om profilen. Fältlägen blir okända och AIS behålls tills nya stoppbesked kommit.';activateForm.prepend(activationInfo);
   const activateButton=document.createElement('button');activateButton.textContent='Granska och aktivera';$('activate').before(activateButton);
   const activateModal=createAdminDialog({title:'Aktivera driftprofil',body:activateForm,saveButton:$('activate'),dirty:()=>$('reason').value!=='',busy:()=>busy,onCancel:()=>{$('reason').value='';}});
   activateButton.onclick=()=>{$('reason').value='';controls();activateModal.open();};

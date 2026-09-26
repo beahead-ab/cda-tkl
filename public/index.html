@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Charlottendal · TKL</title>
-  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><link rel="stylesheet" href="/panel-fixed.css"><link rel="stylesheet" href="/admin.css">
+  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><link rel="stylesheet" href="/panel-fixed.css"><link rel="stylesheet" href="/admin.css"><link rel="stylesheet" href="/admin-line.css">
   <script type="module" src="/app.js"></script>
 </head>
 <body data-skin="original" data-page="panel" data-crossing-display="calm">
@@ -11,16 +11,27 @@
   <a class="brand" href="#panel"><span>Charlottendal TKL</span></a>
   <div class="connection" id="connection">Startar…</div><div id="header-menu-slot"></div>
 </header>
+<nav id="admin-sidebar" aria-label="Administration">
+  <a class="admin-panel-link" href="#panel"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10H4m5-5-5 5 5 5"/></svg>Ställverket</a>
+  <span class="admin-nav-label">Administration</span>
+  <a href="#import">Tidtabeller</a>
+  <a href="#trainmeet">TrainMeet</a>
+  <a href="#register">Anläggning</a>
+  <a href="#tools/appearance">Utseende och ljud</a>
+  <a href="#tools/journal">Händelser</a>
+  <a href="#advanced">Avancerat</a>
+</nav>
 <nav id="app-menu" class="app-menu" aria-label="Appmeny" hidden>
+  <div class="app-menu-heading"><span class="app-menu-title">CHARLOTTENDAL</span><span id="panel-connection" class="connection" role="status">Startar…</span></div>
   <a id="panel-tab" href="#panel">Ställverk</a>
   <a href="#panel" data-tools-section="panel-operations">Driftverktyg</a>
   <a id="trainmeet-tab" href="#trainmeet">TrainMeet <span id="menu-trainmeet-status">Ej ansluten</span></a>
   <a id="import-tab" href="#import">Tidtabell och import</a>
   <hr>
   <a id="open-panel-zoom" href="#panel">Zoom <span id="menu-zoom-value"></span></a>
-  <a id="tools-tab" href="#tools" data-tools-section="appearance-tools">Utseende och ljud</a>
+  <a id="tools-tab" href="#tools/appearance" data-tools-section="appearance-tools">Utseende och ljud</a>
   <a id="admin-tab" href="#register">Anläggningsregister</a>
-  <a href="#tools" data-tools-section="journal-tools">Händelser</a>
+  <a href="#tools/journal" data-tools-section="journal-tools">Händelser</a>
   <a id="advanced-tab" href="#advanced">Avancerat</a>
   <hr>
   <button id="toggle-fullscreen" type="button" aria-pressed="false" title="Visa i fullskärm"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path class="fullscreen-expand" d="M7 3H3v4m10-4h4v4M3 13v4h4m10-4v4h-4"/><path class="fullscreen-contract" d="M3 7h4V3m6 0v4h4M7 17v-4H3m10 4v-4h4"/></svg><span>Fullskärm</span></button>
@@ -35,13 +46,12 @@
 </div>
 <main id="panel-view">
   <section class="panel-shell" aria-label="Charlottendals spårplan">
-    <div class="panel-name">
-      <span>CHARLOTTENDAL</span><span id="panel-connection" class="connection" role="status">Startar…</span>
-      <div class="panel-actions">
+    <div id="panel-menu-slot">
+      <button id="menu-toggle" type="button" aria-label="Öppna meny" aria-controls="app-menu" aria-expanded="false" title="Meny"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="4" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="16" cy="10" r="1.5"/></svg></button>
+    </div>
+    <div id="panel-controls-source" hidden>
         <select id="route-mode" aria-label="Typ av tågväg"><option value="main">Huvudtågväg</option><option value="shunt">Växeltågväg</option></select>
         <button id="all-stop" class="stop-button">Alla signaler i stopp</button>
-        <button id="menu-toggle" type="button" aria-label="Öppna meny" aria-controls="app-menu" aria-expanded="false" title="Meny"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
-      </div>
       <span id="selection-hint" hidden>Välj startplupp och därefter slutplupp</span><button id="clear-selection" hidden>Avbryt val · Esc</button>
     </div>
     <div class="panel-scroll"><div id="plan-stage"><svg id="track-plan" viewBox="24 128 2102 640" role="group" aria-label="Spårplan med signaler, växlar och tågvägsknappar"></svg></div></div>
@@ -53,7 +63,7 @@
 </main>
 <main id="tools-view" hidden>
   <div class="tools-heading"><h1 tabindex="-1">Verktyg</h1><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div>
-  <nav class="tools-sections" aria-label="Verktygsavsnitt"><a href="#tools" data-tools-section="appearance-tools">Utseende</a><a href="#tools" data-tools-section="journal-tools">Händelser</a></nav>
+  <nav class="tools-sections" aria-label="Verktygsavsnitt"><a href="#tools/appearance" data-tools-section="appearance-tools">Utseende</a><a href="#tools/journal" data-tools-section="journal-tools">Händelser</a></nav>
   <section id="traffic-tools" class="tools-section" aria-labelledby="traffic-heading">
     <h2 id="traffic-heading">Trafik</h2>
     <details id="route-activity" class="route-activity" hidden open><summary id="route-summary">Aktiva tågvägar</summary><div id="active-routes"></div></details>
@@ -76,8 +86,8 @@
   </section>
   <section id="journal-tools" class="card journal tools-section" aria-labelledby="journal-heading"><div class="card-heading"><h2 id="journal-heading">Händelser</h2><span class="muted" id="event-status">Väntar på rapporter</span></div><div id="events"></div></section>
 </main>
-<main id="trainmeet-view" hidden><div class="tools-heading"><h1 tabindex="-1">TrainMeet</h1><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div><p class="muted">Anslut till träffen och läs Charlottendals tågrörelser.</p><section id="trainmeet" class="card"></section></main>
-<main id="import-view" hidden><div class="tools-heading"><h1 tabindex="-1">Tidtabell och import</h1><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div><section id="timetable-settings" class="card"></section><div id="timetable-import"></div></main>
+<main id="trainmeet-view" hidden><div class="tools-heading"><h1 tabindex="-1">TrainMeet</h1><span class="admin-scope">Hela anläggningen</span><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div><p class="muted">Anslut till träffen och läs Charlottendals tågrörelser.</p><section id="trainmeet" class="card"></section></main>
+<main id="import-view" hidden><div class="tools-heading"><h1 tabindex="-1">Tidtabeller</h1><span class="admin-scope">Hela anläggningen</span><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div><section id="timetable-settings" class="card"></section><div id="timetable-import"></div></main>
 <main id="admin-view" hidden><p class="muted">Läser det kompletta källregistret…</p></main>
 <main id="advanced-view" hidden>
   <div class="tools-heading"><h1 tabindex="-1">Avancerat</h1><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div>
@@ -92,5 +102,5 @@
   <section id="advanced-protocol" hidden><div class="admin-workspace-heading"><h1 tabindex="-1">Protokollinspelning</h1><a href="#advanced">Tillbaka till Avancerat →</a></div><section class="card"><div id="recording-tools"></div></section><details class="card"><summary>Visa protokolltrafik</summary><pre id="wire"></pre></details></section>
 </main>
 <dialog id="inspector-host" class="inspector-host" aria-labelledby="inspector-heading"></dialog>
-<footer>Charlottendal TKL · version 0.31.0</footer>
+<footer>Charlottendal TKL · version 0.32.0</footer>
 </body></html>

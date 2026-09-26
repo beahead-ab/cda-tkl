@@ -8,6 +8,18 @@ export function createAdminDialog({title,body,saveButton,dirty=()=>false,busy=()
   dialog.innerHTML=`<header><h2 id="${id}">${escapeHTML(title)}</h2><button type="button" data-close aria-label="Stäng dialog">×</button></header><div class="admin-dialog-body"></div><p class="admin-form-error" role="alert" hidden></p><footer class="admin-dialog-actions"><button type="button" data-cancel>Avbryt</button></footer><section class="admin-discard" hidden><h3>Osparade ändringar</h3><p>Vill du fortsätta redigera eller kasta ändringarna?</p><div class="admin-dialog-actions"><button type="button" data-continue>Fortsätt redigera</button><button type="button" data-discard>Kasta ändringarna</button></div></section>`;
   const content=dialog.querySelector('.admin-dialog-body'),footer=dialog.querySelector('footer'),error=dialog.querySelector('[role=alert]'),discard=dialog.querySelector('.admin-discard');
   if(typeof body==='string')content.innerHTML=body;else if(body)content.append(body);
+  const fieldErrors=new Map();
+  function clearFieldError(field){const item=fieldErrors.get(field);if(!item)return;item.node.remove();if(item.described)field.setAttribute('aria-describedby',item.described);else field.removeAttribute('aria-describedby');if(item.invalid!==null)field.setAttribute('aria-invalid',item.invalid);else field.removeAttribute('aria-invalid');fieldErrors.delete(field);}
+  let focusingInvalid=false;
+  content.addEventListener('invalid',e=>{
+    e.preventDefault();const field=e.target;clearFieldError(field);
+    const node=document.createElement('span');node.className='admin-field-error';node.id=id+'-error-'+(++sequence);node.textContent=field.validationMessage;
+    fieldErrors.set(field,{node,described:field.getAttribute('aria-describedby'),invalid:field.getAttribute('aria-invalid')});
+    field.setAttribute('aria-invalid','true');field.setAttribute('aria-describedby',[field.getAttribute('aria-describedby'),node.id].filter(Boolean).join(' '));(field.closest('label')||field).after(node);
+    if(!focusingInvalid){focusingInvalid=true;field.focus();queueMicrotask(()=>{focusingInvalid=false;});}
+  },true);
+  content.addEventListener('input',e=>{if(e.target.validity?.valid)clearFieldError(e.target);});
+  dialog.addEventListener('close',()=>{for(const field of fieldErrors.keys())clearFieldError(field);});
   if(saveButton){const form=saveButton.form;if(form)saveButton.setAttribute('form',form.id);footer.append(saveButton);saveButton.classList.add('primary');}
   document.body.append(dialog);let trigger;
   const pending=()=>dialog.isConnected&&dialog.open&&dirty();unsavedChecks.add(pending);

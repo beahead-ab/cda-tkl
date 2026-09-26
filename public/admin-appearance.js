@@ -2,7 +2,7 @@ import {createAdminDialog} from './admin-ui.js';
 import {createZoomControl,zoomLabel} from './panel-zoom.js';
 export function createAdminAppearance({zoom}){
   const $=id=>document.getElementById(id),original=document.querySelector('.appearance-controls');
-  const overview=document.createElement('section');overview.className='card';overview.innerHTML='<dl class="admin-summary" id="appearance-summary"></dl><button id="appearance-edit">Redigera utseende och ljud</button>';original.before(overview);original.hidden=true;
+  const overview=document.createElement('section');overview.className='card';overview.innerHTML='<div class="card-heading"><span class="admin-scope">Den här enheten</span><button id="appearance-edit" class="primary">Redigera</button></div><dl class="admin-summary" id="appearance-summary"></dl>';original.before(overview);original.hidden=true;
   const form=document.createElement('form');form.id='appearance-form';form.innerHTML='<label>Övergångslampor<select id="pref-crossing"><option value="calm">Lugn blinkning</option><option value="steady">Fast rött sken</option></select></label><label>Ljud vid fel<select id="pref-sound"><option value="no">Av</option><option value="yes">På</option></select></label><button type="submit">Spara</button>';
   const zoomControl=createZoomControl({id:'pref-zoom'});form.prepend(zoomControl.element);
   const values=()=>JSON.stringify([zoomControl.value,...['crossing','sound'].map(k=>$('pref-'+k).value)]);let baseline;

@@ -5,7 +5,7 @@ const status=value=>({none:'',approaching:'Närmar sig',arrived:'Ankommet',posit
 
 export function createTrainMeetTimetable({selectSource}) {
   const root=document.getElementById('trainmeet-timetable'),$=id=>document.getElementById('tt-'+id);
-  root.innerHTML='<header class="tt-heading"><h2>Tidtabell</h2><span id="tt-station"></span><span id="tt-clock"></span><nav class="tt-pagination" aria-label="Bläddra i tidtabellen"><button id="tt-prev" type="button" aria-label="Föregående tågrörelser">‹</button><span id="tt-range" role="status"></span><button id="tt-next" type="button" aria-label="Nästa tågrörelser">›</button></nav></header><p id="tt-status" role="status" hidden></p><div id="tt-content"></div>';
+  root.innerHTML='<header class="tt-heading" style="visibility:hidden"><h2>Tidtabell</h2><span id="tt-station"></span><span id="tt-clock"></span><nav class="tt-pagination" aria-label="Bläddra i tidtabellen" hidden><button id="tt-prev" type="button" aria-label="Föregående tågrörelser"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8L10 13"/></svg></button><span id="tt-range" role="status"></span><button id="tt-next" type="button" aria-label="Nästa tågrörelser"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3L11 8L6 13"/></svg></button></nav></header><p id="tt-status" role="status" hidden></p><div id="tt-content"></div>';
   document.getElementById('timetable-settings').innerHTML='<div class="admin-current-source"><div><h2>Visas i ställverket</h2><p id="tt-source-summary" class="muted"></p></div><button id="tt-change-source">Byt tidtabellskälla</button></div>';
   const sourceForm=document.createElement('form');sourceForm.id='tt-source-form';sourceForm.innerHTML='<label>Visa i ställverket<select id="tt-source"><option value="trainmeet">TrainMeet</option><option value="import">Egen tidtabell</option></select></label><p class="muted">Båda källorna behålls när du byter.</p><button id="tt-save-source" type="submit">Spara</button>';
   let sourceBase='',sourceRevision,sourceBusy=false;
@@ -13,7 +13,7 @@ export function createTrainMeetTimetable({selectSource}) {
 
   const dialog=document.createElement('dialog');dialog.className='inspector-host timetable-details';dialog.setAttribute('aria-labelledby','tt-detail-title');
   dialog.innerHTML='<div class="card"><div class="card-heading"><h3 id="tt-detail-title"></h3><button type="button" id="tt-close-detail" aria-label="Stäng tidtabellsuppgifter" autofocus>Stäng</button></div><div id="tt-detail-content"></div></div>';document.body.append(dialog);
-  let importState,rows=[],page=0,columns=1,perColumn=3,last='',identity='',selected=null,detailHTML='',frame=0,emptyText='Ingen tidtabell hämtad.';
+  let importState,rows=[],page=0,columns=1,perColumn=3,last='',identity='',selected=null,detailHTML='',frame=0;
   const details=createContextDialog({dialog,onClose:()=>{selected=null;}});
   $('close-detail').onclick=()=>details.close();
   $('change-source').onclick=()=>{sourceRevision={sessionId:importState.sessionId,revision:importState.revision};sourceBase=importState.source;$('source').value=sourceBase;sourceDialog.open();};
@@ -42,7 +42,9 @@ export function createTrainMeetTimetable({selectSource}) {
     const start=page*capacity,end=Math.min(start+capacity,rows.length);
     $('prev').disabled=page===0;$('next').disabled=end>=rows.length;
     $('range').textContent=rows.length?(start+1)+'–'+end+' / '+rows.length:'0 tåg';
-    let html='<p class="tt-empty">'+esc(emptyText)+' <a href="#import">Välj tidtabell</a></p>';
+    root.querySelector('.tt-heading').style.visibility=rows.length?'visible':'hidden';
+    root.querySelector('.tt-pagination').hidden=rows.length<=capacity;
+    let html='';
     if(rows.length){
       html='<div class="tt-columns" style="--tt-columns:'+columns+';--tt-rows:'+perColumn+'">';
       for(let col=0;col<columns;col++){
@@ -80,11 +82,11 @@ export function createTrainMeetTimetable({selectSource}) {
     const c=local?(active?{station:{name:'Egen tidtabell'},meet:active.title,day:'',tracks:[],operatingPoints:[],movements:[],trains:active.rows.map(r=>({id:r.id,train_number:r.trainNumber,station_name:r.station,day_label:r.day,arrival_time:r.arrival,departure_time:r.departure,arrival_from:r.from,departure_to:r.to,track:r.track,no_stop:r.noStop,note:r.note}))}:null):state?.context;
     const stale=!!c&&(!online||!local&&state?.stale);
     root.classList.toggle('timetable-stale',stale);
-    $('station').textContent=c?[local?(active.kind==='manual'?'Manuell':'Importerad'):c.station.name,c.meet,c.day].filter(Boolean).join(' · '):'Ingen vald tidtabell';
+    $('station').textContent=c?[c.meet,c.day].filter(Boolean).join(' · '):'';
     $('clock').textContent=c&&!local?'Träffklocka '+c.clock.time+' · '+(c.clock.running?'går':'pausad')+' · '+c.clock.rate+'×':'';
     $('status').textContent=stale?'Kontakt saknas – senaste mottagna uppgifter.':'';$('status').hidden=!stale;
     const nextIdentity=JSON.stringify([local,active?.id,c?.station.id,c?.day,c?.trains.map(t=>t.id)]);if(nextIdentity!==identity){identity=nextIdentity;page=0;details.close();}
-    rows=[];emptyText=c?'Inga tågrörelser i den valda tidtabellen.':'Ingen tidtabell hämtad.';
+    rows=[];
     if(c){
       const tracks=new Map(c.tracks.map(t=>[t.id,t])),points=new Map(c.operatingPoints.map(p=>[p.id,p.code])),movements=new Map(c.movements.map(m=>[m.id,m]));
       const trackName=id=>{const t=tracks.get(id);return t?[points.get(t.operatingPointId),t.label].filter(Boolean).join(' · '):'Okänt spår ('+id+')';};
