@@ -666,7 +666,8 @@ placering: top 10 px, höger 14 px. Diffkontroll godkänd. Inte driftsatt.
 ### 0.39.0 · Endast möjliga slutpunkter under tågvägsval
 
 När en huvudtågvägsplupp valts tillåter spårplanen endast startpluppen
-(avbryt) och nu möjliga målpluppar. Övriga pluppar dämpas; växlar, signaler
+(avbryt) och nu möjliga målpluppar. Övriga pluppar behåller sitt vanliga
+utseende men saknar hoverreaktion; växlar, signaler
 och objektdetaljer går inte att aktivera under valet, även med tangentbord.
 Växeltågvägsval via signaler begränsas på motsvarande sätt till giltiga
 slutsignaler. Escape och ett nytt startklick avbryter.
