@@ -13,3 +13,5 @@ Byte till den nya profilen kräver att gamla tågvägs- och programmeringslås �
 ## Förlängning vid en gemensam signalgräns
 
 Driftmotorn känner igen fortsättningar med samma tågvägstyp och samma källsignal som mål/start. När nästa del har reserverats och fått körmedgivande får den första delens målsignal visa kör utan att den första delen hålls. Övriga skyddssignaler kräver fortsatt stopp. Varje del behåller sina lås och löses ut först efter egen verifierad passage eller återtagning. Ett kort vänteläge för stoppåterrapport vid passage/normal återtagning hanteras utan att slå ut tidigare delar; utebliven rapport eller fel får inte kringgås.
+
+Klick på den ursprungliga startknappen och kedjans sista slutknapp återtar samtliga anslutande delar mellan dessa punkter. Hela återtagningsbegäran sparas före stopporder. Belagda delar behåller sina lås; andra fristående tågvägar berörs inte. Enskilda delar kan fortfarande återtas via tågvägslistan.

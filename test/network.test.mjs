@@ -446,3 +446,19 @@ test('every available source join works for main and shunt controls, independent
   assert.equal(a.state,'active',key+': '+a.reason);assert.equal(b.state,'active',key+': '+b.reason);
  }
 });
+
+for(const occupied of [false,true])test(`original start and final end cancel the entire extended route, occupied ${occupied}`,()=>{
+ const r=rig(),a=r.request('htvCu','htvSpIA');r.advance(6500);
+ const b=r.request('htvSpIA','htvSpIB');r.advance(6500);
+ const c=r.request('htvSpIB','htvSpIC');r.advance(6500);
+ const independent=r.request('htvCn','htvSpIIIA');r.advance(6500);
+ if(occupied){r.field.setBlock(a.blocks[0],true);r.drain();}
+ const before=r.commands.length;
+ r.request('htvCu','htvSpIC');
+ assert.ok([a,b,c].every(x=>x.cancelRequested),'all parts marked before field acknowledgement');
+ assert.ok(r.commands.slice(before).every(c=>c.position==='T'),'cancellation must not establish the longer catalog route');
+ r.drain();r.advance(1000);
+ assert.equal(independent.state,'active');assert.ok(r.engine.routes.includes(independent));
+ if(occupied){assert.ok(r.engine.routes.includes(a));r.field.setBlock(a.blocks[0],false);r.drain();r.advance(1000);}
+ assert.deepEqual(r.engine.routes.map(x=>x.id),[independent.id]);
+});

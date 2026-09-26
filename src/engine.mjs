@@ -157,6 +157,8 @@ export class Engine extends EventEmitter {
   request(from, to) {
     const existing = this.routes.find(r => r.from === from && r.to === to);
     if (existing) return this.cancel(existing.id);
+    const chain=this.findRouteChain(from,to);
+    if(chain.length>1){this.cancelRoutes(chain);return chain[0];}
     if (!this.connected || this.storageFault) throw Error(this.storageFault ? 'Lagringsfel; manövrering spärrad.' : 'Ingen LocoNet-anslutning.');
     if(this.controls.mode!=='local') throw Error('Fjärrläge: lokal tågvägsläggning är spärrad. Inget fjärrsystem är anslutet ännu.');
     if (this.controls.stopAll) throw Error('Alla signaler i stopp är aktiverat. Återställ AIS före ny tågväg.');
@@ -193,15 +195,35 @@ export class Engine extends EventEmitter {
     }
     return r;
   }
+  findRouteChain(from,to) {
+    const found=[];
+    const visit=chain=>{
+      const last=chain.at(-1);
+      if(last.to===to){found.push(chain);return;}
+      for(const next of this.routes)if(!chain.includes(next)&&last.to===next.from&&this.isContinuation(last,next,next.signals[0]))visit([...chain,next]);
+    };
+    for(const first of this.routes)if(first.from===from)visit([first]);
+    if(found.length>1)throw Error('Flera anslutande tågvägar hittades. Välj återtagning i tågvägslistan.');
+    return found[0]||[];
+  }
   cancel(id) {
-    const r = this.routes.find(r => r.id === id); if (!r) throw Error('Tågvägen finns inte.');
-    if (!r.cancelRequested) {
-      r.cancelRequested = true; r.cancelAt = this.now(); r.cancelSequence=this.reportSequence; r.state = 'cancelling'; r.reason = 'Begärt stopp. Inväntar fria avsnitt och stoppåterrapport.';
-      this.persist();
-      for (const n of r.signals) this.permission(n, 'STOP');
-      this.log('cancel', `${r.label}: återtagning begärd. Låsen ligger kvar tills villkoren är uppfyllda.`);
+    const r=this.routes.find(r=>r.id===id);if(!r)throw Error('Tågvägen finns inte.');
+    this.cancelRoutes([r]);return r;
+  }
+  cancelRoutes(routes) {
+    const requested=routes.filter(r=>!r.cancelRequested);
+    for(const r of requested){
+      r.cancelRequested=true;r.cancelAt=this.now();r.cancelSequence=this.reportSequence;r.state='cancelling';
+      r.reason='Begärt stopp. Inväntar fria avsnitt och stoppåterrapport.';
     }
-    this.tick(); return r;
+    if(requested.length){
+      this.persist(); // The entire requested chain is recorded before any STOP command.
+      for(const r of requested){
+        for(const n of r.signals)this.permission(n,'STOP');
+        this.log('cancel',`${r.label}: återtagning begärd. Låsen ligger kvar tills villkoren är uppfyllda.`);
+      }
+    }
+    this.tick();
   }
   manual(name, position) {
     if (!this.profile.turnouts[name] || !['C', 'T'].includes(position)) throw Error('Okänd växel eller manöver.');
