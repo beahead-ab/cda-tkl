@@ -31,3 +31,13 @@ Samma monterade meny används nu både bakom panelens tre punkter och som fast v
 
 ## Direkt adminfönster · 0.34.0
 Trepunktsknappen öppnar nu hela administrationen direkt som ett stort fönster över ställverket. Samma vänsternavigation används för alla arbetsytor, utan en första liten meny. Kryss eller Escape går tillbaka till panelen via befintligt skydd för osparade ändringar. Panelen ligger kvar i sin fasta storlek bakom fönstret.
+
+## Sex ingångar och flikrad · 29 september (lokalt, ej publicerad)
+
+Vänsterspalten i adminfönstret har sex ingångar: Drift, Tidtabeller, Händelser, Utseende, Anläggning och Avancerat. Undervalen visas som en flikrad överst på respektive sida, med gruppens egen översikt som första flik. TrainMeet är en flik under Tidtabeller och visar anslutningsstatus i fliken. Anläggningssimulatorn är en flik under Avancerat. Utseende och Händelser är enkla sidor utan flikrad.
+
+Sidfoten med Zoom, Fullskärm, Byt lösenord och anslutningsstatus ligger fast; bara listan ovanför rullar om höjden inte räcker. Under 540 px visas spalten som sidolåda bakom trepunktsknappen i fönstrets överkant. Klick på ett val, klick utanför eller Escape stänger lådan; nästa Escape stänger fönstret. Fokus går till första valet när lådan öppnas och tillbaka till knappen när den stängs.
+
+Alla `#`-adresser är oförändrade, så bokmärken, prov och dokumentation gäller fortfarande. Varje undersida ger nu en egen titel i webbläsarflik och historik, till exempel Tågvägar · Charlottendal TKL. Bakåtlänkarna "Tillbaka till … →" och "Avbryt →" på undersidorna är borttagna eftersom flikraden och spalten alltid visar vägen tillbaka. Översiktssidornas kort med förklaringar finns kvar.
+
+Navigationsmodellen ligger i `public/admin-navigation-model.js` och provas i `test/admin-navigation.test.mjs`: sex ingångar i beslutad ordning, varje flik pekar på en registrerad arbetsyta, TrainMeet hör till Tidtabeller, objektsidor faller tillbaka på registrets titel och panelen aktiverar ingen grupp.

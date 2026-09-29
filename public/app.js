@@ -71,7 +71,7 @@ function setPage(page,{historyMode='push'}={}) {
     if(tab){tab.classList.toggle('selected',p===page);if(p===page)tab.setAttribute('aria-current','page');else tab.removeAttribute('aria-current');}
   }
   adminNavigation.sync();
-  document.title=({panel:'Ställverk',tools:'Verktyg',admin:'Anläggningsregister',trainmeet:'TrainMeet',import:'Tidtabell och import',advanced:'Avancerat'})[page]+' · Charlottendal TKL';
+  document.title=adminNavigation.title()+' · Charlottendal TKL';
   window.scrollTo(0,0);$('admin-shell-content').scrollTop=0;syncAdminWorkspaces();paint();
   if(page==='admin'||page==='advanced')return sourceRegister.open().catch(e=>message(e.message));
 }

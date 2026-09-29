@@ -812,3 +812,24 @@ av återtagning av Au → Spår 1a och omstart av TKL. Simulatorn och P421 behö
 Backup, provning, automatisk återgång vid första efterkontrollen och verifierad
 slutlig aktivering dokumenterade i drift.md. Produktionspanelen visar den nya
 menyn och rangeröverlämningsknappen utan webbläsarfel.
+
+## 29 september – sex menyingångar med flikrad (lokalt, ej publicerad)
+
+Granskningen av menyn under `…` mätte 25–26 länkar i sju grupper med 992 px
+rullhöjd mot 788 px synligt vid 1440 × 900, så Zoom, Fullskärm, Simulator och
+Byt lösenord hamnade under kanten. Driftverktyg, Anläggningsregister, Avancerat
+och Tidtabeller listade dessutom samma underval som spalten. Under 540 px saknades
+den dokumenterade sidolådan; spalten tog 142 av 386 px.
+
+Förslag A är infört: sex ingångar i spalten, undervalen som flikrad överst på
+sidan, fast sidfot med Zoom och Fullskärm, sidolåda på telefon och egna sidtitlar
+per undersida. Bakåtlänkarna på undersidorna är borttagna. Inga adresser, arbetsytor,
+driftkommandon eller profiler har ändrats. Se admin-linje.md för handhavandet.
+
+Verifiering: syntaxkontroll, 4 nya modelltester och samtliga 285 enhetstester
+godkända. Lokalt webbläsarprov vid 1440 × 900: sex ingångar, flikrad med aktuell
+flik, sidfot synlig utan rullning, TrainMeet-status i fliken, simulatorlänk under
+Avancerat och titlar som Tågvägar, Visningsinställningar och XML-granskning. Vid
+390 × 760: låda öppnas med fokus på Drift, stängs vid val, klick utanför och Escape;
+nästa Escape stänger fönstret. Vid 1440 × 520 ligger sidfoten kvar synlig. Inga
+JavaScript-fel. Ingen driftmanöver utförd och ingen produktion ändrad.
