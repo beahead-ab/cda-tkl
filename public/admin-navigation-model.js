@@ -5,6 +5,7 @@ export const NAVIGATION_SECTIONS=[
   {hash:'#tools/operations',label:'Drift',id:'operations-tab',title:'Driftverktyg',tabs:[
     {hash:'#tools/operations',label:'Driftverktyg'},
     {hash:'#tools/operations/routes',label:'Tågvägar'},
+    {hash:'#tools/operations/clearance',label:'Tågklarering'},
     {hash:'#tools/operations/blocks',label:'Spårspärrar'},
     {hash:'#tools/operations/lines',label:'Linjer och programmeringsspår'},
     {hash:'#tools/operations/trains',label:'Tågnummer'},

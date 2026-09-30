@@ -48,3 +48,23 @@ Proven omfattar en fryst tidtabell genererad av den granskade TrainMeet-serverns
 Anläggningsregister → Orter och telefonnummer sparar separat namn/nummer för Cu, Cn, Au, An, Bu, Bn och D i destinations.json. Varje utfart väljer lokalt namn eller explicit station-id från TrainMeets display.stations (id/name). Katalogen uppdateras varje poll; inget automatiskt namnmatchat byte av station görs. Vid avbrott visas senaste namnet, och admin markerar gamla uppgifter. Saknas stationen används det lokala reservnamnet med tydlig adminstatus. Telefon anges lokalt: den granskade HTTP-v1-källan saknar telefonfält. Inget påhittat telefonkontrakt används. Befintliga XML-nummer 72/71 är lokala grundvärden. D har inget namngivet mål i underlaget och visas initialt som D.
 
 Namn/nummer är endast presentation och ändrar inte tågvägar, adresser, lås eller klareringar. Sparande kontrollerar revision och skriver hållbart innan den aktiva visningen ändras.
+
+## Stationen som TMBox mot server.trainmeet.app · 30 september 2026 (lokalt, ej publicerad)
+
+Servern i drift är 1.16.5 (build 9fcf769a) och exponerar bara HTTPS på port 443. TMBox v2 över MQTT går på träffens lokala Mosquitto utan lösenord och är stängt utåt, så cda-tkl ansluter som `tkl_terminal` med HTTP v1. Servern översätter en TMBox:s knapptryckningar till samma stationskommandon som TKL-kontraktet använder, så klareringsflödet är detsamma; skillnaden är att klienten heter TKL i serverns lista över stationer och klienter. Den webbläsar-TKL som redan står tilldelad Charlottendal där är serverns egen webbklient, inte cda-tkl.
+
+Anslutningskoden under Skärmar → Visa anslutningsuppgifter gäller även TKL-terminaler och ger åtkomst till träffens alla stationer. Charlottendal heter `station-charlottendal` i Grimslöv 2027 med sträckorna Vagnsta (dubbelspår), Lekby (dubbelspår) och Kungsfors (enkelspår). Parkopplingen görs i Tidtabeller → TrainMeet; koden matas in där och skrivs aldrig in i dokumentationen. Adapterns validering är kontrollerad mot 1.16.5:s verkliga display-svar (stationer, sträckor, klocka med sekunder, 80 tågrörelser vid Charlottendal).
+
+Adaptern skriver nu stationens egna kommandon:
+
+- Trafikpass: `POST /v1/tkl/shift/start` med operatör, terminalnamn lika med TKL-id och eventuellt övertagande, samt `/v1/tkl/shift/finish` med avsluta eller lämna över och anteckning.
+- Klarering per sträcka: `POST /v1/tkl/clearance` med request, accept, reject, cancel, depart och arrive. Tillståndsmaskinen fri → begärd → klar → på linjen → fri speglas lokalt bara för att visa rätt knappar; servern avgör. Avslag visas med serverns egen text, till exempel "Sträckan är redan upptagen", och kontexten läses om efter varje kommando oavsett utfall.
+- Tågrörelser: `POST /v1/tkl/movement` med uppställt, förare på plats, närmar sig, ankommit och verkligt spår. Oförändrade fält skickas med sina aktuella värden så att ingen av serverns två kodvägar nollställer dem.
+- Sträckkatalogen i display-svaret sammanfogas med stationens förbindelselägen till `lines` med grannens namn, spårtyp, riktning och tillåtna åtgärder. Saknat läge visas som okänt, aldrig som fritt.
+- Ett kommando väntar på en pågående poll; poll och kommando skriver aldrig samtidigt i senaste goda kontext. Godkända steg journalförs som händelser av typen `trainmeet`.
+
+Arbetsytan Drift → Tågklarering visar trafikpasset, en ruta per sträcka med status och knappar (Begär klarering med tågnummer, Godkänn, Neka, Återta, Avgått, Mottaget) samt dagens tågrörelser med Uppställt, Förare på plats, Närmar sig och Ankommit med valfritt spår. En inkommande förfrågan ger toast, markerad ruta och räknare på Driftverktyg. Utan trafikpass är knapparna spärrade; utan parkoppling hänvisas till TrainMeet-sidan. Klarering påverkar aldrig tågvägar, lås eller signalbesked.
+
+Inte infört: linjen klar (publicera och kvittera), TMBox:s spårväljare före ankomst annat än som spårfält, dubbelspårens riktningskanaler visas som ett läge per sträcka, och riktig parkoppling mot server.trainmeet.app återstår att göra av Casper med koden från adminvyn.
+
+Provning: sex adaptertester för sträckor, trafikpass, klarering, seriell körning mot poll, tågrörelser och ordalydelse; ett nytt processprov genom hela TKL-servern med trafikpass, begäran, avslag, tågrörelse och journal; totalt 291 enhetstester och 10 integrationstester godkända. Lokalt webbläsarprov mot en fejkad server byggd av träffens verkliga display-svar: trafikpass, begäran mot Lekby med Återta, grannens godkännande, Avgått, på linjen och fritt när Lekby tog emot; inkommande förfrågan från Vagnsta med larm, Godkänn, grannens avgång, Mottaget och fritt; uppställt, förare på plats och redo för tåg 93; journalrad för varje steg och inga JavaScript-fel.

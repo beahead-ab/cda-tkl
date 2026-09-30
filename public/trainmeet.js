@@ -36,12 +36,12 @@ export function createTrainMeet({api,onTimetable}) {
   return {update(next,connected,imported){
     state=next;online=connected;if(!state)return;timetable.update(state,online,imported);
     const stale=!online||state.stale;
-    $('status').textContent=!state.paired?'Ej ansluten':stale?'Kontakt saknas · gamla uppgifter':'Ansluten · läsande';
+    $('status').textContent=!state.paired?'Ej ansluten':stale?'Kontakt saknas · gamla uppgifter':'Ansluten';
     document.getElementById('menu-trainmeet-status').textContent=!state.paired?'Ej ansluten':stale?'Kontakt saknas':'Ansluten';
     $('message').textContent=state.error||(state.paired?'Koppla från innan du ändrar anslutningen.':'Spara serveradress och TKL-id, parkoppla sedan med träffen.');
     $('identity').textContent=state.clientId;$('origin').textContent=state.origin||'Ingen server vald';$('station-summary').textContent=state.context?.station.name||state.stationId||'Ingen station vald';
     controls();root.classList.toggle('trainmeet-stale',!!state.paired&&stale);
-    const c=state.context;let html='';if(c)html=`<div class="trainmeet-heading"><strong>${esc(c.station.name)} · ${esc(c.meet)} · ${esc(c.day)}</strong><span>${c.trains.length} tågrörelser · TrainMeet-klocka ${esc(c.clock.time)}${stale?' · gamla uppgifter':''}</span></div><details><summary>Förbindelselägen</summary>${c.connections.map(n=>`<p>${esc(n.id)} · ${esc(n.state)} ${esc(n.trainNumber)}</p>`).join('')||'<p>Inga förbindelser.</p>'}</details>`;
+    const c=state.context;let html='';if(c)html=`<div class="trainmeet-heading"><strong>${esc(c.station.name)} · ${esc(c.meet)} · ${esc(c.day)}</strong><span>${c.trains.length} tågrörelser · TrainMeet-klocka ${esc(c.clock.time)}${stale?' · gamla uppgifter':''}</span></div><details><summary>Förbindelselägen</summary>${(c.lines||c.connections).map(n=>`<p>${esc(n.neighborName||n.id)} · ${esc(n.state)} ${esc(n.trainNumber)}</p>`).join('')||'<p>Inga förbindelser.</p>'}</details>`;
     if(html!==lastContent){lastContent=html;$('context').innerHTML=html;}
   }};
 }

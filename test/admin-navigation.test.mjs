@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {NAVIGATION_SECTIONS,resolveNavigation} from '../public/admin-navigation-model.js';
 
-const registered=['#tools/operations','#tools/operations/routes','#tools/operations/blocks','#tools/operations/lines','#tools/operations/trains','#tools/operations/clock','#tools/operations/authority',
+const registered=['#tools/operations','#tools/operations/routes','#tools/operations/clearance','#tools/operations/blocks','#tools/operations/lines','#tools/operations/trains','#tools/operations/clock','#tools/operations/authority',
   '#trainmeet','#import','#import/upload','#import/edit','#tools/appearance','#tools/journal',
   '#register','#register/station','#register/destinations','#register/presentation','#register/bindings','#register/object',
   '#advanced','#advanced/xml','#advanced/migration','#advanced/protocol'];
@@ -39,7 +39,7 @@ test('every registered address resolves to one section with a page title of its 
   assert.equal(titles.get('#register/destinations'),'Orter och telefonnummer');
   assert.equal(titles.get('#advanced/protocol'),'Protokollinspelning');
   // The six operating tools and the four register pages must no longer share one title.
-  assert.equal(new Set(registered.filter(h=>h.startsWith('#tools/operations')).map(h=>titles.get(h))).size,7);
+  assert.equal(new Set(registered.filter(h=>h.startsWith('#tools/operations')).map(h=>titles.get(h))).size,8);
   assert.equal(new Set(registered.filter(h=>h.startsWith('#register')).map(h=>titles.get(h))).size,5);
 });
 

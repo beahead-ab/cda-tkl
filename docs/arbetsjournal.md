@@ -833,3 +833,20 @@ Avancerat och titlar som Tågvägar, Visningsinställningar och XML-granskning. 
 390 × 760: låda öppnas med fokus på Drift, stängs vid val, klick utanför och Escape;
 nästa Escape stänger fönstret. Vid 1440 × 520 ligger sidfoten kvar synlig. Inga
 JavaScript-fel. Ingen driftmanöver utförd och ingen produktion ändrad.
+
+## 30 september – stationen som TMBox mot TrainMeet (lokalt, ej publicerad)
+
+server.trainmeet.app kör 1.16.5 och släpper bara in HTTPS; MQTT-vägen för
+fysiska TMBoxar är stängd utåt. cda-tkl ansluter därför som TKL-terminal med
+serverns anslutningskod och får samma klareringsflöde som en TMBox. Adaptern
+är nu skrivande: trafikpass, klarering per sträcka (begär, godkänn, neka,
+återta, avgått, mottaget) och tågrörelser (uppställt, förare på plats,
+närmar sig, ankommit, verkligt spår). Ny arbetsyta Drift → Tågklarering med
+larm vid inkommande förfrågan. Klarering är skild från tågvägar och signaler.
+Se trainmeet-adapter.md för kontrakt, avgränsning och provning.
+
+Verifiering: syntax, 291 enhetstester och 10 integrationstester godkända.
+Webbläsarprov mot fejkad server med träffens verkliga stationer, sträckor och
+80 tåg: full klareringscykel åt båda hållen, tågsteg och journal utan fel.
+Riktig parkoppling mot server.trainmeet.app återstår; koden anges i TKL.
+Ändringen kräver omstart av TKL-tjänsten vid publicering.

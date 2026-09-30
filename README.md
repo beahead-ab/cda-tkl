@@ -31,6 +31,7 @@ Om appen redan är igång öppnar du länkarna direkt. Avsluta med Ctrl+C i dess
 - Lågt tidtabellsfält direkt under spårplanen, med flera kolumner, bläddring och fullständiga tåguppgifter vid klick eller högerklick. Utseendet följer valt panelskin.
 - Manuell tidtabell med egna tågrörelser, redigerbara utkast och godkännande före användning. Visas i samma panelkolumner som filimport och TrainMeet, utan krav på AI-nyckel.
 - Separat [tidtabellsimport från bilder/PDF med OpenAI](docs/tidtabellsimport.md), redigerbart granskningsutkast och uttryckligt källval mellan import och TrainMeet. Kräver API-nyckel på servern; verklig AI-tolkning återstår att verifiera.
+- Tågklarering mot grannstationerna genom TrainMeet som TKL-terminal, med samma flöde som en TMBox: trafikpass, begär, godkänn, neka, återta, avgått och mottaget per sträcka samt uppställt, förare på plats, närmar sig och ankommit per tåg. Klarering är skild från tågvägar och signaler. Provad mot fejkad server; riktig parkoppling återstår.
 - Lokal kärna som ensam avgör tågvägar, lås, växelorder och signalmedgivanden.
 - 210 huvudtågvägar och 130 växeltågvägar, 49 växlar, 197 körbara layoutblock och 66 signaler. Spår 6 väljs i tågvägslistan; källan saknar en panelikon för dess huvudtågvägsknapp.
 - Reserverade block och korsningar; kopplade växlar kan delas i samma läge. Manuell omläggning av låsta växlar vägras. Profilerna innehåller ännu inga godkända automatiska alternativa tågvägar.
@@ -60,7 +61,7 @@ Detta är en utvecklingsprofil för modelljärnvägen. Simulatorn är en uttryck
 - Verifiera svenska Signal10-besked. Kod 0, 8 och 18 kommer från ett dokumenterat CZ-exempel och används endast som preliminär stopp/kör-mappning. Gränssnittet återger inte ännu fullständiga svenska huvud- och försignalbesked eller skillnaden mellan 8 och 18.
 - Fastställ alla signalriktningar, tågvägsregler, flankskydd, skyddsavstånd, tidsvillkor, automatisk upplåsning och lokala växlingsregler. De importerade 1 377 JMRI-conditionals finns i appens register med samtliga variabler, åtgärdsvärden, tidsparametrar och införandestatus per regel. Utvalda huvud-/växeltågvägsregler och manuella villkor har översatts till kärnan; den kör inte JMRI eller de saknade externa Jython-skripten.
 - Granska de 15 undantagna växeltågvägarna, rangerområdets överlämning och återstående funktioner. Okonfigurerade eller motsägande fall manövreras inte.
-- Verifiera den läsande TrainMeet-adaptern mot den riktiga lokala servern. Stationskontext och tidtabell via HTTP v1 är byggda; TMBox v2/MQTT och skrivande klareringsutbyte återstår.
+- Parkoppla mot server.trainmeet.app (1.16.5) med serverns anslutningskod och prova klareringsflödet i skarp träff. Trafikpass, klarering och tågrörelser via TKL-kontraktet är byggda; linjen klar återstår. TMBox v2 över MQTT är inte nåbart utifrån.
 
 Vid avbrott kan kärnan begära stopp endast när förbindelsen fungerar. Den kan inte garantera ett fysiskt stoppbesked över en bruten förbindelse. Provmodellens återrapport av växelläge är heller inte en verifiering av mekaniska ändlägen.
 

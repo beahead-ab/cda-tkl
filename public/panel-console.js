@@ -23,6 +23,7 @@ export function createPanelConsole({onOpen,onResetComplete}) {
   const overview=document.createElement('section');overview.id='panel-operations';overview.className='operation-overview';
   const descriptions=[
     ['panel-route-tools','Tågvägar','Välj typ av tågväg, använd listval och återta lagda vägar.'],
+    ['clearance-tools','Tågklarering','Begär, godkänn och bekräfta tågklarering mot grannstationerna genom TrainMeet.'],
     ['track-block-tools','Spårspärrar','Hindra nya tågvägar över ett valt spåravsnitt.'],
     ['operating-controls','Linjer och programmeringsspår','Spärra en linje eller växla Lastspår 3 till programmeringsläge.'],
     ['train-information','Tågnummer','Ange tågidentitet och hantera nummerföljning i spårplanen.'],
@@ -31,12 +32,12 @@ export function createPanelConsole({onOpen,onResetComplete}) {
   ];
   for(const [id,title,description] of descriptions){const button=document.createElement('button');button.type='button';button.dataset.panelTool=id;button.setAttribute('aria-controls',id);button.innerHTML='<strong></strong><span></span>';button.querySelector('strong').textContent=title;button.querySelector('span').textContent=description;overview.append(button);}
   const blocks=$('toggle-block').closest('details');blocks.id='track-block-tools';
-  const panes=[overview,routes,blocks,$('operating-controls'),$('train-information'),$('model-clock'),authority];
+  const panes=[overview,routes,$('clearance-tools'),blocks,$('operating-controls'),$('train-information'),$('model-clock'),authority];
   for(const pane of panes){pane.hidden=true;drawer.append(pane);}
   $('inspector-home').hidden=true;document.body.append($('inspector-home'));
   $('traffic-tools').remove();$('operating-tools').remove();
   let lastReset=null;
-  const hashes=['','#routes','#blocks','#lines','#trains','#clock','#authority'];
+  const hashes=['','#routes','#clearance','#blocks','#lines','#trains','#clock','#authority'];
   const workspaces=new Map();
   for(let i=0;i<panes.length;i++){
     const pane=panes[i],workspace=document.createElement('section');workspace.hidden=true;
