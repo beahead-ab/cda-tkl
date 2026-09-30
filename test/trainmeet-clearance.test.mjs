@@ -20,7 +20,7 @@ function rig(){
     return new Response(JSON.stringify(data),{status:200});};
   const service=new TrainMeet({origin:'https://trainmeet.example',storage,fetcher,now:()=>now});
   const journal=[];service.on('journal',text=>journal.push(text));
-  return {service,calls,context,display,responses,journal,now:n=>{now=n;},posts:()=>calls.filter(c=>c.method==='POST'&&c.path!=='/v1/pair')};
+  return {service,calls,context,display,responses,journal,storage,fetcher,now:n=>{now=n;},posts:()=>calls.filter(c=>c.method==='POST'&&c.path!=='/v1/pair')};
 }
 const pair=r=>r.service.pair({...r.service.view(),stationId:'cda',code:'458982'});
 const shift={shift_id:'s1',operator_name:'Casper',terminal_name:'cda-tkl',status:'active',started_at:'2026-09-30T06:00:00',ended_at:null,handover_note:null,updated_at:'2026-09-30T06:00:00'};
@@ -140,4 +140,27 @@ test('movement declarations send unchanged fields with their current values and 
   assert.equal(movementDone({arrival:'arrived',departure:'departed'},stop),true);
   assert.equal(movementDone({arrival:'arrived'},stop),false);
   assert.equal(movementDone({arrival:'arrived'},arrivalOnly),true);
+});
+
+test('TMBox mode keeps a shift active automatically, at most once a minute, never taking over, and survives restart',async()=>{
+  const r=rig();await pair(r);
+  assert.deepEqual(r.service.view().autoShift,{enabled:false,operatorName:'',error:''});
+  assert.throws(()=>r.service.setAutoShift({...r.service.view(),enabled:true,operatorName:'  '}),/operatörens namn/);
+  assert.throws(()=>r.service.setAutoShift({sessionId:'x',revision:0,enabled:true,operatorName:'Casper'}),/ändrats/);
+  const on=r.service.setAutoShift({...r.service.view(),enabled:true,operatorName:' Casper '});
+  assert.deepEqual(on.autoShift,{enabled:true,operatorName:'Casper',error:''});assert.equal(r.storage.load('trainmeet.json',{}).autoShift.enabled,true);
+  const starts=()=>r.posts().filter(p=>p.path==='/v1/tkl/shift/start');
+  r.responses['/v1/tkl/shift/start']={status:200,body:{shift}};
+  r.now(200000);await r.service.refresh();
+  assert.equal(starts().length,1);assert.deepEqual(starts()[0].body,{station_id:'cda',operator_name:'Casper',terminal_name:'cda-tkl',take_over:false});
+  r.now(230000);await r.service.refresh();assert.equal(starts().length,1,'no retry within a minute');
+  r.now(270000);await r.service.refresh();assert.equal(starts().length,2);
+  r.context.shift=shift;r.now(340000);await r.service.refresh();assert.equal(starts().length,2,'nothing to do once a shift is active');
+  assert.ok(r.journal.some(t=>t==='Trafikpass startat automatiskt (TMBox-läge) av Casper hos TrainMeet.'));
+  r.context.shift=null;r.responses['/v1/tkl/shift/start']={status:409,body:{error:'tkl_unavailable',message:'TKL-driftlagret är inte tillgängligt'}};
+  r.now(400000);await r.service.refresh();assert.equal(r.service.view().autoShift.error,'TKL-driftlagret är inte tillgängligt');assert.equal(r.service.view().status,'connected');
+  const again=new TrainMeet({origin:'https://trainmeet.example',storage:r.storage,fetcher:r.fetcher,now:()=>500000});
+  assert.deepEqual(again.view().autoShift,{enabled:true,operatorName:'Casper',error:''});assert.equal(again.view().paired,true);
+  const off=r.service.setAutoShift({...r.service.view(),enabled:false});assert.equal(off.autoShift.enabled,false);assert.equal(off.autoShift.operatorName,'Casper');
+  r.now(600000);await r.service.refresh();assert.equal(starts().length,3,'no further attempts when off');
 });

@@ -842,10 +842,11 @@ serverns anslutningskod och får samma klareringsflöde som en TMBox. Adaptern
 är nu skrivande: trafikpass, klarering per sträcka (begär, godkänn, neka,
 återta, avgått, mottaget) och tågrörelser (uppställt, förare på plats,
 närmar sig, ankommit, verkligt spår). Ny arbetsyta Drift → Tågklarering med
-larm vid inkommande förfrågan. Klarering är skild från tågvägar och signaler.
+larm vid inkommande förfrågan och ett TMBox-läge som håller trafikpasset
+aktivt automatiskt, högst ett försök per minut och utan övertagande. Klarering är skild från tågvägar och signaler.
 Se trainmeet-adapter.md för kontrakt, avgränsning och provning.
 
-Verifiering: syntax, 291 enhetstester och 10 integrationstester godkända.
+Verifiering: syntax, 292 enhetstester och 10 integrationstester godkända.
 Webbläsarprov mot fejkad server med träffens verkliga stationer, sträckor och
 80 tåg: full klareringscykel åt båda hållen, tågsteg och journal utan fel.
 Riktig parkoppling mot server.trainmeet.app gjordes kl. 03:37 från den lokala
