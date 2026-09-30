@@ -848,5 +848,7 @@ Se trainmeet-adapter.md för kontrakt, avgränsning och provning.
 Verifiering: syntax, 291 enhetstester och 10 integrationstester godkända.
 Webbläsarprov mot fejkad server med träffens verkliga stationer, sträckor och
 80 tåg: full klareringscykel åt båda hållen, tågsteg och journal utan fel.
-Riktig parkoppling mot server.trainmeet.app återstår; koden anges i TKL.
+Riktig parkoppling mot server.trainmeet.app gjordes kl. 03:37 från den lokala
+installationen med koden inmatad i TKL: Ansluten, 80 tågrörelser, tre fria
+sträckor och träffens tidtabell i panelen. Inget trafikpass startat.
 Ändringen kräver omstart av TKL-tjänsten vid publicering.
