@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `8d62b40` · version 0.42.1 (1 oktober 2026, 18:47) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/8d62b40` |
+| Driftsatt kodversion | `e1caf0c` · version 0.42.2 (1 oktober 2026, 20:40) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/e1caf0c` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -637,3 +637,21 @@ process 140318 behölls, noll lås före bytet. Serverns prov: syntax, 70 riktad
 enhetstester och 5 processprov. Backup: `/root/charlottendal-backups/network-8d62b40-20261001T164727Z`.
 Efterkontroll: tjänster aktiva, TKL ny process 210785, version 0.42.1,
 driftdata oförändrade.
+
+## Version 0.42.2 · kodfältet och avslag genom Cloudflare
+
+`e1caf0c` aktiverad 1 oktober 2026, 20:40 svensk tid av Casper med
+deploy/publish-release.sh. Webbdriftens parkoppling hade visat "Unexpected
+token '<' … is not valid JSON": adaptern svarade 502 på TrainMeets avslag och
+Cloudflare byter ut 502/504 mot sin egen HTML-sida. Avslag svarar nu 409 med
+serverns förklaring, övriga serverfel 503, och kodfältet visar koden som
+123-456. Endast TKL startades om, simulatorns process 140318 behölls, noll lås
+före bytet. Serverns prov: syntax, 73 riktade enhetstester och 5 processprov.
+Backup: `/root/charlottendal-backups/network-e1caf0c-20261001T184006Z`.
+Efterkontroll: tjänster aktiva, TKL ny process 213553, version 0.42.2,
+driftdata oförändrade. Verifierat i webbdriften: stationslistan laddas med
+Charlottendal förvald och en felaktig kod besvaras med 409 "Parkopplingskoden
+är ogiltig eller har gått ut" plus var en aktuell kod hämtas. Ett
+stationsanrop direkt efter omstarten fick tidsgräns mot server.trainmeet.app,
+medan svarstiden strax därefter låg under en sekund från servern; dialogen
+visar då id-fältet och ett nytt försök laddar listan.

@@ -918,11 +918,12 @@ Backup, serverprov och efterkontroll i drift.md.
 
 ## Release 0.42.2 · kodfältet och avslag genom Cloudflare
 
-`ee75cd2` committad 1 oktober, ännu inte publicerad. Webbdriftens första
+`e1caf0c` (kod `ee75cd2` med journalnotis) publicerad 1 oktober 20:40 av Casper. Webbdriftens första
 parkopplingsförsök visade "Unexpected token '<' … is not valid JSON": adaptern
 svarade 502 på TrainMeets avslag, och Cloudflare byter ut 502/504 mot sin egen
 HTML-sida. Avslag svarar nu 409 med serverns förklaring och var en aktuell kod
 hämtas, övriga serverfel 503, och webbläsaren tål svar som inte är JSON.
 Kodfältet visar koden i klartext som 123-456 och adaptern skickar den
 normaliserad som servern jämför den. 309 enhetstester och 10 processprov gröna
-lokalt. Publicering: `bash deploy/publish-release.sh` i terminalen.
+lokalt, 73 + 5 på servern. Backup och efterkontroll i drift.md. Verifierat i
+webbdriften: en felaktig kod besvaras med 409 och serverns förklaring.
