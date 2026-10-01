@@ -672,11 +672,12 @@ Charlottendal förvald. Webbdriftens parkoppling med kod återstår.
 ## Version 0.43.0 · nederrad med tidtabell och händelser
 
 `b635c78` aktiverad 1 oktober 2026, 22:50 svensk tid med deploy/publish-release.sh
-(skriptet kördes två gånger från appens terminal; den andra körningen stoppades
-av vakten "finns redan" utan åtgärd). Planen skalas till bredden, konsolen är
+(Caspers körning i egen terminal; en andra körning från appens terminal
+stoppades av vakten "finns redan" utan åtgärd). Planen skalas till bredden, konsolen är
 54 px och nederraden med klockförankrad tidtabell och händelsekolumn får resten;
 IBM Plex serveras lokalt. Endast TKL startades om, simulatorns process 140318
-behölls, noll lås före bytet. Backup:
+behölls, noll lås före bytet. Serverns prov: syntax, 74 riktade enhetstester
+och 5 processprov. Backup:
 `/root/charlottendal-backups/network-b635c78-20261001T205049Z`. Efterkontroll:
 tjänster aktiva, TKL ny process 219273, version 0.43.0, driftdata oförändrade.
 Verifierat i webbdriften: version 0.43.0, ingen sidscroll, golvregeln ger planen
