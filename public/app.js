@@ -18,6 +18,7 @@ import { createTrainInformation } from './train-information.js';
 import { createTelegramRecorder } from './telegram-recorder.js';
 import { createTrainMeet } from './trainmeet.js';
 import {createClearance} from './clearance.js';
+import {createStreamDeck} from './stream-deck.js';
 import { createModelClock } from './model-clock.js';
 import { createFeedback } from './feedback.js';
 import { createOperatingControls } from './operating-controls.js';
@@ -50,7 +51,7 @@ const routeTargets=createRouteTargets({load:async(from,kind)=>{
   if(!response.ok)throw Error('Mål kunde inte kontrolleras.');
   return response.json();
 },onChange:()=>paint()});
-let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport,signalControls,chosenKind=null,clearanceView;
+let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport,signalControls,chosenKind=null,clearanceView,streamDeck;
 const pageFromHash=()=>{
   if(location.hash==='#tools/zoom')history.replaceState(null,'','#tools/appearance');
   if(location.hash==='#tools')history.replaceState(null,'','#tools/appearance');
@@ -314,7 +315,7 @@ function buildPlan() {
     });
     if(names.length){manualName=manualFeedback.addControl(g,names,b.centerX,b.centerY);objectDetails(g,'turnout',manualName);}
     const indication=sourceLamps.find(l=>l.g===g);if(indication)objectDetails(g,'indication',indication.name);
-    if(isButton) buttons.push({id:b.sensor,g,hit,hitCap:b.hitCap,available,names,isRoute});
+    if(isButton) buttons.push({id:b.sensor,g,hit,hitCap:b.hitCap,available,names,isRoute,kind:isShunt?'shunt':'main'});
   }
   new ResizeObserver(()=>{
     const scale=root.getScreenCTM()?.a||1;
@@ -493,6 +494,7 @@ function renderPanel() {
   if(state.clock)modelClock?.update(state.clock,online);
   trainMeet?.update(state.trainMeet,online,state.timetableImport);
   clearanceView?.update(state.trainMeet,online);
+  streamDeck?.update();
   timetableImport?.update(state.timetableImport,online);
   if(chosen && (!usable() || state.controls?.mode==='remote')) clearChoice(false);
   const c = $('connection'); setText(c,!online ? 'Kontakt med kärnan saknas' : state.storageFault ? 'Lagringsfel · spärrad' : state.connection === 'connected' ? (state.connectionInfo?.mode==='simulator'?'Simulator ansluten':'LocoNet ansluten') : (state.connectionInfo?.mode==='simulator'?'Simulator frånkopplad':'LocoNet frånkopplad'));
@@ -591,6 +593,7 @@ async function start() {
   sourceRegister = createSourceRegister({config,panel,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   signalControls=signalRouteControls(config,registry,signalEndpoints);
   buildPlan();
+  streamDeck=createStreamDeck({pluppar:()=>buttons.filter(b=>b.isRoute).map(b=>({id:b.id,kind:b.kind,node:b.g,label:label(b.id)})),choose,clearChoice,api,message,state:()=>state,online:()=>online&&state?.connection==='connected',chosen:()=>chosen});
   trainInformation=createTrainInformation({catalog:config.trainFields,controls:layout.controls,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
   $('close-inspector').onclick=()=>closeInspector();
   $('dismiss-message').onclick=()=>message('');

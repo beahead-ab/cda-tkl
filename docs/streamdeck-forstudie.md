@@ -54,3 +54,13 @@ Knappbilderna ritas i webbläsaren med canvas från panelens egna symboler och t
 5. Senare vid behov: ett Elgato-plugin för Macen som återanvänder samma layout och åtgärdskatalog, om Stream Deck också ska användas för annat än stationen.
 
 Modellen avgör rutnätets form och om vred finns; den behöver fastställas före steg 2.
+
+## Steg 1 byggt · 1 oktober 2026 (lokalt, ej publicerad)
+
+Panelsidan kan nu öppna en Stream Deck via WebHID. Under Utseende och ljud finns kortet Stream Deck, märkt Den här enheten, med Anslut och Koppla bort. Webbläsaren visar sin egen enhetsväljare vid första anslutningen; därefter återupptas anslutningen automatiskt när sidan öppnas, utan ny fråga. Utan WebHID, i Safari eller Firefox, eller på en osäker adress visas en förklaring och knappen är spärrad.
+
+Knapparna i steg 1 är fasta: sida 1 börjar med Sida, Alla signaler i stopp, Återställ stopp, Återställ panel med långtryck och Avbryt val, följt av plupparna i ordningen linjer före spår och huvudtågvägsknappar före växeltågvägsknappar. Följande sidor börjar med Sida och fortsätter med resten av plupparna, så alla pluppar nås oavsett modell. Ett tryck på en plupp gör exakt vad ett klick gör: samma startval, samma kontroll av möjliga slutpunkter, samma avslag i fjärrläge. Bilderna ritas från plupparnas egna klasser: ljus när fri, grön i tågväg, gul vid kvarhållet lås, röd vid beläggning, ring vid valt start eller möjlig slutpunkt, dämpad när valet inte tillåter knappen, blinkande under förberedelse och gul kant vid linjespärr. Alla knappar dämpas vid kontaktbortfall.
+
+Biblioteket `@elgato-stream-deck/webhid` 7.7.1 (MIT) ligger paketerat utan ändringar under `public/vendor/`, eftersom panelens innehållspolicy bara tillåter egna skript. Modellen läses från enheten, så samma kod gäller 6, 8, 15 och 32 knappar; vred och beröringsremsa används inte än. Layoutredigeraren och tågklareringsknapparna är nästa steg.
+
+Provat: tre tester för sidindelning, utseende och blinkfas; syntaxkontroll; modulen laddas i panelen utan fel. Ingen Stream Deck var ansluten till Macen vid bygget, så det första fysiska provet görs av Casper i Chrome mot den lokala installationen.

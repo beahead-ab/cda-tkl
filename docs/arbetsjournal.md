@@ -864,3 +864,13 @@ ny kod och ingen frånkoppling. Nycklar skickas bara till sin egen server och
 når aldrig webbläsaren. Se trainmeet-adapter.md.
 
 Verifiering: syntax, 293 enhetstester och 10 integrationstester godkända.
+
+## 1 oktober – Stream Deck via WebHID i panelen (lokalt, ej publicerad)
+
+Förstudien valde WebHID i panelsidan framför plugin och egen tjänst, så att
+Stream Deck blir ett tangentbord till panelen med samma pluppval, spärrar och
+tillstånd som spårplanen. Steg 1 är byggt: kort under Utseende och ljud för
+anslutning, fast knapplayout med driftknappar och alla pluppar över flera
+sidor, bilder från plupparnas egna klasser och långtryck för Återställ panel.
+Biblioteket är vendorat under public/vendor. Se streamdeck-forstudie.md.
+Första fysiska provet återstår; ingen enhet var ansluten vid bygget.
