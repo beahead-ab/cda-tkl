@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `3b98895` · version 0.44.1 (1 oktober 2026, 23:44) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/3b98895` |
+| Driftsatt kodversion | `5bfe9b9` · version 0.44.2 (2 oktober 2026, 00:21) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/5bfe9b9` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -698,3 +698,17 @@ Verifierat i webbdriften: version 0.44.1, statusraden, 90 huvudspår, sju
 riktningsplåtar, inga konsolfel. Händelsekolumnen var tom: kärnans buffert på
 150 händelser innehöll efter omstarten bara fältrapporter (slaget report),
 som kolumnen och Verktyg → Händelser döljer.
+
+## Version 0.44.2 · driftskeenden i egen buffert
+
+`5bfe9b9` aktiverad 2 oktober 2026, 00:21 svensk tid med deploy/publish-release.sh
+från Caspers egen terminal; en samtidig körning från appens terminal stoppades
+av vakten "finns redan" utan åtgärd. Skriptet aktiverar bara efter godkända
+serverprov. Kärnan håller driftskeenden i en egen buffert så att fältrapporter
+och ordrar inte tränger ut dem. Endast TKL startades om, simulatorns process
+140318 behölls. Backup:
+`/root/charlottendal-backups/network-5bfe9b9-20261001T222121Z`. Efterkontroll:
+tjänster aktiva, TKL ny process 224877, version 0.44.2. Verifierat i
+webbdriften: händelsekolumnen visar "TKL startad" och "LocoNet ansluten",
+medan de 66 stoppbegäran vid start bara finns i journalen under Verktyg;
+inga konsolfel.

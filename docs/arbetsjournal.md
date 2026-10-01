@@ -962,7 +962,7 @@ Geometri, träffytor, zoom och logik orörda.
 
 ## Release 0.44.2 · driftskeenden i egen buffert
 
-Committad 2 oktober, ännu inte publicerad. Efterkontrollen av 0.44.1 visade en
+`5bfe9b9` publicerad 2 oktober 00:21; backup och efterkontroll i drift.md. Efterkontrollen av 0.44.1 visade en
 tom händelsekolumn: kärnans enda buffert om 150 rader innehöll bara
 fältrapporter. Produktionsjournalens senaste 3 000 rader var 1 607 rapporter,
 1 332 behörighetsbegäran, 22 ordrar och 39 driftskeenden. Kärnan håller nu tre
