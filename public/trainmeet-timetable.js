@@ -31,7 +31,8 @@ export function createTrainMeetTimetable({selectSource}) {
   }
   function showDetails(e){
     const button=e.target.closest('[data-timetable-row]');if(!button)return;
-    e.preventDefault();selected=rows[Number(button.dataset.timetableRow)]?.id;if(!selected)return;drawDetails();
+    e.preventDefault();const chosen=rows[Number(button.dataset.timetableRow)];selected=chosen?.id;if(!selected)return;drawDetails();
+    if(chosen.trackLabel)window.dispatchEvent(new CustomEvent('panel-highlight',{detail:{kind:'track',name:chosen.trackLabel}}));
     details.open({currentTarget:button,clientX:e.clientX,clientY:e.clientY},button);
   }
   for(const host of [$('content'),$('mini')]){

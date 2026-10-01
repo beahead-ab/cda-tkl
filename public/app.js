@@ -27,6 +27,8 @@ import { createFullscreen } from './fullscreen.js';
 import { createContextDialog } from './context-dialog.js';
 import { createPanelConsole } from './panel-console.js';
 import {createPanelEvents} from './panel-events.js';
+import {createPanelHead} from './panel-head.js';
+import {labelClass,objectFromMessage} from './plan-objects.js';
 const $ = id => document.getElementById(id);
 const adminNavigation=createAdminNavigation();
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -53,7 +55,7 @@ const routeTargets=createRouteTargets({load:async(from,kind)=>{
   if(!response.ok)throw Error('Mål kunde inte kontrolleras.');
   return response.json();
 },onChange:()=>paint()});
-let currentPage='panel',appMenu,contextDialog,panelConsole,panelEvents,timetableImport,signalControls,chosenKind=null,clearanceView,streamDeck,streamDeckEditor;
+let currentPage='panel',appMenu,contextDialog,panelConsole,panelEvents,panelHead,timetableImport,signalControls,chosenKind=null,clearanceView,streamDeck,streamDeckEditor;
 const pageFromHash=()=>{
   if(location.hash==='#tools/zoom')history.replaceState(null,'','#tools/appearance');
   if(location.hash==='#tools')history.replaceState(null,'','#tools/appearance');
@@ -86,7 +88,7 @@ function openTools(section) {
 async function openSource(kind,name) { await setPage('admin'); await sourceRegister.open(kind,name); }
 let blockedTracks=new Map(),blockedLineParts=new Set(),lineExtents=new Map();
 const blockMarkers=[];
-const destinationNodes=[], rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], sourceLamps=[],routeNodes = new Map();
+const destinationNodes=[], rails = [], switches = [], signals = [], buttons = [], indicatorLamps = [], sourceLamps=[],routeNodes = new Map(),turnoutNumbers=new Map();
 const iconTypes = {
   hsi_2: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_4: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_5: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32],
   'hsi_3+dvsi': ['Hsi0+Sh0', 'Hsi1+Sh1', 'Hsi-dark+Sh-dark', 12, 32], hdvsi_8: ['Hdvsi0+Sh0', 'Hdvsi1+Sh1', 'Hdvsi-dark', 18, 31],
@@ -127,6 +129,7 @@ function message(text,{error=true,duration=4000}={}) {
   $('message').dataset.tone=error?'error':'success';
   pauseMessage();if(text&&error)feedback?.error();$('message-text').textContent=text;$('message').hidden=!text;
   if(text)resumeMessage();
+  panelHead?.message(text,error,duration);
 }
 $('message').addEventListener('pointerenter',()=>{if(messageCanPause)pauseMessage();});
 $('message').addEventListener('pointerleave',()=>{if(messageCanPause)resumeMessage();});
@@ -196,6 +199,37 @@ function applyPresentation(value) {
   for(const b of buttons) { const id=b.sensor||b.id;if(!id)continue;const node=b.g||b.node;if(node&&config.buttons?.[id]) {node.setAttribute('aria-label',label(id));const title=node.querySelector('title');if(title)title.textContent=label(id);} }
   paint();
 }
+// A yellow ring marks the plan object a journal row or timetable row refers to.
+// Presentation only: it reads the drawn plan and sends nothing.
+let hiliteNode=null,hiliteTimer=0;
+function objectPosition(kind,name){
+  if(!panel||!layout)return null;
+  if(kind==='turnout'){const t=Object.values(panel.turnouts).find(t=>t.name===name);return t?{x:t.cx,y:t.cy}:null;}
+  if(kind==='signal'){const m=signals.find(s=>s.mast===name)?.g.transform.baseVal.consolidate()?.matrix;return m?{x:m.e,y:m.f}:null;}
+  if(kind==='block'){const parts=rails.filter(r=>r.block===name).map(r=>r.node);if(!parts.length)return null;const len=n=>Math.hypot(n.x2.baseVal.value-n.x1.baseVal.value,n.y2.baseVal.value-n.y1.baseVal.value);const n=parts.reduce((a,b)=>len(b)>len(a)?b:a);return {x:(n.x1.baseVal.value+n.x2.baseVal.value)/2,y:(n.y1.baseVal.value+n.y2.baseVal.value)/2};}
+  if(kind==='button'){const b=layout.controls.find(b=>b.sensor===name);return b?{x:b.centerX,y:b.centerY}:null;}
+  if(kind==='route'){const r=config.routes.find(r=>r.label===name);return r?objectPosition('button',r.to)||objectPosition('button',r.from):null;}
+  if(kind==='track'){const l=panel.labels.find(l=>!l.hidden&&String(l.text).toLowerCase()===String(name).toLowerCase());return l?{x:l.x+String(l.text).length*(l.size||12)*.3,y:l.y+(l.size||12)/2}:null;}
+  return null;
+}
+function highlightObject(target){
+  const pos=target&&objectPosition(target.kind,target.name);if(!pos)return false;
+  if(!hiliteNode)hiliteNode=svg('circle',{r:22,class:'hilite','aria-hidden':'true'},$('track-plan'));
+  attribute(hiliteNode,'cx',pos.x);attribute(hiliteNode,'cy',pos.y);style(hiliteNode,'display','');
+  clearTimeout(hiliteTimer);hiliteTimer=setTimeout(()=>style(hiliteNode,'display','none'),8000);
+  return true;
+}
+window.addEventListener('panel-highlight',e=>highlightObject(e.detail));
+document.addEventListener('pointerdown',()=>{if(hiliteNode)style(hiliteNode,'display','none');},true);
+const HEAD_WAIT=new Set(['setting','establishing','clearing','held','cancelling']);
+function headStatus(){
+  const mode=state?.controls?.mode;
+  const subtitle=[config?.profile?.title||'Charlottendal',mode==='remote'?'fjärrläge':'lokal drift',Object.keys(config?.turnouts||{}).length+' växlar',signals.length+' signaler'].join(' · ');
+  const waiting=(state?.routes||[]).find(r=>HEAD_WAIT.has(r.state));
+  const status=waiting?{text:displayName('routes',waiting.definitionId,waiting.label)+' · '+(statuses[waiting.state]||waiting.state)+(waiting.reason?' · '+waiting.reason:''),tone:waiting.state==='held'?'alarm':'warn'}:null;
+  const simulator=state?.connectionInfo?.mode==='simulator';
+  return {subtitle,status,gateway:{text:simulator?'Simulator':'MGP · LocoNet',tone:online&&state?.connection==='connected'?'on':'err'},simulator};
+}
 function buildPlan() {
   layout = panelLayout(panel);
   lineExtents=lineRestrictionExtents(panel,config);
@@ -207,7 +241,7 @@ function buildPlan() {
   for (const s of panel.segs.filter(s => s.b !== 'frame' && s.b !== 'turntable' && !s.hide && Math.min(s.y1, s.y2) < 850)) {
     const node = svg('line', { x1: s.x1, y1: s.y1, x2: s.x2, y2: s.y2, class: 'rail unconfigured' }, track);
     svg('title', {}, node, 'Spårsegment '+s.id+' · '+s.b);
-    rails.push({ node, block: s.b, id:s.id });
+    rails.push({ node, block: s.b, id:s.id, main:!!s.m });
     if (s.d) node.setAttribute('stroke-dasharray','7 5');
     const length=Math.hypot(s.x2-s.x1,s.y2-s.y1), count=length<26?0:Math.max(1,Math.round(length/78));
     for(let i=0;i<count;i++){ const fraction=(i+.5)/count;
@@ -224,7 +258,7 @@ function buildPlan() {
     }
     switches.push({ ...t, legs,litLegs,group,seenConfirmed:false });
     manualFeedback.addTurnout(t);
-    svg('text', { x: t.cx + 3, y: t.cy - 11, class: 'turnout-number' }, labels, t.name.replace('Vx', ''));
+    turnoutNumbers.set(t.name,svg('text', { x: t.cx + 3, y: t.cy - 11, class: 'turnout-number' }, labels, t.name.replace('Vx', '')));
     // The source manoeuvre dot already occupies this position. A second,
     // invisible button underneath it gave pointer and keyboard different actions.
   }
@@ -239,7 +273,7 @@ function buildPlan() {
     if(/Lekby|Vagnsta|Kungsfors/i.test(l.text))continue;
     const size=l.size||12;
     if(l.br!=null)svg('rect',{x:l.x-3,y:l.y-3,width:l.text.length*size*.58+12,height:size*1.5+3,fill:`rgb(${l.br},${l.bg},${l.bb})`},labels);
-    svg('text',{x:l.x,y:l.y+size,class:'track-label',style:`font-size:${size}px`},labels,l.text);
+    svg('text',{x:l.x,y:l.y+size,class:'track-label '+labelClass(l.text),...(size===12?{}:{style:`font-size:${size}px`})},labels,l.text);
   }
   for(const fallback of destinationDefaults){
     const b=layout.controls.find(b=>b.sensor==='htv'+fallback.id);if(!b)continue;
@@ -366,7 +400,7 @@ function paintPlan() {
   const fresh = online && state?.connection === 'connected';
   for (const r of rails) {
     const value = fresh ? state.blocks[r.block]?.occupied : null;
-    attribute(r.node,'class', 'rail ' + (yardParts.has(r.id)?'yard-delegated ':'') + (hasTrackRestriction(r.block)||blockedLineParts.has(r.id)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
+    attribute(r.node,'class', 'rail ' + (r.main?'main ':'') + (yardParts.has(r.id)?'yard-delegated ':'') + (hasTrackRestriction(r.block)||blockedLineParts.has(r.id)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
   }
   for (const t of switches) {
     const display=turnoutDisplay(t,state.turnouts[t.name],{fresh:fresh&&!state.storageFault,now:state.serverTime,timeout:config.commandTimeoutMs});
@@ -374,6 +408,7 @@ function paintPlan() {
     attribute(t.group,'data-phase',display.phase);
     attribute(t.group,'data-instant',!t.seenConfirmed||display.phase==='unknown');
     if(display.active)t.seenConfirmed=true;
+    turnoutNumbers.get(t.name)?.classList.toggle('locked',!!state?.routes.some(r=>r.turnouts[t.name]));
     for(const [leg,node] of Object.entries(t.legs)){
       const restricted=hasTrackRestriction(t.block)||blockedLineParts.has('VX:'+t.name+':'+leg),flags=(yardPoints.has(t.name)?'yard-delegated ':'')+(restricted?'blocked ':'')+(occupied?'occupied ':'');
       attribute(node,'class','rail turnout-base '+flags+(display.phase==='unknown'?'unknown':leg==='A'&&display.active?'turnout-stem':'branch-off'));
@@ -534,7 +569,7 @@ function renderPanel() {
   $('event-status').textContent = state.routes.length + ' tågvägslås · ' + Object.keys(config.turnouts).length + ' anslutna växlar';
   html('events', state.events.filter(e => !['report', 'transport'].includes(e.kind)).slice(0, 7).map(e => `<div class="event-row"><time>${time(e.at)}</time><span>${esc(e.message)}</span></div>`).join(''));
   $('wire').textContent = (state.trace || []).slice(0, 40).map(e => `${time(e.at)}  ${e.direction === 'out' ? 'SKICKAT ' : 'MOTTAGET'}  ${e.hex}`).join('\n');
-  panelConsole?.update(state,online);panelEvents?.update(state,online);
+  panelConsole?.update(state,online);panelEvents?.update(state,online);panelHead?.update(headStatus());
 }
 function paintInspector() {
   if (!inspected || !state) return;
@@ -642,6 +677,7 @@ async function start() {
   try{localStorage.removeItem('charlottendal-skin');}catch{}
   const panelZoom=createPanelZoom({plan:$('track-plan'),viewport:document.querySelector('.panel-scroll'),stage:$('plan-stage'),controls:$('panel-console')});
   const zoomDialog=createZoomDialog(panelZoom);
+  panelHead=createPanelHead({shell:document.querySelector('#panel-view .panel-shell'),onZoom:()=>zoomDialog.open()});panelZoom.subscribe(value=>panelHead?.zoom(value));
   panelZoom.subscribe(value=>{$('menu-zoom-value').textContent=zoomLabel(value);});
   $('open-panel-zoom').onclick=e=>{e.preventDefault();e.stopPropagation();appMenu.close();zoomDialog.open();};
   createAdminAppearance({zoom:panelZoom});

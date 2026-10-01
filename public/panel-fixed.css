@@ -359,3 +359,80 @@ body.panel-app #trainmeet-timetable{border-right:0;grid-template-rows:minmax(0,1
 #panel-bottom[data-expanded] #panel-events{border-top:1px solid #1f2429}
 }
 @media(prefers-reduced-motion:reduce){.tt-entry,.ev-row{transition:none}}
+
+/* ===== Harmoniserat ställverk (design 1 oktober 2026, STÄLLVERK.md) =====
+   Only colour, line weight and typography. Geometry, hit areas, zoom and the
+   route, lock and signal logic are untouched. Tokens come from tokens.css. */
+body.panel-app .panel-shell{--rail:var(--track-side);--rail-unknown:var(--track-off);--route:var(--green);--ink:var(--fg);--red:#ff5a4d;--green:#46d36b;--amber:#f5c518}
+#track-plan{font-family:var(--font-mono)}
+#track-plan .rail{stroke:var(--track-side);stroke-width:var(--track-w);stroke-linecap:round}
+#track-plan .rail.main{stroke:var(--track-main)}
+#track-plan .rail.unconfigured{stroke:var(--track-off)}
+#track-plan .rail.occupied{stroke:var(--red)!important;stroke-width:var(--track-w-state);stroke-dasharray:none}
+#track-plan .rail.unknown:not(.turnout-base){stroke:var(--yellow);stroke-width:var(--track-w);stroke-dasharray:var(--track-dash-unknown)}
+#track-plan .rail.branch-off{stroke:var(--track-off);stroke-width:var(--track-w-off);opacity:1;stroke-dasharray:none}
+#track-plan .turnout-base.turnout-stem{opacity:1}
+#track-plan .turnout-base.unknown{stroke:var(--track-off);stroke-width:var(--track-w-off);stroke-dasharray:4 4}
+#track-plan .turnout-lit{stroke:var(--track-main);stroke-width:var(--track-w)}
+#track-plan .turnout-lit.occupied{stroke:var(--red)!important;stroke-width:var(--track-w-state)}
+#track-plan .route-flow{stroke:var(--green);stroke-width:var(--track-w-state);opacity:1}
+#track-plan .route-flow.held,#track-plan .route-flow.setting,#track-plan .route-flow.cancelling{stroke:var(--yellow);stroke-dasharray:4 6;opacity:.9}
+#track-plan .route-flow.occupied,#track-plan .route-flow.traversing{stroke:var(--red);stroke-dasharray:none;opacity:1}
+#track-plan .turnout-number{display:block;fill:var(--fg-label);font:400 11px var(--font-mono);opacity:1}
+#track-plan .turnout-number.locked{fill:var(--yellow);font-weight:500}
+#track-plan .track-label{fill:var(--fg);font:500 12px var(--font-mono);letter-spacing:0}
+#track-plan .track-label.lbl-place{fill:var(--fg-muted);font:500 11.5px var(--font-sans)}
+#track-plan .track-label.lbl-road{fill:var(--fg-faint);font:400 10.5px var(--font-mono)}
+#track-plan .destination-label{fill:var(--fg);font:600 10.5px var(--font-sans);letter-spacing:.12em}
+#track-plan .destination-arrow{stroke:var(--fg)}
+#track-plan .destination rect{fill:var(--chip-bg);stroke:var(--chip-border);stroke-width:1}
+#track-plan .destination-phone{fill:var(--fg);font:500 11px var(--font-mono)}
+#track-plan .touch-target .dot{fill:var(--plupp-idle);stroke:var(--fg-faint);stroke-width:1}
+#track-plan .touch-target:hover .dot,#track-plan .touch-target:focus-visible .dot{fill:#aeb6be;filter:none}
+#track-plan .touch-target:hover .hit,#track-plan .touch-target:focus-visible .hit{fill:rgba(255,255,255,.10);stroke:rgba(245,197,24,.6)}
+#track-plan .touch-target.locked .dot{stroke:var(--yellow)}
+#track-plan .route-button.in-route{--route-dot:var(--green)}
+#track-plan .route-choice-start .dot{animation:none;fill:var(--green);stroke:var(--green)}
+#track-plan .route-choice-end .dot,#track-plan .route-preparing .dot{fill:#fff;stroke:#fff;animation:hblink .7s infinite}
+#track-plan .touch-target.chosen .dot{fill:#fff;stroke:#fff}
+#track-plan .shunt-arrow{fill:var(--plupp-idle);stroke:var(--fg-faint)}
+#track-plan .indicator-off{fill:var(--lamp-off);stroke:#2a3036}
+#track-plan .signal-unknown,#track-plan .derived-unknown,#track-plan .turntable-unknown{fill:var(--yellow);font:700 11px var(--font-mono);opacity:1}
+#track-plan .incoming-train-number rect{fill:var(--red-bg);stroke:var(--red-border);stroke-width:1}
+#track-plan .incoming-train-number text{fill:var(--red-text);font:500 11.5px var(--font-mono)}
+#track-plan .turntable-pit{fill:#000;stroke:var(--track-struct);stroke-width:1.5}
+#track-plan .turntable-rim{stroke:#3a424a;opacity:1}
+#track-plan .turntable-deck{fill:#000;stroke:var(--fg-faint)}
+#track-plan .turntable-sleeper,#track-plan .turntable-rails{stroke:var(--fg-faint);opacity:1}
+#track-plan .hilite{fill:none;stroke:var(--yellow);stroke-width:2;pointer-events:none}
+@media(prefers-reduced-motion:reduce){#track-plan .route-choice-end .dot,#track-plan .route-preparing .dot{animation:none}}
+/* Status bar over the plan's top band: title, station line, the core's message. */
+#plan-head{position:absolute;left:50px;top:8px;z-index:6;display:flex;align-items:center;gap:14px;height:32px;white-space:nowrap;pointer-events:none;max-width:calc(100% - 380px);overflow:hidden}
+.plan-head-title{font:600 12.5px var(--font-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--fg)}
+.plan-head-sub{font:400 12px var(--font-sans);color:var(--fg-label)}
+#plan-head-right{position:absolute;right:12px;top:10px;z-index:6;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:0;padding:3px 8px;border:1px solid var(--chip-border);border-radius:3px;background:var(--chip-bg);font:400 10.5px/1.3 var(--font-sans);color:#98a2ab;pointer-events:auto}
+button.chip{cursor:pointer;color:var(--fg)}button.chip:hover{background:#262c32;border-color:var(--chip-border)}
+.chip-dot{width:7px;height:7px;border-radius:50%;background:var(--fg-label);flex:none}
+.chip[data-tone=on] .chip-dot{background:var(--green)}.chip[data-tone=warn] .chip-dot{background:var(--yellow)}.chip[data-tone=alarm] .chip-dot,.chip[data-tone=err] .chip-dot{background:var(--red)}
+.chip-status{padding:3px 9px;font-size:11.5px;color:var(--fg-dim);min-width:0}
+.chip-status>span{overflow:hidden;text-overflow:ellipsis;max-width:60ch}
+.chip-status[data-tone=warn]{color:var(--yellow-text)}.chip-status[data-tone=alarm]{color:var(--red-text)}
+.chip-sim{background:transparent;border-color:var(--amber-border);color:var(--amber);letter-spacing:.07em;text-transform:uppercase}
+.chip[hidden]{display:none}
+/* Flat push buttons: indicator · key · label in capitals beside it. */
+#panel-quick-actions{gap:56px}
+#panel-quick-actions :is(#panel-reset,#yard-authority){flex-direction:row;align-items:center;gap:10px;min-width:0;min-height:0;padding:4px 6px;font:400 10.5px/1.3 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-muted)}
+:is(#panel-reset-label,#yard-authority-label){order:1;max-width:none;text-align:left}
+.console-ind{width:7px;height:7px;border-radius:50%;background:var(--red-lamp-off);border:1px solid var(--red-border);flex:none}
+:is(#panel-reset,#yard-authority) .reset-switch{width:24px;height:24px;flex:none}
+.reset-key-rim{fill:var(--button-face);stroke:var(--button-border);stroke-width:1.2}
+.reset-key-face{fill:var(--button-face);stroke:none;transition:fill 100ms}
+:is(#panel-reset,#yard-authority):hover:not(:disabled) .reset-key-rim{stroke:#5c656d}
+:is(#panel-reset,#yard-authority):active:not(:disabled) .reset-key-face{fill:#cfd5db;transform:none}
+:is(#panel-reset,#yard-authority)[aria-busy=true] .console-ind{background:var(--red);border-color:var(--red)}
+#yard-authority[aria-pressed=true] .console-ind{background:#7fa7bb;border-color:#a2c7d8}
+@media(max-width:1200px){#panel-quick-actions{gap:36px}:is(#panel-reset,#yard-authority) .reset-switch{width:22px;height:22px}}
+@media(orientation:portrait) and (max-width:900px){#plan-head-right{display:none}#plan-head{max-width:calc(100% - 70px)}}
+@media(max-width:500px){#plan-head,#plan-head-right{display:none}}
+@media(max-height:430px){#plan-head-right{display:none}#plan-head{left:44px;top:4px;height:28px}}

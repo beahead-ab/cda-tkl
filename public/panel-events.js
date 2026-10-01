@@ -3,6 +3,7 @@
 // (the button disappears, the row stays) until the core has an acknowledgement
 // order; nothing is sent anywhere.
 import {FILTERS,alarmCount,eventKey,filterEvents,latestAlarm,tone} from './panel-events-model.js';
+import {objectFromMessage} from './plan-objects.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const time=at=>new Date(at).toLocaleTimeString('sv-SE');
 
@@ -18,7 +19,8 @@ export function createPanelEvents(){
   const filters=root.querySelector('.ev-filters'),content=root.querySelector('#ev-content'),acked=new Set();
   let filter='all',events=[],last='';
   filters.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;for(const o of filters.querySelectorAll('[data-filter]'))o.setAttribute('aria-pressed',String(o===b));render();});
-  content.addEventListener('click',e=>{const b=e.target.closest('[data-ack]');if(!b)return;acked.add(b.dataset.ack);render();});
+  // A row that names a turnout, signal, block or route marks it on the plan with the yellow ring.
+  content.addEventListener('click',e=>{const b=e.target.closest('[data-ack]');if(b){acked.add(b.dataset.ack);render();return;}const row=e.target.closest('.ev-row');const target=row&&objectFromMessage(row.querySelector('.ev-text')?.textContent);if(target)window.dispatchEvent(new CustomEvent('panel-highlight',{detail:target}));});
   function render(){
     const rows=filterEvents(events,filter);
     const html=rows.map(e=>{const t=tone(e.kind),key=eventKey(e);return '<div class="ev-row ev-'+t+'" data-key="'+esc(key)+'"><time datetime="'+esc(new Date(e.at).toISOString())+'">'+esc(time(e.at))+'</time><i class="ev-dot" aria-hidden="true"></i><span class="ev-text" title="'+esc(e.message)+'">'+esc(e.message)+'</span>'+(t==='alarm'&&!acked.has(key)?'<button type="button" class="ev-ack" data-ack="'+esc(key)+'">Kvittera</button>':'')+'</div>';}).join('')||'<p class="ev-empty">Inga händelser.</p>';

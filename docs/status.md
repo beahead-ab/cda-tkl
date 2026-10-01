@@ -4,7 +4,7 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Färdigt i den körbara grunden
 
-- Ren ställverkssida med fullskärm, manöverknappar och en nederrad med klockförankrad tidtabell och händelsekolumn under spårplanen, som skalas till bredden (0.43.0). En [meny](panel-och-verktyg.md) samlar TrainMeet, import, utseende, anslutningar och händelser. Signal- och kompisinformation visas vid behov; aktiva stopp och fel är fortsatt synliga.
+- Ren ställverkssida med fullskärm, manöverknappar och en nederrad med klockförankrad tidtabell och händelsekolumn under spårplanen, som skalas till bredden (0.43.0). Planen är harmoniserad med nederradens färger och typografi och har en statusrad över det övre bandet (0.44.0). En [meny](panel-och-verktyg.md) samlar TrainMeet, import, utseende, anslutningar och händelser. Signal- och kompisinformation visas vid behov; aktiva stopp och fel är fortsatt synliga.
 
 - Originalpanelen med förladdade originalikoner, större träffytor och tågväg som tänds i färdriktningen. Samma start och mål återtar vägen.
 - 210 huvudtågvägar och 130 växeltågvägar med etablerings- och passageprov. 49 växlar, 197 körbara layoutblock och 66 signaler. Låsta växlar kan inte läggas om manuellt. Kompisväxlar följer med; omläggning kontrollerar även kompisens spår utanför färdvägen.

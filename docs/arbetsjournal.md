@@ -945,3 +945,13 @@ journalen, IBM Plex lokalt, brytpunkter för iPad stående, iPhone stående och
 liggande. Nya rena moduler timetable-rows.js och panel-events-model.js med
 prov; layoutregler provas statiskt och geometrin i webbläsaren, se
 panel-och-verktyg.md. Tågvägs-, lås- och signallogik orörd; inga nya anrop.
+
+## Release 0.44.0 · harmoniserat ställverk
+
+Committad 1 oktober, ännu inte publicerad. Korrektur 4 (STÄLLVERK.md) införd:
+planens färger, linjevikter och typografi följer nederradens tokens
+(public/tokens.css, avgränsade till ställverkssidan), statusrad över planens
+övre band med kärnans meddelande och gateway-, simulerings- och zoomchips,
+platta tryckknappar, gul markeringsring från händelse- och tågrader. Nya rena
+moduler plan-objects.js (etikettklass, objekt ur journalrad) och panel-head.js.
+Geometri, träffytor, zoom och logik orörda.

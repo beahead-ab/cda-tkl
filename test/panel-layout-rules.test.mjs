@@ -36,3 +36,14 @@ test('the event column reads the journal with the same filter as the tools page'
   assert.ok(app.includes('panelEvents?.update(state,online)'));
   assert.ok(!/api\('events|api\("events/.test(read('public/panel-events.js')),'no new API calls');
 });
+
+test('the harmonised plan reads its colours from scoped tokens and only restyles',()=>{
+  const tokens=read('public/tokens.css'),css=read('public/panel-fixed.css'),html=read('public/index.html');
+  assert.ok(html.includes('href="/tokens.css"'));
+  assert.ok(!/^:root\s*\{/m.test(tokens),'tokens are scoped to the panel, not :root');
+  assert.ok(tokens.includes('body.panel-app .panel-shell {'));
+  assert.match(css,/#track-plan \.rail\.main\{stroke:var\(--track-main\)/);
+  assert.match(css,/#track-plan \.turnout-number\.locked\{fill:var\(--yellow\)/);
+  assert.match(css,/#track-plan \.hilite\{fill:none;stroke:var\(--yellow\)/);
+  assert.ok(!read('public/panel-head.js').includes('fetch('),'the status bar sends nothing');
+});
