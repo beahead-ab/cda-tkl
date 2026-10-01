@@ -937,7 +937,7 @@ igen. Serverprov 74 + 5; backup och efterkontroll i drift.md.
 
 ## Release 0.43.0 · nederrad med tidtabell och händelser
 
-Committad 1 oktober, ännu inte publicerad. Designunderlaget "Jimri TKL panel
+`b635c78` publicerad 1 oktober 22:50; backup och efterkontroll i drift.md. Designunderlaget "Jimri TKL panel
 design3" infört enligt README §1–§7: layoutregeln (planen skalas till bredden,
 nederraden får resten, golv 300 px), klockförankrad tidtabell med Slag, Från,
 Till, Läge och Anmärkning utan bläddring, ny händelsekolumn som bara läser

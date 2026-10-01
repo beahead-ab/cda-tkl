@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `e9a905b` · version 0.42.3 (1 oktober 2026, 21:32) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/e9a905b` |
+| Driftsatt kodversion | `b635c78` · version 0.43.0 (1 oktober 2026, 22:50) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/b635c78` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -668,3 +668,17 @@ enhetstester och 5 processprov. Backup:
 tjänster aktiva, TKL ny process 216296, version 0.42.3, driftdata oförändrade.
 Verifierat i webbdriften: dialogen öppnas, stationslistan laddas med
 Charlottendal förvald. Webbdriftens parkoppling med kod återstår.
+
+## Version 0.43.0 · nederrad med tidtabell och händelser
+
+`b635c78` aktiverad 1 oktober 2026, 22:50 svensk tid med deploy/publish-release.sh
+(skriptet kördes två gånger från appens terminal; den andra körningen stoppades
+av vakten "finns redan" utan åtgärd). Planen skalas till bredden, konsolen är
+54 px och nederraden med klockförankrad tidtabell och händelsekolumn får resten;
+IBM Plex serveras lokalt. Endast TKL startades om, simulatorns process 140318
+behölls, noll lås före bytet. Backup:
+`/root/charlottendal-backups/network-b635c78-20261001T205049Z`. Efterkontroll:
+tjänster aktiva, TKL ny process 219273, version 0.43.0, driftdata oförändrade.
+Verifierat i webbdriften: version 0.43.0, ingen sidscroll, golvregeln ger planen
+687×225 och nederraden 372 px vid 704×653, typsnitten laddade; tidtabellen är tom
+tills stationen parkopplats.
