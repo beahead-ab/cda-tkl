@@ -18,7 +18,9 @@ export const NAVIGATION_SECTIONS=[
     {hash:'#import/edit',label:'Redigera utkast',title:'Redigera tidtabell'}]},
   {hash:'#tools/journal',label:'Händelser',id:'journal-tab',title:'Händelser',tabs:[]},
   {hash:'#tools/appearance',label:'Utseende',id:'tools-tab',title:'Utseende och ljud',tabs:[]},
-  {hash:'#tools/streamdeck',label:'Stream Deck',id:'streamdeck-tab',title:'Elgato Stream Deck',tabs:[]},
+  {hash:'#tools/streamdeck',label:'Stream Deck',id:'streamdeck-tab',title:'Elgato Stream Deck',tabs:[
+    {hash:'#tools/streamdeck',label:'Anslutning'},
+    {hash:'#tools/streamdeck/layout',label:'Layout',title:'Stream Deck-layout'}]},
   {hash:'#register',label:'Anläggning',id:'admin-tab',title:'Anläggningsregister',tabs:[
     {hash:'#register',label:'Anläggningsregister'},
     {hash:'#register/station',label:'Anläggningsöversikt'},

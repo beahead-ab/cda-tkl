@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {NAVIGATION_SECTIONS,resolveNavigation} from '../public/admin-navigation-model.js';
 
 const registered=['#tools/operations','#tools/operations/routes','#tools/operations/clearance','#tools/operations/blocks','#tools/operations/lines','#tools/operations/trains','#tools/operations/clock','#tools/operations/authority',
-  '#trainmeet','#import','#import/upload','#import/edit','#tools/appearance','#tools/streamdeck','#tools/journal',
+  '#trainmeet','#import','#import/upload','#import/edit','#tools/appearance','#tools/streamdeck','#tools/streamdeck/layout','#tools/journal',
   '#register','#register/station','#register/destinations','#register/presentation','#register/bindings','#register/object',
   '#advanced','#advanced/xml','#advanced/migration','#advanced/protocol'];
 

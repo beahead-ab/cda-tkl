@@ -72,7 +72,9 @@
       <li><strong>På träffens Raspberry Pi</strong> körs Chromium i helskärm mot <code>http://127.0.0.1:8910</code> med en udev-regel för enheten; det ingår i Pi-installationen.</li>
     </ol></section>
     <section class="card"><h3>Knapparna</h3><p class="muted">Ett tryck gör samma sak som ett klick på spårplanen, med samma spärrar. Sida 1 börjar med driftknapparna; när TrainMeet är parkopplad följer en avgångs- och en ankomstknapp per sträcka, där kort tryck tar nästa steg i klareringen och långt tryck återtar eller nekar. Därefter kommer plupparna, linjer före spår. Återställ panel kräver att knappen hålls in en sekund.</p><div id="streamdeck-pages" class="muted"></div></section>
+    <section class="card" id="streamdeck-layout-card"><div class="card-heading"><span class="admin-scope">Hela anläggningen</span><h3>Knapplayout</h3></div><p id="streamdeck-layout-summary" class="muted"></p><div class="admin-actions"><button id="streamdeck-layout-edit" type="button">Redigera layout</button><button id="streamdeck-layout-reset" type="button">Återgå till standard</button></div></section>
   </section>
+  <section id="streamdeck-layout-editor" hidden></section>
 </main>
 <main id="trainmeet-view" hidden><div class="tools-heading"><h1 tabindex="-1">TrainMeet</h1><span class="admin-scope">Hela anläggningen</span><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div><p class="muted">Anslut till träffen och läs Charlottendals tågrörelser.</p><section id="trainmeet" class="card"></section></main>
 <main id="import-view" hidden><div class="tools-heading"><h1 tabindex="-1">Tidtabeller</h1><span class="admin-scope">Hela anläggningen</span><a class="back-to-panel" href="#panel">Tillbaka till ställverket →</a></div><section id="timetable-settings" class="card"></section><div id="timetable-import"></div></main>

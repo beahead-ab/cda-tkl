@@ -1,6 +1,7 @@
 import {connectionInfo,commandExpectations,protocolObjects} from './communication-diagnostics.mjs';
 import http from 'node:http';
 import {Destinations} from './destinations.mjs';
+import {StreamDeckLayouts} from './stream-deck-layout.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -79,7 +80,9 @@ function installRuntime(next,start=true){
 trainMeet.on('change',()=>{dirty=true;});trainMeet.on('journal',text=>{engine.log('trainmeet',text);dirty=true;});
 timetableImport.on('change',()=>{dirty=true;});
 installRuntime(createRuntime(bindings.profile()),false);
-const snapshot = () => {const state=engine.snapshot();return { ...state,connectionInfo:connectionInfo(profile),destinations:destinations.view(),bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),timetableImport:timetableImport.summary(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
+// Layouts are checked against the live profile's pluppar, so the store is created once the runtime exists.
+const streamDeckLayouts=new StreamDeckLayouts(storage,{pluppIds:()=>Object.keys(profile?.buttons||{})});
+const snapshot = () => {const state=engine.snapshot();return { ...state,connectionInfo:connectionInfo(profile),destinations:destinations.view(),streamDeck:streamDeckLayouts.view(),bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),timetableImport:timetableImport.summary(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -135,6 +138,7 @@ const server = http.createServer(async (req, res) => {
     const data = await body(req,url.pathname==='/api/timetable-import/save'?2*1024*1024:65536);
     if(url.pathname.startsWith('/api/timetable-import/')){const command=url.pathname.slice('/api/timetable-import/'.length);if(!['manual','edit','append','save','sheet','activate','discard','select'].includes(command))return json(res,{error:'Okänd tidtabellsåtgärd'},404);return json(res,timetableImport[command](data));}
     if(url.pathname.startsWith('/api/bindings/')){const command=url.pathname.slice('/api/bindings/'.length);if(!['save','discard','restore','activate'].includes(command))return json(res,{error:'Okänd driftinställning'},404);const result=bindings[command](data);engine.log('bindings',command==='activate'?'Driftprofil version '+result.activeVersion+' aktiverad. AIS kvarstår, alla rapporter läses in på nytt.':'Driftinställningarnas utkast uppdaterat.');dirty=true;return json(res,result);}
+    if(url.pathname.startsWith('/api/streamdeck/')){const command={save:'save',activate:'activate',discard:'discard',reset:'reset'}[url.pathname.slice('/api/streamdeck/'.length)];if(!command)return json(res,{error:'Okänd Stream Deck-åtgärd'},404);const result=streamDeckLayouts[command](data);dirty=true;if(command==='activate')engine.log('streamdeck','Stream Deck-layout version '+result.activeVersion+' aktiverad.');if(command==='reset')engine.log('streamdeck','Stream Deck använder standardlayouten.');return json(res,result);}
     if(url.pathname==='/api/destinations'){const result=destinations.save(data,trainMeet.context?.stations||[]);dirty=true;return json(res,result);}
     if(url.pathname.startsWith('/api/trainmeet/')){const command={configure:'configure',pair:'pair',refresh:'refresh',disconnect:'disconnect','operator-name':'setOperatorName',clearance:'clearance',movement:'movement'}[url.pathname.slice('/api/trainmeet/'.length)];if(!command)return json(res,{error:'Okänd TrainMeet-åtgärd'},404);return json(res,await trainMeet[command](data));}
     if(url.pathname==='/api/clock'){const result=modelClock.change(data);dirty=true;engine.log('clock','Modellklockan '+(result.running?'går':'är pausad')+' med hastighet '+result.rate+'×.');return json(res,result);}

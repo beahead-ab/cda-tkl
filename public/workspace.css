@@ -137,3 +137,20 @@ body[data-skin=relay] #trainmeet-timetable{border-color:#8b8973;background:#b3ba
 .streamdeck-steps li{margin:6px 0}
 .streamdeck-steps code{font-size:12px;background:#222120;padding:1px 5px;border-radius:3px}
 #streamdeck-pages p{margin:4px 0;font-size:12px}
+/* Stream Deck-layout */
+.sde-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin:12px 0}
+.sde-toolbar label{display:flex;flex-direction:column;gap:4px;font-size:12px}
+.sde-import{cursor:pointer;padding:9px 13px;border:1px solid var(--border);border-radius:6px;background:#20292e;font-size:13px}
+.sde-pages{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 8px}
+.sde-pages button{padding:6px 12px;font-size:12px}
+.sde-pages button.selected{background:#354740;border-color:#617b64;color:#e4efdf}
+.sde-page-actions{margin-bottom:12px}
+.sde-grid{display:grid;gap:8px;max-width:760px}
+.sde-key{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;border:1px solid var(--border);border-radius:8px;background:#141413;color:var(--text);font-size:12px;text-align:center;overflow:hidden}
+.sde-key.empty{color:var(--muted);border-style:dashed}
+.sde-key.selected{outline:2px solid #fff2bd;outline-offset:2px}
+.sde-key.system{background:#1d1a1a}.sde-key.train{background:#15201a}.sde-key.page{background:#1a1a22}
+.sde-key-type{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.sde-key-label{font-weight:500;line-height:1.2;overflow-wrap:anywhere}
+#sde-key-form [data-for][hidden]{display:none}
+#sde-plupp{min-width:260px}

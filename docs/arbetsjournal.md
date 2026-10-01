@@ -893,3 +893,12 @@ genom övertagande av en annan terminal; Koppla från avslutar vårt pass.
 Kvar är bara namnet som visas för grannarna, i anslutningsdialogen. Kommandona
 shift-start, shift-finish och auto-shift är borta; operator-name är nytt.
 Syntax, 299 enhetstester och 10 integrationstester godkända.
+
+## 1 oktober – Stream Deck-layoutredigerare (lokalt, ej publicerad)
+
+Layouten sparas på TKL-servern som driftdata med utkast, aktivering och
+revisioner, validerad mot installationens pluppar. Redigerare under
+Stream Deck → Layout med modell, sidor, rutnät, knappdialog, byte av plats,
+standardlayout, export och import. Decket följer aktiv layout direkt; saknat
+underlag visas dämpat. Se streamdeck-forstudie.md. Syntax, riktade tester,
+processprov och API-prov godkända; webbläsarprov av redigeraren utan fel.

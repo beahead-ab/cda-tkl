@@ -7,8 +7,9 @@
 import sd from './vendor/elgato-stream-deck-webhid.js';
 import {buildPages,pluppSpec,systemSpec,signature,COLORS} from './stream-deck-layout.js';
 import {departureKey,arrivalKey} from './stream-deck-trains.js';
+import {layoutPages,fits,keyCount,modelFor} from './stream-deck-profile.js';
 const STORAGE='charlottendal-streamdeck',LONG_PRESS=800;
-export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,online,chosen,trainMeet}){
+export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,online,chosen,trainMeet,layout}){
   const $=id=>document.getElementById(id),statusNode=$('streamdeck-status'),connectButton=$('streamdeck-connect'),disconnectButton=$('streamdeck-disconnect'),originNode=$('streamdeck-origin'),pagesNode=$('streamdeck-pages');
   const supported=typeof navigator!=='undefined'&&!!navigator.hid&&window.isSecureContext;
   let deck=null,controls=[],size=72,pages=[[]],pagesSig='',page=0,shown=new Map(),downAt=new Map(),blinkOn=false,timer=null,rendering=false,again=false;
@@ -46,15 +47,19 @@ export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,o
   if(supported)navigator.hid.addEventListener('disconnect',()=>{if(deck){deck=null;controls=[];shown=new Map();if(timer){clearInterval(timer);timer=null;}status('Stream Deck frånkopplad. Anslut den igen så återupptas visningen.');}});
   const context=()=>trainMeet()?.context||null;
   function lines(){return context()?.lines||[];}
+  // The saved layout wins when it fits the connected deck; otherwise the automatic one.
+  function activeLayout(){const saved=layout?.()?.active;return saved&&fits(saved,controls.length)?saved:null;}
   function keys(){
-    const list=pluppar(),current=lines(),sig=list.length+'|'+current.map(l=>l.id).join(',')+'|'+controls.length;
-    if(sig!==pagesSig){pagesSig=sig;pages=buildPages(list,controls.length,current);if(page>=pages.length)page=0;describe();}
+    const list=pluppar(),current=lines(),saved=activeLayout(),sig=list.length+'|'+current.map(l=>l.id).join(',')+'|'+controls.length+'|'+(saved?'v'+layout().activeVersion:'auto');
+    if(sig!==pagesSig){pagesSig=sig;pages=saved?layoutPages(saved,{pluppar:list,lines:current}):buildPages(list,controls.length,current);if(page>=pages.length)page=0;describe();}
     return pages;
   }
+  function info(){const columns=controls.length?Math.max(...controls.map(c=>c.column))+1:0,rows=controls.length?Math.max(...controls.map(c=>c.row))+1:0;return {connected:!!deck,keys:controls.length,columns,rows,model:modelFor(columns,rows),name:deck?.PRODUCT_NAME||''};}
   function describe(){
     if(!pagesNode)return;
-    const name=k=>k.type==='train'?`${k.role==='departure'?'→':'←'} ${k.neighborCode||k.neighborName}`:k.type==='plupp'?k.label:k.title;
-    pagesNode.replaceChildren(...pages.map((p,i)=>{const line=document.createElement('p');line.textContent=`Sida ${i+1}: ${p.map(name).join(' · ')}`;return line;}));
+    const name=k=>!k?'tom':k.type==='train'?`${k.role==='departure'?'→':'←'} ${k.neighborCode||k.neighborName}`:k.type==='plupp'?k.label:k.type==='missing'?'saknas ('+k.label+')':k.title;
+    const saved=activeLayout();
+    pagesNode.replaceChildren(...pages.map((p,i)=>{const line=document.createElement('p');line.textContent=`${saved?saved.pages[i]?.name||'Sida '+(i+1):'Sida '+(i+1)}: ${p.map(name).join(' · ')}`;return line;}));
   }
   function trainSpec(key){
     const c=context(),line=c?.lines.find(l=>l.id===key.lineId);
@@ -71,6 +76,8 @@ export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,o
   function press(index,held){
     if(!deck)return;const key=keys()[page]?.[index];if(!key)return;
     if(key.type==='plupp')return choose(key.id,key.kind);
+    if(key.type==='page'){page=Math.min(key.target,keys().length-1);update(true);return;}
+    if(key.type==='missing')return message('Knappen '+key.label+' saknar underlag i den här installationen.');
     if(key.type==='train'){
       const spec=trainSpec(key),long=held>=LONG_PRESS;
       const action=long?spec.long:spec.short;
@@ -124,13 +131,13 @@ export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,o
         const key=current[page][control.index];
         const spec=!key?{kind:'empty',lines:[],dim:true,blink:false}
           :key.type==='plupp'?pluppSpec(key,new Set(nodes.get(key.id)?.classList||[]),nodes.get(key.id)?.dataset.routePhase||'')
-          :key.type==='train'?trainSpec(key):systemSpec(key,ctxSystem);
+          :key.type==='train'?trainSpec(key):key.type==='page'?{kind:'system',id:'page',title:key.title,lines:['Sida',key.title],caption:'',fill:'',ring:'',dim:false,blink:false,blocked:false}:key.type==='missing'?{kind:'system',id:'missing',title:key.title,lines:[key.title,key.label],caption:'',fill:'',ring:'',dim:true,blink:false,blocked:false}:systemSpec(key,ctxSystem);
         if(!online()&&spec.kind!=='empty')spec.dim=true;
         const sig=signature(spec,blinkOn);
         if(!force&&shown.get(control.index)?.sig===sig)continue;
         draw(spec);await deck.fillKeyCanvas(control.index,canvas);shown.set(control.index,{sig,blink:spec.blink});
       }
-      status(`${deck.PRODUCT_NAME} · ${controls.length} knappar · sida ${page+1} av ${current.length}`);
+      status(`${deck.PRODUCT_NAME} · ${controls.length} knappar · sida ${page+1} av ${current.length} · ${activeLayout()?'egen layout version '+layout().activeVersion:'standardlayout'}`);
     }catch(e){message('Stream Deck kunde inte uppdateras: '+(e?.message||e));}
     finally{rendering=false;if(again){again=false;update();}}
   }
@@ -138,5 +145,5 @@ export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,o
   if(disconnectButton)disconnectButton.onclick=()=>detach(true);
   let auto=false;try{auto=localStorage.getItem(STORAGE)==='auto';}catch{}
   if(auto&&supported)connect(false);
-  return {update:()=>update(false),connect,detach};
+  return {update:()=>update(false),connect,detach,info};
 }
