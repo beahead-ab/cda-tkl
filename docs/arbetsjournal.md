@@ -948,7 +948,7 @@ panel-och-verktyg.md. Tågvägs-, lås- och signallogik orörd; inga nya anrop.
 
 ## Release 0.44.0 · harmoniserat ställverk
 
-Committad 1 oktober, ännu inte publicerad. Korrektur 4 (STÄLLVERK.md) införd:
+Publicerad tillsammans med 0.44.1, se nedan. Korrektur 4 (STÄLLVERK.md) införd:
 planens färger, linjevikter och typografi följer nederradens tokens
 (public/tokens.css, avgränsade till ställverkssidan), statusrad över planens
 övre band med kärnans meddelande och gateway-, simulerings- och zoomchips,
@@ -958,7 +958,7 @@ Geometri, träffytor, zoom och logik orörda.
 
 ## Release 0.44.1 · händelsekolumnen visar driftskeenden
 
-Committad 1 oktober, ännu inte publicerad. Casper såg att kolumnen fylldes
+`3b98895` publicerad 1 oktober 23:44; backup och efterkontroll i drift.md. Casper såg att kolumnen fylldes
 av "Signal 1/1: begär körmedgivande": kärnans fältordrar (slagen order och
 permission) och administrativa rader döljs nu i kolumnen men står kvar i
 journalen under Verktyg. Adaptern journalför vad en avläsning visar har hänt

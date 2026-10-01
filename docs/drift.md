@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `b635c78` · version 0.43.0 (1 oktober 2026, 22:50) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/b635c78` |
+| Driftsatt kodversion | `3b98895` · version 0.44.1 (1 oktober 2026, 23:44) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/3b98895` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -683,3 +683,18 @@ tjänster aktiva, TKL ny process 219273, version 0.43.0, driftdata oförändrade
 Verifierat i webbdriften: version 0.43.0, ingen sidscroll, golvregeln ger planen
 687×225 och nederraden 372 px vid 704×653, typsnitten laddade; tidtabellen är tom
 tills stationen parkopplats.
+
+## Version 0.44.1 · harmoniserat ställverk och händelser som driftskeenden
+
+`3b98895` aktiverad 1 oktober 2026, 23:44 svensk tid med deploy/publish-release.sh
+i appens terminal; innehåller 0.44.0 (harmoniserad plan, statusrad, platta
+knappar, markeringsring) och 0.44.1 (kolumnen döljer fältordrar, TrainMeet-
+iakttagelser journalförs). Endast TKL startades om, simulatorns process 140318
+behölls, noll lås före bytet. Serverns prov: syntax, 75 riktade enhetstester
+och 5 processprov. Backup:
+`/root/charlottendal-backups/network-3b98895-20261001T214417Z`. Efterkontroll:
+tjänster aktiva, TKL ny process 222032, version 0.44.1, driftdata oförändrade.
+Verifierat i webbdriften: version 0.44.1, statusraden, 90 huvudspår, sju
+riktningsplåtar, inga konsolfel. Händelsekolumnen var tom: kärnans buffert på
+150 händelser innehöll efter omstarten bara fältrapporter (slaget report),
+som kolumnen och Verktyg → Händelser döljer.
