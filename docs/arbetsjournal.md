@@ -902,3 +902,10 @@ Stream Deck → Layout med modell, sidor, rutnät, knappdialog, byte av plats,
 standardlayout, export och import. Decket följer aktiv layout direkt; saknat
 underlag visas dämpat. Se streamdeck-forstudie.md. Syntax, riktade tester,
 processprov och API-prov godkända; webbläsarprov av redigeraren utan fel.
+
+## Publicering 0.42.0
+
+`cacd971` publicerad 1 oktober 17:34 med deploy/publish-release.sh efter
+Caspers begäran, med omstart av enbart TKL. Backup, serverprov och
+efterkontroll dokumenterade i drift.md. Produktionen körde dessförinnan en
+odokumenterad release `142b514`; den finns kvar på servern.

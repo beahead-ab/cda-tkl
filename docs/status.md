@@ -17,7 +17,7 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 ## Publicerat på webbadressen
 
-**Aktuellt: 0.41.0, release `381a9ea`, publicerad 26 september 12:07.** Webbdriften kör uttryckligen i simuleringsläge. Anläggningsöversikt och kommunikationsdiagnostik är införda; fysisk MGP tas senare enligt användarens beslut. Se [handhavande](anlaggningsoversikt-kommunikation.md) och [aktuell driftjournal](drift.md). Följande avsnitt beskriver tidigare etapper.
+**Aktuellt: 0.42.0, release `cacd971`, publicerad 1 oktober 17:34.** Innehåller sex menyingångar, TrainMeet-klarering som TMBox, träffnätsstöd och Stream Deck; se arbetsjournalen. Tidigare: Webbdriften kör uttryckligen i simuleringsläge. Anläggningsöversikt och kommunikationsdiagnostik är införda; fysisk MGP tas senare enligt användarens beslut. Se [handhavande](anlaggningsoversikt-kommunikation.md) och [aktuell driftjournal](drift.md). Följande avsnitt beskriver tidigare etapper.
 
 Version **0.33.0**, release `8bef196`, publicerades 26 september kl. 02:51 på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/) utan omstart. [Linje och adminprinciperna](admin-linje.md) är införda, med gemensam vänstermeny för samtliga adminvyer, separata redigeringsflöden och en renare panel. Meny → Zoom behåller reglage 50–300 %, Visa hela och lokalt sparat val. Original är enda panelutseendet. Backend är oförändrad från 0.30.0 och driftdata bevarades. Se driftjournalen för rollback av gränssnittsöverlägget.
 

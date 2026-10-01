@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `381a9ea` · version 0.41.0 (26 september 2026, 12:07) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/381a9ea` |
+| Driftsatt kodversion | `cacd971` · version 0.42.0 (1 oktober 2026, 17:34) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/cacd971` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -605,3 +605,24 @@ godkända lokalt. Serverns 15 riktade prov, syntax och alla nio integrationsprov
 godkända före aktivering. Efterkontroll: tjänster aktiva, ansluten simulator,
 skyddade API:er inklusive kommunikationsvyn, inloggad 0.41.0 och inga
 JavaScript-fel. Protokollvyn visar matchande U4-återrapport från simulatorn.
+
+## Version 0.42.0 · TrainMeet-klarering, Stream Deck och sex menyingångar
+
+`cacd971` aktiverad 1 oktober 2026, 17:34 svensk tid, med det nya skriptet
+deploy/publish-release.sh kört i appens terminal på Caspers Mac på hans begäran.
+Endast TKL startades om; simulatorns process 140318 behölls. Noll sparade
+tågvägslås före bytet. Den dittills körande releasen var `142b514`, som inte
+finns i det lokala arkivet eller i den här journalen; katalogen ligger kvar
+under /opt/charlottendal/releases.
+
+Backup: `/root/charlottendal-backups/network-cacd971-20261001T153444Z` med
+driftdata, inloggning och inställningar. Serverns prov före aktivering: syntax,
+69 riktade enhetstester och 5 processprov godkända. Efterkontroll: båda
+tjänsterna aktiva, TKL ny process 208066, version 0.42.0 i current, ren
+omstart i journalen. routes.json skrevs om med nytt profilfingeravtryck och
+fortsatt noll lås; övriga driftdata oförändrade. Lokal HTTP-kontroll mot
+127.0.0.1 ger 400 eftersom servern bara godtar den publika adressen.
+
+Återstår i webbdriften: parkoppling mot server.trainmeet.app med serverns
+anslutningskod, varefter stationen tas i tjänst automatiskt, samt anslutning
+av Stream Deck från Chrome mot https://cda-tkl.trainmeet.app.
