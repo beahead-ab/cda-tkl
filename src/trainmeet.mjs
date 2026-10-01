@@ -43,9 +43,29 @@ function readShift(value){
   if(!record(value)||!identity(value.shift_id)||!text(value.operator_name,80)||!value.operator_name.trim())fail('Ogiltigt trafikpass från TrainMeet.',502);
   return {id:value.shift_id,operatorName:value.operator_name,terminalName:optional(value.terminal_name,80),status:optional(value.status,40),startedAt:optional(value.started_at,64),endedAt:optional(value.ended_at,64),note:optional(value.handover_note,1000)};
 }
+// Direction of each movement at the station, read from the service stop lists:
+// the stop before and after this station on the same service. Auxiliary data,
+// so a malformed row is skipped rather than failing the whole read.
+export function routeDirections(routes,trains,station){
+  const result={};if(!Array.isArray(routes)||!Array.isArray(trains)||routes.length>50000)return result;
+  const byService=new Map();
+  for(const r of routes){if(!record(r)||!identity(r.service_id)||!identity(r.station_id)||!Number.isFinite(r.stop_order))continue;if(!byService.has(r.service_id))byService.set(r.service_id,[]);byService.get(r.service_id).push(r);}
+  for(const stops of byService.values())stops.sort((a,b)=>a.stop_order-b.stop_order);
+  for(const t of trains){
+    if(!record(t)||t.station_id!==station||!identity(t.id)||!identity(t.service_id))continue;
+    const stops=byService.get(t.service_id)||[],here=stops.map((s,i)=>[s,i]).filter(([s])=>s.station_id===station);
+    const hit=here.find(([s])=>(s.departure_time??null)===(t.departure_time??null)&&(s.arrival_time??null)===(t.arrival_time??null))||(here.length===1?here[0]:null);
+    if(!hit)continue;const i=hit[1];let p=i,n=i;
+    while(p>0&&stops[p-1].station_id===station)p--;while(n<stops.length-1&&stops[n+1].station_id===station)n++;
+    const from=stops[p-1]?.station_id||'',to=stops[n+1]?.station_id||'';
+    if(!text(from,128)||!text(to,128))continue;
+    result[t.id]={from,to};if(text(t.train_number)&&t.train_number&&!result['#'+t.train_number])result['#'+t.train_number]={from,to};
+  }
+  return result;
+}
 // Lines of this station: static catalogue from the display joined with the
 // live state from the station context. Unknown or missing states stay unknown.
-function readLines(display,context,station,names){
+function readLines(display,context,station,names,codes){
   const catalogue=display.connections??[];
   if(!Array.isArray(catalogue)||catalogue.length>5000)fail('Ogiltig sträckkatalog från TrainMeet.',502);
   const live=new Map();
@@ -58,7 +78,7 @@ function readLines(display,context,station,names){
     if(!identity(c.id)||!identity(c.station_a_id)||!identity(c.station_b_id))fail('Ogiltig sträcka från TrainMeet.',502);
     const neighborId=c.station_a_id===station?c.station_b_id:c.station_a_id,s=live.get(c.id);
     const state=s?s.state:'unknown',direction=!s||state==='free'?'':s.from===station?'out':s.to===station?'in':'';
-    return {id:c.id,neighborId,neighborName:names.get(neighborId)||neighborId,trackType:text(c.track_type,32)?c.track_type:'',state,direction,from:s?.from||'',to:s?.to||'',trainNumber:s?.trainNumber||'',actions:lineActions(state,direction)};
+    return {id:c.id,neighborId,neighborName:names.get(neighborId)||neighborId,neighborCode:codes.get(neighborId)||'',trackType:text(c.track_type,32)?c.track_type:'',state,direction,from:s?.from||'',to:s?.to||'',trainNumber:s?.trainNumber||'',actions:lineActions(state,direction)};
   });
 }
 
@@ -120,7 +140,7 @@ export class TrainMeet extends EventEmitter {
     if(context?.protocol_version!==1||display?.protocol_version!==1||!identity(context.publication_id)||context.publication_id!==display.publication_id||!identity(context.active_day)||context.active_day!==display.active_day||context.station?.id!==station||!record(context.movements)||!Array.isArray(context.connection_states)||!Array.isArray(display.trains)||!Number.isSafeInteger(display.revision)||display.revision<0)fail('TrainMeet-svaret följer inte det granskade kontraktet.',502);
     if(!allowReset&&this.context?.publicationId===display.publication_id&&this.context.day===display.active_day&&display.revision<this.context.revision)fail('TrainMeet skickade en äldre revision. Kontrollera serverbytet och parkoppla på nytt.',502);
     const stations=display.stations??[];
-    if(!Array.isArray(stations)||stations.length>5000||stations.some(s=>!record(s)||!identity(s.id)||!text(s.name,200)||!s.name.trim())||new Set(stations.map(s=>s.id)).size!==stations.length)fail('Ogiltig stationskatalog från TrainMeet.',502);
+    if(!Array.isArray(stations)||stations.length>5000||stations.some(s=>!record(s)||!identity(s.id)||!text(s.name,200)||!s.name.trim()||s.code!=null&&!text(String(s.code),12))||new Set(stations.map(s=>s.id)).size!==stations.length)fail('Ogiltig stationskatalog från TrainMeet.',502);
     const clock=display.clock;
     if(!record(clock)||typeof clock.configured!=='boolean'||typeof clock.running!=='boolean'||!/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(clock.time)||!Number.isFinite(clock.speed)||clock.speed<=0||clock.speed>1000)fail('TrainMeet-klockan kunde inte verifieras.',502);
     const trains=display.trains.filter(t=>t.station_id===station).map(t=>{if(!identity(t.id))fail('Tågrörelse saknar identitet.',502);const result={id:t.id};for(const k of ['train_number','arrival_time','departure_time','track','train_type','arrival_from','departure_to','track_id'])if(t[k]!=null){const value=String(t[k]);if(!text(value))fail('Ogiltig tåginformation.',502);result[k]=value;}return result;});
@@ -128,7 +148,8 @@ export class TrainMeet extends EventEmitter {
     const movements=Object.entries(context.movements).map(([id,m])=>{if(!identity(id)||!record(m)||!Number.isSafeInteger(m.revision)||m.revision<0)fail('Driftpost saknar identitet eller revision.',502);return {id,revision:m.revision,arrival:text(m.arrival)?m.arrival:'',departure:text(m.departure)?m.departure:'',track:text(m.actualTrack)?m.actualTrack:'',crewReady:m.crewReady===true,note:text(m.operatorNote)?m.operatorNote:''};});
     if(!allowReset&&this.context?.publicationId===display.publication_id&&this.context.day===display.active_day)for(const m of movements){const previous=this.context.movements.find(p=>p.id===m.id);if(previous&&m.revision<previous.revision)fail('TrainMeet skickade en äldre driftrevision. Kontrollera serverbytet.',502);}
     const connections=context.connection_states.map(c=>{if(!identity(c.id)||!text(c.state))fail('Ogiltigt förbindelseläge.',502);return {id:c.id,state:c.state,trainNumber:text(c.train_number)?c.train_number:''};});
-    const lines=readLines(display,context,station,new Map(stations.map(s=>[s.id,s.name])));
+    const lines=readLines(display,context,station,new Map(stations.map(s=>[s.id,s.name])),new Map(stations.map(s=>[s.id,s.code==null?'':String(s.code)])));
+    const directions=routeDirections(display.routes,display.trains,station);
     const shift=readShift(context.shift),previousShift=readShift(context.previous_shift);
     // Publications are immutable. Refresh dynamic data every poll and reload the
     // timetable on publication/day/station changes or an explicit refresh.
@@ -136,7 +157,7 @@ export class TrainMeet extends EventEmitter {
     const cached=!allowReset&&!reloadTimetable&&previous?.timetable&&previous.publicationId===display.publication_id&&previous.day===display.active_day&&previous.station.id===station;
     const timetable=cached?{trains:previous.trains,tracks:previous.tracks,operatingPoints:previous.operatingPoints,timetable:previous.timetable}
       :readTimetable(await this.request('/v1/timetable?station_id='+encodeURIComponent(station),{token}),{stationId:station,publicationId:display.publication_id,day:display.active_day,loadedAt:this.now()});
-    return {stations:stations.map(s=>({id:s.id,name:s.name})),publicationId:display.publication_id,revision:display.revision,day:display.active_day,meet:text(display.meet?.name)?display.meet.name:'',station:{id:station,name:text(context.station.name)?context.station.name:station},clock:{time:clock.time,rate:clock.speed,running:clock.running,configured:clock.configured},...timetable,movements,connections,lines,shift,previousShift};
+    return {stations:stations.map(s=>({id:s.id,name:s.name,code:s.code==null?'':String(s.code)})),publicationId:display.publication_id,revision:display.revision,day:display.active_day,meet:text(display.meet?.name)?display.meet.name:'',station:{id:station,name:text(context.station.name)?context.station.name:station},clock:{time:clock.time,rate:clock.speed,running:clock.running,configured:clock.configured},...timetable,movements,connections,lines,directions,shift,previousShift};
   }
   // One TrainMeet exchange at a time, so a poll and an action never interleave
   // their writes to the last good context.

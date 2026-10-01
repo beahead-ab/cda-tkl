@@ -14,9 +14,11 @@ const collator=new Intl.Collator('sv',{numeric:true});
 export function orderPluppar(pluppar){
   return [...pluppar].sort((a,b)=>(a.kind==='shunt')-(b.kind==='shunt')||collator.compare(a.label,b.label));
 }
-export function buildPages(pluppar,keyCount){
+export function buildPages(pluppar,keyCount,lines=[]){
   const ordered=orderPluppar(pluppar),pages=[];let i=0;
   const first=SYSTEM_KEYS.map(k=>({type:'system',...k}));
+  // One departure and one arrival key per line toward a neighbouring station.
+  for(const line of lines)for(const role of ['departure','arrival'])if(first.length<keyCount)first.push({type:'train',role,lineId:line.id,neighborId:line.neighborId,neighborName:line.neighborName,neighborCode:line.neighborCode||''});
   while(first.length<keyCount&&i<ordered.length)first.push({type:'plupp',...ordered[i++]});
   pages.push(first.slice(0,keyCount));
   while(i<ordered.length){const page=[{type:'system',...SYSTEM_KEYS[0]}];while(page.length<keyCount&&i<ordered.length)page.push({type:'plupp',...ordered[i++]});pages.push(page);}

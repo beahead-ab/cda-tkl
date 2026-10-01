@@ -1,18 +1,22 @@
 // Stream Deck as a keyboard for the panel over WebHID. A key press does exactly
 // what a click on the plupp does, through the same choose() and the same API
-// calls, so locks, modes and refusals apply unchanged. Key images are drawn
-// from the pluppar's own classes each paint. Nothing here talks to the field.
+// calls, so locks, modes and refusals apply unchanged. Line keys walk the
+// TMBox sequence for the next train toward or from each neighbour. Key images
+// are drawn from the pluppar's own classes and the TrainMeet context each
+// paint. Nothing here talks to the field.
 import sd from './vendor/elgato-stream-deck-webhid.js';
 import {buildPages,pluppSpec,systemSpec,signature,COLORS} from './stream-deck-layout.js';
-const STORAGE='charlottendal-streamdeck';
-export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,online,chosen}){
-  const $=id=>document.getElementById(id),statusNode=$('streamdeck-status'),connectButton=$('streamdeck-connect'),disconnectButton=$('streamdeck-disconnect');
+import {departureKey,arrivalKey} from './stream-deck-trains.js';
+const STORAGE='charlottendal-streamdeck',LONG_PRESS=800;
+export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,online,chosen,trainMeet}){
+  const $=id=>document.getElementById(id),statusNode=$('streamdeck-status'),connectButton=$('streamdeck-connect'),disconnectButton=$('streamdeck-disconnect'),originNode=$('streamdeck-origin'),pagesNode=$('streamdeck-pages');
   const supported=typeof navigator!=='undefined'&&!!navigator.hid&&window.isSecureContext;
-  let deck=null,controls=[],size=72,pages=[[]],page=0,shown=new Map(),downAt=new Map(),blinkOn=false,timer=null,rendering=false,again=false;
+  let deck=null,controls=[],size=72,pages=[[]],pagesSig='',page=0,shown=new Map(),downAt=new Map(),blinkOn=false,timer=null,rendering=false,again=false;
   const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
   function status(text){if(statusNode)statusNode.textContent=text;if(connectButton)connectButton.hidden=!!deck;if(disconnectButton)disconnectButton.hidden=!deck;}
   if(!supported){status('WebHID saknas här. Använd Chrome, Edge eller Chromium på en säker adress (https eller localhost).');if(connectButton)connectButton.disabled=true;}
   else status('Ej ansluten.');
+  if(originNode)originNode.textContent=`Den här sidan: ${location.origin} · ${!navigator.hid?'WebHID saknas i webbläsaren, öppna adressen i Chrome':!window.isSecureContext?'osäker adress, använd https eller localhost':'WebHID tillgängligt'}.`;
   async function connect(prompt){
     if(!supported)return false;
     try{
@@ -29,7 +33,7 @@ export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,o
     deck.on('down',c=>{if(c.type==='button')downAt.set(c.index,performance.now());});
     deck.on('up',c=>{if(c.type==='button')press(c.index,performance.now()-(downAt.get(c.index)||performance.now()));});
     await deck.clearPanel();await deck.setBrightness(80);
-    page=0;shown=new Map();try{localStorage.setItem(STORAGE,'auto');}catch{}
+    page=0;shown=new Map();pagesSig='';try{localStorage.setItem(STORAGE,'auto');}catch{}
     if(!timer)timer=setInterval(()=>{blinkOn=!blinkOn;if([...shown.values()].some(s=>s.blink))update();},600);
     update(true);
   }
@@ -37,13 +41,43 @@ export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,o
     const d=deck;deck=null;controls=[];shown=new Map();if(timer){clearInterval(timer);timer=null;}
     if(forget){try{localStorage.removeItem(STORAGE);}catch{}}
     if(d){try{await d.clearPanel();}catch{}try{await d.close();}catch{}}
-    status('Ej ansluten.');
+    pagesSig='';if(pagesNode)pagesNode.replaceChildren();status('Ej ansluten.');
   }
   if(supported)navigator.hid.addEventListener('disconnect',()=>{if(deck){deck=null;controls=[];shown=new Map();if(timer){clearInterval(timer);timer=null;}status('Stream Deck frånkopplad. Anslut den igen så återupptas visningen.');}});
-  function keys(){const list=pluppar();if(!pages.length||pages.flat().filter(k=>k.type==='plupp').length!==list.length)pages=buildPages(list,controls.length);return pages;}
+  const context=()=>trainMeet()?.context||null;
+  function lines(){return context()?.lines||[];}
+  function keys(){
+    const list=pluppar(),current=lines(),sig=list.length+'|'+current.map(l=>l.id).join(',')+'|'+controls.length;
+    if(sig!==pagesSig){pagesSig=sig;pages=buildPages(list,controls.length,current);if(page>=pages.length)page=0;describe();}
+    return pages;
+  }
+  function describe(){
+    if(!pagesNode)return;
+    const name=k=>k.type==='train'?`${k.role==='departure'?'→':'←'} ${k.neighborCode||k.neighborName}`:k.type==='plupp'?k.label:k.title;
+    pagesNode.replaceChildren(...pages.map((p,i)=>{const line=document.createElement('p');line.textContent=`Sida ${i+1}: ${p.map(name).join(' · ')}`;return line;}));
+  }
+  function trainSpec(key){
+    const c=context(),line=c?.lines.find(l=>l.id===key.lineId);
+    if(!line)return {kind:'train',role:key.role,neighborCode:key.neighborCode,number:'',time:'',text:'TrainMeet ej ansluten',step:'none',fill:'',blink:false,dim:true,short:null,long:null};
+    return key.role==='departure'?departureKey(line,c):arrivalKey(line,c);
+  }
+  function act(key,action){
+    if(!action)return;
+    const tm=trainMeet();if(!tm?.paired)return message('TrainMeet är inte parkopplad.');
+    const base={sessionId:tm.sessionId,revision:tm.revision};
+    if(action.type==='clearance')return api('trainmeet/clearance',{...base,connectionId:key.lineId,action:action.action,trainNumber:action.trainNumber||''});
+    if(action.type==='movement')return api('trainmeet/movement',{...base,movementId:action.movementId,...(action.departure?{departure:action.departure}:{}),...(action.arrival?{arrival:action.arrival}:{})});
+  }
   function press(index,held){
     if(!deck)return;const key=keys()[page]?.[index];if(!key)return;
     if(key.type==='plupp')return choose(key.id,key.kind);
+    if(key.type==='train'){
+      const spec=trainSpec(key),long=held>=LONG_PRESS;
+      const action=long?spec.long:spec.short;
+      if(action)return act(key,action);
+      if(long&&spec.short)return message('Kort tryck: '+spec.text,{error:false});
+      return message(spec.number?`Tåg ${spec.number}: ${spec.text}.`:spec.text,{error:false});
+    }
     const s=state();
     switch(key.id){
       case 'page':page=(page+1)%keys().length;update(true);return;
@@ -53,33 +87,44 @@ export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,o
       case 'panel-reset':if(held>=1000)return $('panel-reset')?.click();return message('Håll in knappen i en sekund för Återställ panel.',{error:false});
     }
   }
+  const font=(weight,px)=>`${weight} ${px}px -apple-system, "Helvetica Neue", Arial, sans-serif`;
+  function fit(text,max){let t=String(text);while(ctx.measureText(t).width>max&&t.length>3)t=t.slice(0,-2)+'…';return t;}
   function draw(spec){
     const s=size,c=ctx;c.clearRect(0,0,s,s);
     c.fillStyle=spec.kind==='system'&&spec.fill?spec.fill:COLORS.background;c.fillRect(0,0,s,s);
-    const alpha=spec.dim?0.38:1;c.globalAlpha=alpha;
-    if(spec.kind==='plupp'){
-      const r=s*0.17,cx=s/2,cy=s*0.30;
-      if(spec.ring){c.beginPath();c.arc(cx,cy,r+s*0.07,0,Math.PI*2);c.strokeStyle=spec.ring;c.lineWidth=Math.max(2,s*0.04);c.stroke();}
-      c.beginPath();c.arc(cx,cy,r,0,Math.PI*2);c.fillStyle=spec.blink&&!blinkOn?COLORS.background:spec.blink?COLORS.preparing:spec.fill;c.fill();
-      c.strokeStyle=spec.blink?COLORS.preparing:spec.fill;c.lineWidth=Math.max(1.5,s*0.025);c.stroke();
-      if(spec.blocked){c.fillStyle=COLORS.held;c.fillRect(0,0,s,Math.max(3,s*0.05));}
+    c.globalAlpha=spec.dim?0.38:1;c.textAlign='center';c.textBaseline='middle';
+    if(spec.kind==='train'){
+      const bar=spec.blink?(blinkOn?spec.fill:COLORS.background):spec.fill;
+      if(bar){c.fillStyle=bar;c.fillRect(0,0,s,Math.max(4,s*0.08));}
+      c.fillStyle=COLORS.muted;c.font=font(500,s*0.13);c.fillText(`${spec.role==='departure'?'→':'←'} ${spec.neighborCode}${spec.time?' · '+spec.time:''}`,s/2,s*0.24);
+      c.fillStyle=COLORS.text;c.font=font(700,spec.number.length>4?s*0.26:s*0.32);c.fillText(spec.number||'—',s/2,s*0.52);
+      c.fillStyle=spec.fill&&!spec.dim?spec.fill:COLORS.muted;c.font=font(500,s*0.13);c.fillText(fit(spec.text,s-4),s/2,s*0.82);
+    }else{
+      if(spec.kind==='plupp'){
+        const r=s*0.17,cx=s/2,cy=s*0.30;
+        if(spec.ring){c.beginPath();c.arc(cx,cy,r+s*0.07,0,Math.PI*2);c.strokeStyle=spec.ring;c.lineWidth=Math.max(2,s*0.04);c.stroke();}
+        c.beginPath();c.arc(cx,cy,r,0,Math.PI*2);c.fillStyle=spec.blink&&!blinkOn?COLORS.background:spec.blink?COLORS.preparing:spec.fill;c.fill();
+        c.strokeStyle=spec.blink?COLORS.preparing:spec.fill;c.lineWidth=Math.max(1.5,s*0.025);c.stroke();
+        if(spec.blocked){c.fillStyle=COLORS.held;c.fillRect(0,0,s,Math.max(3,s*0.05));}
+      }
+      const dark=spec.kind==='system'&&spec.fill;c.fillStyle=dark?'#1a1414':COLORS.text;
+      const lines=spec.lines||[],big=spec.kind==='plupp'?s*0.2:s*0.17,top=spec.kind==='plupp'?s*0.62:s*0.42;
+      c.font=font(600,big);lines.forEach((line,i)=>c.fillText(fit(line,s-6),s/2,top+i*big*1.15));
+      if(spec.caption){c.font=font(400,s*0.13);c.fillStyle=dark?'#1a1414':COLORS.muted;c.fillText(spec.caption,s/2,s*0.9);}
     }
-    const dark=spec.kind==='system'&&spec.fill;c.fillStyle=dark?'#1a1414':COLORS.text;c.textAlign='center';c.textBaseline='middle';
-    const lines=spec.lines,big=spec.kind==='plupp'?s*0.2:s*0.17,top=spec.kind==='plupp'?s*0.62:s*0.42;
-    c.font=`600 ${big}px -apple-system, "Helvetica Neue", Arial, sans-serif`;
-    lines.forEach((line,i)=>{let text=line;while(c.measureText(text).width>s-6&&text.length>3)text=text.slice(0,-2)+'…';c.fillText(text,s/2,top+i*big*1.15);});
-    if(spec.caption){c.font=`${s*0.13}px -apple-system, "Helvetica Neue", Arial, sans-serif`;c.fillStyle=dark?'#1a1414':COLORS.muted;c.fillText(spec.caption,s/2,s*0.9);}
     c.globalAlpha=1;
   }
   async function update(force=false){
     if(!deck)return;if(rendering){again=true;return;}rendering=true;
     try{
       const current=keys();if(page>=current.length)page=0;
-      const s=state(),context={stopAll:!!s?.controls?.stopAll,chosen:!!chosen(),page,pages:current.length,remote:s?.controls?.mode==='remote'};
+      const s=state(),ctxSystem={stopAll:!!s?.controls?.stopAll,chosen:!!chosen(),page,pages:current.length,remote:s?.controls?.mode==='remote'};
       const nodes=new Map(pluppar().map(p=>[p.id,p.node]));
       for(const control of controls){
         const key=current[page][control.index];
-        const spec=!key?{kind:'empty',lines:[],dim:true,blink:false}:key.type==='plupp'?pluppSpec(key,new Set(nodes.get(key.id)?.classList||[]),nodes.get(key.id)?.dataset.routePhase||''):systemSpec(key,context);
+        const spec=!key?{kind:'empty',lines:[],dim:true,blink:false}
+          :key.type==='plupp'?pluppSpec(key,new Set(nodes.get(key.id)?.classList||[]),nodes.get(key.id)?.dataset.routePhase||'')
+          :key.type==='train'?trainSpec(key):systemSpec(key,ctxSystem);
         if(!online()&&spec.kind!=='empty')spec.dim=true;
         const sig=signature(spec,blinkOn);
         if(!force&&shown.get(control.index)?.sig===sig)continue;

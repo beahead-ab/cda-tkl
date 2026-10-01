@@ -874,3 +874,12 @@ anslutning, fast knapplayout med driftknappar och alla pluppar över flera
 sidor, bilder från plupparnas egna klasser och långtryck för Återställ panel.
 Biblioteket är vendorat under public/vendor. Se streamdeck-forstudie.md.
 Första fysiska provet återstår; ingen enhet var ansluten vid bygget.
+
+## 1 oktober – tågknappar och egen Stream Deck-sida (lokalt, ej publicerad)
+
+Första fysiska provet på en MK.2 gav fem sidor med alla pluppar. Därefter:
+egen ingång Stream Deck i spalten med adress- och webbläsarinformation,
+riktning per tågrörelse ur TrainMeets ruttstopp, och en avgångs- och en
+ankomstknapp per sträcka som går igenom TMBox-sekvensen med kort tryck och
+återtar eller nekar med långt tryck. Se streamdeck-forstudie.md.
+Syntax och riktade tester godkända; fysiskt prov av tågknapparna återstår.

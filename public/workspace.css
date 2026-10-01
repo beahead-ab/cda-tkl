@@ -133,3 +133,7 @@ body[data-skin=relay] #trainmeet-timetable{border-color:#8b8973;background:#b3ba
 .cl-row-actions button{padding:5px 9px;font-size:12px}
 .admin-dialog .cl-check{display:flex;flex-direction:row;justify-content:flex-start;align-items:center;gap:10px;text-align:left;font-size:13px}
 .admin-dialog .cl-check input{width:auto;min-width:0;margin:0;flex:none}
+.streamdeck-steps{padding-left:20px;line-height:1.6;font-size:13px}
+.streamdeck-steps li{margin:6px 0}
+.streamdeck-steps code{font-size:12px;background:#222120;padding:1px 5px;border-radius:3px}
+#streamdeck-pages p{margin:4px 0;font-size:12px}

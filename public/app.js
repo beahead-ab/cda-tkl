@@ -593,7 +593,7 @@ async function start() {
   sourceRegister = createSourceRegister({config,panel,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   signalControls=signalRouteControls(config,registry,signalEndpoints);
   buildPlan();
-  streamDeck=createStreamDeck({pluppar:()=>buttons.filter(b=>b.isRoute).map(b=>({id:b.id,kind:b.kind,node:b.g,label:label(b.id)})),choose,clearChoice,api,message,state:()=>state,online:()=>online&&state?.connection==='connected',chosen:()=>chosen});
+  streamDeck=createStreamDeck({pluppar:()=>buttons.filter(b=>b.isRoute).map(b=>({id:b.id,kind:b.kind,node:b.g,label:label(b.id)})),choose,clearChoice,api,message,state:()=>state,online:()=>online&&state?.connection==='connected',chosen:()=>chosen,trainMeet:()=>state?.trainMeet});
   trainInformation=createTrainInformation({catalog:config.trainFields,controls:layout.controls,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
   $('close-inspector').onclick=()=>closeInspector();
   $('dismiss-message').onclick=()=>message('');
@@ -639,7 +639,7 @@ async function start() {
   panelZoom.subscribe(value=>{$('menu-zoom-value').textContent=zoomLabel(value);});
   $('open-panel-zoom').onclick=e=>{e.preventDefault();e.stopPropagation();appMenu.close();zoomDialog.open();};
   createAdminAppearance({zoom:panelZoom});
-  for(const id of ['appearance','journal'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
+  for(const id of ['appearance','journal','streamdeck'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   for(const id of ['xml','migration','protocol'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
   document.addEventListener('click',e=>{
     const section=e.target.closest('[data-tools-section]');

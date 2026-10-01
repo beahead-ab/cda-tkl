@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import {NAVIGATION_SECTIONS,resolveNavigation} from '../public/admin-navigation-model.js';
 
 const registered=['#tools/operations','#tools/operations/routes','#tools/operations/clearance','#tools/operations/blocks','#tools/operations/lines','#tools/operations/trains','#tools/operations/clock','#tools/operations/authority',
-  '#trainmeet','#import','#import/upload','#import/edit','#tools/appearance','#tools/journal',
+  '#trainmeet','#import','#import/upload','#import/edit','#tools/appearance','#tools/streamdeck','#tools/journal',
   '#register','#register/station','#register/destinations','#register/presentation','#register/bindings','#register/object',
   '#advanced','#advanced/xml','#advanced/migration','#advanced/protocol'];
 
-test('the rail has six entries in the agreed order and every tab keeps an existing address',()=>{
-  assert.deepEqual(NAVIGATION_SECTIONS.map(s=>s.label),['Drift','Tidtabeller','Händelser','Utseende','Anläggning','Avancerat']);
+test('the rail has seven entries in the agreed order and every tab keeps an existing address',()=>{
+  assert.deepEqual(NAVIGATION_SECTIONS.map(s=>s.label),['Drift','Tidtabeller','Händelser','Utseende','Stream Deck','Anläggning','Avancerat']);
   for(const section of NAVIGATION_SECTIONS){
     for(const tab of section.tabs){
       if(tab.external){assert.equal(tab.external,'field-link');continue;}
