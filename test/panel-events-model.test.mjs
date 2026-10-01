@@ -12,8 +12,8 @@ test('tones map the core kinds without changing them',()=>{
   assert.deepEqual(['route-request','train-entered','clock'].map(category),['route','train','other']);
 });
 
-test('filters hide reports and transport like the tools page and count open alarms',()=>{
-  const events=[e(5,'error','Block 3b osäker'),e(4,'report'),e(3,'transport'),e(2,'established'),e(1,'train-entered'),e(0,'route-held')];
+test('filters hide field-level rows (reports, transport, orders, permissions) and count open alarms',()=>{
+  const events=[e(5,'error','Block 3b osäker'),e(4,'report'),e(3,'transport'),e(2,'established'),e(1,'train-entered'),e(0,'route-held'),e(-1,'permission','Signal 1/1: begär körmedgivande.'),e(-2,'order','Vx142: begär rakt.'),e(-3,'streamdeck')];
   assert.deepEqual(visibleEvents(events).map(x=>x.id),[5,2,1,0]);
   assert.deepEqual(filterEvents(events,'alarm').map(x=>x.id),[5]);
   assert.deepEqual(filterEvents(events,'route').map(x=>x.id),[2,0]);

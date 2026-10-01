@@ -5,8 +5,11 @@ const WARN=new Set(['all-stop','route-held','programming-held','line-block','tra
 const OK=new Set(['established','route-active','released','panel-reset-complete','emergency-complete']);
 const ROUTE=new Set(['route-request','route-held','route-active','established','released','cancel','order','emergency','emergency-complete','all-stop','panel-reset','panel-reset-complete','programming','programming-held','unexpected-go']);
 const TRAIN=new Set(['train-entered','train-information','trainmeet','track-block','line-block','yard-authority']);
-// Same filter as the tools page: field reports and transport frames are not journal rows.
-export const HIDDEN_KINDS=['report','transport'];
+// The column shows operating events: routes, trains, alarms. Field-level rows stay in
+// the full journal under Verktyg: reports and transport frames (as there), plus the
+// orders and permission requests the core sends to signals and turnouts, and the
+// administrative rows about Stream Deck layouts, display settings and bindings.
+export const HIDDEN_KINDS=['report','transport','order','permission','streamdeck','configuration','bindings'];
 export const FILTERS=[['all','Alla'],['alarm','Larm'],['route','Tågvägar'],['train','Tåg']];
 export const tone=kind=>ALARM.has(kind)?'alarm':WARN.has(kind)?'warn':OK.has(kind)?'ok':'info';
 export const category=kind=>ROUTE.has(kind)?'route':TRAIN.has(kind)?'train':'other';

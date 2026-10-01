@@ -955,3 +955,13 @@ planens färger, linjevikter och typografi följer nederradens tokens
 platta tryckknappar, gul markeringsring från händelse- och tågrader. Nya rena
 moduler plan-objects.js (etikettklass, objekt ur journalrad) och panel-head.js.
 Geometri, träffytor, zoom och logik orörda.
+
+## Release 0.44.1 · händelsekolumnen visar driftskeenden
+
+Committad 1 oktober, ännu inte publicerad. Casper såg att kolumnen fylldes
+av "Signal 1/1: begär körmedgivande": kärnans fältordrar (slagen order och
+permission) och administrativa rader döljs nu i kolumnen men står kvar i
+journalen under Verktyg. Adaptern journalför vad en avläsning visar har hänt
+hos TrainMeet: tåganmälan från grannstation med väntad tid, ankomst med spår
+och avgång med mål, utan att skicka något. Prov i trainmeet-clearance och
+panel-events-model.

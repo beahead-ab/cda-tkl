@@ -195,10 +195,30 @@ export class TrainMeet extends EventEmitter {
     });
     return this.view();
   }
+  // What a poll shows to have happened at TrainMeet becomes a journal row: a
+  // neighbour's announcement, an arrival, a departure. Nothing is sent; our own
+  // commands journal themselves when they are made.
+  journalTransitions(previous,next){
+    if(!previous||!next||previous.station?.id!==next.station?.id||previous.publicationId!==next.publicationId)return;
+    const trains=new Map(next.trains.map(t=>[t.train_number,t])),lines=new Map(previous.lines.map(l=>[l.id,l]));
+    for(const line of next.lines){
+      const old=lines.get(line.id);
+      if(old&&line.state==='requested'&&line.direction==='in'&&(old.state!=='requested'||old.trainNumber!==line.trainNumber)){
+        const planned=line.trainNumber?trains.get(line.trainNumber):null;
+        this.emit('journal','Tåganmälan '+(line.trainNumber||'utan tågnummer')+' från '+line.neighborName+(planned?.arrival_time?' · väntad '+planned.arrival_time:'')+'.');
+      }
+    }
+    const movements=new Map(previous.movements.map(m=>[m.id,m]));
+    for(const m of next.movements){
+      const old=movements.get(m.id),train=next.trains.find(t=>t.id===m.id);if(!train)continue;
+      if(m.arrival==='arrived'&&old?.arrival!=='arrived')this.emit('journal','Tåg '+train.train_number+' ankommit'+(train.track?' spår '+train.track:'')+'.');
+      if(m.departure==='departed'&&old?.departure!=='departed')this.emit('journal','Tåg '+train.train_number+' avgått'+(train.departure_to?' mot '+train.departure_to:'')+'.');
+    }
+  }
   async refresh(data) {
     if(data)this.check(data);if(this.busy||!this.origin||!this.data.token)return this.view();this.lastAttempt=this.now();
     await this.exclusive(async()=>{
-      try{const next=await this.read(this.data.token,this.data.stationId,false,!!data);this.context=next;this.updatedAt=this.now();this.status='connected';this.error='';}
+      try{const next=await this.read(this.data.token,this.data.stationId,false,!!data);this.journalTransitions(this.context,next);this.context=next;this.updatedAt=this.now();this.status='connected';this.error='';}
       catch(e){this.status='disconnected';this.error=e.status?e.message:'TrainMeet svarar inte. Senaste uppgifter visas som gamla.';}
     });
     // A box is simply in service while it is assigned. Keep the station manned the
@@ -240,7 +260,7 @@ export class TrainMeet extends EventEmitter {
       let failure=null;
       try{await this.request(path,{token:this.data.token,payload});}
       catch(e){failure=e.status?e:Object.assign(Error('TrainMeet kunde inte nås. Åtgärden är inte utförd.'),{status:503});}
-      try{this.context=await this.read(this.data.token,this.data.stationId);this.updatedAt=this.now();this.status='connected';this.error='';}
+      try{const fresh=await this.read(this.data.token,this.data.stationId);this.journalTransitions(this.context,fresh);this.context=fresh;this.updatedAt=this.now();this.status='connected';this.error='';}
       catch(e){this.status='disconnected';this.error=e.status?e.message:'TrainMeet svarar inte. Senaste uppgifter visas som gamla.';}
       if(failure)throw failure;
       after?.();

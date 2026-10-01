@@ -164,3 +164,18 @@ test('the station list comes from the public display without credentials and is 
   r.display.stations=[{id:'cda',name:{bad:true}}];await assert.rejects(()=>r.service.stations(),/stationslista/);
   const unconfigured=new TrainMeet({storage:{load:(n,d)=>structuredClone(d),save(){}}});await assert.rejects(()=>unconfigured.stations(),/inte angiven/);
 });
+
+test('what a poll shows to have happened becomes journal rows: announcement, arrival, departure',async()=>{
+  const r=rig();r.context.shift={shift_id:'s1',operator_name:'Rig',terminal_name:'cda-tkl'};await pair(r);r.journal.length=0;
+  r.context.connection_states[0]={id:'cda-lek',state:'requested',from_station_id:'lek',to_station_id:'cda',train_number:'9'};
+  await r.service.refresh();assert.deepEqual(r.journal,['Tåganmälan 9 från Lekby.']);
+  r.context.connection_states[1]={id:'vag-cda',state:'free',from_station_id:null,to_station_id:null,train_number:null};
+  await r.service.refresh();
+  r.context.connection_states[1]={id:'vag-cda',state:'requested',from_station_id:'vag',to_station_id:'cda',train_number:'3581'};
+  await r.service.refresh();assert.equal(r.journal.at(-1),'Tåganmälan 3581 från Vagnsta · väntad 05:00.');
+  r.context.movements={m1:{revision:1,arrival:'arrived',departure:'none'}};
+  await r.service.refresh();assert.equal(r.journal.at(-1),'Tåg 3581 ankommit spår 3.');
+  r.context.movements={m1:{revision:2,arrival:'arrived',departure:'departed'}};
+  await r.service.refresh();assert.equal(r.journal.at(-1),'Tåg 3581 avgått.');
+  const count=r.journal.length;await r.service.refresh();assert.equal(r.journal.length,count);
+});
