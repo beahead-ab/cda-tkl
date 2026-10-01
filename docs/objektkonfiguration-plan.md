@@ -74,7 +74,11 @@ Tolkningen av `M02-100-4` som modul, basadress och kanal är en hypotes som mås
 
 Nås från admin: **Objekt och regler**. Vyn har tre lägen i toppraden: **Konfigurera** (urval, chatt, regelkort), **Genomgång** (AI går igenom hela anläggningen) och **Driftsättning** (mätning mot MGP). Planen ritas ur samma geometri som ställverket, men av modulens egen kod.
 
-Designen finns i Claude Design: https://claude.ai/artifact/8CT3drdM8aStmoi9cgXS7y med fyra vyer: konfigurera med regelkort, AI-genomgång, de tre gränsväxlarna med avvikelselistan, och driftsättning av signal 1/5.
+Designen finns i Claude Design: https://claude.ai/artifact/8CT3drdM8aStmoi9cgXS7y med fem vyer: välj och säg, alla spårledningar tända, tre växlar i ett urval, AI-genomgången och driftsättning av signal 1/5.
+
+**Så lite som möjligt på skärmen.** Planen tar hela bredden och nästan hela höjden. Fyra lagerknappar ligger över planen: Nummer, Spårledningar, Adresser och Avvikelser. Under planen finns en enda rad: urvalet, AI:ns svar i en mening, Godkänn och Ändra, och fältet där man säger eller skriver. Ingen sidokolumn och ingen regeltext utöver meningen; detaljer visas bara när man frågar efter dem. AI:n gör grovjobbet, administratören väljer, säger och godkänner.
+
+**Spårledningslagret** färgar varje spårledning i planen och skriver ut dess namn, alla 197. Av dem har 46 en namngiven ingång i XML:en, till exempel SIA med LS90 på M04 och LS100 på M05; resten föreslår AI:n ur JMRI:s spårledningsregler.
 
 **Planen.** Hela stationen ritad ur panelgeometrin, anpassad till fönstrets höjd och därför bredare än skärmen; sidledes rullning med en minikarta som visar var man är. Växelnumren är stora och tydliga i alla lägen. Zoom finns men utgångsläget är "fyll höjden".
 
