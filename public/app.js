@@ -279,10 +279,12 @@ function buildPlan() {
     const b=layout.controls.find(b=>b.sensor==='htv'+fallback.id);if(!b)continue;
     const right=['Bu','Bn','D'].includes(fallback.id),lower=fallback.id.endsWith('n')||fallback.id==='D',y=b.centerY+(lower?38:-36),arrowX=right?2078:50;
     const group=svg('g',{class:'destination',role:'img','data-destination':fallback.id,display:isOutgoingDestination(fallback.id)?'inline':'none'},labels);
+    // One chip holds arrow, name and number, drawn first so it sits behind them.
+    const plate=svg('rect',{class:'destination-plate',y:y-16,height:23,rx:3,'aria-hidden':'true'},group);
     svg('path',{class:'destination-arrow',transform:`translate(${arrowX} ${y-4})`,d:right?'M0 0H14M10 -4L14 0L10 4':'M14 0H0M4 -4L0 0L4 4','aria-hidden':'true'},group);
     const nameNode=svg('text',{y,'text-anchor':right?'end':'start',class:'track-label destination-label',style:'font-size:11px','aria-hidden':'true'},group,fallback.name.toUpperCase());
     const badge=svg('g',{'aria-hidden':'true'},group),box=svg('rect',{y:y-13,height:18,rx:2,fill:'#fff'},badge),number=svg('text',{y:y, class:'destination-phone',style:'font-size:12px'},badge);
-    destinationNodes.push({id:fallback.id,fallback:{...fallback,source:'local'},group,nameNode,badge,box,number,right,x:right?arrowX-8:arrowX+22});
+    destinationNodes.push({id:fallback.id,fallback:{...fallback,source:'local'},group,plate,nameNode,badge,box,number,right,x:right?arrowX-8:arrowX+22});
   }
   const tt = panel.turntable;
   const table=svg('g',{id:'turntable',class:'turntable',transform:`translate(${tt.cx} ${tt.cy})`,'data-position':'unknown'},track);
@@ -391,7 +393,8 @@ function paintPlan() {
     attribute(n.group,'aria-hidden',visible?'false':'true');
     if(!visible)continue;
     const entry=state.destinations?.entries.find(d=>d.id===n.id)||n.fallback,d=destinationDisplay(entry,state.trainMeet),width=Math.max(30,d.phone.length*7.4+14);
-    setText(n.nameNode,d.name.toUpperCase());const x=n.right?n.x-width:n.x+n.nameNode.getComputedTextLength()+8;attribute(n.nameNode,'x',n.right?n.x-(d.phone?width+8:0):n.x);setText(n.number,d.phone);attribute(n.box,'x',x);attribute(n.box,'width',width);attribute(n.number,'x',x+width/2);attribute(n.number,'text-anchor','middle');attribute(n.badge,'visibility',d.phone?'visible':'hidden');attribute(n.group,'aria-label',d.name+(d.phone?' · telefon '+d.phone:'')+' · '+d.sourceLabel);
+    setText(n.nameNode,d.name.toUpperCase());const x=n.right?n.x-width:n.x+n.nameNode.getComputedTextLength()+8;attribute(n.nameNode,'x',n.right?n.x-(d.phone?width+8:0):n.x);setText(n.number,d.phone?'('+d.phone+')':'');attribute(n.box,'x',x);attribute(n.box,'width',width);attribute(n.number,'x',x+width/2);attribute(n.number,'text-anchor','middle');attribute(n.badge,'visibility',d.phone?'visible':'hidden');
+    const nameLen=n.nameNode.getComputedTextLength(),nameX=Number(n.nameNode.getAttribute('x')),numLen=d.phone?n.number.getComputedTextLength():0,plateStart=(n.right?Math.min(nameX-nameLen,d.phone?x+width/2-numLen/2:Infinity):n.x-22)-9,plateEnd=(n.right?n.x+22:Math.max(nameX+nameLen,d.phone?x+width/2+numLen/2:0))+9;attribute(n.plate,'x',plateStart);attribute(n.plate,'width',Math.max(0,plateEnd-plateStart));attribute(n.group,'aria-label',d.name+(d.phone?' · telefon '+d.phone:'')+' · '+d.sourceLabel);
   }
   const yardParts=new Set(state.yard?.owner==='ranger'?config.yardArea?.segments:[]),yardPoints=new Set(state.yard?.owner==='ranger'?config.yardArea?.turnouts:[]);
   blockedTracks=trackRestrictions(config,state);

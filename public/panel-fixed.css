@@ -385,8 +385,9 @@ body.panel-app .panel-shell{--rail:var(--track-side);--rail-unknown:var(--track-
 #track-plan .track-label.lbl-road{fill:var(--fg-faint);font:400 10.5px var(--font-mono)}
 #track-plan .destination-label{fill:var(--fg);font:600 10.5px var(--font-sans);letter-spacing:.12em}
 #track-plan .destination-arrow{stroke:var(--fg)}
-#track-plan .destination rect{fill:var(--chip-bg);stroke:var(--chip-border);stroke-width:1}
-#track-plan .destination-phone{fill:var(--fg);font:500 11px var(--font-mono)}
+#track-plan .destination-plate{fill:var(--chip-bg);stroke:var(--chip-border);stroke-width:1}
+#track-plan .destination rect:not(.destination-plate){display:none}
+#track-plan .destination-phone{fill:var(--fg);font:600 10.5px var(--font-sans);letter-spacing:.12em}
 #track-plan .touch-target .dot{fill:var(--plupp-idle);stroke:var(--fg-faint);stroke-width:1}
 #track-plan .touch-target:hover .dot,#track-plan .touch-target:focus-visible .dot{fill:#aeb6be;filter:none}
 #track-plan .touch-target:hover .hit,#track-plan .touch-target:focus-visible .hit{fill:rgba(255,255,255,.10);stroke:rgba(245,197,24,.6)}
