@@ -927,3 +927,10 @@ Kodfältet visar koden i klartext som 123-456 och adaptern skickar den
 normaliserad som servern jämför den. 309 enhetstester och 10 processprov gröna
 lokalt, 73 + 5 på servern. Backup och efterkontroll i drift.md. Verifierat i
 webbdriften: en felaktig kod besvaras med 409 och serverns förklaring.
+
+## Release 0.42.3 · stationslistan kan hämtas igen
+
+Committad 1 oktober, ännu inte publicerad. Ett stationsanrop direkt efter
+omstarten till 0.42.2 fick tidsgräns och dialogen visade bara id-fältet.
+Adaptern svarar nu 503 med läsbar text och dialogen har knappen Hämta listan
+igen. Publicering: `bash deploy/publish-release.sh` i terminalen.

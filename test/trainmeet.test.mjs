@@ -182,3 +182,4 @@ test('the pairing code is sent the way TrainMeet compares it: letters and digits
   await r.service.disconnect(r.service.view());
   await assert.rejects(()=>r.service.pair({...r.service.view(),stationId:'cda',code:'-- --'}),/giltig anslutningskod/);
 });
+test('a station list that cannot be fetched is a readable upstream failure, never the raw network error',async()=>{const r=rig();r.fail();await assert.rejects(()=>r.service.stations(),e=>e.status===503&&e.message==='TrainMeet svarar inte. Stationslistan kunde inte hämtas.');});

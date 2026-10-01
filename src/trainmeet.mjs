@@ -177,7 +177,7 @@ export class TrainMeet extends EventEmitter {
   // the operator picks a station instead of typing its id.
   async stations(){
     if(!this.origin)fail('TrainMeet-server är inte angiven för den här installationen.');
-    const display=await this.request('/v1/display');
+    let display;try{display=await this.request('/v1/display');}catch(e){if(e.status)throw e;fail('TrainMeet svarar inte. Stationslistan kunde inte hämtas.',503);}
     const stations=display?.stations;
     if(display?.protocol_version!==1||!Array.isArray(stations)||stations.length>5000||stations.some(s=>!record(s)||!identity(s.id)||!text(s.name,200)||s.code!=null&&!text(String(s.code),12)))fail('TrainMeet lämnade ingen giltig stationslista.',503);
     return {origin:this.origin,meet:text(display.meet?.name)?display.meet.name:'',stations:stations.map(s=>({id:s.id,name:s.name,code:s.code==null?'':String(s.code)}))};
