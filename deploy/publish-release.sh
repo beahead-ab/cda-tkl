@@ -14,7 +14,7 @@ KEY="${CHARLOTTENDAL_SSH_KEY:-$HOME/.ssh/trainmeet_digitalocean}"
 BASE=/opt/charlottendal
 BACKUPS=/root/charlottendal-backups
 STATE=/var/lib/charlottendal-tkl
-SSH=(ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=20 "$HOST")
+SSH=(ssh -i "$KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$HOST")
 remote() { "${SSH[@]}" "export PATH=/usr/local/bin:\$PATH; set -euo pipefail; $1"; }
 say() { printf '\n== %s\n' "$*"; }
 
