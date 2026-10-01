@@ -176,6 +176,24 @@ Utöver regler för ett urval kan administratören be AI:n gå igenom hela anlä
 
 Första genomgången skulle i dag ge ungefär detta, räknat ur källorna: 7 kompisgrupper som förslag, 3 gränsväxlar som förslag, 5 manuella grupper som saknas, signal- och spårledningsadresser ur XML som förslag, vägövergångarna V1–V4 som saknas, 4 motsägande tågvägsregler som beslut och MGP-underlaget som underlag.
 
+## 5c. Tal i alla webbläsare
+
+Webbläsarens inbyggda taligenkänning fungerar bara i vissa webbläsare (Chrome och Edge via sina molntjänster, Safari via Apples diktering, inte Firefox). För att fungera i alla spelar vyn i stället in ljudet med webbläsarens vanliga inspelning, som alla moderna webbläsare har, och skickar det till TKL-servern som gör om det till text. Där kan en svensk taligenkänningsmodell köras på servern, så att inget ljud lämnar den, eller en molntjänst användas. Valet påverkar kostnad och svarstid, inte vyn.
+
+Två saker gäller oavsett motor:
+
+- Taligenkänning hör fel på fackord: JMRI blir "Jimmy", TMBox blir "tmvox". Servern skickar därför med en ordlista med objektnamn, stationer och uttryck, och AI:n matchar det som hörts mot objektlistan. Urvalet och regeln visas alltid som text innan något godkänns.
+- Datorns egen diktering (macOS, iOS, Windows) skriver i vilket textfält som helst i vilken webbläsare som helst. Den fungerar redan från första dagen, innan inspelningen är byggd.
+
+## 5d. JMRI
+
+TKL kör inte JMRI och skriver aldrig till JMRI. Cda60.xml är en kopia som bara läses, och JMRI-installationen vid banan rörs inte. Från filen används bara det som beskriver anläggningen: objektens namn, ritningens geometri, relationerna mellan objekten och adresserna som förslag. JMRI:s egna mekanismer (Logix, minnen, interna sensorer, NX-identiteter) används inte i drift.
+
+Två förutsättningar:
+
+- Cda60.xml måste vara den senaste exporten. Om JMRI-konfigurationen har ändrats sedan dess behövs en ny export innan genomgången körs.
+- JMRI och TKL får inte styra samma LocoNet samtidigt, eftersom båda skickar order. När TKL kopplas in är JMRI avstängt eller bara lyssnande.
+
 ## 6. Signaler och tågvägar
 
 I dag ger TKL varje signal kör eller stopp som en växelorder till en adress och läser beskedet som en E4-kod. Vilket besked signalen visar räknar dekodern ut. JMRI-filen visar att varje mast har en egen utgång, till exempel 1/5 → LT210, där kastad betyder stopp och sluten tillåtande besked. Det passar TKL:s modell, men adresserna i profilen är fel tills de byts mot de verkliga.
@@ -185,6 +203,7 @@ Planen för signaler:
 - **Adresser.** De 66 signalernas bänkadresser ersätts med utgångarna ur XML:en som förslag, med status "ej uppmätt", och verifieras i driftsättningsläget.
 - **Besked.** De svenska beskedskoderna saknas. Regeltypen `aspect` håller dem per masttyp och syns i objektkortet.
 - **Tågvägar.** Skyddssignaler och ordningen signalerna klareras i ändras inte; de syns i objektkortet för varje signal och tågväg, så att en ny regel kan prövas mot dem.
+- **Signalrelationerna i JMRI ska följas.** JMRI har 117 relationer av typen "från signal A till signal B" (signalmastlogik), där spårledningarna och växlarna däremellan räknas fram ur ritningen. 73 av dem finns som på varandra följande signaler i TKL:s tågvägar. 44 finns i JMRI men på ingen tågväg i TKL, till exempel 3/2 → 6/6 och 1/4 → Xv. Genomgången ska pröva varje tågväg mot relationerna och ta upp de 44 som avvikelser: antingen saknas en tågväg, eller så används relationen inte och det ska sägas uttryckligen. Dessutom anger 65 punkter i ritningen vilken signal som står vid vilken spårledningsgräns; även det ska tågvägarna stämma mot.
 - **Vägövergångar.** V1–V3 beräknas i dag bara för visning. Med regeltypen `crossing` blir aktivering, förringning och spärr av tågväg en del av samma regelverk och syns i planen.
 
 ## 7. Avvikelselistan från start
@@ -207,6 +226,7 @@ Det här är redan känt och blir listans första innehåll:
 | Vx124 finns i källan men inte i planen | 1 | beslut |
 | Vändskivans anslutning okänd | 1 | MGP-underlag |
 | Programmeringsspårets relä ej verifierat | 1 | mätning |
+| Signalrelationer i JMRI utan tågväg i TKL | 44 | tågväg eller uttryckligt undantag |
 
 ## 8. Det som måste fram innan utveckling
 
