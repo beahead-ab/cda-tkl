@@ -37,5 +37,6 @@ export function createPanelEvents(){
     if(top>0&&firstKey){const anchor=content.querySelector('.ev-row[data-key="'+CSS.escape(firstKey)+'"]');if(anchor)content.scrollTop=top+anchor.offsetTop;}
   }
   render();
-  return {update(state){events=Array.isArray(state?.events)?state.events:[];render();}};
+  // The core keeps operating events in their own buffer so field reports and orders cannot push them out.
+  return {update(state){events=Array.isArray(state?.operatingEvents)?state.operatingEvents:Array.isArray(state?.events)?state.events:[];render();}};
 }

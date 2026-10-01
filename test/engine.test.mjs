@@ -214,3 +214,18 @@ test('reset storage failures never report completion or allow new orders', () =>
     assert.throws(()=>r.request('cu-2b'),/spärrad/);
   }
 });
+
+test('field reports and orders cannot push operating events out of the journal the panel reads',()=>{
+  const r=rig();r.engine.log('established','Au → Spår 1c: växlarna återrapporterar rätt läge.');
+  for(let i=0;i<400;i++)r.engine.log(i%3?'report':'permission','Signal '+i+': rapport.',i%3?{frame:'00'}:undefined);
+  for(let i=0;i<10;i++)r.engine.log('order','Vx'+i+': begär rakt.');
+  r.engine.log('transport','telegram');
+  const s=r.engine.snapshot();
+  assert.equal(r.engine.events.length,150,'the full buffer keeps feeding the telegram recorder');
+  assert.ok(s.operatingEvents.some(e=>e.kind==='established'),'the operating event survives');
+  assert.ok(s.operatingEvents.every(e=>!['report','transport','order','permission'].includes(e.kind)));
+  assert.ok(s.events.every(e=>!['report','transport'].includes(e.kind)),'the tools journal has no reports');
+  assert.ok(s.events.some(e=>e.kind==='permission')&&s.events.some(e=>e.kind==='order'),'the tools journal keeps orders and permissions');
+  assert.ok(s.events.length<=150&&s.operatingEvents.length<=150);
+  assert.deepEqual(s.operatingEvents.map(e=>e.id),[...s.operatingEvents].sort((a,b)=>b.id-a.id).map(e=>e.id),'newest first');
+});

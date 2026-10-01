@@ -7,12 +7,13 @@ import { splitRouteAt } from './route-sections.mjs';
 import { boundaryCommandReason } from './yard-boundaries.mjs';
 import { YardControl } from './yard-control.mjs';
 
+const FIELD_ROWS = new Set(['report', 'transport']), FIELD_ORDERS = new Set(['order', 'permission']);
 export class Engine extends EventEmitter {
   constructor(profile, { send = () => {}, storage, now = Date.now } = {}) {
     super(); this.profile = profile; this.send = send; this.storage = storage; this.now = now;
     this.policy = profile.sourcePolicy ? new RoutePolicy({mainRoutePolicies:profile.sourcePolicy}) : null;
     this.fingerprint = createHash('sha256').update(JSON.stringify(profile)).digest('hex');
-    this.connected = false; this.connectionAt = 0; this.storageFault = null; this.revision = 0; this.events = []; this.reportSequence=0;
+    this.connected = false; this.connectionAt = 0; this.storageFault = null; this.revision = 0; this.events = []; this.journal = []; this.operatingEvents = []; this.reportSequence=0;
     this.turnouts = Object.fromEntries(Object.keys(profile.turnouts).map(n => [n, { position: 'unknown', desired: null, updatedAt: 0 }]));
     this.blocks = Object.fromEntries(Object.keys(profile.blocks).map(n => [n, { occupied: null, updatedAt: 0 }]));
     this.signals = Object.fromEntries(Object.keys(profile.signals).map(n => [n, { aspect: 'unknown', code: null, desired: 'STOP', updatedAt: 0, commandAt: 0 }]));
@@ -38,6 +39,13 @@ export class Engine extends EventEmitter {
   log(kind, message, details) {
     const event = { id: ++this.revision, at: this.now(), kind, message, ...(details ? { details } : {}) };
     this.events.unshift(event); this.events.length = Math.min(this.events.length, 150);
+    // Field reports arrive by the thousand and orders and permission requests by
+    // the hundred, so one shared buffer of 150 loses every operating event within
+    // minutes. The full buffer stays for the telegram recorder; the journal leaves
+    // out reports and transport frames, and the operating events leave out the
+    // field orders as well. The complete journal on disk is unchanged.
+    if (!FIELD_ROWS.has(kind)) { this.journal.unshift(event); this.journal.length = Math.min(this.journal.length, 150); }
+    if (!FIELD_ROWS.has(kind) && !FIELD_ORDERS.has(kind)) { this.operatingEvents.unshift(event); this.operatingEvents.length = Math.min(this.operatingEvents.length, 150); }
     try { this.storage?.event(event); } catch (e) { this.storageFault = e.message; }
     this.emit('change');
   }
@@ -559,7 +567,7 @@ export class Engine extends EventEmitter {
   snapshot() {
     return { serverTime: this.now(), revision: this.revision, connection: this.connected ? 'connected' : 'disconnected', storageFault: this.storageFault,
       profile: { id: this.profile.id, title: this.profile.title, commissioned: this.profile.commissioned, description: this.profile.description },
-      turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, routes: this.routes, controls:this.controls, events: this.events,
+      turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, routes: this.routes, controls:this.controls, events: this.journal, operatingEvents: this.operatingEvents,
       operating:this.operating.snapshot(),yard:this.yard.snapshot(),
       manual:Object.fromEntries(Object.keys(this.turnouts).map(n=>[n,this.manualStatus(n)])),
       modeChange:this.modeStatus(),allStopReset:this.allStopResetStatus(),panelReset:this.panelResetStatus(),emergencyRemaining:this.emergencyRemaining().map(r=>r.id),

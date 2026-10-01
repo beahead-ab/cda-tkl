@@ -958,7 +958,18 @@ Geometri, träffytor, zoom och logik orörda.
 
 ## Release 0.44.1 · händelsekolumnen visar driftskeenden
 
-`3b98895` publicerad 1 oktober 23:44; backup och efterkontroll i drift.md. Casper såg att kolumnen fylldes
+`3b98895` publicerad 1 oktober 23:44; backup och efterkontroll i drift.md.
+
+## Release 0.44.2 · driftskeenden i egen buffert
+
+Committad 2 oktober, ännu inte publicerad. Efterkontrollen av 0.44.1 visade en
+tom händelsekolumn: kärnans enda buffert om 150 rader innehöll bara
+fältrapporter. Produktionsjournalens senaste 3 000 rader var 1 607 rapporter,
+1 332 behörighetsbegäran, 22 ordrar och 39 driftskeenden. Kärnan håller nu tre
+buffertar: full (telegraminspelningen), journal utan rapporter och telegram
+(Verktyg) och driftskeenden utan ordrar och behörighetsbegäran (ställverkets
+kolumn, nytt fält operatingEvents i tillståndet). Journalfilen på disk orörd.
+Prov i engine.test.mjs. Casper såg att kolumnen fylldes
 av "Signal 1/1: begär körmedgivande": kärnans fältordrar (slagen order och
 permission) och administrativa rader döljs nu i kolumnen men står kvar i
 journalen under Verktyg. Adaptern journalför vad en avläsning visar har hänt
