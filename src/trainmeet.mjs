@@ -168,6 +168,15 @@ export class TrainMeet extends EventEmitter {
     this.current=(async()=>{try{return await work();}finally{this.busy=false;this.current=null;this.emit('change');}})();
     return this.current;
   }
+  // The meet's station list, read without credentials from the public display, so
+  // the operator picks a station instead of typing its id.
+  async stations(){
+    if(!this.origin)fail('TrainMeet-server är inte angiven för den här installationen.');
+    const display=await this.request('/v1/display');
+    const stations=display?.stations;
+    if(display?.protocol_version!==1||!Array.isArray(stations)||stations.length>5000||stations.some(s=>!record(s)||!identity(s.id)||!text(s.name,200)||s.code!=null&&!text(String(s.code),12)))fail('TrainMeet lämnade ingen giltig stationslista.',502);
+    return {origin:this.origin,meet:text(display.meet?.name)?display.meet.name:'',stations:stations.map(s=>({id:s.id,name:s.name,code:s.code==null?'':String(s.code)}))};
+  }
   async pair(data) {
     this.check(data);if(!identity(data.stationId)||!text(data.code,128)||!data.code.trim())fail('Ange stations-id och giltig anslutningskod.');
     await this.exclusive(async()=>{

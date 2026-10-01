@@ -1,4 +1,4 @@
-# Charlottendal TKL · version 0.42.0
+# Charlottendal TKL · version 0.42.1
 
 En första körbar lokal applikation med egen TKL-kärna och en separat anläggningssimulator. Den använder Charlottendals exporterade geometri och JMRI mod59-signalbilder. Claude Design behövs inte för att köra den.
 

@@ -155,3 +155,12 @@ test('an older file with the TMBox-mode setting keeps its operator name',()=>{
   const service=new TrainMeet({storage:{load:()=>structuredClone(legacy),save(){}}});
   assert.equal(service.view().operatorName,'Casper');assert.equal(service.view().paired,true);assert.ok(!('autoShift' in service.data));
 });
+
+test('the station list comes from the public display without credentials and is validated',async()=>{
+  const r=rig();
+  const list=await r.service.stations();
+  assert.deepEqual(list,{origin:'https://trainmeet.example',meet:'Grimslöv 2027',stations:[{id:'cda',name:'Charlottendal',code:''},{id:'lek',name:'Lekby',code:''},{id:'vag',name:'Vagnsta',code:''},{id:'x',name:'X',code:''},{id:'y',name:'Y',code:''}]});
+  assert.ok(r.calls.every(c=>!c.body),'no pairing happened');assert.equal(r.calls.at(-1).path,'/v1/display');
+  r.display.stations=[{id:'cda',name:{bad:true}}];await assert.rejects(()=>r.service.stations(),/stationslista/);
+  const unconfigured=new TrainMeet({storage:{load:(n,d)=>structuredClone(d),save(){}}});await assert.rejects(()=>unconfigured.stations(),/inte angiven/);
+});
