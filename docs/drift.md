@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `e1caf0c` · version 0.42.2 (1 oktober 2026, 20:40) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/e1caf0c` |
+| Driftsatt kodversion | `e9a905b` · version 0.42.3 (1 oktober 2026, 21:32) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/e9a905b` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -655,3 +655,16 @@ Charlottendal förvald och en felaktig kod besvaras med 409 "Parkopplingskoden
 stationsanrop direkt efter omstarten fick tidsgräns mot server.trainmeet.app,
 medan svarstiden strax därefter låg under en sekund från servern; dialogen
 visar då id-fältet och ett nytt försök laddar listan.
+
+## Version 0.42.3 · stationslistan kan hämtas igen
+
+`e9a905b` aktiverad 1 oktober 2026, 21:32 svensk tid med
+deploy/publish-release.sh i appens terminal. Ett stationsanrop utan svar inom
+8 s besvaras med 503 och läsbar text, och parkopplingsdialogen har knappen
+Hämta listan igen vid sidan av id-fältet. Endast TKL startades om, simulatorns
+process 140318 behölls, noll lås före bytet. Serverns prov: syntax, 74 riktade
+enhetstester och 5 processprov. Backup:
+`/root/charlottendal-backups/network-e9a905b-20261001T193215Z`. Efterkontroll:
+tjänster aktiva, TKL ny process 216296, version 0.42.3, driftdata oförändrade.
+Verifierat i webbdriften: dialogen öppnas, stationslistan laddas med
+Charlottendal förvald. Webbdriftens parkoppling med kod återstår.

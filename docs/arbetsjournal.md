@@ -930,7 +930,7 @@ webbdriften: en felaktig kod besvaras med 409 och serverns förklaring.
 
 ## Release 0.42.3 · stationslistan kan hämtas igen
 
-Committad 1 oktober, ännu inte publicerad. Ett stationsanrop direkt efter
+`e9a905b` publicerad 1 oktober 21:32. Ett stationsanrop direkt efter
 omstarten till 0.42.2 fick tidsgräns och dialogen visade bara id-fältet.
 Adaptern svarar nu 503 med läsbar text och dialogen har knappen Hämta listan
-igen. Publicering: `bash deploy/publish-release.sh` i terminalen.
+igen. Serverprov 74 + 5; backup och efterkontroll i drift.md.
