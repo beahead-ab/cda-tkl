@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `cacd971` · version 0.42.0 (1 oktober 2026, 17:34) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/cacd971` |
+| Driftsatt kodversion | `8d62b40` · version 0.42.1 (1 oktober 2026, 18:47) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/8d62b40` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -626,3 +626,14 @@ fortsatt noll lås; övriga driftdata oförändrade. Lokal HTTP-kontroll mot
 Återstår i webbdriften: parkoppling mot server.trainmeet.app med serverns
 anslutningskod, varefter stationen tas i tjänst automatiskt, samt anslutning
 av Stream Deck från Chrome mot https://cda-tkl.trainmeet.app.
+
+## Version 0.42.1 · stationslista vid parkoppling
+
+`8d62b40` aktiverad 1 oktober 2026, 18:47 svensk tid med deploy/publish-release.sh
+i appens terminal. Parkopplingsdialogen hämtar träffens stationer från
+TrainMeets öppna display-svar och förväljer Charlottendal; anslutningskoden
+behövs fortsatt en gång per server. Endast TKL startades om, simulatorns
+process 140318 behölls, noll lås före bytet. Serverns prov: syntax, 70 riktade
+enhetstester och 5 processprov. Backup: `/root/charlottendal-backups/network-8d62b40-20261001T164727Z`.
+Efterkontroll: tjänster aktiva, TKL ny process 210785, version 0.42.1,
+driftdata oförändrade.

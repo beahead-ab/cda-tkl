@@ -909,3 +909,9 @@ processprov och API-prov godkända; webbläsarprov av redigeraren utan fel.
 Caspers begäran, med omstart av enbart TKL. Backup, serverprov och
 efterkontroll dokumenterade i drift.md. Produktionen körde dessförinnan en
 odokumenterad release `142b514`; den finns kvar på servern.
+
+## Publicering 0.42.1
+
+`8d62b40` publicerad 1 oktober 18:47: parkopplingsdialogen visar träffens
+stationer i en lista med Charlottendal förvald i stället för ett tomt id-fält.
+Backup, serverprov och efterkontroll i drift.md.
