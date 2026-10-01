@@ -853,3 +853,14 @@ Riktig parkoppling mot server.trainmeet.app gjordes kl. 03:37 från den lokala
 installationen med koden inmatad i TKL: Ansluten, 80 tågrörelser, tre fria
 sträckor och träffens tidtabell i panelen. Inget trafikpass startat.
 Ändringen kräver omstart av TKL-tjänsten vid publicering.
+
+## 1 oktober – träffnät och sparade parkopplingar (lokalt, ej publicerad)
+
+Inför träffdrift mot en Raspberry Pi med TrainMeet-servern på det lokala
+nätet tillåter adressregeln nu HTTP på privata, länklokala och `.local`-
+adresser; publika adresser kräver fortsatt HTTPS. TKL sparar en parkoppling
+per server, så byte mellan server.trainmeet.app och träffens Pi kräver ingen
+ny kod och ingen frånkoppling. Nycklar skickas bara till sin egen server och
+når aldrig webbläsaren. Se trainmeet-adapter.md.
+
+Verifiering: syntax, 293 enhetstester och 10 integrationstester godkända.

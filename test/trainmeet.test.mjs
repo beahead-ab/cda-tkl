@@ -67,7 +67,7 @@ test('duplicate snapshots replace by identity; reconnect never accumulates movem
 test('old revisions, wrong station/publication/day and invalid clocks preserve last good context as stale',async()=>{for(const corrupt of [r=>{r.display.revision=9;},r=>{r.context.station.id='other';},r=>{r.display.active_day='Dag2';},r=>{r.display.publication_id='other';},r=>{r.display.clock.time='99:00:00';},r=>{r.context.movements.m1.revision=0;},r=>{r.display.trains.push({...r.display.trains[0]});}]){const r=rig();await pair(r);const previous=structuredClone(r.service.view().context);corrupt(r);await r.service.refresh();assert.equal(r.service.view().stale,true);assert.deepEqual(r.service.view().context,previous);}});
 test('timeout/network failure marks old data and restart requires a fresh snapshot',async()=>{const r=rig();await pair(r);r.now(116000);assert.equal(r.service.view().stale,true);r.fail();await r.service.refresh();assert.equal(r.service.view().status,'disconnected');assert.ok(!r.service.view().error.includes('secret'));const next=new TrainMeet({origin:'https://trainmeet.example',storage:r.storage,fetcher:r.fetcher});assert.equal(next.view().context,null);assert.equal(next.view().stale,true);});
 test('stale sessions and busy pairing are refused; failed durable save never replaces existing credentials',async()=>{const r=rig(),old=r.service.view();await pair(r);await assert.rejects(()=>r.service.pair({...old,stationId:'cda',code:'A'}),/ändrats/);r.storage.save=()=>{throw Error('disk full with secret');};await assert.rejects(()=>pair(r),/kunde inte anslutas/);assert.equal(r.service.data.token,'PRIVATE-TOKEN');assert.equal(r.service.view().context.station.id,'cda');assert.equal(r.service.view().stale,true);});
-test('credentials never move to another origin, insecure remote URL is refused and disconnect persists locally',async()=>{const r=rig();await pair(r);assert.throws(()=>new TrainMeet({origin:'https://different.example',storage:r.storage}),/adressen har ändrats/);assert.throws(()=>new TrainMeet({origin:'http://192.168.1.2',storage:r.storage}),/HTTPS/);r.service.disconnect(r.service.view());assert.equal(r.saved().token,'');assert.equal(r.service.view().context,null);assert.equal(r.service.view().status,'unpaired');});
+test('credentials never move to another origin, insecure remote URL is refused and disconnect persists locally',async()=>{const r=rig();await pair(r);assert.throws(()=>new TrainMeet({origin:'https://different.example',storage:r.storage}),/adressen har ändrats/);assert.throws(()=>new TrainMeet({origin:'http://203.0.113.5',storage:r.storage}),/HTTPS/);r.service.disconnect(r.service.view());assert.equal(r.saved().token,'');assert.equal(r.service.view().context,null);assert.equal(r.service.view().status,'unpaired');});
 test('response size is bounded before parsing',async()=>{const r=rig();r.service.fetcher=async()=>new Response('{}',{headers:{'content-length':'2000001'}});await assert.rejects(()=>pair(r),/för stort/);assert.equal(r.saved(),undefined);});
 test('operator-selected origin persists without sending a request or copying credentials',()=>{
   const r=rig(),service=new TrainMeet({storage:r.storage,fetcher:r.fetcher});
@@ -78,15 +78,20 @@ test('operator-selected origin persists without sending a request or copying cre
   assert.equal(restarted.view().origin,'http://localhost:8787');assert.equal(restarted.view().paired,false);
   assert.equal(restarted.data.clientId,service.data.clientId);
 });
-test('changing origin requires disconnect and cannot redirect the existing token',async()=>{
+test('changing origin keeps the old pairing saved for its own server and never redirects the token',async()=>{
   const r=rig(),service=new TrainMeet({storage:r.storage,fetcher:r.fetcher});
   service.configure({...service.view(),origin:'https://trainmeet.example'});
   await service.pair({...service.view(),stationId:'cda',code:'PAIRING'});
-  assert.throws(()=>service.configure({...service.view(),origin:'https://different.example'}),/Koppla från/);
-  assert.equal(service.view().origin,'https://trainmeet.example');assert.equal(r.saved().token,'PRIVATE-TOKEN');
-  service.disconnect(service.view());service.configure({...service.view(),origin:'https://different.example'});
+  service.configure({...service.view(),origin:'https://different.example'});
+  assert.equal(service.view().origin,'https://different.example');assert.equal(service.view().paired,false);assert.equal(service.view().status,'unpaired');
   assert.equal(service.data.token,'');assert.equal(service.view().context,null);assert.equal(service.view().stationId,'');
-  assert.ok(r.calls.every(c=>c.url.startsWith('https://trainmeet.example/')));
+  assert.deepEqual(service.view().savedServers,[{origin:'https://trainmeet.example',stationId:'cda'}]);
+  assert.equal(r.saved().pairings['https://trainmeet.example'].token,'PRIVATE-TOKEN');assert.ok(!JSON.stringify(service.view()).includes('PRIVATE'));
+  await service.refresh();assert.ok(r.calls.every(c=>c.url.startsWith('https://trainmeet.example/')),'nothing is sent to the new server without its own pairing');
+  service.configure({...service.view(),origin:'https://trainmeet.example'});
+  assert.equal(service.view().paired,true);assert.equal(service.view().status,'disconnected');assert.equal(service.view().stationId,'cda');
+  await service.refresh();assert.equal(service.view().status,'connected');assert.ok(r.calls.filter(c=>c.options.method==='POST').length===1,'no new pairing needed');
+  service.disconnect(service.view());assert.deepEqual(service.view().savedServers,[]);assert.equal(r.saved().token,'');
 });
 test('stale, busy and installation-locked origin changes are refused',()=>{
   const r=rig();assert.throws(()=>r.service.configure({...r.service.view(),origin:'https://different.example'}),/fast TrainMeet/);
@@ -96,7 +101,7 @@ test('stale, busy and installation-locked origin changes are refused',()=>{
   service.busy=true;assert.throws(()=>service.configure({...service.view(),origin:''}),/pågår/);
 });
 test('origin validation rejects unsafe or ambiguous destinations without saving them',()=>{
-  for(const origin of ['http://192.168.1.2:8787','http://trainmeet.local:8787','https://name:password@trainmeet.example','https://trainmeet.example/path','https://trainmeet.example?token=x','https://trainmeet.example/#secret','file:///tmp/trainmeet',null,'not an address']){
+  for(const origin of ['http://203.0.113.5:8787','http://trainmeet.example:8787','http://172.32.0.1:8787','http://[2001:db8::1]:8787','https://name:password@trainmeet.example','https://trainmeet.example/path','https://trainmeet.example?token=x','https://trainmeet.example/#secret','file:///tmp/trainmeet',null,'not an address']){
     const r=rig(),service=new TrainMeet({storage:r.storage});
     assert.throws(()=>service.configure({...service.view(),origin}));assert.equal(r.saved(),undefined);assert.equal(service.view().origin,'');
   }
@@ -147,4 +152,10 @@ test('station names refresh each poll; only public identity fields reach the pan
  assert.deepEqual(r.service.view().context.stations,[{id:'other',name:'Lekby'}]);
  r.display.stations[0].name='Ny ort';await r.service.refresh();assert.equal(r.service.view().context.stations[0].name,'Ny ort');
  r.display.stations.push({...r.display.stations[0]});await r.service.refresh();assert.equal(r.service.view().stale,true);assert.equal(r.service.view().context.stations.length,1);
+});
+test('plain HTTP is accepted on the meet network only: private, link-local and .local addresses',()=>{
+  for(const origin of ['http://192.168.1.2:8787','http://10.0.0.5:8787','http://172.20.1.1:8787','http://169.254.10.10:8787','http://trainmeet.local:8787','http://[fe80::1]:8787','http://[fd12::1]:8787','http://localhost:8787']){
+    const r=rig(),service=new TrainMeet({storage:r.storage});
+    service.configure({...service.view(),origin});assert.equal(service.view().origin,origin.replace(/\/$/,''));assert.equal(service.view().status,'unpaired');
+  }
 });
