@@ -703,8 +703,8 @@ som kolumnen och Verktyg → Händelser döljer.
 
 `5bfe9b9` aktiverad 2 oktober 2026, 00:21 svensk tid med deploy/publish-release.sh
 från Caspers egen terminal; en samtidig körning från appens terminal stoppades
-av vakten "finns redan" utan åtgärd. Skriptet aktiverar bara efter godkända
-serverprov. Kärnan håller driftskeenden i en egen buffert så att fältrapporter
+av vakten "finns redan" utan åtgärd. Serverns prov: syntax, 76 riktade
+enhetstester och 5 processprov, noll lås före bytet, driftdata oförändrade. Kärnan håller driftskeenden i en egen buffert så att fältrapporter
 och ordrar inte tränger ut dem. Endast TKL startades om, simulatorns process
 140318 behölls. Backup:
 `/root/charlottendal-backups/network-5bfe9b9-20261001T222121Z`. Efterkontroll:
