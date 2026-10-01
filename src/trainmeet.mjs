@@ -244,7 +244,7 @@ export class TrainMeet extends EventEmitter {
     return this.command(data,context=>{
       const line=(context.lines||[]).find(l=>l.id===data.connectionId);
       if(!line)fail('Sträckan hör inte till stationen.',409);
-      if(!context.shift)fail('Starta trafikpasset innan en klarering hanteras.',409);
+      if(!context.shift)fail('Starta trafikpasset under Drift → Tågklarering innan en klarering hanteras.',409);
       const number=action==='request'?trainNumber:line.trainNumber;
       return {path:'/v1/tkl/clearance',payload:{station_id:this.data.stationId,connection_id:line.id,action,train_number:action==='request'?trainNumber:''},journal:`Klarering ${CLEARANCE_JOURNAL[action]}${number?' · tåg '+number:''} · ${line.neighborName}.`};
     });
@@ -263,7 +263,7 @@ export class TrainMeet extends EventEmitter {
     return this.command(data,context=>{
       const train=(context.trains||[]).find(t=>t.id===movementId);
       if(!train)fail('Tågrörelsen finns inte på stationen i dag.',409);
-      if(!context.shift)fail('Starta trafikpasset innan tågrörelser hanteras.',409);
+      if(!context.shift)fail('Starta trafikpasset under Drift → Tågklarering innan tågrörelser hanteras.',409);
       const current=(context.movements||[]).find(m=>m.id===movementId)||{};
       const payload={station_id:this.data.stationId,movement_id:movementId,departure:departure||current.departure||'none',arrival:arrival||current.arrival||'none',event_type:'tkl_'+(departure||arrival||'track_changed')};
       const actualTrack=track.trim()||current.track||train.track_id||'';if(actualTrack)payload.actual_track=actualTrack;
