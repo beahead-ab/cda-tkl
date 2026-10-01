@@ -883,3 +883,13 @@ riktning per tågrörelse ur TrainMeets ruttstopp, och en avgångs- och en
 ankomstknapp per sträcka som går igenom TMBox-sekvensen med kort tryck och
 återtar eller nekar med långt tryck. Se streamdeck-forstudie.md.
 Syntax och riktade tester godkända; fysiskt prov av tågknapparna återstår.
+
+## 1 oktober – inget trafikpass att starta (lokalt, ej publicerad)
+
+På Caspers beslut är hela trafikpasshanteringen borttagen ur gränssnittet:
+parkopplad betyder i tjänst, som för en tilldelad box. TKL håller stationen
+bemannad hos TrainMeet automatiskt, högst ett försök per minut och aldrig
+genom övertagande av en annan terminal; Koppla från avslutar vårt pass.
+Kvar är bara namnet som visas för grannarna, i anslutningsdialogen. Kommandona
+shift-start, shift-finish och auto-shift är borta; operator-name är nytt.
+Syntax, 299 enhetstester och 10 integrationstester godkända.

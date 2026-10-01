@@ -13,7 +13,7 @@ test('accepts timetable emitted by the reviewed TrainMeet server itself',()=>{
   assert.equal(result.timetable.loadedAt,123);
 });
 function rig(){let saved,now=100000;const calls=[],storage={load:(n,d)=>structuredClone(saved??d),save:(n,d)=>{saved=structuredClone(d);}};
-  const context={protocol_version:1,publication_id:'meet-v1',active_day:'Dagl',station:{id:'cda',name:'Charlottendal'},movements:{m1:{revision:1,arrival:'WAITING',departure:'READY',actualTrack:'track1'}},connection_states:[{id:'line1',state:'free'}]};
+  const context={protocol_version:1,publication_id:'meet-v1',active_day:'Dagl',station:{id:'cda',name:'Charlottendal'},shift:{shift_id:'rig',operator_name:'Rig'},movements:{m1:{revision:1,arrival:'WAITING',departure:'READY',actualTrack:'track1'}},connection_states:[{id:'line1',state:'free'}]};
   const display={protocol_version:1,publication_id:'meet-v1',active_day:'Dagl',revision:10,meet:{name:'Höstträffen'},clock:{time:'12:15:00',speed:4,running:true,configured:true},trains:[{id:'m1',station_id:'cda',train_number:'P123',track:'1',arrival_time:'12:20',departure_time:'12:22'},{id:'m2',station_id:'other',train_number:'P124'}],connection:{pairing_code:'NEVER EXPOSE'}};
   const timetable={schema_version:3,publication_id:'meet-v1',active_day:'Dagl',stations:[{id:'cda',name:'Charlottendal'}],tracks:[{id:'track1',station_id:'cda',display_label:'1',operating_point_id:null}],trains:[{...display.trains[0],track_id:'track1',note:'Kontrollera tågmöte',no_stop:false}],connection:{pairing_code:'NEVER EXPOSE'}};
   let error=false;const fetcher=async(url,options)=>{calls.push({url,options});if(error)throw Error('Network failure with secret metadata');const data=url.endsWith('/v1/pair')?{protocol_version:1,client_id:JSON.parse(options.body).client_id,access_token:'PRIVATE-TOKEN'}:url.includes('/v1/tkl/context?')?context:url.includes('/v1/timetable?')?timetable:display;return new Response(JSON.stringify(data),{status:200});};
@@ -67,7 +67,7 @@ test('duplicate snapshots replace by identity; reconnect never accumulates movem
 test('old revisions, wrong station/publication/day and invalid clocks preserve last good context as stale',async()=>{for(const corrupt of [r=>{r.display.revision=9;},r=>{r.context.station.id='other';},r=>{r.display.active_day='Dag2';},r=>{r.display.publication_id='other';},r=>{r.display.clock.time='99:00:00';},r=>{r.context.movements.m1.revision=0;},r=>{r.display.trains.push({...r.display.trains[0]});}]){const r=rig();await pair(r);const previous=structuredClone(r.service.view().context);corrupt(r);await r.service.refresh();assert.equal(r.service.view().stale,true);assert.deepEqual(r.service.view().context,previous);}});
 test('timeout/network failure marks old data and restart requires a fresh snapshot',async()=>{const r=rig();await pair(r);r.now(116000);assert.equal(r.service.view().stale,true);r.fail();await r.service.refresh();assert.equal(r.service.view().status,'disconnected');assert.ok(!r.service.view().error.includes('secret'));const next=new TrainMeet({origin:'https://trainmeet.example',storage:r.storage,fetcher:r.fetcher});assert.equal(next.view().context,null);assert.equal(next.view().stale,true);});
 test('stale sessions and busy pairing are refused; failed durable save never replaces existing credentials',async()=>{const r=rig(),old=r.service.view();await pair(r);await assert.rejects(()=>r.service.pair({...old,stationId:'cda',code:'A'}),/ändrats/);r.storage.save=()=>{throw Error('disk full with secret');};await assert.rejects(()=>pair(r),/kunde inte anslutas/);assert.equal(r.service.data.token,'PRIVATE-TOKEN');assert.equal(r.service.view().context.station.id,'cda');assert.equal(r.service.view().stale,true);});
-test('credentials never move to another origin, insecure remote URL is refused and disconnect persists locally',async()=>{const r=rig();await pair(r);assert.throws(()=>new TrainMeet({origin:'https://different.example',storage:r.storage}),/adressen har ändrats/);assert.throws(()=>new TrainMeet({origin:'http://203.0.113.5',storage:r.storage}),/HTTPS/);r.service.disconnect(r.service.view());assert.equal(r.saved().token,'');assert.equal(r.service.view().context,null);assert.equal(r.service.view().status,'unpaired');});
+test('credentials never move to another origin, insecure remote URL is refused and disconnect persists locally',async()=>{const r=rig();await pair(r);assert.throws(()=>new TrainMeet({origin:'https://different.example',storage:r.storage}),/adressen har ändrats/);assert.throws(()=>new TrainMeet({origin:'http://203.0.113.5',storage:r.storage}),/HTTPS/);await r.service.disconnect(r.service.view());assert.equal(r.saved().token,'');assert.equal(r.service.view().context,null);assert.equal(r.service.view().status,'unpaired');});
 test('response size is bounded before parsing',async()=>{const r=rig();r.service.fetcher=async()=>new Response('{}',{headers:{'content-length':'2000001'}});await assert.rejects(()=>pair(r),/för stort/);assert.equal(r.saved(),undefined);});
 test('operator-selected origin persists without sending a request or copying credentials',()=>{
   const r=rig(),service=new TrainMeet({storage:r.storage,fetcher:r.fetcher});
@@ -91,7 +91,7 @@ test('changing origin keeps the old pairing saved for its own server and never r
   service.configure({...service.view(),origin:'https://trainmeet.example'});
   assert.equal(service.view().paired,true);assert.equal(service.view().status,'disconnected');assert.equal(service.view().stationId,'cda');
   await service.refresh();assert.equal(service.view().status,'connected');assert.ok(r.calls.filter(c=>c.options.method==='POST').length===1,'no new pairing needed');
-  service.disconnect(service.view());assert.deepEqual(service.view().savedServers,[]);assert.equal(r.saved().token,'');
+  await service.disconnect(service.view());assert.deepEqual(service.view().savedServers,[]);assert.equal(r.saved().token,'');
 });
 test('stale, busy and installation-locked origin changes are refused',()=>{
   const r=rig();assert.throws(()=>r.service.configure({...r.service.view(),origin:'https://different.example'}),/fast TrainMeet/);
@@ -123,7 +123,7 @@ test('readable client id is presented on pairing and persists through disconnect
   assert.equal(sent.client_id,'cda-tkl-demo');assert.equal(sent.display_name,'cda-tkl-demo');assert.equal(sent.device_kind,'tkl_terminal');
   assert.throws(()=>service.configure({...service.view(),clientId:'other-tkl'}),/Koppla från/);
   assert.equal(new TrainMeet({storage:r.storage}).view().clientId,'cda-tkl-demo');
-  service.disconnect(service.view());assert.equal(service.view().clientId,'cda-tkl-demo');
+  await service.disconnect(service.view());assert.equal(service.view().clientId,'cda-tkl-demo');
   const next=new TrainMeet({storage:r.storage});assert.equal(next.view().clientId,'cda-tkl-demo');assert.equal(next.view().paired,false);
 });
 test('invalid or unsaved client ids never alter the previous identity or revision',()=>{

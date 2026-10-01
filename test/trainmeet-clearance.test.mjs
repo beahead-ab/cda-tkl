@@ -39,27 +39,9 @@ test('lines join the catalogue with live state: neighbour names, direction and t
   await r.service.refresh();assert.equal(r.service.view().context.lines[0].state,'unknown');assert.deepEqual(r.service.view().context.lines[0].actions,[]);
 });
 
-test('shift start and finish carry the terminal identity, refresh the context and are validated locally',async()=>{
-  const r=rig();await pair(r);
-  await assert.rejects(()=>r.service.startShift({...r.service.view(),operatorName:'  '}),/operatörens namn/);
-  await assert.rejects(()=>r.service.finishShift({...r.service.view(),status:'closed'}),/Inget trafikpass/);
-  assert.equal(r.posts().length,0);
-  r.responses['/v1/tkl/shift/start']={status:200,body:{shift}};r.context.shift=shift;
-  const view=await r.service.startShift({...r.service.view(),operatorName:' Casper ',takeOver:false});
-  assert.deepEqual(r.posts().at(-1).body,{station_id:'cda',operator_name:'Casper',terminal_name:'cda-tkl',take_over:false});
-  assert.equal(view.context.shift.operatorName,'Casper');assert.equal(view.context.shift.id,'s1');assert.equal(view.status,'connected');
-  await assert.rejects(()=>r.service.finishShift({...r.service.view(),status:'later'}),/Avsluta eller Lämna över/);
-  r.responses['/v1/tkl/shift/finish']={status:200,body:{shift:{shift_id:'s1',status:'handover'}}};
-  r.context.shift=null;r.context.previous_shift={...shift,status:'handover',handover_note:'Tåg 3581 väntar på Lekby'};
-  const after=await r.service.finishShift({...r.service.view(),status:'handover',note:' Tåg 3581 väntar på Lekby '});
-  assert.deepEqual(r.posts().at(-1).body,{station_id:'cda',shift_id:'s1',status:'handover',note:'Tåg 3581 väntar på Lekby'});
-  assert.equal(after.context.shift,null);assert.equal(after.context.previousShift.note,'Tåg 3581 väntar på Lekby');
-  assert.deepEqual(r.journal,['Trafikpass startat av Casper hos TrainMeet.','Trafikpasset överlämnat hos TrainMeet.']);
-});
-
 test('clearance steps are posted only for own lines during a shift; refusals keep the server wording and re-read the context',async()=>{
   const r=rig();await pair(r);
-  await assert.rejects(()=>r.service.clearance({...r.service.view(),connectionId:'vag-cda',action:'accept'}),/Starta trafikpasset/);
+  await assert.rejects(()=>r.service.clearance({...r.service.view(),connectionId:'vag-cda',action:'accept'}),/tas i tjänst/);
   r.context.shift=shift;await r.service.refresh();
   await assert.rejects(()=>r.service.clearance({...r.service.view(),connectionId:'x-y',action:'arrive'}),/hör inte till stationen/);
   await assert.rejects(()=>r.service.clearance({...r.service.view(),connectionId:'cda-lek',action:'request',trainNumber:'P12'}),/tågnumret med siffror/);
@@ -111,7 +93,7 @@ test('line wording follows state and direction; only incoming requests demand at
 import {movementStatus,movementActions,movementDone} from '../public/clearance-text.js';
 test('movement declarations send unchanged fields with their current values and follow the TMBox order',async()=>{
   const r=rig();await pair(r);
-  await assert.rejects(()=>r.service.movement({...r.service.view(),movementId:'m1',departure:'positioned'}),/Starta trafikpasset/);
+  await assert.rejects(()=>r.service.movement({...r.service.view(),movementId:'m1',departure:'positioned'}),/tas i tjänst/);
   r.context.shift=shift;await r.service.refresh();
   await assert.rejects(()=>r.service.movement({...r.service.view(),movementId:'',departure:'positioned'}),/vilken tågrörelse/);
   await assert.rejects(()=>r.service.movement({...r.service.view(),movementId:'m1',departure:'flying'}),/Okänt avgångsläge/);
@@ -142,25 +124,34 @@ test('movement declarations send unchanged fields with their current values and 
   assert.equal(movementDone({arrival:'arrived'},arrivalOnly),true);
 });
 
-test('TMBox mode keeps a shift active automatically, at most once a minute, never taking over, and survives restart',async()=>{
-  const r=rig();await pair(r);
-  assert.deepEqual(r.service.view().autoShift,{enabled:false,operatorName:'',error:''});
-  assert.throws(()=>r.service.setAutoShift({...r.service.view(),enabled:true,operatorName:'  '}),/operatörens namn/);
-  assert.throws(()=>r.service.setAutoShift({sessionId:'x',revision:0,enabled:true,operatorName:'Casper'}),/ändrats/);
-  const on=r.service.setAutoShift({...r.service.view(),enabled:true,operatorName:' Casper '});
-  assert.deepEqual(on.autoShift,{enabled:true,operatorName:'Casper',error:''});assert.equal(r.storage.load('trainmeet.json',{}).autoShift.enabled,true);
+test('pairing puts the station in service and keeps it, at most once a minute and never taking over; the name renames our own shift; disconnect closes it',async()=>{
+  const r=rig();assert.equal(r.service.view().operatorName,'');await pair(r);
   const starts=()=>r.posts().filter(p=>p.path==='/v1/tkl/shift/start');
   r.responses['/v1/tkl/shift/start']={status:200,body:{shift}};
-  r.now(200000);await r.service.refresh();
-  assert.equal(starts().length,1);assert.deepEqual(starts()[0].body,{station_id:'cda',operator_name:'Casper',terminal_name:'cda-tkl',take_over:false});
-  r.now(230000);await r.service.refresh();assert.equal(starts().length,1,'no retry within a minute');
-  r.now(270000);await r.service.refresh();assert.equal(starts().length,2);
-  r.context.shift=shift;r.now(340000);await r.service.refresh();assert.equal(starts().length,2,'nothing to do once a shift is active');
-  assert.ok(r.journal.some(t=>t==='Trafikpass startat automatiskt (TMBox-läge) av Casper hos TrainMeet.'));
+  r.now(150000);await r.service.refresh();
+  assert.deepEqual(starts().map(p=>p.body),[{station_id:'cda',operator_name:'cda-tkl',terminal_name:'cda-tkl',take_over:false}],'the TKL id names the station until an operator chooses a name');
+  r.now(180000);await r.service.refresh();assert.equal(starts().length,1,'no retry within a minute');
+  r.now(220000);await r.service.refresh();assert.equal(starts().length,2);
+  r.context.shift={...shift,operator_name:'cda-tkl',terminal_name:'cda-tkl'};r.now(300000);await r.service.refresh();assert.equal(starts().length,2,'nothing to do once the station is manned');
+  assert.ok(r.journal.includes('Stationen i tjänst hos TrainMeet som cda-tkl.'));
+  await assert.rejects(()=>r.service.setOperatorName({sessionId:'x',revision:0,operatorName:'Casper'}),/ändrats/);
+  await assert.rejects(()=>r.service.setOperatorName({...r.service.view(),operatorName:'x'.repeat(81)}),/80 tecken/);
+  const named=await r.service.setOperatorName({...r.service.view(),operatorName:' Casper '});
+  assert.equal(named.operatorName,'Casper');assert.equal(r.storage.load('trainmeet.json',{}).operatorName,'Casper');
+  assert.deepEqual(starts().at(-1).body,{station_id:'cda',operator_name:'Casper',terminal_name:'cda-tkl',take_over:true},'our own shift is renamed by taking it over');
+  r.context.shift={...shift,operator_name:'Webb',terminal_name:'browser-tkl'};await r.service.refresh();const before=starts().length;
+  await r.service.setOperatorName({...r.service.view(),operatorName:'Anna'});assert.equal(starts().length,before,'another terminal\x27s shift is never taken over by a rename');
   r.context.shift=null;r.responses['/v1/tkl/shift/start']={status:409,body:{error:'tkl_unavailable',message:'TKL-driftlagret är inte tillgängligt'}};
-  r.now(400000);await r.service.refresh();assert.equal(r.service.view().autoShift.error,'TKL-driftlagret är inte tillgängligt');assert.equal(r.service.view().status,'connected');
+  r.now(400000);await r.service.refresh();assert.equal(r.service.view().serviceError,'TKL-driftlagret är inte tillgängligt');assert.equal(r.service.view().status,'connected');
   const again=new TrainMeet({origin:'https://trainmeet.example',storage:r.storage,fetcher:r.fetcher,now:()=>500000});
-  assert.deepEqual(again.view().autoShift,{enabled:true,operatorName:'Casper',error:''});assert.equal(again.view().paired,true);
-  const off=r.service.setAutoShift({...r.service.view(),enabled:false});assert.equal(off.autoShift.enabled,false);assert.equal(off.autoShift.operatorName,'Casper');
-  r.now(600000);await r.service.refresh();assert.equal(starts().length,3,'no further attempts when off');
+  assert.equal(again.view().operatorName,'Anna');assert.equal(again.view().paired,true);
+  r.context.shift={...shift,operator_name:'Anna',terminal_name:'cda-tkl'};await r.service.refresh();r.responses['/v1/tkl/shift/finish']={status:200,body:{}};
+  await r.service.disconnect(r.service.view());
+  assert.deepEqual(r.posts().at(-1),{path:'/v1/tkl/shift/finish',method:'POST',body:{station_id:'cda',shift_id:'s1',status:'closed',note:''}});
+  assert.equal(r.service.view().paired,false);assert.ok(r.journal.includes('Stationen ur tjänst hos TrainMeet (frånkopplad).'));
+});
+test('an older file with the TMBox-mode setting keeps its operator name',()=>{
+  const legacy={version:1,clientId:'cda-tkl',stationId:'cda',token:'t',origin:'https://trainmeet.example',autoShift:{enabled:false,operatorName:'Casper'}};
+  const service=new TrainMeet({storage:{load:()=>structuredClone(legacy),save(){}}});
+  assert.equal(service.view().operatorName,'Casper');assert.equal(service.view().paired,true);assert.ok(!('autoShift' in service.data));
 });
