@@ -36,7 +36,7 @@ export function readTimetable(data,{stationId,publicationId,day,loadedAt}) {
     if(t.operating_point_id&&track&&track.operatingPointId!==t.operating_point_id)invalid();
     const row={id:t.id,train_number:t.train_number,arrival_time:t.arrival_time||'',departure_time:t.departure_time||'',
       track_id:t.track_id||'',track:track?.label||'',operating_point_id:t.operating_point_id||'',no_stop:t.no_stop??false};
-    for(const key of ['days','train_type','arrival_from','departure_to']){
+    for(const key of ['days','train_type','arrival_from','departure_to','sort_time']){
       if(!optional(t[key]))invalid();row[key]=t[key]||'';
     }
     // Notes can contain line breaks, but no other control characters.

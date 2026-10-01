@@ -50,8 +50,8 @@ export function createTrainMeet({api,onTimetable,stationHint=()=>''}) {
   $('refresh').onclick=()=>action('refresh');
   $('disconnect').onclick=()=>confirmAdmin({title:'Koppla från TrainMeet?',message:'TKL slutar hämta träffens tidtabell och trafikläge. Du kan parkoppla igen senare.',button:'Koppla från',action:async()=>!!await action('disconnect')});
   $('show-timetable').onclick=onTimetable;
-  return {update(next,connected,imported){
-    state=next;online=connected;if(!state)return;timetable.update(state,online,imported);
+  return {update(next,connected,imported,panel){
+    state=next;online=connected;if(!state)return;timetable.update(state,online,imported,panel);
     const stale=!online||state.stale;
     $('status').textContent=!state.paired?'Ej ansluten':stale?'Kontakt saknas · gamla uppgifter':'Ansluten';
     document.getElementById('menu-trainmeet-status').textContent=!state.paired?'Ej ansluten':stale?'Kontakt saknas':'Ansluten';

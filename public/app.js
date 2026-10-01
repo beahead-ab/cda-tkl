@@ -26,6 +26,7 @@ import { createOperatingControls } from './operating-controls.js';
 import { createFullscreen } from './fullscreen.js';
 import { createContextDialog } from './context-dialog.js';
 import { createPanelConsole } from './panel-console.js';
+import {createPanelEvents} from './panel-events.js';
 const $ = id => document.getElementById(id);
 const adminNavigation=createAdminNavigation();
 const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -52,7 +53,7 @@ const routeTargets=createRouteTargets({load:async(from,kind)=>{
   if(!response.ok)throw Error('Mål kunde inte kontrolleras.');
   return response.json();
 },onChange:()=>paint()});
-let currentPage='panel',appMenu,contextDialog,panelConsole,timetableImport,signalControls,chosenKind=null,clearanceView,streamDeck,streamDeckEditor;
+let currentPage='panel',appMenu,contextDialog,panelConsole,panelEvents,timetableImport,signalControls,chosenKind=null,clearanceView,streamDeck,streamDeckEditor;
 const pageFromHash=()=>{
   if(location.hash==='#tools/zoom')history.replaceState(null,'','#tools/appearance');
   if(location.hash==='#tools')history.replaceState(null,'','#tools/appearance');
@@ -494,7 +495,7 @@ function renderPanel() {
   telegramRecorder?.update(state,online);
   operatingControls?.update(state,online);
   if(state.clock)modelClock?.update(state.clock,online);
-  trainMeet?.update(state.trainMeet,online,state.timetableImport);
+  trainMeet?.update(state.trainMeet,online,state.timetableImport,{routes:state.routes||[]});
   clearanceView?.update(state.trainMeet,online);
   streamDeck?.update();
   if(state.streamDeck)streamDeckEditor?.update(state.streamDeck,online);
@@ -533,7 +534,7 @@ function renderPanel() {
   $('event-status').textContent = state.routes.length + ' tågvägslås · ' + Object.keys(config.turnouts).length + ' anslutna växlar';
   html('events', state.events.filter(e => !['report', 'transport'].includes(e.kind)).slice(0, 7).map(e => `<div class="event-row"><time>${time(e.at)}</time><span>${esc(e.message)}</span></div>`).join(''));
   $('wire').textContent = (state.trace || []).slice(0, 40).map(e => `${time(e.at)}  ${e.direction === 'out' ? 'SKICKAT ' : 'MOTTAGET'}  ${e.hex}`).join('\n');
-  panelConsole?.update(state,online);
+  panelConsole?.update(state,online);panelEvents?.update(state,online);
 }
 function paintInspector() {
   if (!inspected || !state) return;
@@ -583,7 +584,7 @@ async function start() {
   telegramRecorder=createTelegramRecorder();
   operatingControls=createOperatingControls({api,openSource});
   timetableImport=createTimetableImport();modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable'),stationHint:()=>config?.profile?.title||'Charlottendal'});feedback=createFeedback();clearanceView=createClearance({api,message});
-  panelConsole=createPanelConsole({onOpen:()=>{appMenu?.close();},onResetComplete:text=>message(text,{error:false,duration:4000})});
+  panelConsole=createPanelConsole({onOpen:()=>{appMenu?.close();},onResetComplete:text=>message(text,{error:false,duration:4000})});panelEvents=createPanelEvents();
   [config, panel, registry, signalEndpoints] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json', '/data/signal-endpoints.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.

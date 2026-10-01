@@ -1,7 +1,7 @@
 /* A fixed instrument face. Only an explicit viewport/zoom change resizes it. */
-body.panel-app{--panel-bottom-height:184px;height:100dvh;overflow:hidden;overscroll-behavior:none}
+body.panel-app{height:100dvh;overflow:hidden;overscroll-behavior:none}
+body.panel-app #panel-view .panel-shell{height:100%;display:grid;grid-template-rows:var(--plan-row) minmax(0,1fr);position:relative}
 body.panel-app #panel-view{position:fixed;inset:0;margin:0;overflow:hidden}
-body.panel-app #panel-view .panel-shell{height:100%;display:grid;grid-template-rows:minmax(0,1fr) var(--panel-bottom-height)}
 /* Messages float above the instrument face and never reserve layout space. */
 #global-status{position:fixed;z-index:80;top:max(10px,env(safe-area-inset-top));right:14px;width:min(560px,calc(100vw - 64px));max-height:calc(100dvh - 34px);display:flex;flex-direction:column;gap:8px;overflow:auto;overscroll-behavior:contain;pointer-events:none}
 body:not([data-page=panel]) #global-status{top:88px;max-height:calc(100dvh - 112px)}
@@ -24,7 +24,6 @@ body:not([data-page=panel]) #global-status{top:88px;max-height:calc(100dvh - 112
 #panel-view #track-plan{width:100%;height:100%;min-height:0;min-width:0;overflow:hidden;user-select:none;-webkit-user-select:none}
 body:not([data-panel-ready=true]) #track-plan{visibility:hidden}
 body:not([data-panel-ready=true]) .panel-scroll::before{content:'Läser in ställverket…';position:absolute;inset:45% 0 auto;text-align:center;color:var(--ink);font-size:12px;letter-spacing:1px}
-#panel-bottom{position:relative;display:grid;grid-template-columns:minmax(0,3fr) minmax(180px,1fr);gap:24px;min-height:0;padding:0 14px 8px;color:#e4e8e3}
 body.panel-app #panel-console{min-height:0;height:auto;overflow:hidden;margin:0;padding:8px 0;border:0;border-radius:0;box-shadow:none;background:transparent;color:inherit}
 #panel-quick-actions{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}#panel-quick-actions button{font-size:12px;padding:8px 12px;min-height:34px;border-radius:3px}
 #panel-quick-actions #panel-reset[aria-busy=true]{border-color:#8b8973}
@@ -35,25 +34,12 @@ body.panel-app #panel-console{min-height:0;height:auto;overflow:hidden;margin:0;
 #panel-drawer{position:fixed;inset:auto auto 10px 50%;transform:translateX(-50%);margin:0;width:min(900px,calc(100vw - 24px));max-height:calc(100dvh - 80px);overflow:auto;overscroll-behavior:contain;border:1px solid #819080;border-radius:5px;box-shadow:0 8px 35px #0009;scrollbar-gutter:stable}
 #panel-drawer::backdrop{background:#0002}
 #panel-drawer .panel-drawer-heading{position:sticky;top:-14px;background:var(--page);z-index:1;padding:10px 0}
-body.panel-app #trainmeet-timetable{height:100%;min-height:0;min-width:0;display:grid;grid-template-rows:24px minmax(0,1fr);gap:0;overflow:hidden;margin:0;padding:4px 0 0;border:0;border-radius:0;background:transparent;color:#e4e8e3;font:400 13px/1.4 "Helvetica Neue",Arial,sans-serif;position:relative}
-.tt-heading{height:24px;min-height:0;margin:0;flex-wrap:nowrap;overflow:hidden}.tt-heading h2{color:inherit;font-size:11px;font-weight:400;letter-spacing:1px}
-#tt-status{position:absolute;z-index:2;top:32px;left:0;right:0;margin:0;padding:5px 8px;font-size:11px;line-height:16px;background:var(--panel);color:inherit;border:1px solid #8b897355}
-#tt-status[hidden]{display:none!important}
-#tt-content{min-height:0;overflow:hidden}
-.tt-columns{height:100%;min-height:0;gap:18px}.tt-column{border:0;padding:0;min-width:0}
-.tt-labels,.tt-values{grid-template-columns:minmax(52px,1fr) 44px 44px minmax(42px,.7fr);gap:6px}.tt-labels{height:18px;padding:0 3px;font-size:10px;letter-spacing:.3px;opacity:.75;color:inherit}
-body.panel-app .tt-values{font-size:13px;line-height:24px;color:inherit}body.panel-app .tt-values strong{font-weight:400;color:inherit;letter-spacing:0}
-.tt-entry{height:24px;padding:0 3px;border:0;border-radius:0;color:inherit}.tt-entry:hover{background:#ffffff0a}.tt-track-changed{color:inherit;text-decoration:underline;text-underline-offset:3px}
-.tt-pagination{gap:5px}.tt-pagination button{width:22px;height:22px;border:0;background:transparent;color:inherit}.tt-pagination #tt-range{width:82px;min-width:82px;white-space:nowrap}
-#tt-clock{min-width:0;overflow:hidden;text-overflow:ellipsis}#tt-station{font-size:10px;opacity:.8}.tt-empty{color:inherit;font-size:12px;opacity:1}
 .touch-target .dot,.touch-target:hover .dot,.touch-target:focus-visible .dot{transform:none}
 .touch-target .hit{transition:fill 100ms,stroke 100ms}
 .touch-target .dot{transition:fill 100ms}
 .signal-target image{transition:none}
-@media(min-height:900px){body.panel-app{--panel-bottom-height:232px}}
-@media(max-width:900px){#panel-bottom{grid-template-columns:minmax(0,1fr) 160px;gap:16px}#panel-view .panel-name{grid-template-columns:auto minmax(0,1fr) 34px;gap:8px;padding-inline:10px}#panel-view .panel-name>span:first-child{font-size:10px;letter-spacing:1px}#tt-clock{display:none}}
-@media(max-width:700px){body.panel-app{--panel-bottom-height:220px}#panel-bottom{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) 36px;gap:4px;padding-inline:8px}body.panel-app #panel-console{padding:0;display:flex;align-items:center;gap:8px}#panel-quick-actions{flex-wrap:nowrap}#panel-quick-actions button{min-height:30px;padding:5px 8px;font-size:11px;white-space:nowrap}.panel-runtime-info{margin:0;min-width:0;font-size:10px;gap:0;overflow:hidden}#panel-console #selection-hint{font-size:10px}.operation-overview{grid-template-columns:1fr}#panel-view .panel-actions{flex:none}#tt-station{flex:1 1 auto}.tt-heading{gap:6px}.tt-heading h2{font-size:10px;letter-spacing:.5px}.tt-pagination #tt-range{width:70px;min-width:70px}#panel-drawer{width:calc(100vw - 16px);padding:12px 8px}}
-@media(max-height:600px){body.panel-app{--panel-bottom-height:148px}}
+@media(max-width:900px){#panel-view .panel-name{grid-template-columns:auto minmax(0,1fr) 34px;gap:8px;padding-inline:10px}#panel-view .panel-name>span:first-child{font-size:10px;letter-spacing:1px}}
+@media(max-width:700px){.operation-overview{grid-template-columns:1fr}#panel-view .panel-actions{flex:none}#panel-drawer{width:calc(100vw - 16px);padding:12px 8px}}
 @media(prefers-reduced-motion:reduce){.touch-target .hit,.touch-target .dot,.panel-key{transition:none}}
 /* One fitted image plane; manual zoom expands only this scrollable area. */
 #plan-stage{display:grid;place-items:center;width:100%;height:100%;min-width:0;min-height:0}
@@ -77,9 +63,8 @@ body.panel-app .tt-values{font-size:13px;line-height:24px;color:inherit}body.pan
 .touch-target.route-preparing[data-preparing-endpoint=end] .dot,.touch-target.route-preparing[data-preparing-endpoint=end] .traffic-dot{animation-delay:-1200ms}
 @media(prefers-reduced-motion:reduce){.touch-target.route-preparing .dot,.touch-target.route-preparing .traffic-dot{animation:none;fill:#cbb876;stroke:#cbb876}}
 
-.tt-pagination svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 /* Original panel-style white pushbutton and a separate acknowledgement lamp. */
-body.panel-app #panel-console{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:4px 0 0;height:64px;min-height:64px;flex:none;width:100%}
+body.panel-app #panel-console{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:2px 0 0;height:54px;min-height:54px;flex:none;width:100%}
 #panel-quick-actions{order:0;justify-content:center;margin:0}
 #panel-console .panel-runtime-info{order:1;margin:8px 0 0;text-align:right}
 #panel-quick-actions :is(#panel-reset,#yard-authority){display:flex;flex-direction:column;align-items:center;gap:0;min-width:80px;min-height:56px;padding:0 10px 1px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--ink);font:400 9px/1.3 "Helvetica Neue",Arial,sans-serif;letter-spacing:.1px;touch-action:manipulation}
@@ -133,7 +118,6 @@ body.panel-app #panel-console{display:flex;flex-direction:column;justify-content
 
 /* Keep the small reset control attached to the fitted drawing, above the timetable. */
 #plan-face{display:flex;flex-direction:column;align-items:center;width:max-content;max-width:none}
-body.panel-app #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
 
 /* Turntable pit and bridge, independent of the source's decorative diamond. */
 .turntable{cursor:context-menu;outline:none}
@@ -181,3 +165,197 @@ body.panel-app #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-r
 
 #yard-authority[aria-pressed=true] .reset-indicator{fill:#7fa7bb;stroke:#a2c7d8}
 .rail.yard-delegated:not(.occupied):not(.unknown):not(.blocked){stroke:#7894a2}
+
+/* ===== Nederrad med tidtabell och händelser · helsideslayout (design 1 oktober 2026) =====
+   The bottom row gets what is left; the plan scales to the width in its 2102:688
+   proportion, never the other way round. Below 300 px of bottom row the plan shrinks
+   instead and is centred. All scrolling is local: the page itself never scrolls. */
+html:has(body.panel-app){overflow:hidden}
+body.panel-app{--console-h:54px;--plan-inset-x:16px;--plan-inset-top:10px;--plan-fit:contain;--plan-tag:pan;--plan-h:min(calc((100vw - 16px) / 3.0552),calc(100dvh - 54px - 10px - 300px));--plan-row:calc(var(--plan-h) + var(--plan-inset-top) + var(--console-h));background:#000}
+body.panel-app[data-skin=original] .panel-shell{--panel:#000;background:#000}
+body.panel-app .panel-shell{background:#000}
+#plan-face{padding:var(--plan-inset-top) calc(var(--plan-inset-x) / 2) 0}
+#panel-view .panel-scroll{background:#000}
+/* Återställ panel · Lämna över rangerbangården: 54 px row, labels in IBM Plex. */
+body.panel-app #panel-console{height:var(--console-h);min-height:var(--console-h);padding:2px 0 0}
+#panel-quick-actions{gap:40px}
+#panel-quick-actions :is(#panel-reset,#yard-authority){min-height:50px;padding:0 8px 0;color:#e4e8e3;font:400 9.5px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:0}
+:is(#panel-reset,#yard-authority) .reset-switch{width:34px;height:38px}
+/* The row: timetable left, events right. */
+#panel-bottom{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 560px;grid-template-rows:minmax(0,1fr);gap:0;min-height:0;padding:0;border-top:1px solid #1f2429;background:#000;color:#e6e9ec;font:400 13px/1.3 "IBM Plex Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;--tt-row:25px;--tt-now:27px;--tt-line:14px;--tt-pad:16px;--tt-gap:10px;--tt-cols:72px 48px 104px 104px 62px 62px 84px 250px minmax(0,1fr)}
+#panel-bottom-tabs{display:none}
+body.panel-app #trainmeet-timetable{display:grid;grid-template-rows:auto auto minmax(0,1fr);min-height:0;min-width:0;height:auto;margin:0;padding:0;border:0;border-right:1px solid #1f2429;border-radius:0;background:transparent;color:inherit;font:inherit;position:relative;overflow:hidden}
+.tt-heading{display:flex;align-items:baseline;gap:18px;height:auto;min-height:0;margin:0;padding:9px var(--tt-pad) 7px;border-bottom:1px solid #1f2429;white-space:nowrap;overflow:hidden;flex-wrap:nowrap}
+.tt-heading h2{margin:0;flex:none;font:600 12.5px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#e6e9ec}
+#tt-station{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:12px;color:#7d8791;opacity:1}
+.tt-mode{display:flex;flex:none;border:1px solid #2a3036;border-radius:3px;overflow:hidden;font-size:11px}
+.tt-mode button{min-height:0;padding:2px 9px;border:0;border-radius:0;background:transparent;color:#7d8791;font:inherit;line-height:1.4}
+.tt-mode button:hover{background:#262c32;border-color:transparent}
+.tt-mode button[aria-pressed=true]{background:#262c32;color:#e6e9ec}
+#tt-next{margin-left:auto;flex:none;font-size:12px;color:#aeb6be;white-space:nowrap}
+#tt-next b,#bottom-tabs-next b,.tt-mini-next b{font-weight:600;color:#e6e9ec}
+#tt-next em,#bottom-tabs-next em,.tt-mini-next em{font-style:normal;color:#f5c518}
+#tt-clock{display:flex;flex:none;align-items:baseline;gap:9px;min-width:0;overflow:visible;font-variant-numeric:tabular-nums}
+#tt-clock:empty{display:none}
+#tt-clock-time{font:500 20px/1.2 "IBM Plex Mono",monospace;color:#e6e9ec}
+#tt-clock-label{font-size:11px;color:#7d8791}
+#tt-collapse{display:none}
+#tt-status{position:absolute;z-index:2;top:42px;left:0;right:0;margin:0;padding:5px var(--tt-pad);font-size:11px;line-height:16px;background:#000;color:#f5d76e;border-block:1px solid #2a3036}
+#tt-status[hidden]{display:none!important}
+.tt-labels{display:grid;grid-template-columns:var(--tt-cols);gap:0 var(--tt-gap);padding:5px var(--tt-pad) 3px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#7d8791;opacity:1;white-space:nowrap}
+.tt-labels>span{min-width:0;overflow:hidden;text-overflow:ellipsis;text-align:left}
+#tt-content{min-height:0;overflow:hidden auto;overscroll-behavior:contain;padding:0 var(--tt-pad) 6px;scrollbar-width:thin;outline:none}
+.tt-entry{display:grid;grid-template-columns:var(--tt-cols);gap:0 var(--tt-gap);align-items:center;width:100%;height:var(--tt-row);margin:0;padding:0;border:0;border-radius:0;background:transparent;color:#dfe4e8;font:inherit;text-align:left;white-space:nowrap;cursor:pointer;transition:none}
+.tt-entry>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.tt-entry .tt-n{font-weight:500}
+.tt-entry:hover{background:#ffffff0a;border-color:transparent}
+.tt-entry:focus-visible{outline:1px solid #7d8791;outline-offset:-1px;background:transparent}
+.tt-done{color:#667079}
+.tt-now{height:var(--tt-now);color:#f3f5f7;background:rgba(245,197,24,.07);margin:0 -8px;width:calc(100% + 16px);padding:0 8px}
+.tt-now .tt-n{font-weight:600}
+.tt-now .tt-lage,.tt-now .tt-la{color:#f5c518}
+.tt-next .tt-lage{color:#7d8791}.tt-next .tt-anm{color:#b6bec6}.tt-next .tt-la{color:#8a939c}
+.tt-track-changed{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.tt-now-line{display:flex;align-items:center;gap:10px;height:var(--tt-line);margin:1px 0}
+.tt-now-line span{font:500 10px/1 "IBM Plex Mono",monospace;letter-spacing:.08em;color:#f5c518}
+.tt-now-line i{flex:1;height:1px;background:#f5c518;opacity:.55}
+.tt-frtill,.tt-la{display:none}
+.tt-empty{margin:9px 0;font-size:12px;color:#7d8791;opacity:1}
+.timetable-stale #tt-content,.timetable-stale #tt-clock{opacity:.55}
+#tt-mini{display:none}
+/* Händelser: the core journal, newest on top. */
+#panel-events{display:grid;grid-template-rows:auto minmax(0,1fr);min-height:0;min-width:0;--ev-cols:60px 10px minmax(0,1fr) auto;--ev-gap:10px;--ev-row:30px}
+.ev-heading{display:flex;align-items:baseline;gap:14px;padding:9px var(--tt-pad) 7px;border-bottom:1px solid #1f2429;white-space:nowrap}
+.ev-heading h2{margin:0;font:600 12.5px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#e6e9ec}
+.ev-filters{display:flex;gap:14px;margin-left:auto;font-size:11px}
+.ev-filters button{min-height:0;padding:0;border:0;border-bottom:1px solid transparent;border-radius:0;background:transparent;color:#7d8791;font:inherit;line-height:1.4}
+.ev-filters button:hover{background:transparent;color:#e6e9ec}
+.ev-filters button[aria-pressed=true]{color:#e6e9ec;border-bottom-color:#e6e9ec}
+.ev-alarm-count,#bottom-tabs-alarms{color:#ff6a5c}
+#ev-content{min-height:0;overflow:hidden auto;overscroll-behavior:contain;padding:4px var(--tt-pad) 6px;scrollbar-width:thin;outline:none}
+.ev-row{display:grid;grid-template-columns:var(--ev-cols);gap:0 var(--ev-gap);align-items:center;height:var(--ev-row);font-size:12.5px;border-bottom:1px solid #121619;white-space:nowrap}
+.ev-row time{font:500 11.5px/1 "IBM Plex Mono",monospace;color:#7d8791}
+.ev-dot{width:7px;height:7px;border-radius:50%;background:#5a646d}
+.ev-ok .ev-dot{background:#46d36b}.ev-warn .ev-dot{background:#f5c518}.ev-alarm .ev-dot{background:#ff5a4d}
+.ev-text{min-width:0;overflow:hidden;text-overflow:ellipsis;color:#cfd5db}
+.ev-warn .ev-text{color:#f5d76e}.ev-alarm .ev-text{color:#ff8a7f}
+.ev-ack{min-height:0;padding:2px 9px;border:1px solid #ff6a5c;border-radius:3px;background:transparent;color:#ff8a7f;font:inherit;font-size:11px;line-height:1.4}
+.ev-ack:hover{background:#ff6a5c22;border-color:#ff6a5c}
+.ev-empty{margin:9px 0;font-size:12px;color:#7d8791}
+/* Over the plan on tablets and phones: zoom tag, Visa hela and the pan indicator. */
+#plan-overlay{display:none;position:absolute;top:0;left:0;right:0;height:var(--plan-row);z-index:5;pointer-events:none}
+.plan-zoom-tags{position:absolute;right:12px;top:10px;display:flex;gap:6px;font-size:10.5px;white-space:nowrap}
+.plan-zoom-tag{min-height:0;padding:3px 8px;border:1px solid #2a3036;border-radius:3px;background:#16191d;color:#98a2ab;font:inherit;line-height:1.4;pointer-events:auto}
+button.plan-zoom-tag{color:#e6e9ec;cursor:pointer}
+button.plan-zoom-tag:hover{background:#262c32;border-color:#2a3036}
+.plan-pan{position:absolute;left:50%;bottom:calc(var(--console-h) + 6px);transform:translateX(-50%);width:160px;height:4px;border-radius:2px;background:#22282e;opacity:0}
+.plan-overlay-pannable .plan-pan{opacity:1}
+.plan-pan i{position:absolute;top:0;height:4px;border-radius:2px;background:#7d8791}
+#panel-phone-bar{display:none}
+/* Laptop and iPad: one step smaller type, narrower columns. */
+@media(max-width:1799px){
+#panel-bottom{grid-template-columns:minmax(0,1fr) 440px;font-size:12.5px;--tt-row:24px;--tt-now:26px;--tt-line:12px;--tt-pad:14px;--tt-gap:8px;--tt-cols:62px 44px 84px 84px 56px 56px 72px 244px minmax(0,1fr)}
+.tt-heading{gap:14px;padding:8px var(--tt-pad) 6px}.tt-heading h2,.ev-heading h2{font-size:12px}#tt-station{font-size:11.5px}.tt-mode{font-size:10.5px}.tt-mode button{padding:2px 8px}#tt-next{font-size:11.5px}#tt-clock{gap:8px}#tt-clock-time{font-size:18px}#tt-clock-label{font-size:10.5px}.tt-labels{font-size:9.5px;padding:4px var(--tt-pad) 2px}.tt-now-line span{font-size:9.5px}.tt-next-from,.tt-next-kind,.tt-clock-prefix{display:none}
+.ev-heading{gap:12px;padding:8px var(--tt-pad) 6px}.ev-filters{gap:12px;font-size:10.5px}#panel-events{--ev-cols:50px 8px minmax(0,1fr) auto;--ev-gap:8px;--ev-row:28px}.ev-row{font-size:12px}.ev-row time{font-size:11px}.ev-ack{font-size:10.5px;padding:2px 6px}#ev-content{padding:3px var(--tt-pad) 6px}
+#panel-quick-actions{gap:36px}
+}
+@media(max-width:1439px){#panel-bottom{grid-template-columns:minmax(0,1fr) 400px}}
+@media(max-width:1400px){body.panel-app{--plan-inset-top:6px}}
+/* iPad Pro 12,9″ landscape: a touch screen keeps the desktop type. */
+@media(min-width:1300px) and (max-width:1400px) and (pointer:coarse){
+#panel-bottom{font-size:13px;--tt-row:25px;--tt-now:27px;--tt-line:14px;--tt-pad:16px;--tt-gap:10px;--tt-cols:64px 44px 96px 96px 56px 56px 76px 246px minmax(0,1fr)}
+.tt-heading{gap:16px;padding:9px var(--tt-pad) 7px}.tt-heading h2,.ev-heading h2{font-size:12.5px}#tt-station{font-size:12px}.tt-mode{font-size:11px}.tt-mode button{padding:2px 9px}#tt-next{font-size:12px}#tt-clock{gap:9px}#tt-clock-time{font-size:20px}#tt-clock-label{font-size:11px}.tt-labels{font-size:10px;padding:5px var(--tt-pad) 3px}.tt-now-line span{font-size:10px}
+.ev-heading{gap:14px;padding:9px var(--tt-pad) 7px}.ev-filters{gap:14px;font-size:11px}#panel-events{--ev-cols:56px 8px minmax(0,1fr) auto;--ev-gap:8px;--ev-row:30px}.ev-row{font-size:12.5px}.ev-row time{font-size:11.5px}.ev-ack{font-size:11px;padding:2px 7px}#ev-content{padding:4px var(--tt-pad) 6px}
+#panel-quick-actions{gap:40px}
+}
+@media(max-width:1299px){#panel-bottom{grid-template-columns:minmax(0,1fr) 380px}}
+/* Below 1200 px Läge and Anmärkning share one column so rows stay single-line. */
+@media(max-width:1200px){
+body.panel-app{--console-h:50px}
+#panel-bottom{--tt-cols:60px 40px 84px 84px 52px 52px 64px minmax(0,1fr)}
+.tt-lage,.tt-anm{display:none}.tt-la{display:block}
+:is(#panel-reset,#yard-authority) .reset-switch{width:32px;height:36px}
+}
+/* iPad portrait: the whole plan would be 273 px high. It is locked to 400 px with
+   panning instead; Visa hela goes back to 100 %. Timetable stacks over events. */
+@media(orientation:portrait) and (max-width:900px){
+body.panel-app{--console-h:50px;--plan-inset-x:0px;--plan-inset-top:6px;--plan-fit:height;--plan-tag:pan;--plan-h:400px}
+#panel-view .panel-scroll{touch-action:pan-x pan-y}
+#panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.3fr) minmax(0,1fr);--tt-cols:56px 40px 150px 50px 50px 62px minmax(0,1fr)}
+body.panel-app #trainmeet-timetable{border-right:0}
+#panel-events{border-top:1px solid #1f2429;--ev-cols:54px 8px minmax(0,1fr) auto}
+.tt-fr,.tt-till,.tt-lage,.tt-anm{display:none}.tt-frtill,.tt-la{display:block}
+#plan-overlay{display:block}
+}
+/* iPhone portrait: monitoring, not operation. A scrollable plan strip, no touch
+   targets, tabs for timetable and events, two-line rows. */
+@media(max-width:500px){
+body.panel-app{--console-h:0px;--plan-inset-x:0px;--plan-inset-top:4px;--plan-fit:height;--plan-tag:pinch;--plan-h:232px;--plan-row:236px}
+body.panel-app #panel-view .panel-shell{grid-template-rows:40px var(--plan-row) minmax(0,1fr)}
+#panel-phone-bar{display:flex;order:-1;align-items:center;gap:12px;padding:0 48px 0 16px;border-bottom:1px solid #1f2429;white-space:nowrap}
+#panel-phone-bar .phone-brand{font:400 11px/1 "IBM Plex Mono",monospace;letter-spacing:.16em;color:#cfcfcf}
+#panel-phone-clock{margin-left:auto;font:500 16px/1 "IBM Plex Mono",monospace;color:#e6e9ec;font-variant-numeric:tabular-nums}
+#panel-phone-rate{font-size:10.5px;color:#7d8791}
+#panel-menu-slot{top:4px;left:auto;right:8px}
+#plan-overlay{display:block;top:40px}
+.plan-zoom-tags{right:10px;top:8px}.plan-zoom-tag{padding:2px 7px;font-size:10px}#plan-zoom-fit{display:none}.plan-pan{width:120px;bottom:6px}
+#panel-view .panel-scroll{border-bottom:1px solid #1f2429;touch-action:pan-x pan-y}
+body.panel-app #panel-console{display:none}
+#track-plan .touch-target,#track-plan .signal-target{pointer-events:none}
+#panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);border-top:0;--tt-pad:16px;--tt-row:44px;--tt-now:46px;--tt-line:14px}
+#panel-bottom-tabs{display:flex;align-items:center;gap:10px;padding:0 16px;white-space:nowrap}
+.bottom-tabs{display:flex;border:1px solid #2a3036;border-radius:3px;overflow:hidden;font-size:12px}
+.bottom-tabs button{min-height:44px;padding:0 12px;border:0;border-radius:0;background:transparent;color:#aeb6be;font:inherit;line-height:1.4}
+.bottom-tabs button[aria-selected=true]{background:#262c32;color:#e6e9ec}
+#bottom-tabs-next{margin-left:auto;font-size:11px;color:#aeb6be}
+#panel-bottom[data-bottom-tab=events] #trainmeet-timetable{display:none}
+#panel-bottom:not([data-bottom-tab=events]) #panel-events{display:none}
+body.panel-app #trainmeet-timetable{border-right:0;grid-template-rows:minmax(0,1fr)}
+.tt-heading,.tt-labels{display:none}
+#tt-status{top:0}
+.tt-entry{grid-template-columns:46px minmax(0,1fr) 42px 42px 50px;grid-template-rows:auto auto;gap:0 8px;align-items:baseline;align-content:center;border-bottom:1px solid #121619}
+.tt-entry>span:not(.tt-la){grid-row:1}
+.tt-slag,.tt-fr,.tt-till,.tt-lage,.tt-anm{display:none}.tt-frtill{display:block}.tt-spar{text-align:right}
+.tt-entry>.tt-la{display:block;grid-row:2;grid-column:1/-1;padding-left:54px;font-size:11px;color:#8a939c}
+.tt-done .tt-la{color:inherit}.tt-now .tt-la{color:#f5c518}
+.tt-now-line{height:14px;margin:2px 0;gap:8px}.tt-now-line span{font-size:9.5px}
+#panel-events{--ev-cols:54px 8px minmax(0,1fr) auto;--ev-gap:8px;--ev-row:36px}
+.ev-heading{padding:8px 16px 6px}
+}
+/* iPhone landscape: the whole plan in 734 px, then the clock, next train, alarm and
+   the three nearest rows. Swipe up for the full timetable and events. */
+@media(max-height:430px){
+body.panel-app{--console-h:0px;--plan-inset-x:0px;--plan-inset-top:10px;--plan-fit:contain;--plan-h:240px;--plan-row:250px}
+body.panel-app #panel-view .panel-shell{grid-template-rows:var(--plan-row) minmax(0,1fr);padding:0 max(0px,env(safe-area-inset-right)) 0 max(0px,env(safe-area-inset-left))}
+body.panel-app #panel-console{display:none}
+#panel-phone-bar{display:none}
+#track-plan .touch-target,#track-plan .signal-target{pointer-events:none}
+#panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);--tt-pad:0px;--tt-row:24px;--tt-now:24px}
+#panel-bottom-tabs,#panel-events{display:none}
+body.panel-app #trainmeet-timetable{border-right:0;grid-template-rows:minmax(0,1fr)}
+.tt-heading,.tt-labels,#tt-content{display:none}
+#tt-mini{display:grid;grid-template-rows:26px minmax(0,1fr) 16px;min-height:0}
+.tt-mini-status{display:flex;align-items:center;gap:14px;font-size:11.5px;white-space:nowrap;overflow:hidden}
+.tt-mini-nu{font:500 10px/1 "IBM Plex Mono",monospace;letter-spacing:.08em;color:#f5c518}
+.tt-mini-clock{margin-left:-8px;font:500 14px/1 "IBM Plex Mono",monospace;color:#e6e9ec;font-variant-numeric:tabular-nums}
+.tt-mini-rate{margin-left:-8px;font-size:10px;color:#7d8791}
+.tt-mini-next{color:#aeb6be}
+#panel-alarm-summary{display:flex;align-items:center;gap:6px;margin-left:auto;min-width:0;overflow:hidden;text-overflow:ellipsis;color:#ff8a7f}
+#panel-alarm-summary[hidden]{display:none}
+#panel-alarm-summary::before{content:'';flex:none;width:7px;height:7px;border-radius:50%;background:#ff5a4d}
+.tt-mini-rows{min-height:0;overflow:hidden}
+.tt-mini-rows .tt-entry{grid-template-columns:48px 150px 46px 46px 56px minmax(0,1fr);gap:0 8px;height:24px;font-size:12.5px}
+.tt-mini-rows .tt-now{margin:0 -6px;width:calc(100% + 12px);padding:0 6px}
+.tt-mini-rows .tt-slag,.tt-mini-rows .tt-fr,.tt-mini-rows .tt-till,.tt-mini-rows .tt-lage,.tt-mini-rows .tt-anm{display:none}
+.tt-mini-rows .tt-frtill,.tt-mini-rows .tt-la{display:block}
+.tt-mini-hint{display:flex;align-items:center;justify-content:center;gap:8px;min-height:0;padding:0;border:0;background:transparent;font:inherit;font-size:10px;color:#7d8791}
+.tt-mini-hint::before{content:'';width:26px;height:3px;border-radius:2px;background:#2a3036}
+#panel-bottom[data-expanded]{position:fixed;inset:0;z-index:70;grid-template-rows:minmax(0,1fr) minmax(0,1fr);background:#000;--tt-pad:12px}
+#panel-bottom[data-expanded] #tt-mini{display:none}
+#panel-bottom[data-expanded] .tt-heading,#panel-bottom[data-expanded] .tt-labels,#panel-bottom[data-expanded] #tt-content,#panel-bottom[data-expanded] #panel-events{display:grid}
+#panel-bottom[data-expanded] .tt-heading{display:flex}#panel-bottom[data-expanded] #tt-content{display:block}
+#panel-bottom[data-expanded] #trainmeet-timetable{grid-template-rows:auto auto minmax(0,1fr)}
+#panel-bottom[data-expanded] #tt-collapse{display:inline-block;margin-left:12px;min-height:0;padding:2px 8px;border:1px solid #2a3036;border-radius:3px;background:#16191d;color:#e6e9ec;font:inherit;font-size:10.5px}
+#panel-bottom[data-expanded] #panel-events{border-top:1px solid #1f2429}
+}
+@media(prefers-reduced-motion:reduce){.tt-entry,.ev-row{transition:none}}

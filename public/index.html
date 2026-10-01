@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Charlottendal · TKL</title>
-  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><link rel="stylesheet" href="/panel-fixed.css"><link rel="stylesheet" href="/admin.css"><link rel="stylesheet" href="/admin-line.css"><link rel="stylesheet" href="/station-workspace.css">
+  <link rel="stylesheet" href="/fonts/fonts.css"><link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><link rel="stylesheet" href="/panel-fixed.css"><link rel="stylesheet" href="/admin.css"><link rel="stylesheet" href="/admin-line.css"><link rel="stylesheet" href="/station-workspace.css">
   <script type="module" src="/app.js"></script>
 </head>
 <body class="panel-app" data-skin="original" data-page="panel" data-crossing-display="calm">
@@ -30,9 +30,11 @@
         <button id="all-stop" class="stop-button">Alla signaler i stopp</button>
       <span id="selection-hint" hidden>Välj startplupp och därefter slutplupp</span><button id="clear-selection" hidden>Avbryt val · Esc</button>
     </div>
+    <div id="panel-phone-bar" aria-hidden="true"><span class="phone-brand">CHARLOTTENDAL</span><span id="panel-phone-clock"></span><span id="panel-phone-rate"></span></div>
     <div class="panel-scroll"><div id="plan-stage"><div id="plan-face"><svg id="track-plan" viewBox="24 128 2102 640" role="group" aria-label="Spårplan med signaler, växlar och tågvägsknappar"></svg><aside id="panel-console" aria-label="Återställning och aktuellt manöverläge"></aside></div></div></div>
     <div id="panel-bottom">
     <section id="trainmeet-timetable" aria-label="Tidtabell" tabindex="-1"></section>
+    <section id="panel-events" aria-label="Händelser"></section>
     </div>
   </section>
 </main>
@@ -92,5 +94,5 @@
   <section id="advanced-protocol" hidden><div class="admin-workspace-heading"><h1 tabindex="-1">Protokollinspelning</h1></div><section class="card"><div id="recording-tools"></div></section><details class="card"><summary>Visa protokolltrafik</summary><pre id="wire"></pre></details></section>
 </main>
 <dialog id="inspector-host" class="inspector-host" aria-labelledby="inspector-heading"></dialog>
-<footer>Charlottendal TKL · version 0.42.3</footer>
+<footer>Charlottendal TKL · version 0.43.0</footer>
 </body></html>

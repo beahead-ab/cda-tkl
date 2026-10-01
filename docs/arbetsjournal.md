@@ -934,3 +934,14 @@ webbdriften: en felaktig kod besvaras med 409 och serverns förklaring.
 omstarten till 0.42.2 fick tidsgräns och dialogen visade bara id-fältet.
 Adaptern svarar nu 503 med läsbar text och dialogen har knappen Hämta listan
 igen. Serverprov 74 + 5; backup och efterkontroll i drift.md.
+
+## Release 0.43.0 · nederrad med tidtabell och händelser
+
+Committad 1 oktober, ännu inte publicerad. Designunderlaget "Jimri TKL panel
+design3" infört enligt README §1–§7: layoutregeln (planen skalas till bredden,
+nederraden får resten, golv 300 px), klockförankrad tidtabell med Slag, Från,
+Till, Läge och Anmärkning utan bläddring, ny händelsekolumn som bara läser
+journalen, IBM Plex lokalt, brytpunkter för iPad stående, iPhone stående och
+liggande. Nya rena moduler timetable-rows.js och panel-events-model.js med
+prov; layoutregler provas statiskt och geometrin i webbläsaren, se
+panel-och-verktyg.md. Tågvägs-, lås- och signallogik orörd; inga nya anrop.
