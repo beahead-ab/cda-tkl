@@ -6,6 +6,12 @@ Plan för diskussion, 2 oktober 2026. Ingen kod är skriven. Underlaget är en g
 
 Ett enda ställe i admin där hela stationen visas i hög upplösning, där varje objekt (växel, signal, spårledning, vägövergång) knyts till sin MGP-dekoder och där beteendet för en grupp objekt beskrivs i vanlig svenska, i text eller tal, och blir deterministiska, provade regler som TKL verkställer och som kan översättas till rätt kommandon mot MGP.
 
+## 1b. En fristående modul
+
+Konfigurationen byggs som en egen modul utan beroenden till andra adminfunktioner. Den läser bara tre saker: ritningens geometri, driftprofilen och källfilen Cda60.xml. Mot kärnan har den ett enda gränssnitt: regler och bindningar in, prövning och mätning ut. Den importerar inget från Driftinställningar, Anläggningsregistret, Visningsinställningar eller de andra adminsidorna.
+
+Det gör att admin kan rensas när modulen är klar. Funktioner som inte behövs tas bort och läggs tillbaka först när de behövs igen. Modulen ska klara sig ensam även då.
+
 ## 2. Läget i dag, kort
 
 **Objekt.** Driftprofilen har 49 växlar, 66 signaler, 197 spårledningsblock, 340 tågvägar och 3 spårkorsningar (X1–X3). Vägindikeringarna V1–V4 finns som visning.
@@ -66,7 +72,9 @@ Tolkningen av `M02-100-4` som modul, basadress och kanal är en hypotes som mås
 
 ## 4. Vyn
 
-Nås från admin: Anläggning → **Objekt och regler**. Byggs vidare på den befintliga Anläggningsöversikten (`public/station-model.js`), som redan ritar planen ur samma data och tolkar modulreferenserna.
+Nås från admin: **Objekt och regler**. Vyn har tre lägen i toppraden: **Konfigurera** (urval, chatt, regelkort), **Genomgång** (AI går igenom hela anläggningen) och **Driftsättning** (mätning mot MGP). Planen ritas ur samma geometri som ställverket, men av modulens egen kod.
+
+Designen finns i Claude Design: https://claude.ai/artifact/8CT3drdM8aStmoi9cgXS7y med fyra vyer: konfigurera med regelkort, AI-genomgång, de tre gränsväxlarna med avvikelselistan, och driftsättning av signal 1/5.
 
 **Planen.** Hela stationen ritad ur panelgeometrin, anpassad till fönstrets höjd och därför bredare än skärmen; sidledes rullning med en minikarta som visar var man är. Växelnumren är stora och tydliga i alla lägen. Zoom finns men utgångsläget är "fyll höjden".
 
@@ -152,6 +160,18 @@ Inkopplingspunkterna i koden finns redan: `Engine.manualStatus` och `boundaryCom
 
 En regel blir i första hand TKL-logik och LocoNet-ordrar till befintliga adresser. Det som måste ligga i dekodrarna (adresser, polaritet, beskedskoder, eventuella lokala växelberoenden) samlas per modul i en **MGP-sammanställning**: modul, dekodertyp, kanal, adress, SV-värden. Den kan exporteras för programmering och senare jämföras mot det dekodrarna rapporterar. Att skriva SV-värden direkt över LocoNet är ett senare steg, först när läsningen är verifierad.
 
+## 5b. AI-genomgång av hela anläggningen
+
+Utöver regler för ett urval kan administratören be AI:n gå igenom hela anläggningen. Utgångspunkten är att reglerna ska följa det som är ritat.
+
+1. AI:n läser ritningen (spår, växlar och deras ben, signaler, vägövergångar), driftprofilen och Cda60.xml.
+2. Den grupperar objekten efter vad ritningen säger: kompisväxlar, växlar som skiljer rangerbangården från spåren, manuella knappgrupper, vägövergångar och de block de berör, signaler och nästa signal.
+3. För varje grupp lämnar den ett kort med en av fyra statusar: **förslag** (regel eller bindning att granska), **saknas** (regel som behövs men inte finns), **beslut** (källan säger emot sig själv) och **underlag** (något som bara MGP-uppgifterna kan avgöra).
+4. Varje förslag går samma väg som ett regelkort från chatten: deterministisk validering, tillbakaläsning på svenska, prov i simulatorn, utkast och aktivering. Inget aktiveras av genomgången.
+5. En ny genomgång efter en ändring i ritningen visar vilka regler som inte längre stämmer med den, till exempel en regel som pekar på ett ben som inte finns.
+
+Första genomgången skulle i dag ge ungefär detta, räknat ur källorna: 7 kompisgrupper som förslag, 3 gränsväxlar som förslag, 5 manuella grupper som saknas, signal- och spårledningsadresser ur XML som förslag, vägövergångarna V1–V4 som saknas, 4 motsägande tågvägsregler som beslut och MGP-underlaget som underlag.
+
 ## 6. Signaler och tågvägar
 
 I dag ger TKL varje signal kör eller stopp som en växelorder till en adress och läser beskedet som en E4-kod. Vilket besked signalen visar räknar dekodern ut. JMRI-filen visar att varje mast har en egen utgång, till exempel 1/5 → LT210, där kastad betyder stopp och sluten tillåtande besked. Det passar TKL:s modell, men adresserna i profilen är fel tills de byts mot de verkliga.
@@ -205,9 +225,9 @@ Från Casper:
 ## 9. Ordning att bygga, varje steg körbart för sig
 
 1. **Objektregister och ID-städning.** Ny objektfil med TKL-namn, fysisk bindning och spårbarhet. XML:ens LS- och LT-kommentarer läses in som förslag. Ingen ändring av driften förrän aktivering. Avvikelselistan byggs här.
-2. **Vyn utan redigering.** Planen i hög upplösning, lager, urval, objektkort, avvikelser. Designas först i Claude Design (§10).
+2. **Vyn utan redigering.** Planen i hög upplösning, lager, urval, objektkort, avvikelser. Designen finns i Claude Design (§4).
 3. **Regelspråk och kompilator för det som redan finns.** Kompisväxlar, gränsväxlar, manuella villkor, programmeringsspår och linjespärrar uttrycks som regler. Provet: exakt samma beteende som i dag, alla 326 enhetstester och processprov gröna.
-4. **Chatten.** Fritext och tal → regelkort → validering → simulatorprov → utkast → aktivering.
+4. **Chatten och genomgången.** Fritext och tal → regelkort → validering → simulatorprov → utkast → aktivering. Därefter AI-genomgången av hela anläggningen (§5b), som använder samma kedja.
 5. **Driftsättningsläget och MGP-sammanställningen.** Mätning objekt för objekt mot verklig utrustning; export per modul.
 6. **Signaler och vägövergångar** in i regelverket med `aspect` och `crossing`.
 
