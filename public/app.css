@@ -63,3 +63,4 @@ button,input,select,textarea{border-radius:3px}button{padding:6px 10px}.app-head
 
 
 @media(prefers-reduced-motion:reduce){}
+#tm-pair input.pairing-code{font-family:Menlo,monospace;font-size:18px;letter-spacing:.16em;font-variant-numeric:tabular-nums}#tm-pair input.pairing-code::placeholder{opacity:.4}

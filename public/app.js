@@ -136,7 +136,8 @@ async function api(path, data) {
   if (pending&&!urgent) return; pending++;
   try {
     const response = await fetch('/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-    const answer = await response.json(); if (!response.ok) throw Error(answer.error);
+    // A reverse proxy may answer with an HTML page instead of our JSON; say so instead of showing the parser's complaint.
+    const answer = await response.json().catch(() => null); if (!response.ok || !answer) throw Error(answer?.error || 'Servern svarade med fel ' + response.status + ' utan läsbart besked.');
     // The ordered event stream owns the display; a late HTTP reply cannot roll it back.
     if(path!=='panel-reset')message(''); return answer;
   } catch (e) { message(e.message); } finally { pending--; paint(); }

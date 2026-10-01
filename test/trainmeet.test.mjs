@@ -159,3 +159,26 @@ test('plain HTTP is accepted on the meet network only: private, link-local and .
     service.configure({...service.view(),origin});assert.equal(service.view().origin,origin.replace(/\/$/,''));assert.equal(service.view().status,'unpaired');
   }
 });
+test('a refused pairing code reports the server reason with a hint, as a refusal rather than a gateway error',async()=>{
+  const r=rig();const inner=r.fetcher;
+  r.service.fetcher=async(url,options)=>url.endsWith('/v1/pair')?new Response(JSON.stringify({message:'Parkopplingskoden är ogiltig eller har gått ut'}),{status:401}):inner(url,options);
+  await assert.rejects(()=>pair(r),e=>e.status===409&&e.message==='Parkopplingskoden är ogiltig eller har gått ut. Hämta en aktuell kod under Skärmar → Visa anslutningsuppgifter i TrainMeet.');
+  assert.equal(r.saved(),undefined);assert.equal(r.service.view().status,'unpaired');assert.match(r.service.view().error,/ogiltig eller har gått ut/);
+  r.service.fetcher=async(url,options)=>url.endsWith('/v1/pair')?new Response('',{status:403}):inner(url,options);
+  await assert.rejects(()=>pair(r),e=>e.status===409&&e.message==='TrainMeet godkände inte anslutningskoden. Hämta en aktuell kod under Skärmar → Visa anslutningsuppgifter i TrainMeet.');
+});
+test('upstream failures answer 503, never 502 or 504 which the public proxy replaces with its own page',async()=>{
+  const r=rig();const inner=r.fetcher;
+  r.service.fetcher=async(url,options)=>url.endsWith('/v1/pair')?new Response('<!DOCTYPE html>',{status:502}):inner(url,options);
+  await assert.rejects(()=>pair(r),e=>e.status===503&&e.message==='TrainMeet svarade med fel 502.');
+  r.service.fetcher=async(url,options)=>url.endsWith('/v1/pair')?new Response('{"protocol_version":1}',{status:200}):inner(url,options);
+  await assert.rejects(()=>pair(r),e=>e.status===503&&/parkopplingsnyckel/.test(e.message));
+  r.service.fetcher=inner;r.fail();
+  await assert.rejects(()=>pair(r),e=>e.status===503&&e.message==='TrainMeet kunde inte anslutas. Kontrollera adress, kod och server.');
+});
+test('the pairing code is sent the way TrainMeet compares it: letters and digits only, upper case',async()=>{
+  const r=rig();await r.service.pair({...r.service.view(),stationId:'cda',code:' 458-982 '});
+  assert.equal(JSON.parse(r.calls.find(c=>c.url.endsWith('/v1/pair')).options.body).pairing_code,'458982');
+  await r.service.disconnect(r.service.view());
+  await assert.rejects(()=>r.service.pair({...r.service.view(),stationId:'cda',code:'-- --'}),/giltig anslutningskod/);
+});

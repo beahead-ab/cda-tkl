@@ -1,5 +1,6 @@
 import {createTrainMeetTimetable} from './trainmeet-timetable.js';
 import {createAdminDialog,confirmAdmin,escapeHTML as esc} from './admin-ui.js';
+import {formatPairingCode} from './pairing-code.js';
 export function createTrainMeet({api,onTimetable,stationHint=()=>''}) {
   const root=document.getElementById('trainmeet'),$=id=>document.getElementById('tm-'+id);
   const timetable=createTrainMeetTimetable({selectSource:data=>api('timetable-import/select',data)});
@@ -9,7 +10,8 @@ export function createTrainMeet({api,onTimetable,stationHint=()=>''}) {
   editForm.innerHTML=`<label>TKL-id<input id="tm-client-id" minlength="3" maxlength="64" pattern="[A-Za-z0-9._:\\-]{3,64}" required autocomplete="off" spellcheck="false" aria-describedby="tm-client-help"></label><p id="tm-client-help" class="muted">Det här id:t visas hos TrainMeet. Varje TKL-installation ska ha ett eget id.</p><label>Serveradress<input id="tm-server" type="url" maxlength="512" placeholder="https://server.trainmeet.app" autocomplete="url" spellcheck="false" list="tm-saved-servers"></label><datalist id="tm-saved-servers"></datalist><p id="tm-server-help" class="muted"></p><label>Namn hos TrainMeet<input id="tm-operator" maxlength="80" autocomplete="off" placeholder="tomt ger TKL-id"></label><p class="muted">Visas för grannstationerna när stationen är i tjänst. Stationen tas i tjänst automatiskt så länge den är parkopplad.</p><button id="tm-save-server" type="submit">Spara anslutning</button>`;
   const editValue=()=>JSON.stringify([$('client-id').value,$('server').value,$('operator').value]);
   const editDialog=createAdminDialog({title:'Redigera anslutning',body:editForm,saveButton:editForm.querySelector('button'),dirty:()=>editValue()!==editBaseline,busy:()=>busy});
-  const pairForm=document.createElement('form');pairForm.id='tm-pair';pairForm.innerHTML='<p id="tm-pair-destination" class="muted"></p><label>Station<select id="tm-station-list" hidden></select><input id="tm-station" maxlength="128" required autocomplete="off" placeholder="stations-id"></label><p id="tm-station-help" class="muted"></p><label>Anslutningskod<input id="tm-code" type="password" maxlength="128" required autocomplete="off"></label><p class="muted">Koden visas i TrainMeet under Skärmar → Visa anslutningsuppgifter. Den behövs en gång per server; därefter återansluter TKL själv.</p><button id="tm-connect" type="submit">Parkoppla</button>';
+  const pairForm=document.createElement('form');pairForm.id='tm-pair';pairForm.innerHTML='<p id="tm-pair-destination" class="muted"></p><label>Station<select id="tm-station-list" hidden></select><input id="tm-station" maxlength="128" required autocomplete="off" placeholder="stations-id"></label><p id="tm-station-help" class="muted"></p><label>Anslutningskod<input id="tm-code" class="pairing-code" maxlength="128" required autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" placeholder="123-456"></label><p class="muted">Koden visas i TrainMeet under Skärmar → Visa anslutningsuppgifter, skriven som 123-456. Den behövs en gång per server; därefter återansluter TKL själv.</p><button id="tm-connect" type="submit">Parkoppla</button>';
+  pairForm.querySelector('#tm-code').addEventListener('input',e=>{e.target.value=formatPairingCode(e.target.value);});
   const pairValue=()=>JSON.stringify([$ ('station').value,$('code').value]);
   const pairDialog=createAdminDialog({title:'Parkoppla med TrainMeet',body:pairForm,saveButton:pairForm.querySelector('button'),dirty:()=>pairValue()!==pairBaseline,busy:()=>busy,onCancel:()=>{$('code').value='';}});
   const action=(name,extra={},version=state)=>api('trainmeet/'+name,{sessionId:version.sessionId,revision:version.revision,...extra});
@@ -43,7 +45,7 @@ export function createTrainMeet({api,onTimetable,stationHint=()=>''}) {
   editForm.onsubmit=e=>{e.preventDefault();const clientId=$('client-id').value.trim(),origin=$('server').value.trim(),operatorName=$('operator').value.trim();
     const steps=[];if(clientId!==state.clientId||origin!==state.origin)steps.push(['configure',{clientId,origin}]);if(operatorName!==(state.operatorName||''))steps.push(['operator-name',{operatorName}]);
     submitAll(editDialog,steps);};
-  pairForm.onsubmit=e=>{e.preventDefault();submit(pairDialog,'pair',{stationId:$('station').value.trim(),code:$('code').value});};
+  pairForm.onsubmit=e=>{e.preventDefault();submit(pairDialog,'pair',{stationId:$('station').value.trim(),code:formatPairingCode($('code').value)});};
   $('refresh').onclick=()=>action('refresh');
   $('disconnect').onclick=()=>confirmAdmin({title:'Koppla från TrainMeet?',message:'TKL slutar hämta träffens tidtabell och trafikläge. Du kan parkoppla igen senare.',button:'Koppla från',action:async()=>!!await action('disconnect')});
   $('show-timetable').onclick=onTimetable;
