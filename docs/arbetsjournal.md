@@ -976,3 +976,17 @@ journalen under Verktyg. Adaptern journalför vad en avläsning visar har hänt
 hos TrainMeet: tåganmälan från grannstation med väntad tid, ankomst med spår
 och avgång med mål, utan att skicka något. Prov i trainmeet-clearance och
 panel-events-model.
+
+## 2 oktober 2026, admin v2
+
+Casper vill bygga admin v2 bredvid dagens admin och flytta över successivt.
+Tre underlag i docs/admin-v2.md: en preliminär lista över de 25 adminsidorna
+(9 ersätts av Objekt och regler, 7 tas bort, 5 flyttar till panelmenyn, 4
+behålls), en beskrivning av hur Cloud visar all data per träff och hur samma
+sätt översätts till TKL:s mängder (växlar, signaler, spårledningar, linjer,
+tågvägar, regler, bindningar, avvikelser, händelser) med ett objekt som
+korsfilter, och en skiss över hur Konfigurera, Data, Genomgång och
+Driftsättning delar last, urval, avvikelser och utkast. Tavla 6 i Claude
+Design visar Data-vyn. Växeltågvägarna som "slutat fungera" var ingen bugg:
+rangerbangården var överlämnad; panelen bör säga det, förslag i dokumentet.
+

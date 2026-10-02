@@ -104,6 +104,10 @@ Designen finns i Claude Design: https://claude.ai/artifact/8CT3drdM8aStmoi9cgXS7
 
 **Driftsättningsläge**, en egen omkopplare: klick på ett objekt skickar en provorder eller väntar på en rapport, visar telegrammen och låter operatören markera bindningen som uppmätt med datum och namn. Det är så "det vi verkligen har kvar att göra" betas av objekt för objekt.
 
+## 4b. Data-vyn
+
+En andra flik bredvid planen visar all data som i TrainMeet Cloud: informationsmängder som chips med antal, staplade rutnät, ett objekt som globalt korsfilter och relationer som kolumner i stället för detaljsidor. Vyn läser samma last som planen och delar urval, avvikelser och utkast med den. Mängder, kolumner, djuplänk och beroendena mellan vyerna står i admin-v2.md; skissen är tavla 6 i Claude Design.
+
 ## 5. Från fritext till deterministiska regler
 
 AI:n är en översättare, aldrig en auktoritet. Flödet:
@@ -252,6 +256,7 @@ Från Casper:
 
 1. **Objektregister och ID-städning.** Ny objektfil med TKL-namn, fysisk bindning och spårbarhet. XML:ens LS- och LT-kommentarer läses in som förslag. Ingen ändring av driften förrän aktivering. Avvikelselistan byggs här.
 2. **Vyn utan redigering.** Planen i hög upplösning, lager, urval, objektkort, avvikelser. Designen finns i Claude Design (§4).
+   2b. **Data-vyn.** Projektioner över samma last, chips, rutnät och korsfilter på ett objekt (§4b). Billig, eftersom tågvägstabellen och objekten redan finns; ersätter Tågvägar, Anläggningsregister och Visningsinställningar i dagens admin (admin-v2.md).
 3. **Regelspråk och kompilator för det som redan finns.** Kompisväxlar, gränsväxlar, manuella villkor, programmeringsspår och linjespärrar uttrycks som regler. Provet: exakt samma beteende som i dag, alla 326 enhetstester och processprov gröna.
 4. **Chatten och genomgången.** Fritext och tal → regelkort → validering → simulatorprov → utkast → aktivering. Därefter AI-genomgången av hela anläggningen (§5b), som använder samma kedja.
 5. **Driftsättningsläget och MGP-sammanställningen.** Mätning objekt för objekt mot verklig utrustning; export per modul.
