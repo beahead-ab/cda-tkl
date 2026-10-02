@@ -29,3 +29,14 @@ test('0.45.1: short chip words, one simulation chip, Styra RBG struck through wh
   assert.match(head,/id="plan-head-zoom">Zoom</);
   assert.doesNotMatch(head,/plan-head-sim/);
 });
+
+test('0.45.2: a focus ring only after Tab, and a reload chip for a new release',()=>{
+  const app=fs.readFileSync(new URL('../public/app.css',import.meta.url),'utf8');
+  const head=fs.readFileSync(new URL('../public/panel-head.js',import.meta.url),'utf8');
+  const server=fs.readFileSync(new URL('../src/server.mjs',import.meta.url),'utf8');
+  assert.match(app,/body:not\(\[data-nav-keyboard\]\) :is\(button,a,input,select,textarea,summary,\[role=button\],\[role=tab\],\[tabindex\]\):is\(:focus,:focus-visible\)\{outline:none!important\}/);
+  assert.match(app,/body\[data-nav-keyboard\] :is\([^)]*\):focus-visible\{outline:2px solid #aeb6be!important/);
+  assert.match(head,/id="plan-head-release"/);
+  assert.match(server,/return \{ \.\.\.state,release,/);
+  assert.match(server,/\.\.\.panelProfile,release,/);
+});

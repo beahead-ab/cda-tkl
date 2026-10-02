@@ -82,7 +82,10 @@ timetableImport.on('change',()=>{dirty=true;});
 installRuntime(createRuntime(bindings.profile()),false);
 // Layouts are checked against the live profile's pluppar, so the store is created once the runtime exists.
 const streamDeckLayouts=new StreamDeckLayouts(storage,{pluppIds:()=>Object.keys(profile?.buttons||{})});
-const snapshot = () => {const state=engine.snapshot();return { ...state,connectionInfo:connectionInfo(profile),destinations:destinations.view(),streamDeck:streamDeckLayouts.view(),bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),timetableImport:timetableImport.summary(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
+// The version this process was started with. An open panel compares it with the
+// version it was loaded from and offers a reload after a release.
+const release=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version;
+const snapshot = () => {const state=engine.snapshot();return { ...state,release,connectionInfo:connectionInfo(profile),destinations:destinations.view(),streamDeck:streamDeckLayouts.view(),bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),timetableImport:timetableImport.summary(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -106,7 +109,7 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(200,{'Content-Type':file.mime,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"sandbox; default-src 'none'",'Content-Disposition':(file.mime.startsWith('image/')?'inline':'attachment')+"; filename*=UTF-8''"+encodeURIComponent(file.name)});
         return res.end(req.method==='HEAD'?undefined:bytes);
       }
-      if (url.pathname === '/api/config') { const {routeAlternatives,...panelProfile}=profile; return json(res, { ...panelProfile,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null }); }
+      if (url.pathname === '/api/config') { const {routeAlternatives,...panelProfile}=profile; return json(res, { ...panelProfile,release,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null }); }
       if (url.pathname === '/api/train-information') return json(res, {...trainInformation.snapshot(),...trainInformation.catalog()});
       if(url.pathname==='/api/bindings')return json(res,bindings.view());
       if(url.pathname==='/api/bindings/export'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','Content-Disposition':'attachment; filename=charlottendal-driftprofil.json'});return res.end(req.method==='HEAD'?undefined:JSON.stringify(bindings.export(),null,2));}

@@ -261,3 +261,25 @@ visar zoomen.
 Kvar att besluta: vid 1024–1280 px ligger klustret över spår 10 och V3 överst i planen
 (så var det även före 0.45). Förslaget är att planen flyttas ned statusradens höjd under
 1440 px, vilket kostar nederraden omkring 30 px.
+
+## Ny version-chip och ingen fokusram (0.45.2)
+
+**Ny version · ladda om.** En öppen flik kör den kod den laddades med tills sidan laddas
+om; läget på banan kommer ändå direkt genom `/api/events`. Servern skickar nu sin version
+(`release`, ur package.json när processen startar) både i `/api/config` och i varje
+tillstånd. När de skiljer sig, alltså när en publicering har startat om TKL medan fliken
+stått öppen, visas chipet `● Ny version · ladda om` med gul ram först i statusraden.
+Tryck laddar om. Sidan laddar aldrig om av sig själv för en ny version, eftersom det kan
+avbryta ett tågvägsval eller en kvittering; ändrade driftbindningar laddar fortfarande om
+direkt som förut. Provat lokalt genom att starta om servern med ett annat versionsnummer
+medan en flik stod öppen.
+
+**Fokusram bara vid Tab.** Casper bad om att ramen som kommer och går runt fält och
+kontroller tas bort genomgående, och valde sedan att den ska finnas kvar för tangentbordet.
+Sist i app.css: utan tangentbord (attributet `data-nav-keyboard` saknas på body) ritas
+ingen `outline` vid fokus på knappar, länkar, fält, listval, flikar och allt med `tabindex`
+eller `role=button`; efter Tab ritas en ljusgrå ring (`#aeb6be`, 2 px) runt kontrollen med
+`:focus-visible`. admin-navigation.js sätter attributet vid Tab och tar bort det vid varje
+tryck med mus, penna eller finger. Gäller ställverket, administrationen och dialogerna.
+Textfält visar alltid var man skriver med en ljusare kant (`#8a939c`). Inloggningssidan
+har ingen ring efter klick, men en ring på knappen efter Tab.

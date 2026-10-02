@@ -1009,3 +1009,10 @@ råkade dölja där. Ikoner i stället för ord avråddes: Återställ och RBG �
 säkerhetsrelevanta och överstrykningen kräver ordet. Kvar: överlapp mot spår 10
 vid 1024–1280 px, förslag att flytta ned planen under 1440 px.
 
+## 2 oktober 2026, 0.45.2 lokalt
+
+Chip "Ny version · ladda om" i statusraden när servern kör en annan version än
+sidan laddades från (servern skickar `release` i config och tillstånd). Ingen
+automatisk omladdning. Fokusramen runt fält och kontroller visas bara efter Tab, aldrig
+efter klick eller tryck (Caspers val); textfält visar fokus med ljusare kant.
+

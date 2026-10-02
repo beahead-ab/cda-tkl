@@ -703,6 +703,7 @@ async function start() {
   let presentationLoading=false,observedResetId;
   source.onmessage = e => {
     state = JSON.parse(e.data);if(state.bindingVersion!==config.bindingVersion){location.reload();return;} online = true; lastEvent = Date.now();
+    panelHead?.release(state.release&&config.release&&state.release!==config.release?state.release:null);
     // A quick reset may finish between two snapshots. Use its identity, not a
     // waiting/stop transition, so every open panel clears its local buttons once.
     const resetId=state.panelReset?.id;
