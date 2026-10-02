@@ -6,6 +6,8 @@ Plan för diskussion, 2 oktober 2026. Ingen kod är skriven. Underlaget är en g
 
 Ett enda ställe i admin där hela stationen visas i hög upplösning, där varje objekt (växel, signal, spårledning, vägövergång) knyts till sin MGP-dekoder och där beteendet för en grupp objekt beskrivs i vanlig svenska, i text eller tal, och blir deterministiska, provade regler som TKL verkställer och som kan översättas till rätt kommandon mot MGP.
 
+Hur objekten hänger ihop, varför tågvägarna räknas fram och fryses som tabell, riskerna och hur det landar i praktiken: [objektmodell.md](objektmodell.md).
+
 ## 1b. En fristående modul
 
 Konfigurationen byggs som en egen modul utan beroenden till andra adminfunktioner. Den läser bara tre saker: ritningens geometri, driftprofilen och källfilen Cda60.xml. Mot kärnan har den ett enda gränssnitt: regler och bindningar in, prövning och mätning ut. Den importerar inget från Driftinställningar, Anläggningsregistret, Visningsinställningar eller de andra adminsidorna.
