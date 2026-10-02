@@ -105,3 +105,13 @@ Geometri och register kommer från den exporterade Charlottendal-designen och de
 [Driftbindningar, manöverbegränsningar och granskade profilbyten](docs/driftbindningar.md)
 
 Senaste leveransavstämning: [samtliga användningsfall](docs/acceptans-2026-09-23.md), [aktuell status](docs/status.md) och [testresultat](docs/provresultat.md).
+
+## Raspberry Pi
+
+Installera som ett fristående ställverk på en Raspberry Pi 5 med en rad:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo sh
+```
+
+Se [docs/raspberry-pi.md](docs/raspberry-pi.md).

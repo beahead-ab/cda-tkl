@@ -18,7 +18,7 @@ export function createTrainMeetTimetable({selectSource}) {
   dialog.innerHTML='<div class="card"><div class="card-heading"><h3 id="tt-detail-title"></h3><button type="button" id="tt-close-detail" aria-label="Stäng tidtabellsuppgifter" autofocus>Stäng</button></div><div id="tt-detail-content"></div></div>';document.body.append(dialog);
   let importState,rows=[],grouped=null,mode='upcoming',last='',miniLast='',identity='',selected=null,detailHTML='',frame=0;
   // The meet clock runs locally between polls; groups are recomputed when the minute changes.
-  let clockBase=null,clockStart=0,clockKey='',shownMinute=null,clockMinutes=null,occupancy=null,clockShort='',doneLimit=Infinity,routes=[],userActiveUntil=0,programmatic=false,anchoredKey=null;
+  let clockBase=null,clockStart=0,clockKey='',shownMinute=null,clockMinutes=null,occupancy=null,clockShort='',doneLimit=Infinity,routes=[],userActiveUntil=0,lastTouch=0,userMoved=false,programmaticUntil=0,layoutHeight=0,anchoredKey=null;
   const announced=new Map();
   const details=createContextDialog({dialog,onClose:()=>{selected=null;}});
   $('close-detail').onclick=()=>details.close();
@@ -49,9 +49,10 @@ export function createTrainMeetTimetable({selectSource}) {
     occupancy=createTrackOccupancy({host,range:document.getElementById('occ-range')});detailsFrom(host);return occupancy;
   }
   // Never move the list under a reader's finger or pointer.
-  const touched=()=>{userActiveUntil=Date.now()+4000;};
+  // Four seconds after the reader lets go, the list glides back to the NU line by itself.
+  const touched=()=>{lastTouch=Date.now();userActiveUntil=lastTouch+4000;userMoved=true;};
   for(const type of ['wheel','touchstart','touchmove','pointerdown','keydown'])$('content').addEventListener(type,touched,{passive:true});
-  $('content').addEventListener('scroll',()=>{if(programmatic)programmatic=false;else touched();},{passive:true});
+  $('content').addEventListener('scroll',()=>{if(Date.now()>=programmaticUntil)touched();},{passive:true});
   function rowHTML(row){
     const values={n:row.number,slag:row.slag,fr:row.fromText,till:row.toText,frtill:row.frTill,ank:row.arrival||'—',avg:row.departure||'—',spar:row.track+(row.changed?' *':''),lage:row.lage,anm:row.noteLine,la:row.la};
     const titles={anm:row.note,la:row.la};
@@ -114,20 +115,23 @@ export function createTrainMeetTimetable({selectSource}) {
     drawDetails();
   }
   // The NU line sits about a third down the list; done rows fill the space above it.
-  function anchor(force){
+  function anchor(force,smooth=false){
     const content=$('content'),line=content.querySelector('.tt-now-line');if(!line)return;
     if(!force&&Date.now()<userActiveUntil)return;
     anchoredKey=grouped?.doneKey??null;
     const top=Math.max(0,Math.round(line.offsetTop-content.offsetTop-content.clientHeight/3));
     if(Math.abs(content.scrollTop-top)<1)return;
-    programmatic=true;content.scrollTop=top;
+    // Our own scrolling is not the reader's: its scroll events are ignored for a moment.
+    const glide=smooth&&!still.matches;programmaticUntil=Date.now()+(glide?1500:150);
+    content.scrollTo({top,behavior:glide?'smooth':'auto'});
   }
   function layout(){
     frame=0;const content=$('content');const height=content.clientHeight;if(!height)return;
     const style=getComputedStyle(root),rowHeight=parseFloat(style.getPropertyValue('--tt-row'))||25,lineHeight=parseFloat(style.getPropertyValue('--tt-line'))||14;
     const limit=Math.max(0,Math.floor((height/3-lineHeight)/rowHeight));
     if(limit!==doneLimit){doneLimit=limit;render();}
-    anchor(false);
+    // A new size moves the line at once; a reader's scroll is undone by tick(), gliding.
+    if(height!==layoutHeight){layoutHeight=height;anchor(false);}
   }
   const schedule=()=>{if(!frame)frame=requestAnimationFrame(layout);};
   new ResizeObserver(schedule).observe(root);window.addEventListener('resize',schedule);
@@ -149,6 +153,7 @@ export function createTrainMeetTimetable({selectSource}) {
     render(true);
   }
   function tick(){
+    if(userMoved&&Date.now()>=userActiveUntil){userMoved=false;anchor(false,true);}
     if(!clockBase||document.hidden)return;
     const now=clockAt(clockBase,performance.now()-clockStart);
     $('clock-time').textContent=now.text;clockShort=now.short;

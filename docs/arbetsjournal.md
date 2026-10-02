@@ -1036,3 +1036,14 @@ pilar efter Tab. Provat lokalt i 1920 × 900 (590 → 623 px, stannar vid sidorn
 0.46.0 publicerad 01:06. 0.46.1 lokalt: tidtabellsraderna och NU-strecket glider till
 sin nya plats när klockan flyttar en rad, i stället för att hoppa.
 
+## 3 oktober 2026, 0.47.0 lokalt: installation på Raspberry Pi
+
+Casper vill installera TKL som TrainMeet Server: en rad, resten automatiskt. install.sh hämtar
+paketet från GitHub och kör scripts/install-raspberry-pi.sh: egen Node 22, release-katalog per
+installation med återställning, tjänsterna cda-tkl och cda-tkl-simulator, helskärm i Chromium,
+udev-regel och Chromium-policy för Stream Deck, cda-tkl-update. Provat i en Debian 12-container
+på arm64 med systemd: ny installation, uppdatering och återställning efter en trasig version.
+Förrådet är privat, så enradaren kräver en token tills Casper beslutar annat. Dessutom: panelen
+öppnar redan tillåten Stream Deck utan klick, och tidtabellen glider tillbaka till NU-strecket
+fyra sekunder efter manuell scrollning. Se raspberry-pi.md.
+

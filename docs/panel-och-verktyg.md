@@ -318,3 +318,15 @@ och de som flyttats animeras från sin gamla plats till den nya på 0,7 s (FLIP 
 mellan Kommande och Alla, och inte om enheten har bett om minskad rörelse. Provat mot
 TrainMeet-attrappen: när ett tåg markerades avgånget gled alla rader under strecket upp en
 rad (24 px) i stället för att hoppa.
+
+## Mjuk återgång och Stream Deck utan klick (0.47.0)
+
+**Tidtabellen glider tillbaka.** Fyra sekunder efter att man slutat scrolla återgår listan till
+NU-strecket. Tidigare skedde det med ett ryck vid nästa tillståndsuppdatering; nu sköts återgången av
+klockans tick med `scrollTo({behavior:'smooth'})`. Listans egen scrollning räknas inte som läsarens
+(händelserna ignoreras en kort stund). En ny storlek flyttar strecket direkt som förut, och minskad
+rörelse ger direkt återgång.
+
+**Stream Deck utan klick.** Panelen öppnar en Stream Deck som webbläsaren redan tillåter, både vid
+start och när den kopplas in, om man inte valt Koppla bort på enheten. På Raspberry Pi tillåter
+Chromium-policyn Elgatos enheter, så ingen behöver klicka; se raspberry-pi.md.

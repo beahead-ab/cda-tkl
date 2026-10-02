@@ -40,7 +40,7 @@ export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,o
   }
   async function detach(forget=true){
     const d=deck;deck=null;controls=[];shown=new Map();if(timer){clearInterval(timer);timer=null;}
-    if(forget){try{localStorage.removeItem(STORAGE);}catch{}}
+    if(forget){try{localStorage.setItem(STORAGE,'off');}catch{}}
     if(d){try{await d.clearPanel();}catch{}try{await d.close();}catch{}}
     pagesSig='';if(pagesNode)pagesNode.replaceChildren();status('Ej ansluten.');
   }
@@ -143,7 +143,10 @@ export function createStreamDeck({pluppar,choose,clearChoice,api,message,state,o
   }
   if(connectButton)connectButton.onclick=()=>connect(true);
   if(disconnectButton)disconnectButton.onclick=()=>detach(true);
-  let auto=false;try{auto=localStorage.getItem(STORAGE)==='auto';}catch{}
-  if(auto&&supported)connect(false);
+  // Open a Stream Deck the browser already allows (a click earlier, or the Raspberry Pi's
+  // Chromium policy) at start and whenever one is plugged in, unless Koppla bort was chosen here.
+  const off=()=>{try{return localStorage.getItem(STORAGE)==='off';}catch{return false;}};
+  if(supported&&!off())connect(false);
+  if(supported)navigator.hid.addEventListener('connect',()=>{if(!deck&&!off())connect(false);});
   return {update:()=>update(false),connect,detach,info};
 }

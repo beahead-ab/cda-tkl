@@ -1,0 +1,65 @@
+#!/bin/sh
+# Public installer for Charlottendal TKL on a Raspberry Pi 5 (Raspberry Pi OS 64-bit)
+# or another Debian/Ubuntu machine:
+#
+#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo sh
+#
+# It fetches the whole package from GitHub and runs scripts/install-raspberry-pi.sh.
+# Run it again, or `sudo cda-tkl-update`, to update; settings and operating data stay.
+# While the repository is private, give a read-only GitHub token:
+#   curl -fsSL -H "Authorization: Bearer $TOKEN" https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo CDA_TKL_TOKEN=$TOKEN sh
+# CDA_TKL_SOURCE=/path/to/package.tar.gz or a directory installs from there instead (tests).
+set -eu
+
+REPOSITORY="beahead-ab/cda-tkl"
+BRANCH="${CDA_TKL_BRANCH:-main}"
+INSTALLER="scripts/install-raspberry-pi.sh"
+TEMP_DIR=$(mktemp -d)
+cleanup() { rm -rf "$TEMP_DIR"; }
+trap cleanup EXIT INT TERM
+
+if [ "$(uname -s)" != Linux ]; then
+  echo "Installationen är för Raspberry Pi OS och andra Debian-baserade Linux."
+  echo "På en Mac körs TKL för utveckling med: npm start"
+  exit 1
+fi
+if [ "$(id -u)" -ne 0 ]; then
+  echo "Kör installationen med sudo:"
+  echo "  curl -fsSL https://raw.githubusercontent.com/${REPOSITORY}/${BRANCH}/install.sh | sudo sh"
+  exit 1
+fi
+command -v curl >/dev/null 2>&1 || { apt-get update && apt-get install -y curl ca-certificates; }
+
+SOURCE="${CDA_TKL_SOURCE:-}"
+if [ -n "$SOURCE" ] && [ -d "$SOURCE" ]; then
+  SOURCE_DIR="$SOURCE"
+else
+  ARCHIVE="$TEMP_DIR/cda-tkl.tar.gz"
+  if [ -n "$SOURCE" ]; then
+    cp "$SOURCE" "$ARCHIVE"
+  else
+    echo "Hämtar Charlottendal TKL …"
+    if [ -n "${CDA_TKL_TOKEN:-}" ]; then
+      URL="https://api.github.com/repos/${REPOSITORY}/tarball/${BRANCH}"
+      set -- -H "Authorization: Bearer ${CDA_TKL_TOKEN}" -H "Accept: application/vnd.github+json"
+    else
+      URL="https://github.com/${REPOSITORY}/archive/refs/heads/${BRANCH}.tar.gz"
+      set --
+    fi
+    if ! curl -fsSL "$@" "$URL" -o "$ARCHIVE"; then
+      echo
+      echo "Kunde inte hämta Charlottendal TKL från GitHub."
+      echo "Kontrollera internetanslutningen, och att CDA_TKL_TOKEN är satt om förrådet är privat."
+      exit 1
+    fi
+  fi
+  tar -xzf "$ARCHIVE" -C "$TEMP_DIR"
+  SOURCE_DIR=$(find "$TEMP_DIR" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+fi
+
+if [ -z "${SOURCE_DIR:-}" ] || [ ! -f "$SOURCE_DIR/$INSTALLER" ]; then
+  echo "Installationspaketet saknar $INSTALLER."
+  exit 1
+fi
+export CDA_TKL_TOKEN="${CDA_TKL_TOKEN:-}" CDA_TKL_BRANCH="$BRANCH"
+sh "$SOURCE_DIR/$INSTALLER" "$SOURCE_DIR"
