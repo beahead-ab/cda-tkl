@@ -228,7 +228,7 @@ function headStatus(){
   const waiting=(state?.routes||[]).find(r=>HEAD_WAIT.has(r.state));
   const status=waiting?{text:displayName('routes',waiting.definitionId,waiting.label)+' · '+(statuses[waiting.state]||waiting.state)+(waiting.reason?' · '+waiting.reason:''),tone:waiting.state==='held'?'alarm':'warn'}:null;
   const simulator=state?.connectionInfo?.mode==='simulator';
-  return {subtitle,status,gateway:{text:simulator?'Simulator':'MGP · LocoNet',tone:online&&state?.connection==='connected'?'on':'err'},simulator};
+  return {subtitle,status,gateway:{text:simulator?'Simulering':'MGP · LocoNet',tone:online&&state?.connection==='connected'?'on':'err'},simulator};
 }
 function buildPlan() {
   layout = panelLayout(panel);

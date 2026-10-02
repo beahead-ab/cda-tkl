@@ -240,3 +240,24 @@ markerar spåret i planen. Kolumnen blir bredare när fliken visas, 820 px på 1
 på 1440–1799, 480 px på 1201–1439 (tidtabellen tar då sina kompakta kolumner) och 400 px
 under 1200; under 1440 döljs teckenförklaringen. Prov: track-occupancy-model.test.mjs och
 panel-occupancy-layout.test.mjs; 333 enhetstester går.
+
+## Kortare statusrad (0.45.1)
+
+Casper ville kompakta statusraden efter 0.45.0. Högra klustret är nu fyra korta chips:
+
+| Före | Nu |
+|---|---|
+| `● Simulator` och `SIMULERING` | ett chip, `● SIMULERING` i bärnsten; pricken är fortfarande anslutningen (grön/röd). Mot riktig utrustning står `● MGP · LocoNet`. |
+| `● Återställ panel` | `● Återställ` (skärmläsaren hör fortfarande "Återställ panel") |
+| `● Lämna över rangerbangården` / `● Återta rangerbangården` | `● Styra RBG`: vanlig text när TKL styr rangerbangården, överstruken med gul prick när den är överlämnad. Skärmläsaren och verktygstipset säger vad ett tryck gör. |
+| `100 % · hela planen` | `Zoom`; aktuell zoom står i verktygstipset och i zoomdialogen. |
+
+Klustret är 314 px brett i stället för omkring 560. Ingenting i planen hamnar under
+statusraden vid 1600 och 1920 px. På iPad stående, där klustret var dolt i 0.45.0 så att
+Återställ och rangerbangården inte gick att nå, visas nu Simulering, Återställ och Styra RBG
+till vänster om planens egna zoomskyltar; Zoom-chipen döljs där eftersom skyltarna redan
+visar zoomen.
+
+Kvar att besluta: vid 1024–1280 px ligger klustret över spår 10 och V3 överst i planen
+(så var det även före 0.45). Förslaget är att planen flyttas ned statusradens höjd under
+1440 px, vilket kostar nederraden omkring 30 px.
