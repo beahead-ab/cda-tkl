@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `67ec379` · version 0.45.1 (2 oktober 2026, 21:52) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/67ec379` |
+| Driftsatt kodversion | `a091b54` · version 0.45.2 (2 oktober 2026, 22:24) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/a091b54` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -737,4 +737,16 @@ simulatorns process 140318 behölls. Backup:
 release `22842df`. Innehåll: SIMULERING som ett chip, Återställ, Styra RBG
 (överstruken när rangerbangården är överlämnad) och Zoom; iPad stående visar
 Återställ och Styra RBG igen.
+
+## Version 0.45.2 · chip för ny version, fokusring vid Tab
+
+`a091b54` aktiverad 2 oktober 2026, 22:24 svensk tid med deploy/publish-release.sh
+från appens terminal, efter att Casper parkopplat webbdriften med station
+Charlottendal på https://server.trainmeet.app (kontrollerat i trainmeet.json före
+bytet: station-charlottendal, nyckel sparad). Serverns prov: syntax, 76 riktade
+enhetstester och 5 processprov, driftdata oförändrade. Endast TKL startades om, ny
+process 240195; simulatorns process 140318 behölls. Backup:
+`/root/charlottendal-backups/network-a091b54-20261002T202402Z`. Föregående release
+`67ec379`. Innehåll: servern skickar sin version och panelen visar "Ny version ·
+ladda om" när den skiljer sig; fokusringen visas bara efter Tab.
 
