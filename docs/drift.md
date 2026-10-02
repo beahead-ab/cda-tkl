@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `a091b54` · version 0.45.2 (2 oktober 2026, 22:24) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/a091b54` |
+| Driftsatt kodversion | `765f033` · version 0.45.3 (3 oktober 2026, 00:56) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/765f033` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -749,4 +749,16 @@ process 240195; simulatorns process 140318 behölls. Backup:
 `/root/charlottendal-backups/network-a091b54-20261002T202402Z`. Föregående release
 `67ec379`. Innehåll: servern skickar sin version och panelen visar "Ny version ·
 ladda om" när den skiljer sig; fokusringen visas bara efter Tab.
+
+## Version 0.45.3 · träffklockan följer TrainMeet
+
+`765f033` aktiverad 3 oktober 2026, 00:56 svensk tid med deploy/publish-release.sh
+från appens terminal. Serverns prov: syntax, 76 riktade enhetstester och 5
+processprov, driftdata oförändrade. Endast TKL startades om, ny process 243726;
+simulatorns process 140318 behölls. Backup:
+`/root/charlottendal-backups/network-765f033-20261002T225600Z`. Föregående release
+`a091b54`. Efter bytet svarade https://server.trainmeet.app/v1/events med `hello`,
+alltså finns ändringsflödet som adaptern nu följer. Innehåll: daterad klockavläsning,
+ställverket räknar fram själv, stopp och start via ändringsflödet, försenade aktiva
+tåg ovanför NU-strecket; se trainmeet-adapter.md.
 

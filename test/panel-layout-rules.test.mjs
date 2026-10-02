@@ -7,7 +7,7 @@ const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
 // checked in a browser at the listed viewports; these guard the sources.
 test('the plan scales to the width in its 2102:688 proportion and the bottom row keeps at least 300 px',()=>{
   const css=read('public/panel-fixed.css');
-  assert.match(css,/--plan-h:min\(calc\(\(100vw - 16px\)\s*\/\s*3\.0552\),calc\(100dvh - [^)]*300px\)\)/);
+  assert.match(css,/--plan-h:min\(calc\(\(100vw - 16px\)\s*\/\s*3\.0552\),var\(--plan-user,calc\(100dvh - [^)]*300px\)\)\)/);
   assert.match(css,/grid-template-rows:var\(--plan-row\) minmax\(0,1fr\)/);
   assert.ok(!css.includes('--panel-bottom-height'),'the fixed bottom height is gone');
   assert.match(css,/html:has\(body\.panel-app\)\{overflow:hidden\}/);

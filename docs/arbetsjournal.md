@@ -1026,3 +1026,10 @@ Casper föreslog en ping varje minut och vid stopp och start; förankrad klocka 
 försenade tåg som fortfarande är aktiva står ovanför strecket med "sen …".
 Detaljer i trainmeet-adapter.md.
 
+
+## 3 oktober 2026, 0.45.3 i drift och 0.46.0 lokalt
+
+0.45.3 publicerad 00:56; TrainMeet Servers ändringsflöde svarar. 0.46.0: dragbar gräns
+mellan ställverket och nederraden, sparad per enhet, dubbelklick för standardläget,
+pilar efter Tab. Provat lokalt i 1920 × 900 (590 → 623 px, stannar vid sidorna; upp till
+280 px), iPad stående (273–1 028 px) och telefon (ingen gräns).

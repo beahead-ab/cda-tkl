@@ -150,7 +150,7 @@ body.panel-app #panel-console{display:none}
    proportion, never the other way round. Below 300 px of bottom row the plan shrinks
    instead and is centred. All scrolling is local: the page itself never scrolls. */
 html:has(body.panel-app){overflow:hidden}
-body.panel-app{--console-h:0px;--plan-inset-x:16px;--plan-inset-top:10px;--plan-fit:contain;--plan-tag:pan;--plan-h:min(calc((100vw - 16px) / 3.0552),calc(100dvh - 10px - 300px));--plan-row:calc(var(--plan-h) + var(--plan-inset-top) + var(--console-h));background:#000}
+body.panel-app{--console-h:0px;--plan-inset-x:16px;--plan-inset-top:10px;--plan-fit:contain;--plan-tag:pan;--plan-h:min(calc((100vw - 16px) / 3.0552),var(--plan-user,calc(100dvh - 10px - 300px)));--plan-row:calc(var(--plan-h) + var(--plan-inset-top) + var(--console-h));background:#000}
 body.panel-app[data-skin=original] .panel-shell{--panel:#000;background:#000}
 body.panel-app .panel-shell{background:#000}
 #plan-face{padding:var(--plan-inset-top) calc(var(--plan-inset-x) / 2) 0}
@@ -249,7 +249,7 @@ button.plan-zoom-tag:hover{background:#262c32;border-color:#2a3036}
 /* iPad portrait: the whole plan would be 273 px high. It is locked to 400 px with
    panning instead; Visa hela goes back to 100 %. Timetable stacks over events. */
 @media(orientation:portrait) and (max-width:900px){
-body.panel-app{--plan-inset-x:0px;--plan-inset-top:6px;--plan-fit:height;--plan-tag:pan;--plan-h:400px}
+body.panel-app{--plan-inset-x:0px;--plan-inset-top:6px;--plan-fit:height;--plan-tag:pan;--plan-h:var(--plan-user,400px)}
 #panel-view .panel-scroll{touch-action:pan-x pan-y}
 #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.3fr) minmax(0,1fr);--tt-cols:56px 40px 150px 50px 50px 62px minmax(0,1fr)}
 body.panel-app #trainmeet-timetable{border-right:0}
@@ -432,3 +432,14 @@ button.chip:disabled{opacity:.45;cursor:default}button.chip:disabled:hover{backg
 @media(max-width:1439px){.occ-legend{display:none}}
 @media(max-width:1799px){#panel-occupancy{--occ-row:32px}.occ-bar{font-size:11px}.occ-name{font-size:12px}.ev-tabs button{font-size:12px}}
 @media(max-width:1200px){#panel-occupancy{--occ-name:56px}}
+/* Draggable boundary between the plan and the bottom row (panel-split.js). The line is
+   the bottom row's top border; a 14 px grip straddles it and shows a pill on hover. */
+#panel-divider{position:absolute;left:0;right:0;top:-7px;height:14px;z-index:7;cursor:row-resize;touch-action:none;display:flex;align-items:center;justify-content:center}
+#panel-divider[hidden]{display:none}
+#panel-divider i{display:block;width:36px;height:4px;border-radius:2px;background:#3a424a;opacity:0;transition:opacity 120ms}
+#panel-divider:hover i,#panel-divider:focus-visible i,body[data-split-dragging] #panel-divider i{opacity:1;background:#7d8791}
+body[data-split-dragging]{cursor:row-resize;user-select:none;-webkit-user-select:none}
+body[data-split-dragging] #panel-bottom{border-top-color:#5c656d}
+@media(pointer:coarse){#panel-divider{top:-11px;height:22px}#panel-divider i{opacity:1}}
+@media(max-width:500px),(max-height:430px){#panel-divider{display:none}}
+

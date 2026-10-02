@@ -28,6 +28,7 @@ import { createContextDialog } from './context-dialog.js';
 import { createPanelConsole } from './panel-console.js';
 import {createPanelEvents} from './panel-events.js';
 import {createPanelHead} from './panel-head.js';
+import {createPanelSplit} from './panel-split.js';
 import {labelClass,objectFromMessage} from './plan-objects.js';
 const $ = id => document.getElementById(id);
 const adminNavigation=createAdminNavigation();
@@ -680,7 +681,8 @@ async function start() {
   try{localStorage.removeItem('charlottendal-skin');}catch{}
   const panelZoom=createPanelZoom({plan:$('track-plan'),viewport:document.querySelector('.panel-scroll'),stage:$('plan-stage'),controls:$('panel-console')});
   const zoomDialog=createZoomDialog(panelZoom);
-  panelHead=createPanelHead({shell:document.querySelector('#panel-view .panel-shell'),onZoom:()=>zoomDialog.open()});panelZoom.subscribe(value=>panelHead?.zoom(value));
+  panelHead=createPanelHead({shell:document.querySelector('#panel-view .panel-shell'),onZoom:()=>zoomDialog.open()});
+  createPanelSplit({bottom:$('panel-bottom'),viewport:document.querySelector('.panel-scroll')});panelZoom.subscribe(value=>panelHead?.zoom(value));
   // Återställ panel and Lämna över rangerbangården sit beside the zoom chip; the console row under the plan is gone.
   document.getElementById('plan-head-zoom')?.before($('panel-quick-actions'));
   panelZoom.subscribe(value=>{$('menu-zoom-value').textContent=zoomLabel(value);});

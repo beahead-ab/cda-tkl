@@ -283,3 +283,28 @@ eller `role=button`; efter Tab ritas en ljusgrå ring (`#aeb6be`, 2 px) runt kon
 tryck med mus, penna eller finger. Gäller ställverket, administrationen och dialogerna.
 Textfält visar alltid var man skriver med en ljusare kant (`#8a939c`). Inloggningssidan
 har ingen ring efter klick, men en ring på knappen efter Tab.
+
+## Dragbar gräns mellan ställverket och nederraden (0.46.0)
+
+Gränsen mellan planen och nederraden går att dra, som Casper föreslog: lägre tidtabell ger
+större ställverk och tvärtom. Planen behåller alltid sina proportioner. På dator och iPad
+liggande växer den tills den når sidorna och stannar där; den kan bli ungefär hälften så
+stor (45 % av fullbredd, minst 160 px). På iPad stående, där planen panoreras i sidled, får
+den växa tills nederraden är som minst. Nederraden blir aldrig lägre än 160 px. På telefon
+finns ingen gräns att dra.
+
+Greppet är 14 px över linjen (22 px på pekskärm) med pekaren ↕ och ett litet handtag som
+syns vid hovring. Dubbelklick ger standardläget. Med tangentbordet, efter Tab: pil upp och
+ned flyttar 16 px (med Skift 64 px), Home minsta och End största plan. Valet sparas i
+webbläsaren på enheten (`localStorage` `cda-panel-split-v1`) som planens andel av fönstrets
+höjd, så det följer med när fönstret ändras eller plattan vänds.
+
+Tekniskt sätter `public/panel-split.js` variabeln `--plan-user` på body;
+`--plan-h` i panel-fixed.css är nu `min(calc((100vw - 16px)/3.0552), var(--plan-user,
+calc(100dvh - 10px - 300px)))` och på iPad stående `var(--plan-user, 400px)`. Gränserna
+räknas i `public/panel-split-model.js` (ren funktion, prov i panel-split-model.test.mjs).
+Zoomen fortsätter att gälla inom planens yta.
+
+Värt att veta: på en bred skärm som 1920 × 1080 spänner planen redan över hela bredden, så
+där kan gränsen bara dras uppåt för mer tidtabell. Planen växer när fönstret är lågt i
+förhållande till bredden, till exempel 1920 × 900 (från 590 till 623 px).
