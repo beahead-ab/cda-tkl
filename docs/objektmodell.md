@@ -91,9 +91,11 @@ Att bestämma innan det byggs: om en spårledning räcker överallt, och hur lå
 
 ## Så landar det i praktiken
 
-1. **Lyssna.** TKL kopplas till LocoNet utan att skicka något medan JMRI kör som vanligt. Varje order JMRI skickar och varje rapport som kommer tillbaka jämförs med TKL:s modell. Det bekräftar adresser och visar hur dekodrarna rapporterar, utan risk. Lyssningsläget är ett litet tillägg till telegraminspelningen som redan finns.
-2. **Mät.** JMRI stängs av. Driftsättningsläget provar de objekt som lyssnandet inte täckte, ett i taget.
+Ingen operationell koppling till JMRI, beslutat 2 oktober 2026. JMRI kopplas bort från LocoNet för gott, och TKL är ensam på bussen från första steget. Cda60.xml finns kvar som en ritning att läsa ur, inte som ett system att köra.
+
+1. **Lyssna.** TKL kopplas till LocoNet i ett läge där den inte skickar något. Det visar vad dekodrarna rapporterar av sig själva vid start och om de rapporterar periodiskt, och det fångar rapporter när någon lägger en växel eller ett tåg kör. Det besvarar den viktigaste tekniska frågan utan risk. Lyssningsläget är ett litet tillägg till telegraminspelningen som redan finns.
+2. **Mät.** Driftsättningsläget provar varje objekt, ett i taget: provorder, återrapport, och en bekräftelse av det man ser på banan.
 3. **Prova tågvägarna** utan tåg på banan och sedan med tåg, enligt en lista ur tabellen.
 4. **Drift.**
 
-Varje steg har en väg tillbaka: JMRI är orört och kan startas igen.
+Vägen tillbaka går genom TKL själv: varje aktivering sparar den föregående versionen av bindningar och regler, och den kan återställas. Inget steg förutsätter att JMRI startas igen.

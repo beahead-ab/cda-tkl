@@ -189,12 +189,11 @@ Två saker gäller oavsett motor:
 
 ## 5d. JMRI
 
-TKL kör inte JMRI och skriver aldrig till JMRI. Cda60.xml är en kopia som bara läses, och JMRI-installationen vid banan rörs inte. Från filen används bara det som beskriver anläggningen: objektens namn, ritningens geometri, relationerna mellan objekten och adresserna som förslag. JMRI:s egna mekanismer (Logix, minnen, interna sensorer, NX-identiteter) används inte i drift.
+Ingen operationell koppling till JMRI, beslutat 2 oktober 2026. TKL kör inte JMRI, skriver aldrig till JMRI och använder inte JMRI vid införandet. JMRI kopplas bort från LocoNet när TKL kopplas in, och TKL är därefter ensam på bussen.
 
-Två förutsättningar:
+Cda60.xml finns kvar som en ritning att läsa ur, en gång: objektens namn, ritningens geometri, relationerna mellan objekten och adresserna som förslag. När objektmodellen är granskad och aktiverad är det modellen som gäller, och filen behövs bara för att kunna visa var något kom ifrån. JMRI:s egna mekanismer (Logix, minnen, interna sensorer, NX-identiteter) används inte.
 
-- Cda60.xml måste vara den senaste exporten. Om JMRI-konfigurationen har ändrats sedan dess behövs en ny export innan genomgången körs.
-- JMRI och TKL får inte styra samma LocoNet samtidigt, eftersom båda skickar order. När TKL kopplas in är JMRI avstängt eller bara lyssnande.
+En förutsättning: Cda60.xml måste vara den senaste exporten. Om JMRI-konfigurationen har ändrats sedan dess behövs en ny export en sista gång, innan genomgången körs.
 
 ## 6. Signaler och tågvägar
 
