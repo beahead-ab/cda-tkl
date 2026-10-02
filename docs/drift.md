@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `5bfe9b9` · version 0.44.2 (2 oktober 2026, 00:21) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/5bfe9b9` |
+| Driftsatt kodversion | `22842df` · version 0.45.0 (2 oktober 2026, 10:49) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/22842df` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -712,3 +712,18 @@ tjänster aktiva, TKL ny process 224877, version 0.44.2. Verifierat i
 webbdriften: händelsekolumnen visar "TKL startad" och "LocoNet ansluten",
 medan de 66 stoppbegäran vid start bara finns i journalen under Verktyg;
 inga konsolfel.
+
+## Version 0.45.0 · spårbeläggning, knappar i statusraden, inget toast
+
+`22842df` aktiverad 2 oktober 2026, 10:49 svensk tid med deploy/publish-release.sh
+från appens terminal. Serverns prov: syntax, 76 riktade enhetstester och 5
+processprov, noll lås före bytet, driftdata oförändrade. Endast TKL startades
+om, simulatorns process 140318 behölls. Backup:
+`/root/charlottendal-backups/network-22842df-20261002T084853Z`. Efterkontroll:
+tjänsterna aktiva, TKL ny process 230356, version 0.45.0. Föregående release
+`5bfe9b9`. Innehåll: inget toast på ställverkssidan, Återställ panel och Lämna
+över rangerbangården som chips i statusraden (konsolraden borta, planen 54 px
+högre), och Spårbeläggning som andra flik i högra kolumnen; se
+panel-och-verktyg.md. Inte granskat inloggad i webbdriften av Claude, eftersom
+det kräver inloggning.
+
