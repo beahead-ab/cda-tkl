@@ -90,3 +90,41 @@ Webbdriften ligger bakom Cloudflare, som ersätter ursprungets 502- och 504-svar
 Ett stationsanrop som inte får svar i tid (8 s) besvaras med 503 "TrainMeet svarar inte. Stationslistan kunde inte hämtas." i stället för nätverksbibliotekets egen text, och dialogen erbjuder då Hämta listan igen vid sidan av id-fältet. Ett sådant fall inträffade i webbdriften direkt efter omstarten till 0.42.2.
 
 Från 0.44.1 journalför adaptern vad en avläsning visar har hänt hos TrainMeet, utan att skicka något: tåganmälan från en grannstation ("Tåganmälan 3510 från Vagnsta · väntad 06:17"), ankomst ("Tåg 3510 ankommit spår 1a") och avgång ("Tåg 3510 avgått mot Lekby"). Raderna får slaget `trainmeet` och visas under Tåg i ställverkets händelsekolumn; egna kommandon journalförs som förut när de görs.
+
+## Träffklockan i synk med servern (0.45.3)
+
+Casper såg att TKL:s klocka inte gick i takt med TrainMeet Server. Orsaken låg i TKL:
+adaptern läste klockan var femte sekund men sparade bara klockslaget, och ställverket
+räknade om från det klockslaget vid varje tillståndsuppdatering, minst en gång i sekunden.
+Vid 4× gick klockan en sekund, hoppade tillbaka och hoppade fram omkring 20 träffsekunder
+vid varje avläsning.
+
+Nu gäller:
+
+- **Avläsningen dateras.** Adaptern noterar när `/v1/display` frågades och när svaret
+  kom; klockslaget räknas som avläst mitt emellan (`clock.readAt`). Vyn skickar med hur
+  gammal avläsningen är (`clockAgeMs`), räknat när tillståndet skickas.
+- **Ställverket räknar fram själv.** Klockan förankras bara när en ny avläsning kommer,
+  bakdaterad med dess ålder, och går sedan lokalt med träffens hastighet. Den uppdateras
+  fyra gånger i sekunden, så att en 4×-klocka visar varje sekund.
+- **Stopp, start och ny hastighet direkt.** TrainMeet Server har ett ändringsflöde,
+  `GET /v1/events` (Server-Sent Events, bara ämnesnamn, ingen nyckel). Adaptern följer det
+  medan stationen är parkopplad och läser klockan vid nästa tick (100 ms) när ämnet
+  `clock` kommer, och läser allt en gång när en ny ström öppnas (`hello`). Avläsningen var
+  femte sekund ligger kvar och rättar eventuell glidning. Saknar servern flödet (404)
+  försöker adaptern igen efter fem minuter; ett avbrutet flöde efter 15 sekunder; ett
+  flöde som servern avslutat (efter fem minuter) efter två sekunder. Nyckeln skickas
+  aldrig till flödet.
+
+Ingen ändring i TrainMeet Server behövdes. Prov: trainmeet.test.mjs (daterad avläsning,
+flödets händelser, ström, återförsök) och trainmeet-integration.mjs, där en TrainMeet-
+attrapp stoppar klockan och meddelar det i flödet: TKL ser stoppet inom 2 s, utan flödet
+tog det 4,5 s. Mot en lokal attrapp skilde TKL:s klocka och attrappens högst en halv
+träffsekund, vilket är attrappens avrundning till hela sekunder.
+
+**NU-strecket.** Ett tåg som fortfarande är Redo, Uppställt eller Väntar efter sin egen tid
+(till exempel 3581 med avgång 05:05 klockan 14:48) stod under NU-strecket tillsammans med
+det som pågår nu, så strecket såg ut att inte stämma med klockan. Sådana tåg står nu ovanför
+strecket i tidsordning, gulmarkerade som pågående och alltid synliga, med förseningen i
+Läge: "Redo · sen 9 h 43 min". Mer än tolv timmar bakåt räknas som nästa dygn, så ett
+23:50-tåg strax efter midnatt står kvar under strecket.

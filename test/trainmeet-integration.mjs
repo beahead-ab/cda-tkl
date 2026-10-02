@@ -78,3 +78,34 @@ test('TKL process drives shifts, clearances and movement declarations through Tr
     assert.equal(s.routes.length,0);assert.ok(Object.values(s.blocks).every(b=>b.occupied===null),'no field state touched by clearances');
   }finally{const exited=new Promise(r=>child.once('exit',r));child.kill('SIGTERM');await exited;await new Promise(r=>gateway.close(r));fs.rmSync(dir,{recursive:true,force:true});}
 });
+
+test('TKL reads the meet clock at once when TrainMeet\'s change feed says it changed',{timeout:20000},async()=>{
+  let running=true,feed=null,feedAuth;
+  const gateway=http.createServer(async(req,res)=>{
+    if(req.url==='/v1/events'){feedAuth=req.headers.authorization;res.writeHead(200,{'Content-Type':'text/event-stream'});res.write('retry: 2000\nevent: hello\ndata: {"boot":"b1","seq":1}\n\n');feed=res;return;}
+    res.setHeader('Content-Type','application/json');
+    if(req.url==='/v1/pair')return res.end(JSON.stringify({protocol_version:1,client_id:'cda-tkl',access_token:'clock-token'}));
+    if(req.headers.authorization!=='Bearer clock-token'){res.writeHead(401);return res.end('{}');}
+    const common={protocol_version:1,publication_id:'pub1',active_day:'Dagl'};
+    if(req.url==='/v1/tkl/context?station_id=cda')return res.end(JSON.stringify({...common,station:{id:'cda',name:'Charlottendal'},shift:{shift_id:'s0',operator_name:'Rig'},previous_shift:null,movements:{},connection_states:[]}));
+    if(req.url==='/v1/timetable?station_id=cda')return res.end(JSON.stringify({schema_version:3,publication_id:'pub1',active_day:'Dagl',stations:[{id:'cda'}],tracks:[],trains:[]}));
+    if(req.url==='/v1/display')return res.end(JSON.stringify({...common,stations:[{id:'cda',name:'Charlottendal'}],revision:1,clock:{configured:true,time:'12:00:00',running,speed:4},trains:[],routes:[],connections:[]}));
+    res.writeHead(404);res.end('{}');});
+  await new Promise(r=>gateway.listen(0,'127.0.0.1',r));const port=await freePort(),wire=await freePort(),dir=fs.mkdtempSync(path.join(os.tmpdir(),'cda-trainmeet-clock-'));let child,output='';
+  const state=async()=>(await fetch('http://127.0.0.1:'+port+'/api/state')).json();
+  try{
+    child=spawn(process.execPath,['src/server.mjs'],{cwd,env:{...process.env,CHARLOTTENDAL_AUTH_MODE:'cloudflare',CHARLOTTENDAL_PUBLIC_ORIGIN:'',CHARLOTTENDAL_PORT:String(port),CHARLOTTENDAL_WIRE_PORT:String(wire),CHARLOTTENDAL_STATE_DIR:dir,CHARLOTTENDAL_TRAINMEET_ORIGIN:''}});child.stderr.on('data',c=>{output+=c;});
+    const initial=await until(state);
+    const configured=await (await fetch('http://127.0.0.1:'+port+'/api/trainmeet/configure',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...initial.trainMeet,origin:'http://127.0.0.1:'+gateway.address().port,clientId:'cda-tkl'})})).json();
+    const paired=await fetch('http://127.0.0.1:'+port+'/api/trainmeet/pair',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...configured,stationId:'cda',code:'clock-code'})});assert.equal(paired.status,200,output);
+    let s=await until(async()=>{const v=await state();return v.trainMeet.context?.clock?.running===true&&feed?v:null;});
+    assert.ok(Number.isFinite(s.trainMeet.context.clock.readAt),'the reading is dated');
+    assert.ok(Number.isFinite(s.trainMeet.clockAgeMs)&&s.trainMeet.clockAgeMs>=0&&s.trainMeet.clockAgeMs<6000,'and its age is sent');
+    assert.equal(feedAuth,undefined,'the change feed never carries the key');
+    // Let the five-second poll settle first, so only the feed can explain a quick read.
+    await new Promise(r=>setTimeout(r,600));
+    running=false;const stopped=Date.now();feed.write('event: change\ndata: {"seq":2,"topics":["clock"]}\n\n');
+    s=await until(async()=>{const v=await state();return v.trainMeet.context?.clock?.running===false?v:null;});
+    assert.ok(Date.now()-stopped<2000,'the stop reached TKL in '+(Date.now()-stopped)+' ms, well inside the 5 s poll');
+  }finally{if(child?.exitCode===null){const exited=new Promise(r=>child.once('exit',r));child.kill('SIGTERM');await exited;}feed?.end();gateway.closeAllConnections?.();await new Promise(r=>gateway.close(r));fs.rmSync(dir,{recursive:true,force:true});}
+});

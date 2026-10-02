@@ -89,8 +89,8 @@ function readLines(display,context,station,names,codes){
 // commands a TMBox uses. It deliberately has no reference to Engine, Field or
 // detector state: a clearance is never a route, a lock or a signal aspect.
 export class TrainMeet extends EventEmitter {
-  constructor({storage,origin='',fetcher=fetch,now=Date.now}) {
-    super();this.storage=storage;this.fetcher=fetcher;this.now=now;this.sessionId=randomUUID();this.revision=0;this.busy=false;this.current=null;this.lastAttempt=0;this.context=null;this.status='unconfigured';this.error='';this.updatedAt=0;
+  constructor({storage,origin='',fetcher=fetch,now=Date.now,changeFeed=true}) {
+    super();this.storage=storage;this.fetcher=fetcher;this.now=now;this.changeFeed=changeFeed;this.feed=null;this.feedRetryAt=0;this.urgent=false;this.sessionId=randomUUID();this.revision=0;this.busy=false;this.current=null;this.lastAttempt=0;this.context=null;this.status='unconfigured';this.error='';this.updatedAt=0;
     this.origin=serverOrigin(origin);this.originLocked=!!origin;
     this.data=storage.load('trainmeet.json',{version:1,clientId:'cda-tkl',stationId:'',token:'',origin:this.origin,operatorName:'',pairings:{}});
     // One saved pairing per server, each key bound to its own origin. Older files hold only the active one.
@@ -105,7 +105,9 @@ export class TrainMeet extends EventEmitter {
     if(!this.origin)this.origin=serverOrigin(this.data.origin);
     if(this.origin)this.status=this.data.token?'disconnected':'unpaired';
   }
-  view(){return {sessionId:this.sessionId,revision:this.revision,origin:this.origin,originLocked:this.originLocked,clientId:this.data.clientId,status:this.status,busy:this.busy,paired:!!this.data.token,stationId:this.data.stationId,error:this.error,updatedAt:this.updatedAt,stale:this.status!=='connected'||this.now()-this.updatedAt>15000,contract:'TrainMeet HTTP v1 · TKL-terminal',savedServers:Object.entries(this.data.pairings).map(([origin,p])=>({origin,stationId:p.stationId})),operatorName:this.data.operatorName,serviceError:this.autoShiftError,context:this.context};}
+  view(){return {sessionId:this.sessionId,revision:this.revision,origin:this.origin,originLocked:this.originLocked,clientId:this.data.clientId,status:this.status,busy:this.busy,paired:!!this.data.token,stationId:this.data.stationId,error:this.error,updatedAt:this.updatedAt,stale:this.status!=='connected'||this.now()-this.updatedAt>15000,contract:'TrainMeet HTTP v1 · TKL-terminal',savedServers:Object.entries(this.data.pairings).map(([origin,p])=>({origin,stationId:p.stationId})),operatorName:this.data.operatorName,serviceError:this.autoShiftError,context:this.context,
+    // How old the clock reading is now; the panel runs the meet clock on from there.
+    clockAgeMs:Number.isFinite(this.context?.clock?.readAt)?Math.max(0,this.now()-this.context.clock.readAt):null};}
   check(data){if(data.sessionId!==this.sessionId||data.revision!==this.revision)fail('TrainMeet-anslutningen har ändrats. Läs in senaste läget.',409);if(this.busy)fail('En TrainMeet-begäran pågår.',409);}
   // Switching server keeps the pairing of the server left behind and resumes a
   // saved pairing for the server chosen; a key is only ever sent to its own origin.
@@ -142,7 +144,8 @@ export class TrainMeet extends EventEmitter {
   }
   async read(token=this.data.token,station=this.data.stationId,allowReset=false,reloadTimetable=false) {
     const context=await this.request('/v1/tkl/context?station_id='+encodeURIComponent(station),{token});
-    const display=await this.request('/v1/display',{token});
+    // The clock in the answer was read somewhere during the request; the middle is the best guess.
+    const asked=this.now(),display=await this.request('/v1/display',{token}),readAt=Math.round((asked+this.now())/2);
     if(context?.protocol_version!==1||display?.protocol_version!==1||!identity(context.publication_id)||context.publication_id!==display.publication_id||!identity(context.active_day)||context.active_day!==display.active_day||context.station?.id!==station||!record(context.movements)||!Array.isArray(context.connection_states)||!Array.isArray(display.trains)||!Number.isSafeInteger(display.revision)||display.revision<0)fail('TrainMeet-svaret följer inte det granskade kontraktet.',503);
     if(!allowReset&&this.context?.publicationId===display.publication_id&&this.context.day===display.active_day&&display.revision<this.context.revision)fail('TrainMeet skickade en äldre revision. Kontrollera serverbytet och parkoppla på nytt.',503);
     const stations=display.stations??[];
@@ -163,7 +166,7 @@ export class TrainMeet extends EventEmitter {
     const cached=!allowReset&&!reloadTimetable&&previous?.timetable&&previous.publicationId===display.publication_id&&previous.day===display.active_day&&previous.station.id===station;
     const timetable=cached?{trains:previous.trains,tracks:previous.tracks,operatingPoints:previous.operatingPoints,timetable:previous.timetable}
       :readTimetable(await this.request('/v1/timetable?station_id='+encodeURIComponent(station),{token}),{stationId:station,publicationId:display.publication_id,day:display.active_day,loadedAt:this.now()});
-    return {stations:stations.map(s=>({id:s.id,name:s.name,code:s.code==null?'':String(s.code)})),publicationId:display.publication_id,revision:display.revision,day:display.active_day,meet:text(display.meet?.name)?display.meet.name:'',station:{id:station,name:text(context.station.name)?context.station.name:station},clock:{time:clock.time,rate:clock.speed,running:clock.running,configured:clock.configured},...timetable,movements,connections,lines,directions,shift,previousShift};
+    return {stations:stations.map(s=>({id:s.id,name:s.name,code:s.code==null?'':String(s.code)})),publicationId:display.publication_id,revision:display.revision,day:display.active_day,meet:text(display.meet?.name)?display.meet.name:'',station:{id:station,name:text(context.station.name)?context.station.name:station},clock:{time:clock.time,rate:clock.speed,running:clock.running,configured:clock.configured,readAt},...timetable,movements,connections,lines,directions,shift,previousShift};
   }
   // One TrainMeet exchange at a time, so a poll and an action never interleave
   // their writes to the last good context.
@@ -312,5 +315,37 @@ export class TrainMeet extends EventEmitter {
     const shift=this.context?.shift;
     if(this.data.token&&shift&&shift.terminalName===this.data.clientId)await this.exclusive(async()=>{try{await this.request('/v1/tkl/shift/finish',{token:this.data.token,payload:{station_id:this.data.stationId,shift_id:shift.id,status:'closed',note:''}});this.emit('journal','Stationen ur tjänst hos TrainMeet (frånkopplad).');}catch{}});
     const pairings={...this.data.pairings};delete pairings[this.origin];const next={...this.data,token:'',stationId:'',origin:this.origin,pairings};this.storage.save('trainmeet.json',next);this.data=next;this.context=null;this.updatedAt=0;this.status=this.origin?'unpaired':'unconfigured';this.error='';this.revision++;this.emit('change');return this.view();}
-  tick(){if(this.origin&&this.data.token&&!this.busy&&this.now()-this.lastAttempt>=5000)this.refresh();}
+  tick(){
+    const paired=!!(this.origin&&this.data.token);
+    if(this.feed&&(!paired||this.feed.origin!==this.origin)){this.feed.controller.abort();this.feed=null;this.feedRetryAt=0;}
+    if(paired&&this.changeFeed&&!this.feed&&this.now()>=this.feedRetryAt)this.follow();
+    if(paired&&!this.busy&&(this.urgent||this.now()-this.lastAttempt>=5000)){this.urgent=false;this.refresh();}
+  }
+  // TrainMeet says at once when its clock is stopped, started or given a new speed
+  // (/v1/events: topic names only, no key). The clock is then read on the next tick
+  // instead of on the next five-second poll; the poll still corrects any drift, and
+  // without the feed (an older server, a proxy that cuts it) everything works as before.
+  async follow(){
+    const origin=this.origin,controller=new AbortController();this.feed={origin,controller};let wait=2000;
+    try{
+      const response=await this.fetcher(origin+'/v1/events',{headers:{Accept:'text/event-stream'},redirect:'error',signal:controller.signal});
+      if(!response.ok||!response.body){wait=response.status===404?300000:30000;return;}
+      const decoder=new TextDecoder();let buffer='';
+      for await(const part of response.body){
+        buffer+=decoder.decode(part,{stream:true});
+        for(let cut;(cut=buffer.indexOf('\n\n'))>=0;){this.feedEvent(buffer.slice(0,cut));buffer=buffer.slice(cut+2);}
+        if(buffer.length>65536)buffer='';
+      }
+    }catch{wait=controller.signal.aborted?0:15000;}
+    finally{if(this.feed?.controller===controller){this.feed=null;this.feedRetryAt=this.now()+wait;}}
+  }
+  feedEvent(block){
+    let event='message',data='';
+    for(const line of block.split('\n')){if(line.startsWith('event:'))event=line.slice(6).trim();else if(line.startsWith('data:'))data+=line.slice(5).trim();}
+    // A new stream may have missed a change while it was closed: read everything once.
+    if(event==='hello'){this.urgent=true;return;}
+    if(event!=='change')return;
+    let topics=[];try{topics=JSON.parse(data).topics;}catch{return;}
+    if(Array.isArray(topics)&&topics.includes('clock'))this.urgent=true;
+  }
 }

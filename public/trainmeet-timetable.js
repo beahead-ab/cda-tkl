@@ -18,7 +18,7 @@ export function createTrainMeetTimetable({selectSource}) {
   dialog.innerHTML='<div class="card"><div class="card-heading"><h3 id="tt-detail-title"></h3><button type="button" id="tt-close-detail" aria-label="Stäng tidtabellsuppgifter" autofocus>Stäng</button></div><div id="tt-detail-content"></div></div>';document.body.append(dialog);
   let importState,rows=[],grouped=null,mode='upcoming',last='',miniLast='',identity='',selected=null,detailHTML='',frame=0;
   // The meet clock runs locally between polls; groups are recomputed when the minute changes.
-  let clockBase=null,clockStart=0,shownMinute=null,clockMinutes=null,occupancy=null,clockShort='',doneLimit=Infinity,routes=[],userActiveUntil=0,programmatic=false,anchoredKey=null;
+  let clockBase=null,clockStart=0,clockKey='',shownMinute=null,clockMinutes=null,occupancy=null,clockShort='',doneLimit=Infinity,routes=[],userActiveUntil=0,programmatic=false,anchoredKey=null;
   const announced=new Map();
   const details=createContextDialog({dialog,onClose:()=>{selected=null;}});
   $('close-detail').onclick=()=>details.close();
@@ -84,8 +84,11 @@ export function createTrainMeetTimetable({selectSource}) {
     let html='';
     if(!rows.length)html='<p class="tt-empty">Ingen tidtabell att visa.</p>';
     else{
+      // Everything above the NU line has its time behind it: the last done rows and,
+      // always shown, trains still active after their time, in time order.
       const done=mode==='all'?g.done:g.done.slice(Math.max(0,g.done.length-doneLimit));
-      html=done.map(rowHTML).join('')+nowLine()+g.now.map(rowHTML).join('')+g.next.map(rowHTML).join('');
+      const above=[...done,...g.late].sort((a,b)=>((a.time??1e9)-(b.time??1e9))||(a.i-b.i));
+      html=above.map(rowHTML).join('')+nowLine()+g.now.map(rowHTML).join('')+g.next.map(rowHTML).join('');
     }
     const structural=replaceList($('content'),html,listKey);
     ensureOccupancy()?.update(occupancyModel(g?.all||[],{minutes:clockMinutes}));
@@ -137,7 +140,8 @@ export function createTrainMeetTimetable({selectSource}) {
     const mini=$('mini').querySelector('.tt-mini-clock');if(mini)mini.textContent=now.text;
     if(now.minutes!==shownMinute){shownMinute=now.minutes;regroup();}
   }
-  setInterval(tick,1000);
+  // Four times a second, so a fast clock (4×) shows every meet second instead of every fourth.
+  setInterval(tick,250);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick();});
   return {update(state,online,imported,panel){
     importState=imported;routes=Array.isArray(panel?.routes)?panel.routes:[];
@@ -149,8 +153,13 @@ export function createTrainMeetTimetable({selectSource}) {
     $('station').textContent=c?[c.meet,c.day,local?'':'TrainMeet'].filter(Boolean).join(' · '):'';
     // The meet clock belongs to TrainMeet; an imported timetable keeps it when the station is paired.
     const clock=state?.context?.clock;
-    if(clock&&/^\d\d:\d\d:\d\d$/.test(clock.time)){clockBase={time:clock.time,rate:clock.rate,running:clock.running};clockStart=performance.now();$('clock-label').innerHTML='<span class="tt-clock-prefix">träffklocka · </span>'+(clock.running?'går':'pausad')+' · '+esc(clock.rate)+'×';const rate=document.getElementById('panel-phone-rate');if(rate)rate.textContent=clock.rate+'×';}
-    else{clockBase=null;clockShort='';$('clock-time').textContent='';$('clock-label').textContent='';}
+    if(clock&&/^\d\d:\d\d:\d\d$/.test(clock.time)){
+      // Re-anchor only on a new reading, back-dated by its age; between readings the
+      // clock runs on locally instead of restarting from an old time on every update.
+      const key=[clock.readAt??'',clock.time,clock.rate,clock.running].join('|');
+      if(key!==clockKey){clockKey=key;clockBase={time:clock.time,rate:clock.rate,running:clock.running};clockStart=performance.now()-(Number.isFinite(state.clockAgeMs)?state.clockAgeMs:0);}
+      $('clock-label').innerHTML='<span class="tt-clock-prefix">träffklocka · </span>'+(clock.running?'går':'pausad')+' · '+esc(clock.rate)+'×';const rate=document.getElementById('panel-phone-rate');if(rate)rate.textContent=clock.rate+'×';}
+    else{clockBase=null;clockKey='';clockShort='';$('clock-time').textContent='';$('clock-label').textContent='';}
     $('status').textContent=stale?'Kontakt saknas – senaste mottagna uppgifter.':'';$('status').hidden=!stale;
     const nextIdentity=JSON.stringify([local,active?.id,c?.station.id,c?.day,c?.trains.map(t=>t.id)]);if(nextIdentity!==identity){identity=nextIdentity;details.close();anchoredKey=null;}
     rows=[];
@@ -163,10 +172,10 @@ export function createTrainMeetTimetable({selectSource}) {
       });
       // A train announced from a neighbour (its line requested or reserved towards us)
       // is noted with the meet time it was first seen here; TrainMeet sends no timestamp.
-      const seen=clockBase?clockAt(clockBase,0).short:'';
+      const seen=clockBase?clockAt(clockBase,performance.now()-clockStart).short:'';
       for(const line of c.lines||[])if(['requested','reserved'].includes(line.state)&&line.direction==='in'&&line.trainNumber&&!announced.has(line.trainNumber))announced.set(line.trainNumber,seen);
     }
-    if(clockBase){const now=clockAt(clockBase,0);clockShort=now.short;shownMinute=now.minutes;$('clock-time').textContent=now.text;}
+    if(clockBase){const now=clockAt(clockBase,performance.now()-clockStart);clockShort=now.short;shownMinute=now.minutes;$('clock-time').textContent=now.text;}
     regroup();schedule();
   }};
 }

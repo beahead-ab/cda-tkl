@@ -58,3 +58,22 @@ test('departed trains sort before the NU line even when the server listed them l
   assert.deepEqual(g.all.map(r=>r.number+':'+r.group),['b:done','a:next']);
   assert.equal(g.next[0].lage,'om 5 min');
 });
+
+test('a train still active after its time sits above the NU line and says how late it is',()=>{
+  const rows=[
+    row('3581',{departure:'05:05',to:'Snöflemåla',movement:{arrival:'none',departure:'ready'},sortTime:'05:05'}),
+    row('9920',{arrival:'14:20',departure:'14:20',movement:{arrival:'arrived',departure:'departed'},sortTime:'14:20'}),
+    row('3519',{arrival:'14:52',departure:'14:55',sortTime:'14:52'}),
+    row('4158',{arrival:'14:40',departure:'17:03',movement:{arrival:'arrived',departure:'waiting'},sortTime:'14:40'}),
+  ];
+  const g=groupRows(rows,{minutes:14*60+48});
+  assert.deepEqual(g.late.map(r=>r.number),['3581']);
+  assert.equal(g.late[0].group,'now','still drawn as ongoing');
+  assert.match(g.late[0].lage,/^Redo · sen 9 h 43 min/);
+  assert.deepEqual(g.now.map(r=>r.number),['4158'],'an active train whose departure is still ahead stays under the line');
+  assert.deepEqual(g.next.map(r=>r.number),['3519']);
+  assert.ok(g.doneKey.includes('m3581'),'a late train moves the anchor like a done one');
+  // Just after midnight a 23:50 train is not twenty-three hours late.
+  const night=groupRows([row('77',{departure:'23:50',movement:{arrival:'none',departure:'ready'},sortTime:'23:50'})],{minutes:10});
+  assert.deepEqual(night.late,[]);assert.deepEqual(night.now.map(r=>r.number),['77']);
+});

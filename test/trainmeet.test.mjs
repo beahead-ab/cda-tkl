@@ -183,3 +183,34 @@ test('the pairing code is sent the way TrainMeet compares it: letters and digits
   await assert.rejects(()=>r.service.pair({...r.service.view(),stationId:'cda',code:'-- --'}),/giltig anslutningskod/);
 });
 test('a station list that cannot be fetched is a readable upstream failure, never the raw network error',async()=>{const r=rig();r.fail();await assert.rejects(()=>r.service.stations(),e=>e.status===503&&e.message==='TrainMeet svarar inte. Stationslistan kunde inte hämtas.');});
+
+test('the clock reading is dated to the middle of its request and the view says how old it is',async()=>{
+  const r=rig();await pair(r);
+  let t=200000;r.now(t);
+  // Each call to now() inside the request advances the fake clock: asked at 200000, answered at 200400.
+  r.service.now=()=>t;const fetcher=r.service.fetcher;r.service.fetcher=async(url,o)=>{if(url.includes('/v1/display'))t+=400;return fetcher(url,o);};
+  await r.service.refresh();
+  assert.equal(r.service.view().context.clock.readAt,200200);
+  t=201200;assert.equal(r.service.view().clockAgeMs,1000);
+  assert.equal(r.service.view().context.clock.time,'12:15:00');
+});
+
+test('the change feed asks for a read at once on a clock change or a new stream, not on traffic',()=>{
+  const r=rig();
+  r.service.feedEvent('event: change\ndata: {"seq":3,"topics":["traffic"]}');assert.equal(r.service.urgent,false);
+  r.service.feedEvent('event: change\ndata: {"seq":4,"topics":["clock","traffic"]}');assert.equal(r.service.urgent,true);
+  r.service.urgent=false;r.service.feedEvent('retry: 2000\nevent: hello\ndata: {"boot":"ab12","seq":4}');assert.equal(r.service.urgent,true);
+  r.service.urgent=false;r.service.feedEvent(': ping');r.service.feedEvent('event: change\ndata: not json');assert.equal(r.service.urgent,false);
+});
+
+test('the feed is read as a stream, retried after it ends and backed off when the server has none',async()=>{
+  let now=1000;const storage={load:(n,d)=>({...d,token:'KEY',stationId:'cda',origin:'https://trainmeet.example',pairings:{'https://trainmeet.example':{stationId:'cda',token:'KEY'}}}),save(){}};
+  const encoder=new TextEncoder(),calls=[];
+  const stream=chunks=>new ReadableStream({start(c){for(const s of chunks)c.enqueue(encoder.encode(s));c.close();}});
+  let answer=()=>new Response(stream(['retry: 2000\nevent: hel','lo\ndata: {"boot":"x","seq":1}\n\n','event: change\ndata: {"seq":2,"topics":["clock"]}\n\n']),{headers:{'Content-Type':'text/event-stream'}});
+  const service=new TrainMeet({origin:'https://trainmeet.example',storage,now:()=>now,fetcher:async(url,o)=>{calls.push({url,accept:o.headers.Accept,auth:o.headers.Authorization});return answer();}});
+  await service.follow();
+  assert.equal(calls[0].url,'https://trainmeet.example/v1/events');assert.equal(calls[0].accept,'text/event-stream');assert.equal(calls[0].auth,undefined,'the feed never carries the key');
+  assert.equal(service.urgent,true);assert.equal(service.feed,null);assert.equal(service.feedRetryAt,3000);
+  answer=()=>new Response('{}',{status:404});await service.follow();assert.equal(service.feedRetryAt,1000+300000);
+});

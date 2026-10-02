@@ -1016,3 +1016,13 @@ sidan laddades från (servern skickar `release` i config och tillstånd). Ingen
 automatisk omladdning. Fokusramen runt fält och kontroller visas bara efter Tab, aldrig
 efter klick eller tryck (Caspers val); textfält visar fokus med ljusare kant.
 
+## 2 oktober 2026, 0.45.3 lokalt
+
+Träffklockan: TKL daterar varje avläsning av TrainMeets klocka, ställverket räknar
+fram från den i stället för att börja om vid varje uppdatering, och adaptern följer
+TrainMeets ändringsflöde (/v1/events) så att stopp och start syns inom en sekund.
+Casper föreslog en ping varje minut och vid stopp och start; förankrad klocka plus
+ändringsflödet ger samma sak tätare och utan ändring i servern. NU-strecket:
+försenade tåg som fortfarande är aktiva står ovanför strecket med "sen …".
+Detaljer i trainmeet-adapter.md.
+

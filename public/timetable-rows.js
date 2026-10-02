@@ -39,7 +39,7 @@ function upcomingTime(row,minutes){
 export function groupRows(rows,{minutes=null,routes=[],announced=new Map()}={}){
   const keyed=rows.map((r,i)=>({...r,i,time:toMinutes(r.sortTime)??toMinutes(r.arrival)??toMinutes(r.departure)}));
   keyed.sort((a,b)=>((a.time??1e9)-(b.time??1e9))||(a.i-b.i));
-  const done=[],now=[],next=[];
+  const done=[],late=[],now=[],next=[];
   for(const r of keyed){
     const arr=r.movement?.arrival||'none',dep=r.movement?.departure||'none',hasData=arr!=='none'||dep!=='none';
     const lastTime=toMinutes(r.departure)??toMinutes(r.arrival);
@@ -48,18 +48,21 @@ export function groupRows(rows,{minutes=null,routes=[],announced=new Map()}={}){
     if(group==='done')row.lage=dep==='departed'?'Avgått':arr==='arrived'?'Ankommet':'';
     else if(group==='now'){
       const parts=[statusText(dep!=='none'?dep:arr)];
+      // Still active after its own time: it sits above the NU line, where its time belongs, and says how late it is.
+      const behind=minutes!=null&&lastTime!=null?minutes-lastTime:0;
+      if(behind>0&&behind<=720){row.late=true;parts.push('sen '+(behind>=60?Math.floor(behind/60)+' h '+behind%60+' min':behind+' min'));}
       const at=announced.get(r.number);if(at)parts.push('anmält '+at);
       if(routeLaid(routes,r.trackLabel??r.track)===false)parts.push('tågväg ej lagd');
       row.lage=parts.filter(Boolean).join(' · ');
     } else {
       const parts=[];if(r.noStop)parts.push('Genomfart');if(r.changed&&r.planned)parts.push('Spår ändrat fr. '+r.planned);row.lage=parts.join(' · ');
     }
-    (group==='done'?done:group==='now'?now:next).push(row);
+    (group==='done'?done:row.late?late:group==='now'?now:next).push(row);
   }
   if(next.length&&minutes!=null){const t=upcomingTime(next[0],minutes);if(t)next[0].lage=['om '+(t.minutes-minutes)+' min',next[0].lage].filter(Boolean).join(' · ');}
   let nextSummary=null;
   for(const r of [...now,...next]){const t=upcomingTime(r,minutes);if(t){nextSummary={number:r.number,from:r.from||'',kind:t.kind,time:t.time,minutes:minutes==null?null:t.minutes-minutes};break;}}
   if(!nextSummary){const r=[...now,...next][0];const t=r&&upcomingTime(r,null);if(t)nextSummary={number:r.number,from:r.from||'',kind:t.kind,time:t.time,minutes:minutes==null?null:Math.max(0,t.minutes-minutes)};}
-  for(const r of [...done,...now,...next])r.la=[r.lage,r.noteLine].filter(Boolean).join(' · ');
-  return {done,now,next,all:[...done,...now,...next],nextSummary,doneKey:done.map(r=>r.id).join('\u0000')};
+  for(const r of [...done,...late,...now,...next])r.la=[r.lage,r.noteLine].filter(Boolean).join(' · ');
+  return {done,late,now,next,all:[...done,...late,...now,...next],nextSummary,doneKey:[...done,...late].map(r=>r.id).join('\u0000')};
 }
