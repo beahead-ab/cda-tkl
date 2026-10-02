@@ -990,3 +990,13 @@ Driftsättning delar last, urval, avvikelser och utkast. Tavla 6 i Claude
 Design visar Data-vyn. Växeltågvägarna som "slutat fungera" var ingen bugg:
 rangerbangården var överlämnad; panelen bör säga det, förslag i dokumentet.
 
+## 2 oktober 2026, 0.45.0 lokalt
+
+Casper granskade 0.44.2 i drift: toasten uppe till höger ska bort (statuschipen räcker),
+spårbeläggningen ska gå att se, och knapparna under planen ska se ut som zoomchipen.
+Gjort: inget toast på ställverkssidan; Återställ panel och Lämna över rangerbangården
+är chips i statusraden bredvid zoomen, konsolraden borta och planen 54 px högre;
+SPÅRBELÄGGNING som andra flik i högra kolumnen enligt designens 1c, ritad ur samma
+rader som tidtabellen med fönster kring träffklockan. Verifierat lokalt i 1920×1080
+och 1024×768 med Grimslöv 2027 från TrainMeet. Detaljer i panel-och-verktyg.md.
+

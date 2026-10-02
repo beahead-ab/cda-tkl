@@ -1,6 +1,8 @@
 import {createAdminDialog} from './admin-ui.js';
 import {createContextDialog} from './context-dialog.js';
 import {clockAt,groupRows,trainClass} from './timetable-rows.js';
+import {createTrackOccupancy} from './track-occupancy.js';
+import {occupancyModel} from './track-occupancy-model.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const CELLS=['n','slag','fr','till','frtill','ank','avg','spar','lage','anm','la'];
 
@@ -16,7 +18,7 @@ export function createTrainMeetTimetable({selectSource}) {
   dialog.innerHTML='<div class="card"><div class="card-heading"><h3 id="tt-detail-title"></h3><button type="button" id="tt-close-detail" aria-label="Stäng tidtabellsuppgifter" autofocus>Stäng</button></div><div id="tt-detail-content"></div></div>';document.body.append(dialog);
   let importState,rows=[],grouped=null,mode='upcoming',last='',miniLast='',identity='',selected=null,detailHTML='',frame=0;
   // The meet clock runs locally between polls; groups are recomputed when the minute changes.
-  let clockBase=null,clockStart=0,shownMinute=null,clockShort='',doneLimit=Infinity,routes=[],userActiveUntil=0,programmatic=false,anchoredKey=null;
+  let clockBase=null,clockStart=0,shownMinute=null,clockMinutes=null,occupancy=null,clockShort='',doneLimit=Infinity,routes=[],userActiveUntil=0,programmatic=false,anchoredKey=null;
   const announced=new Map();
   const details=createContextDialog({dialog,onClose:()=>{selected=null;}});
   $('close-detail').onclick=()=>details.close();
@@ -35,10 +37,16 @@ export function createTrainMeetTimetable({selectSource}) {
     if(chosen.trackLabel)window.dispatchEvent(new CustomEvent('panel-highlight',{detail:{kind:'track',name:chosen.trackLabel}}));
     details.open({currentTarget:button,clientX:e.clientX,clientY:e.clientY},button);
   }
-  for(const host of [$('content'),$('mini')]){
+  function detailsFrom(host){
     host.addEventListener('click',showDetails);
     host.addEventListener('contextmenu',showDetails);
     host.addEventListener('keydown',e=>{if(e.key==='ContextMenu'||e.shiftKey&&e.key==='F10')showDetails(e);});
+  }
+  for(const host of [$('content'),$('mini')])detailsFrom(host);
+  // The occupancy tab lives in the events column, which is built after this module.
+  function ensureOccupancy(){
+    if(occupancy)return occupancy;const host=document.getElementById('panel-occupancy');if(!host)return null;
+    occupancy=createTrackOccupancy({host,range:document.getElementById('occ-range')});detailsFrom(host);return occupancy;
   }
   // Never move the list under a reader's finger or pointer.
   const touched=()=>{userActiveUntil=Date.now()+4000;};
@@ -80,6 +88,7 @@ export function createTrainMeetTimetable({selectSource}) {
       html=done.map(rowHTML).join('')+nowLine()+g.now.map(rowHTML).join('')+g.next.map(rowHTML).join('');
     }
     const structural=replaceList($('content'),html,listKey);
+    ensureOccupancy()?.update(occupancyModel(g?.all||[],{minutes:clockMinutes}));
     const mini=rows.length?'<div class="tt-mini-status"><span class="tt-mini-nu">NU</span><span class="tt-mini-clock">'+esc($('clock-time').textContent)+'</span><span class="tt-mini-rate">'+esc($('clock-label').textContent.replace(/^träffklocka · /,''))+'</span><span class="tt-mini-next">'+next+'</span><span id="panel-alarm-summary" hidden></span></div><div class="tt-mini-rows">'+[...g.now,...g.next.slice(0,g.now.length?2:3)].map(rowHTML).join('')+'</div><button type="button" class="tt-mini-hint">Svep upp · tidtabell och händelser</button>':'';
     if(mini!==miniLast){const summary=document.getElementById('panel-alarm-summary');const keep=summary?{text:summary.textContent,hidden:summary.hidden}:null;$('mini').innerHTML=mini;miniLast=mini;if(keep){const s=document.getElementById('panel-alarm-summary');if(s){s.textContent=keep.text;s.hidden=keep.hidden;}}}
     if(structural&&g&&g.doneKey!==anchoredKey)anchor(false);
@@ -115,7 +124,7 @@ export function createTrainMeetTimetable({selectSource}) {
   bottom?.addEventListener('touchstart',e=>{swipe={y:e.touches[0].clientY,at:Date.now()};},{passive:true});
   bottom?.addEventListener('touchend',e=>{if(!swipe)return;const dy=e.changedTouches[0].clientY-swipe.y;const quick=Date.now()-swipe.at<600;swipe=null;if(!quick)return;if(dy<-40&&!('expanded' in bottom.dataset)&&$('mini').offsetParent)expand(true);else if(dy>40&&'expanded' in bottom.dataset&&$('content').scrollTop===0)expand(false);},{passive:true});
   function regroup(){
-    const minutes=clockBase?clockAt(clockBase,performance.now()-clockStart).minutes:null;
+    const minutes=clockBase?clockAt(clockBase,performance.now()-clockStart).minutes:null;clockMinutes=minutes;
     grouped=groupRows(rows,{minutes,routes,announced});
     for(const key of [...announced.keys()])if(grouped.done.some(r=>r.number===key))announced.delete(key);
     render();

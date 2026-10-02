@@ -24,11 +24,9 @@ body:not([data-page=panel]) #global-status{top:88px;max-height:calc(100dvh - 112
 #panel-view #track-plan{width:100%;height:100%;min-height:0;min-width:0;overflow:hidden;user-select:none;-webkit-user-select:none}
 body:not([data-panel-ready=true]) #track-plan{visibility:hidden}
 body:not([data-panel-ready=true]) .panel-scroll::before{content:'Läser in ställverket…';position:absolute;inset:45% 0 auto;text-align:center;color:var(--ink);font-size:12px;letter-spacing:1px}
-body.panel-app #panel-console{min-height:0;height:auto;overflow:hidden;margin:0;padding:8px 0;border:0;border-radius:0;box-shadow:none;background:transparent;color:inherit}
-#panel-quick-actions{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}#panel-quick-actions button{font-size:12px;padding:8px 12px;min-height:34px;border-radius:3px}
-#panel-quick-actions #panel-reset[aria-busy=true]{border-color:#8b8973}
+/* The console row under the plan is empty since 0.45: its buttons sit in the status bar. */
+body.panel-app #panel-console{display:none}
 .panel-runtime-info{display:flex;flex-direction:column;gap:10px;margin-top:12px;font-size:12px;line-height:1.5}.panel-runtime-info>span:empty{display:none}
-#panel-console #selection-hint{font-size:12px;color:inherit;white-space:normal}
 .operation-overview{display:grid;grid-template-columns:1fr 1fr;gap:12px}.operation-overview button{text-align:left;padding:16px;background:transparent}.operation-overview strong{display:block;font-size:14px;font-weight:500}.operation-overview span{display:block;margin-top:8px;color:var(--muted);font-size:12px;line-height:1.5}
 #panel-drawer .authority-bar{display:flex;justify-content:space-between;gap:16px;align-items:center}
 #panel-drawer{position:fixed;inset:auto auto 10px 50%;transform:translateX(-50%);margin:0;width:min(900px,calc(100vw - 24px));max-height:calc(100dvh - 80px);overflow:auto;overscroll-behavior:contain;border:1px solid #819080;border-radius:5px;box-shadow:0 8px 35px #0009;scrollbar-gutter:stable}
@@ -63,25 +61,6 @@ body.panel-app #panel-console{min-height:0;height:auto;overflow:hidden;margin:0;
 .touch-target.route-preparing[data-preparing-endpoint=end] .dot,.touch-target.route-preparing[data-preparing-endpoint=end] .traffic-dot{animation-delay:-1200ms}
 @media(prefers-reduced-motion:reduce){.touch-target.route-preparing .dot,.touch-target.route-preparing .traffic-dot{animation:none;fill:#cbb876;stroke:#cbb876}}
 
-/* Original panel-style white pushbutton and a separate acknowledgement lamp. */
-body.panel-app #panel-console{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:2px 0 0;height:54px;min-height:54px;flex:none;width:100%}
-#panel-quick-actions{order:0;justify-content:center;margin:0}
-#panel-console .panel-runtime-info{order:1;margin:8px 0 0;text-align:right}
-#panel-quick-actions :is(#panel-reset,#yard-authority){display:flex;flex-direction:column;align-items:center;gap:0;min-width:80px;min-height:56px;padding:0 10px 1px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--ink);font:400 9px/1.3 "Helvetica Neue",Arial,sans-serif;letter-spacing:.1px;touch-action:manipulation}
-:is(#panel-reset-label,#yard-authority-label){order:-1;max-width:140px;text-align:center}
-:is(#panel-reset,#yard-authority) .reset-switch{display:block;width:40px;height:45px;overflow:visible}
-.reset-indicator-rim{fill:#161415;stroke:#99999a;stroke-width:1.2}
-.reset-indicator{fill:#321b1d;stroke:#70464a;stroke-width:.7}
-.reset-key-rim{fill:#090909;stroke:#41413f;stroke-width:1}
-.reset-key-face{fill:url(#reset-key-white);stroke:#96978f;stroke-width:.8;transform-origin:32px 48px;transition:transform 100ms ease-out}
-#panel-quick-actions :is(#panel-reset,#yard-authority):hover:not(:disabled){background:transparent;border-color:transparent}
-:is(#panel-reset,#yard-authority):hover:not(:disabled) .reset-key-rim{stroke:#bdbdb5}
-#panel-quick-actions :is(#panel-reset,#yard-authority):focus-visible{outline:2px solid #deded1;outline-offset:2px}
-:is(#panel-reset,#yard-authority):active:not(:disabled) .reset-key-face{fill:url(#reset-key-down);transform:scale(.92)}
-:is(#panel-reset,#yard-authority)[aria-busy=true] .reset-indicator{fill:#dd684f;stroke:#e0a493}
-#panel-quick-actions :is(#panel-reset,#yard-authority)[aria-busy=true]{opacity:1;border-color:transparent;cursor:wait}
-:is(#panel-reset,#yard-authority):disabled:not([aria-busy=true]){opacity:.4}
-@media(prefers-reduced-motion:reduce){.reset-key-face{transition:none}}
 
 /* Reservation and detection are independent: red still means occupied. */
 #track-plan .rail.blocked{stroke-dasharray:9 6;stroke-linecap:butt}
@@ -171,16 +150,11 @@ body.panel-app #panel-console{display:flex;flex-direction:column;justify-content
    proportion, never the other way round. Below 300 px of bottom row the plan shrinks
    instead and is centred. All scrolling is local: the page itself never scrolls. */
 html:has(body.panel-app){overflow:hidden}
-body.panel-app{--console-h:54px;--plan-inset-x:16px;--plan-inset-top:10px;--plan-fit:contain;--plan-tag:pan;--plan-h:min(calc((100vw - 16px) / 3.0552),calc(100dvh - 54px - 10px - 300px));--plan-row:calc(var(--plan-h) + var(--plan-inset-top) + var(--console-h));background:#000}
+body.panel-app{--console-h:0px;--plan-inset-x:16px;--plan-inset-top:10px;--plan-fit:contain;--plan-tag:pan;--plan-h:min(calc((100vw - 16px) / 3.0552),calc(100dvh - 10px - 300px));--plan-row:calc(var(--plan-h) + var(--plan-inset-top) + var(--console-h));background:#000}
 body.panel-app[data-skin=original] .panel-shell{--panel:#000;background:#000}
 body.panel-app .panel-shell{background:#000}
 #plan-face{padding:var(--plan-inset-top) calc(var(--plan-inset-x) / 2) 0}
 #panel-view .panel-scroll{background:#000}
-/* Återställ panel · Lämna över rangerbangården: 54 px row, labels in IBM Plex. */
-body.panel-app #panel-console{height:var(--console-h);min-height:var(--console-h);padding:2px 0 0}
-#panel-quick-actions{gap:40px}
-#panel-quick-actions :is(#panel-reset,#yard-authority){min-height:50px;padding:0 8px 0;color:#e4e8e3;font:400 9.5px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:0}
-:is(#panel-reset,#yard-authority) .reset-switch{width:34px;height:38px}
 /* The row: timetable left, events right. */
 #panel-bottom{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 560px;grid-template-rows:minmax(0,1fr);gap:0;min-height:0;padding:0;border-top:1px solid #1f2429;background:#000;color:#e6e9ec;font:400 13px/1.3 "IBM Plex Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;--tt-row:25px;--tt-now:27px;--tt-line:14px;--tt-pad:16px;--tt-gap:10px;--tt-cols:72px 48px 104px 104px 62px 62px 84px 250px minmax(0,1fr)}
 #panel-bottom-tabs{display:none}
@@ -257,7 +231,6 @@ button.plan-zoom-tag:hover{background:#262c32;border-color:#2a3036}
 #panel-bottom{grid-template-columns:minmax(0,1fr) 440px;font-size:12.5px;--tt-row:24px;--tt-now:26px;--tt-line:12px;--tt-pad:14px;--tt-gap:8px;--tt-cols:62px 44px 84px 84px 56px 56px 72px 244px minmax(0,1fr)}
 .tt-heading{gap:14px;padding:8px var(--tt-pad) 6px}.tt-heading h2,.ev-heading h2{font-size:12px}#tt-station{font-size:11.5px}.tt-mode{font-size:10.5px}.tt-mode button{padding:2px 8px}#tt-next{font-size:11.5px}#tt-clock{gap:8px}#tt-clock-time{font-size:18px}#tt-clock-label{font-size:10.5px}.tt-labels{font-size:9.5px;padding:4px var(--tt-pad) 2px}.tt-now-line span{font-size:9.5px}.tt-next-from,.tt-next-kind,.tt-clock-prefix{display:none}
 .ev-heading{gap:12px;padding:8px var(--tt-pad) 6px}.ev-filters{gap:12px;font-size:10.5px}#panel-events{--ev-cols:50px 8px minmax(0,1fr) auto;--ev-gap:8px;--ev-row:28px}.ev-row{font-size:12px}.ev-row time{font-size:11px}.ev-ack{font-size:10.5px;padding:2px 6px}#ev-content{padding:3px var(--tt-pad) 6px}
-#panel-quick-actions{gap:36px}
 }
 @media(max-width:1439px){#panel-bottom{grid-template-columns:minmax(0,1fr) 400px}}
 @media(max-width:1400px){body.panel-app{--plan-inset-top:6px}}
@@ -266,20 +239,17 @@ button.plan-zoom-tag:hover{background:#262c32;border-color:#2a3036}
 #panel-bottom{font-size:13px;--tt-row:25px;--tt-now:27px;--tt-line:14px;--tt-pad:16px;--tt-gap:10px;--tt-cols:64px 44px 96px 96px 56px 56px 76px 246px minmax(0,1fr)}
 .tt-heading{gap:16px;padding:9px var(--tt-pad) 7px}.tt-heading h2,.ev-heading h2{font-size:12.5px}#tt-station{font-size:12px}.tt-mode{font-size:11px}.tt-mode button{padding:2px 9px}#tt-next{font-size:12px}#tt-clock{gap:9px}#tt-clock-time{font-size:20px}#tt-clock-label{font-size:11px}.tt-labels{font-size:10px;padding:5px var(--tt-pad) 3px}.tt-now-line span{font-size:10px}
 .ev-heading{gap:14px;padding:9px var(--tt-pad) 7px}.ev-filters{gap:14px;font-size:11px}#panel-events{--ev-cols:56px 8px minmax(0,1fr) auto;--ev-gap:8px;--ev-row:30px}.ev-row{font-size:12.5px}.ev-row time{font-size:11.5px}.ev-ack{font-size:11px;padding:2px 7px}#ev-content{padding:4px var(--tt-pad) 6px}
-#panel-quick-actions{gap:40px}
 }
 @media(max-width:1299px){#panel-bottom{grid-template-columns:minmax(0,1fr) 380px}}
 /* Below 1200 px Läge and Anmärkning share one column so rows stay single-line. */
 @media(max-width:1200px){
-body.panel-app{--console-h:50px}
 #panel-bottom{--tt-cols:60px 40px 84px 84px 52px 52px 64px minmax(0,1fr)}
 .tt-lage,.tt-anm{display:none}.tt-la{display:block}
-:is(#panel-reset,#yard-authority) .reset-switch{width:32px;height:36px}
 }
 /* iPad portrait: the whole plan would be 273 px high. It is locked to 400 px with
    panning instead; Visa hela goes back to 100 %. Timetable stacks over events. */
 @media(orientation:portrait) and (max-width:900px){
-body.panel-app{--console-h:50px;--plan-inset-x:0px;--plan-inset-top:6px;--plan-fit:height;--plan-tag:pan;--plan-h:400px}
+body.panel-app{--plan-inset-x:0px;--plan-inset-top:6px;--plan-fit:height;--plan-tag:pan;--plan-h:400px}
 #panel-view .panel-scroll{touch-action:pan-x pan-y}
 #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.3fr) minmax(0,1fr);--tt-cols:56px 40px 150px 50px 50px 62px minmax(0,1fr)}
 body.panel-app #trainmeet-timetable{border-right:0}
@@ -300,7 +270,6 @@ body.panel-app #panel-view .panel-shell{grid-template-rows:40px var(--plan-row) 
 #plan-overlay{display:block;top:40px}
 .plan-zoom-tags{right:10px;top:8px}.plan-zoom-tag{padding:2px 7px;font-size:10px}#plan-zoom-fit{display:none}.plan-pan{width:120px;bottom:6px}
 #panel-view .panel-scroll{border-bottom:1px solid #1f2429;touch-action:pan-x pan-y}
-body.panel-app #panel-console{display:none}
 #track-plan .touch-target,#track-plan .signal-target{pointer-events:none}
 #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);border-top:0;--tt-pad:16px;--tt-row:44px;--tt-now:46px;--tt-line:14px}
 #panel-bottom-tabs{display:flex;align-items:center;gap:10px;padding:0 16px;white-space:nowrap}
@@ -327,7 +296,6 @@ body.panel-app #trainmeet-timetable{border-right:0;grid-template-rows:minmax(0,1
 @media(max-height:430px){
 body.panel-app{--console-h:0px;--plan-inset-x:0px;--plan-inset-top:10px;--plan-fit:contain;--plan-h:240px;--plan-row:250px}
 body.panel-app #panel-view .panel-shell{grid-template-rows:var(--plan-row) minmax(0,1fr);padding:0 max(0px,env(safe-area-inset-right)) 0 max(0px,env(safe-area-inset-left))}
-body.panel-app #panel-console{display:none}
 #panel-phone-bar{display:none}
 #track-plan .touch-target,#track-plan .signal-target{pointer-events:none}
 #panel-bottom{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);--tt-pad:0px;--tt-row:24px;--tt-now:24px}
@@ -408,7 +376,7 @@ body.panel-app .panel-shell{--rail:var(--track-side);--rail-unknown:var(--track-
 #track-plan .hilite{fill:none;stroke:var(--yellow);stroke-width:2;pointer-events:none}
 @media(prefers-reduced-motion:reduce){#track-plan .route-choice-end .dot,#track-plan .route-preparing .dot{animation:none}}
 /* Status bar over the plan's top band: title, station line, the core's message. */
-#plan-head{position:absolute;left:50px;top:8px;z-index:6;display:flex;align-items:center;gap:14px;height:32px;white-space:nowrap;pointer-events:none;max-width:calc(100% - 380px);overflow:hidden}
+#plan-head{position:absolute;left:50px;top:8px;z-index:6;display:flex;align-items:center;gap:14px;height:32px;white-space:nowrap;pointer-events:none;max-width:calc(100% - 660px);overflow:hidden}
 .plan-head-title{font:600 12.5px var(--font-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--fg)}
 .plan-head-sub{font:400 12px var(--font-sans);color:var(--fg-label)}
 #plan-head-right{position:absolute;right:12px;top:10px;z-index:6;display:flex;align-items:center;gap:6px;white-space:nowrap}
@@ -421,19 +389,44 @@ button.chip{cursor:pointer;color:var(--fg)}button.chip:hover{background:#262c32;
 .chip-status[data-tone=warn]{color:var(--yellow-text)}.chip-status[data-tone=alarm]{color:var(--red-text)}
 .chip-sim{background:transparent;border-color:var(--amber-border);color:var(--amber);letter-spacing:.07em;text-transform:uppercase}
 .chip[hidden]{display:none}
-/* Flat push buttons: indicator · key · label in capitals beside it. */
-#panel-quick-actions{gap:56px}
-#panel-quick-actions :is(#panel-reset,#yard-authority){flex-direction:row;align-items:center;gap:10px;min-width:0;min-height:0;padding:4px 6px;font:400 10.5px/1.3 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-muted)}
-:is(#panel-reset-label,#yard-authority-label){order:1;max-width:none;text-align:left}
-.console-ind{width:7px;height:7px;border-radius:50%;background:var(--red-lamp-off);border:1px solid var(--red-border);flex:none}
-:is(#panel-reset,#yard-authority) .reset-switch{width:24px;height:24px;flex:none}
-.reset-key-rim{fill:var(--button-face);stroke:var(--button-border);stroke-width:1.2}
-.reset-key-face{fill:var(--button-face);stroke:none;transition:fill 100ms}
-:is(#panel-reset,#yard-authority):hover:not(:disabled) .reset-key-rim{stroke:#5c656d}
-:is(#panel-reset,#yard-authority):active:not(:disabled) .reset-key-face{fill:#cfd5db;transform:none}
-:is(#panel-reset,#yard-authority)[aria-busy=true] .console-ind{background:var(--red);border-color:var(--red)}
-#yard-authority[aria-pressed=true] .console-ind{background:#7fa7bb;border-color:#a2c7d8}
-@media(max-width:1200px){#panel-quick-actions{gap:36px}:is(#panel-reset,#yard-authority) .reset-switch{width:22px;height:22px}}
+/* Återställ panel · Lämna över rangerbangården: chips in the status bar, beside the zoom chip. */
+#plan-head-right #panel-quick-actions{display:contents}
+button.chip:disabled{opacity:.45;cursor:default}button.chip:disabled:hover{background:var(--chip-bg)}button.chip[aria-busy=true]{cursor:wait}
 @media(orientation:portrait) and (max-width:900px){#plan-head-right{display:none}#plan-head{max-width:calc(100% - 70px)}}
 @media(max-width:500px){#plan-head,#plan-head-right{display:none}}
 @media(max-height:430px){#plan-head-right{display:none}#plan-head{left:44px;top:4px;height:28px}}
+/* Right column, second tab: track occupancy over time (design 1c). Händelser and
+   Spårbeläggning share the heading; the legend replaces the filters. */
+.ev-tabs{display:flex;gap:14px;margin:0}
+.ev-tabs button{min-height:0;padding:0;border:0;border-radius:0;background:transparent;font:600 12.5px/1.3 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#7d8791}
+.ev-tabs button:hover{background:transparent;color:#e6e9ec}.ev-tabs button[aria-selected=true]{color:#e6e9ec}
+#occ-range{font-size:12px;color:#7d8791}
+.occ-legend{display:flex;gap:14px;margin-left:auto;align-items:center;font-size:11px;color:#7d8791}
+.occ-legend i{display:inline-block;width:14px;height:8px;margin-right:6px;vertical-align:-1px;border:1px solid}
+.occ-done{background:#2a3036;border-color:#3a424a}.occ-now{background:rgba(245,197,24,.18);border-color:#f5c518}.occ-next{background:#1b2a3a;border-color:#4a7fb5}
+#panel-bottom:not([data-right=occupancy]) :is(#panel-occupancy,#occ-range,.occ-legend){display:none}
+#panel-bottom[data-right=occupancy] :is(#ev-content,.ev-filters){display:none}
+#panel-occupancy{display:grid;grid-template-rows:auto minmax(0,1fr);min-height:0;padding:6px var(--tt-pad) 8px;--occ-name:64px;--occ-row:36px}
+.occ-axis{position:relative;height:16px;margin-left:var(--occ-name)}
+.occ-axis span{position:absolute;top:0;transform:translateX(-50%);font:400 10.5px/1 "IBM Plex Mono",monospace;color:#7d8791}
+.occ-scroll{min-height:0;overflow:hidden auto;overscroll-behavior:contain;scrollbar-width:thin}
+.occ-rows{display:grid;grid-template-columns:var(--occ-name) minmax(0,1fr)}
+.occ-name{height:var(--occ-row);display:flex;align-items:center;padding-right:8px;font-size:12.5px;color:#aeb6be;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.occ-lanes{position:relative;min-width:0}
+.occ-ticks{position:absolute;inset:0;pointer-events:none}
+.occ-tick{position:absolute;top:0;bottom:0;width:1px;background:#1c2126}
+.occ-nowline{position:absolute;top:-4px;bottom:0;width:1px;background:#f5c518;opacity:.8}
+.occ-lane{position:relative;height:var(--occ-row);border-bottom:1px solid #15191d;overflow:hidden}
+.occ-bar{position:absolute;top:7px;height:22px;min-width:48px;margin:0;padding:0 5px;border:1px solid;border-radius:0;box-sizing:border-box;display:flex;align-items:center;font:500 11.5px/1 "IBM Plex Sans",system-ui,sans-serif;white-space:nowrap;overflow:hidden;cursor:pointer}
+.occ-bar.occ-done{color:#7d8791}.occ-bar.occ-now{color:#f5d76e}.occ-bar.occ-next{color:#e6e9ec}
+.occ-bar.occ-open{border-right-style:dashed}
+.occ-bar:hover{filter:brightness(1.25)}.occ-bar:focus-visible{outline:2px solid #e6e9ec;outline-offset:1px}
+.occ-empty{margin:9px 0;font-size:12px;color:#7d8791}
+/* The chart needs width: the column grows while it is shown, the timetable keeps its compact columns. */
+@media(min-width:1800px) and (min-height:431px){#panel-bottom[data-right=occupancy]{grid-template-columns:minmax(0,1fr) 820px}}
+@media(min-width:1440px) and (max-width:1799px) and (min-height:431px){#panel-bottom[data-right=occupancy]{grid-template-columns:minmax(0,1fr) 640px}}
+@media(min-width:1201px) and (max-width:1439px) and (min-height:431px){#panel-bottom[data-right=occupancy]{grid-template-columns:minmax(0,1fr) 480px;--tt-cols:60px 40px 84px 84px 52px 52px 64px minmax(0,1fr)}#panel-bottom[data-right=occupancy] :is(.tt-lage,.tt-anm){display:none}#panel-bottom[data-right=occupancy] .tt-la{display:block}}
+@media(min-width:901px) and (max-width:1200px) and (min-height:431px){#panel-bottom[data-right=occupancy]{grid-template-columns:minmax(0,1fr) 400px}}
+@media(max-width:1439px){.occ-legend{display:none}}
+@media(max-width:1799px){#panel-occupancy{--occ-row:32px}.occ-bar{font-size:11px}.occ-name{font-size:12px}.ev-tabs button{font-size:12px}}
+@media(max-width:1200px){#panel-occupancy{--occ-name:56px}}

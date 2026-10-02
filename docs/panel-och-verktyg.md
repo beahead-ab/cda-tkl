@@ -201,3 +201,42 @@ Ovanför planens tomma övre band ligger en statusrad som inte tar höjd från p
 Klick på en händelserad som namnger signal, växel, block eller tågväg, eller på en tågrad med spår, tänder en gul ring (r 22) vid objektet i planen. Ringen släcks vid nästa klick eller efter åtta sekunder. Inget nytt anrop: raden tolkas i webbläsaren och ringen ritas i befintlig SVG. Geometri, träffytor, zoomens semantik, mod59-ikonerna och all tågvägs-, lås- och signallogik är orörda; de administrativa spärrarna behåller sin lila markering eftersom designen inte täcker dem.
 
 Från 0.44.2 håller kärnan driftskeendena i en egen buffert. Tidigare delade alla journalrader på 150 platser, och fältrapporter (omkring 1 600 per fem dygn i webbdriften) och behörighetsbegäran till signaler (omkring 1 300) trängde ut de få driftskeendena inom minuter; efter en omstart var alla 150 rader rapporter och både kolumnen och Verktyg → Händelser stod tomma. Nu finns tre buffertar om vardera 150: den fullständiga, som bara telegraminspelningen läser; journalen utan fältrapporter och telegram, som Verktyg → Händelser visar; och driftskeendena utan ordrar och behörighetsbegäran, som ställverkets kolumn visar. Journalfilen på disk är oförändrad och innehåller allt.
+
+## Spårbeläggning, knapparna i statusraden, inget toast (0.45.0)
+
+Tre ändringar efter Caspers granskning av 0.44.2 i drift, 2 oktober 2026.
+
+**Inget toast på ställverkssidan.** Kärnans meddelande visades två gånger: som chip i
+statusraden över planen och som toast uppe till höger med Stäng-knapp. Toasten är borta på
+ställverkssidan (`message()` i app.js håller `#message` dolt när `panelHead` finns och
+sidan är `panel`); statuschipen visar samma text lika länge. På verktygssidorna, som saknar
+statusrad, visas toasten som förut.
+
+**Återställ panel och Lämna över rangerbangården i statusraden.** De två tryckknapparna
+under planen (indikering, rund tangent, versal etikett) är nu chips av samma slag som
+"100 % · hela planen", till vänster om den: `● Återställ panel` och `● Lämna över
+rangerbangården`. Pricken är gul när rangerbangården är överlämnad (etiketten blir då
+"Återta rangerbangården") och medan återställningen pågår ("Återställer…"). panel-console.js
+bygger knapparna som förut och app.js flyttar `#panel-quick-actions` in i `#plan-head-right`;
+Stream Deck-tangenten klickar samma knapp. Konsolraden under planen är tom och dold
+(`--console-h:0px`), så planen får de 54 pixlarna: formeln är nu
+`--plan-h:min(calc((100vw - 16px)/3.0552),calc(100dvh - 10px - 300px))`. Skälet att flytta
+upp: statusraden är redan stället för läge och tillstånd, överlämnad rangerbangård är ett
+tillstånd, och planen blir högre. På iPad stående och i telefon döljs högra klustret som
+konsolraden gjordes förut.
+
+**Spårbeläggning som flik i högra kolumnen.** Designens variant 1c ("tidtabell +
+spårbeläggning över tid", möjlig flik senare) är införd: kolumnrubriken HÄNDELSER är nu två
+flikar, HÄNDELSER och SPÅRBELÄGGNING, och valet sparas i webbläsaren
+(`localStorage` `cda-panel-right`). Spårbeläggningen är en tidslinje per spår med en stapel
+per tåg från ankomst till avgång, byggd ur exakt samma rader och samma gruppering som
+tidtabellen (`public/track-occupancy-model.js`, ren funktion med prov;
+`public/track-occupancy.js` ritar). Fönstret följer träffklockan, 50 minuter bakåt och 100
+framåt i hela tiominuterssteg, med NU-linjen gul; utan klocka visas hela tidtabellen i
+halvtimmar. Färgerna är designens: avklarat grått, pågår gult, kommande blått. Ett tåg som
+börjar här ritas från 6 minuter före avgång, ett som slutar här 28 minuter efter ankomst med
+streckad högerkant. Staplarna är knappar som öppnar tidtabellens egen detaljdialog och
+markerar spåret i planen. Kolumnen blir bredare när fliken visas, 820 px på 1800+, 640 px
+på 1440–1799, 480 px på 1201–1439 (tidtabellen tar då sina kompakta kolumner) och 400 px
+under 1200; under 1440 döljs teckenförklaringen. Prov: track-occupancy-model.test.mjs och
+panel-occupancy-layout.test.mjs; 333 enhetstester går.

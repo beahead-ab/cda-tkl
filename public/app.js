@@ -127,7 +127,7 @@ function resumeMessage(){
 function message(text,{error=true,duration=4000}={}) {
   messageDuration=duration;messageCanPause=error;
   $('message').dataset.tone=error?'error':'success';
-  pauseMessage();if(text&&error)feedback?.error();$('message-text').textContent=text;$('message').hidden=!text;
+  pauseMessage();if(text&&error)feedback?.error();$('message-text').textContent=text;$('message').hidden=!text||!!(panelHead&&document.body.dataset.page==='panel');
   if(text)resumeMessage();
   panelHead?.message(text,error,duration);
 }
@@ -681,6 +681,8 @@ async function start() {
   const panelZoom=createPanelZoom({plan:$('track-plan'),viewport:document.querySelector('.panel-scroll'),stage:$('plan-stage'),controls:$('panel-console')});
   const zoomDialog=createZoomDialog(panelZoom);
   panelHead=createPanelHead({shell:document.querySelector('#panel-view .panel-shell'),onZoom:()=>zoomDialog.open()});panelZoom.subscribe(value=>panelHead?.zoom(value));
+  // Återställ panel and Lämna över rangerbangården sit beside the zoom chip; the console row under the plan is gone.
+  document.getElementById('plan-head-zoom')?.before($('panel-quick-actions'));
   panelZoom.subscribe(value=>{$('menu-zoom-value').textContent=zoomLabel(value);});
   $('open-panel-zoom').onclick=e=>{e.preventDefault();e.stopPropagation();appMenu.close();zoomDialog.open();};
   createAdminAppearance({zoom:panelZoom});

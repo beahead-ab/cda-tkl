@@ -9,7 +9,13 @@ const time=at=>new Date(at).toLocaleTimeString('sv-SE');
 
 export function createPanelEvents(){
   const root=document.getElementById('panel-events');if(!root)return null;
-  root.innerHTML='<header class="ev-heading"><h2>Händelser</h2><nav class="ev-filters" aria-label="Filtrera händelser">'+FILTERS.map(([key,label])=>'<button type="button" data-filter="'+key+'" aria-pressed="'+(key==='all')+'">'+label+(key==='alarm'?'<span class="ev-alarm-count"></span>':'')+'</button>').join('')+'</nav></header><div id="ev-content" tabindex="0"></div>';
+  root.innerHTML='<header class="ev-heading"><div class="ev-tabs" role="tablist" aria-label="Kolumnens innehåll"><button type="button" role="tab" data-view="events" aria-selected="true">Händelser</button><button type="button" role="tab" data-view="occupancy" aria-selected="false">Spårbeläggning</button></div><span id="occ-range"></span><nav class="ev-filters" aria-label="Filtrera händelser">'+FILTERS.map(([key,label])=>'<button type="button" data-filter="'+key+'" aria-pressed="'+(key==='all')+'">'+label+(key==='alarm'?'<span class="ev-alarm-count"></span>':'')+'</button>').join('')+'</nav><span class="occ-legend" aria-hidden="true"><span><i class="occ-done"></i>avklarat</span><span><i class="occ-now"></i>pågår</span><span><i class="occ-next"></i>kommande</span></span></header><div id="ev-content" tabindex="0"></div><div id="panel-occupancy" aria-label="Spårbeläggning"></div>';
+  // Händelser or Spårbeläggning fills the column; the choice is this browser's own.
+  const views=root.querySelector('.ev-tabs'),bottomHost=document.getElementById('panel-bottom');
+  const showView=view=>{if(bottomHost)bottomHost.dataset.right=view;for(const b of views.querySelectorAll('[role=tab]'))b.setAttribute('aria-selected',String(b.dataset.view===view));try{localStorage.setItem('cda-panel-right',view);}catch{}};
+  views.addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(b)showView(b.dataset.view);});
+  let savedView='events';try{if(localStorage.getItem('cda-panel-right')==='occupancy')savedView='occupancy';}catch{}
+  showView(savedView);
   // Phone tabs: timetable or events fills the bottom row; the next train stays visible.
   const bottom=document.getElementById('panel-bottom');
   const tabs=document.createElement('div');tabs.id='panel-bottom-tabs';
