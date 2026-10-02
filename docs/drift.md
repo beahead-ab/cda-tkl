@@ -52,8 +52,8 @@ TKL och anläggningssimulatorn är installerade och startade som separata system
 
 | Del | Plats / inställning |
 |---|---|
-| Driftsatt kodversion | `22842df` · version 0.45.0 (2 oktober 2026, 10:49) |
-| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/22842df` |
+| Driftsatt kodversion | `67ec379` · version 0.45.1 (2 oktober 2026, 21:52) |
+| Aktiv release | `/opt/charlottendal/current` → `/opt/charlottendal/releases/67ec379` |
 | TKL-tjänst | `charlottendal-tkl.service`, användare `charlottendal` |
 | Simulator | `charlottendal-simulator.service`, användare `charlottendal-sim` |
 | Automatisk start | Båda tjänsterna aktiverade vid serverstart och omstart efter processfel |
@@ -726,4 +726,15 @@ tjänsterna aktiva, TKL ny process 230356, version 0.45.0. Föregående release
 högre), och Spårbeläggning som andra flik i högra kolumnen; se
 panel-och-verktyg.md. Inte granskat inloggad i webbdriften av Claude, eftersom
 det kräver inloggning.
+
+## Version 0.45.1 · kortare statusrad
+
+`67ec379` aktiverad 2 oktober 2026, 21:52 svensk tid med deploy/publish-release.sh
+från appens terminal. Serverns prov: syntax, 76 riktade enhetstester och 5
+processprov, driftdata oförändrade. Endast TKL startades om, ny process 236887;
+simulatorns process 140318 behölls. Backup:
+`/root/charlottendal-backups/network-67ec379-20261002T195235Z`. Föregående
+release `22842df`. Innehåll: SIMULERING som ett chip, Återställ, Styra RBG
+(överstruken när rangerbangården är överlämnad) och Zoom; iPad stående visar
+Återställ och Styra RBG igen.
 
