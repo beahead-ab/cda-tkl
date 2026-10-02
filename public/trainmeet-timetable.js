@@ -75,7 +75,22 @@ export function createTrainMeetTimetable({selectSource}) {
     return !same;
   }
   const listKey={last:''},miniKey={last:''};
-  function render(){
+  // When the clock moves a row past the NU line, the rows and the line glide to their
+  // new places instead of jumping (record where they were, then animate from there).
+  const still=matchMedia('(prefers-reduced-motion: reduce)');
+  const placeKey=el=>el.dataset.timetableRow??(el.classList.contains('tt-now-line')?'nu':null);
+  function places(){const map=new Map();for(const el of $('content').children){const key=placeKey(el);if(key!=null)map.set(key,el.getBoundingClientRect().top);}return map;}
+  function glideFrom(before){
+    if(still.matches||!before?.size)return;
+    const moved=[];
+    for(const el of $('content').children){const key=placeKey(el);if(key==null||!before.has(key))continue;const dy=before.get(key)-el.getBoundingClientRect().top;if(Math.abs(dy)<.5||Math.abs(dy)>600)continue;el.style.transition='none';el.style.transform='translateY('+dy+'px)';moved.push(el);}
+    if(!moved.length)return;
+    void $('content').offsetHeight;
+    requestAnimationFrame(()=>{for(const el of moved){el.style.transition='transform 700ms cubic-bezier(.25,.7,.25,1)';el.style.transform='';}});
+    setTimeout(()=>{for(const el of moved)el.style.transition='';},800);
+  }
+  function render(glide=false){
+    const before=glide?places():null;
     const g=grouped;
     $('count').textContent=rows.length?' · '+rows.length:'';
     $('mode-upcoming').setAttribute('aria-pressed',String(mode==='upcoming'));$('mode-all').setAttribute('aria-pressed',String(mode==='all'));
@@ -95,6 +110,7 @@ export function createTrainMeetTimetable({selectSource}) {
     const mini=rows.length?'<div class="tt-mini-status"><span class="tt-mini-nu">NU</span><span class="tt-mini-clock">'+esc($('clock-time').textContent)+'</span><span class="tt-mini-rate">'+esc($('clock-label').textContent.replace(/^träffklocka · /,''))+'</span><span class="tt-mini-next">'+next+'</span><span id="panel-alarm-summary" hidden></span></div><div class="tt-mini-rows">'+[...g.now,...g.next.slice(0,g.now.length?2:3)].map(rowHTML).join('')+'</div><button type="button" class="tt-mini-hint">Svep upp · tidtabell och händelser</button>':'';
     if(mini!==miniLast){const summary=document.getElementById('panel-alarm-summary');const keep=summary?{text:summary.textContent,hidden:summary.hidden}:null;$('mini').innerHTML=mini;miniLast=mini;if(keep){const s=document.getElementById('panel-alarm-summary');if(s){s.textContent=keep.text;s.hidden=keep.hidden;}}}
     if(structural&&g&&g.doneKey!==anchoredKey)anchor(false);
+    if(structural&&before)glideFrom(before);
     drawDetails();
   }
   // The NU line sits about a third down the list; done rows fill the space above it.
@@ -130,7 +146,7 @@ export function createTrainMeetTimetable({selectSource}) {
     const minutes=clockBase?clockAt(clockBase,performance.now()-clockStart).minutes:null;clockMinutes=minutes;
     grouped=groupRows(rows,{minutes,routes,announced});
     for(const key of [...announced.keys()])if(grouped.done.some(r=>r.number===key))announced.delete(key);
-    render();
+    render(true);
   }
   function tick(){
     if(!clockBase||document.hidden)return;

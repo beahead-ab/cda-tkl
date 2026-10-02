@@ -308,3 +308,13 @@ Zoomen fortsätter att gälla inom planens yta.
 Värt att veta: på en bred skärm som 1920 × 1080 spänner planen redan över hela bredden, så
 där kan gränsen bara dras uppåt för mer tidtabell. Planen växer när fönstret är lågt i
 förhållande till bredden, till exempel 1920 × 900 (från 590 till 623 px).
+
+## NU-strecket glider (0.46.1)
+
+När klockan flyttar en rad förbi NU-strecket gled raderna och strecket tidigare inte, de
+hoppade en radhöjd. Nu noteras var varje rad och strecket stod innan tidtabellen ritas om,
+och de som flyttats animeras från sin gamla plats till den nya på 0,7 s (FLIP med
+`transform`). Det gäller bara omritningar som klockan eller TrainMeet orsakar, inte byte
+mellan Kommande och Alla, och inte om enheten har bett om minskad rörelse. Provat mot
+TrainMeet-attrappen: när ett tåg markerades avgånget gled alla rader under strecket upp en
+rad (24 px) i stället för att hoppa.

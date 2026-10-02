@@ -1033,3 +1033,6 @@ Detaljer i trainmeet-adapter.md.
 mellan ställverket och nederraden, sparad per enhet, dubbelklick för standardläget,
 pilar efter Tab. Provat lokalt i 1920 × 900 (590 → 623 px, stannar vid sidorna; upp till
 280 px), iPad stående (273–1 028 px) och telefon (ingen gräns).
+0.46.0 publicerad 01:06. 0.46.1 lokalt: tidtabellsraderna och NU-strecket glider till
+sin nya plats när klockan flyttar en rad, i stället för att hoppa.
+
