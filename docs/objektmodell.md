@@ -74,7 +74,20 @@ Riktiga ställverk arbetar på samma sätt, med tågvägstabeller som granskas i
 | Dekodrarna har egna beroenden | MGP-underlaget; beroendet speglas i modellen och syns som "verkställs även i MGP". |
 | En spårledning har flera ingångar, eller en ingång flera spårledningar | Uttryckligt i bindningen. SIA har två ingångar på två moduler. |
 | En tågväg saknas eller är fel | Jämförelsen mot JMRI:s signalrelationer, och provkörning av varje tågväg på banan. |
-| Skyddssträcka bortom slutsignalen | Finns inte i tågvägarna i dag. Det behöver beslutas om den behövs. |
+| Tåg som rullar förbi slutsignalen | Skyddssträcka bortom slutsignalen, beslutad 2 oktober, se nedan. |
+
+## Skyddssträcka
+
+Beslutat 2 oktober 2026: tågvägarna ska få en skyddssträcka bortom slutsignalen, så att ett tåg som inte hinner stanna inte rullar in i ett annat.
+
+- **Vad den är.** Den första spårledningen efter slutsignalen i färdriktningen. Den måste vara fri och reserveras tillsammans med tågvägen. Växlar i den låses i det läge skyddssträckan räknats fram för.
+- **Var den kommer ifrån.** Spårgrafen vet vad som ligger bortom varje slutsignal, så skyddssträckan räknas fram och fryses med resten av tågvägen.
+- **Mot stoppbock.** Slutar spåret strax efter signalen finns ingen skyddssträcka att reservera. Det noteras på tågvägen i stället för att gissas.
+- **Upptagen skyddssträcka.** Tågvägen nekas. Det är det enklaste deterministiska valet; ett mer restriktivt signalbesked i stället kräver de svenska beskedskoderna och kan läggas till senare.
+- **Frisläppning.** När tåget har stått stilla i målspåret en bestämd tid, eller när en fortsättande tågväg tar över skyddssträckan.
+- **Kostnad.** Färre tågvägar kan ligga samtidigt, framför allt två tåg mot samma spår från var sitt håll. Skillnadslistan visar exakt vilka av de 340 tågvägarna som påverkas innan något aktiveras.
+
+Att bestämma innan det byggs: om en spårledning räcker överallt, och hur lång väntetiden före frisläppning ska vara.
 
 ## Så landar det i praktiken
 

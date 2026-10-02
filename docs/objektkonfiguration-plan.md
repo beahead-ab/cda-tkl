@@ -205,6 +205,7 @@ Planen för signaler:
 - **Adresser.** De 66 signalernas bänkadresser ersätts med utgångarna ur XML:en som förslag, med status "ej uppmätt", och verifieras i driftsättningsläget.
 - **Besked.** De svenska beskedskoderna saknas. Regeltypen `aspect` håller dem per masttyp och syns i objektkortet.
 - **Tågvägar.** Skyddssignaler och ordningen signalerna klareras i ändras inte; de syns i objektkortet för varje signal och tågväg, så att en ny regel kan prövas mot dem.
+- **Skyddssträcka.** Beslutad 2 oktober: varje tågväg får en skyddssträcka bortom slutsignalen, framräknad ur grafen och fryst med tågvägen. Detaljer i [objektmodell.md](objektmodell.md). Den byggs i steg 3 tillsammans med regelspråket och provas i simulatorn mot alla tågvägar.
 - **Signalrelationerna i JMRI ska följas.** JMRI har 117 relationer av typen "från signal A till signal B" (signalmastlogik), där spårledningarna och växlarna däremellan räknas fram ur ritningen. 73 av dem finns som på varandra följande signaler i TKL:s tågvägar. 44 finns i JMRI men på ingen tågväg i TKL, till exempel 3/2 → 6/6 och 1/4 → Xv. Genomgången ska pröva varje tågväg mot relationerna och ta upp de 44 som avvikelser: antingen saknas en tågväg, eller så används relationen inte och det ska sägas uttryckligen. Dessutom anger 65 punkter i ritningen vilken signal som står vid vilken spårledningsgräns; även det ska tågvägarna stämma mot.
 - **Vägövergångar.** V1–V3 beräknas i dag bara för visning. Med regeltypen `crossing` blir aktivering, förringning och spärr av tågväg en del av samma regelverk och syns i planen.
 
