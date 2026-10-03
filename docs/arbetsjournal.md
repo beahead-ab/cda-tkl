@@ -1108,3 +1108,12 @@ föregående versions var/ till state om state är tomt, och väntar tills den g
 borta innan den registrerar den nya (med omförsök). Provat i en testkatalog med mellanslag
 (ny installation och uppdatering ovanpå det gamla felet) och skarpt på Caspers Mac.
 
+## 3 oktober 2026, 0.51.0 lokalt: Stream Deck-admin per deck
+
+Byggt enligt skissen i Claude Design efter Caspers "bygg stream deck-adminen enligt skissen".
+En layout per deck, känd på serienumret (streamdeck.json version 2, den gamla gemensamma layouten
+flyttas till första decket av samma modell). Panelen kör flera deck samtidigt. Ny redigerare med
+knappförråd, dra och släpp, sidflikar, egenskaper, egen text, bild och hålltid, Tåg på tur, Styra
+RBG och sidknappar, Alla deck med kopiering, export, import och Visa vilket deck. Blinkningen
+kontrollerades inte separat, enligt Casper, eftersom redigeraren är ny och aldrig animerar. Provat
+med enhetsprov och i headless Chrome mot lokal TKL med låtsas-TrainMeet; inte med riktiga deck.

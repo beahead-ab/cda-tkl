@@ -365,3 +365,49 @@ att dra, Simulering-chipet tillförde inget, metadata-raden ("Charlottendal · l
   höjden och panoreras i sidled med en indikator under. Storleken väljs med delaren.
 - **Rättat:** i 0.49.0 hade statusraden två metoder med samma namn, så notisen "Uppdatering X" skrevs
   över och kunde aldrig visas. Nu heter den `updateNotice`, och ett prov kontrollerar att namnen är unika.
+
+## Stream Deck-layout per deck (0.51.0)
+
+Casper ska köra tre deck: Huvudställverket (XL) och Rangerbangården vänster och höger (två MK.2).
+Layouten för varje deck redigeras under **Stream Deck → Layout** enligt skissen i Claude Design.
+
+- **Ett deck känns igen på serienumret.** När panelen öppnar ett deck rapporterar den serienummer och
+  modell (`POST /api/streamdeck/seen`, ingen revision). Servern sparar ett namn, modellen, när decket
+  senast sågs, en aktiv layout och ett utkast per deck i `streamdeck.json` version 2. Layouten följer
+  decket till vilken dator det än sitter i. Ett nytt deck får standardlayouten för sin modell. Den
+  gamla gemensamma layouten från version 1 flyttas till det första decket av samma modell som kopplas
+  in.
+- **Flera deck samtidigt.** Panelen öppnar alla tillåtna deck, inte bara det första, och varje deck
+  bläddrar och ritar för sig. Drar man ur ett deck fortsätter de andra.
+- **Redigeraren.** Flikar för decken (grön prick för deck anslutna här) och **Alla deck**. För ett
+  deck: knappförrådet till vänster (Tågvägar med antal som saknas, Tåg på tur, Sträckor, Drift,
+  Navigering, med sökfält), decket i mitten ritat med samma kod som decket själv
+  (`public/stream-deck-render.js`, utan blinkning), sidflikar och egenskaper för vald knapp. Knappar
+  dras från förrådet till en ruta, mellan rutor (byter plats), till en sidflik (flyttar dit) och
+  tillbaka till förrådet (tar bort). Sidflikar dras för att byta ordning. Klick fungerar också: välj
+  en ruta och klicka på en knapp i förrådet. Med tangentbordet flyttar pilarna markeringen, Alt+pil
+  flyttar knappen och Delete tar bort den.
+- **Utkast.** Varje ändring sparas direkt som decket utkast; rubriken visar "Utkast · N ändringar".
+  **Aktivera** gör utkastet till deckets layout, **Kasta** tar bort det. **Visa utkastet på decket**
+  låter ett anslutet deck visa utkastet medan man redigerar.
+- **Egen text och bild.** Alla knappar kan få egen text (högst 24 tecken). Driftknappar, sidbyten och
+  sidknappar kan få en bild ur tolv ikoner (`public/stream-deck-icons.js`). Tågvägar och tåg behåller
+  lampan och stegen; färgen följer alltid läget. Driftknappar, sidknappar och tågvägar kan kräva att
+  knappen hålls in 1 eller 2 sekunder. Återställ panel kräver alltid minst en sekund.
+- **Tåg på tur** (`public/stream-deck-turns.js`). Stationens tåg i tidtabellsordning, var och ett i
+  det steg det nått. En knapp har en plats i turordningen (1–12) och ett urval: alla tåg, bara
+  ankomster, bara avgångar, spår 11–13 eller en sträcka. Kort tryck tar nästa steg: anmält · godkänn,
+  närmar sig och ankommit in; uppställt, förare på plats, begär och avgått ut. Långt tryck avbryter
+  en begäran eller nekar. Ett tåg som har avgått eller ankommit lämnar turen och nästa flyttar fram.
+  Byter knappen tåg medan den hålls in händer ingenting, och panelen ber om ett nytt tryck.
+- **Nya knappar.** Styra RBG (samma knapp som i statusraden, överstruken när rangerställverket styr),
+  Nästa sida, Föregående sida och Hem.
+- **Alla deck.** Kort per deck med namn (skriv för att byta), anslutning, en miniatyr av första sidan,
+  modell, serienummer och layoutläge. **Kopiera layout från …** lägger ett annat decks layout som
+  utkast, med varje knapp kvar i sin rad och kolumn. **Exportera** och **Importera …** flyttar en
+  layout som fil, till exempel till en Pi. **Visa vilket deck** gör ett anslutet decks alla knappar blå
+  med namnet i två sekunder, så att vänster och höger går att skilja. **Standardlayout** och **Glöm**.
+
+Provat med enhetsprov för modell, server, tåg på tur och drivrutin (två låtsasdeck med olika
+layouter) och i Chrome mot en lokal TKL parkopplad med en låtsas-TrainMeet: dra och släpp, sidflikar,
+egenskaper, aktivering, kopiering och import. Inte provat med riktiga Stream Deck än.

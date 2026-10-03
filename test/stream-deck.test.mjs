@@ -7,7 +7,7 @@ const pluppar=[...['Spår 2c','Cu','Spår 11','Au','D','Spår 1b','Bn','An','Sp�
 test('pages start with the operating keys, list lines before tracks and shunt pluppar last, and cover every plupp once',()=>{
   const pages=buildPages(pluppar,15);
   assert.equal(pages.length,2);
-  assert.deepEqual(pages[0].slice(0,5).map(k=>k.id),SYSTEM_KEYS.map(k=>k.id));
+  assert.deepEqual(pages[0].slice(0,5).map(k=>k.id),SYSTEM_KEYS.filter(k=>!k.optional).map(k=>k.id),'Styra RBG is placed by hand, not on the automatic layout');
   assert.deepEqual(pages[0].slice(5).map(k=>k.label),['An','Au','Bn','Bu','Cn','Cu','D','Spår 1a','Spår 1b','Spår 1c']);
   assert.equal(pages[1][0].id,'page');
   assert.deepEqual(pages[1].slice(1).map(k=>k.label),['Spår 2b','Spår 2c','Spår 5b','Spår 11','Spår 12','Signal 1/5']);
