@@ -1141,7 +1141,7 @@ Samma mönster fanns 10:06 med 0.50.0. Rättat på två ställen: tågvägsbegä
 återta, och bara ett fönster per webbläsare styr decken. Provat i motorprov, i drivrutinsprov med
 två låtsasfönster och genom klick i Chrome mot en lokal TKL. Inte provat med det riktiga decket.
 
-## 3 oktober 2026: inget trafikpass alls (ej publicerad)
+## 3 oktober 2026, 0.52.0: inget trafikpass alls
 
 Casper: "måste vi ha start av trafikpasset alls?" Nej. Kravet satt i TrainMeet Server, som avvisade
 klarering och tågrörelser från TKL-terminaler utan aktivt pass, medan en TMBox klarar sig utan.
@@ -1150,4 +1150,5 @@ en tilldelad box, och stegen registreras under terminalens namn. 1145 serverprov
 I TKL är automatstarten, namnet hos TrainMeet, spärren "tas i tjänst inom en minut" och
 passavslutet vid frånkoppling borttagna. En äldre server som fortfarande kräver pass ger texten att
 TrainMeet Server behöver uppdateras. 369 enhetsprov och 11 integrationsprov godkända.
-Publiceras först när serverändringen är i drift på server.trainmeet.app.
+Serverändringen mergades som trainmeet-server#113 (version 2.5.0) och är enligt Casper i drift på
+server.trainmeet.app. TKL-ändringen mergades som cda-tkl#2 och ges ut som 0.52.0.
