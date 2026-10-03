@@ -343,3 +343,25 @@ rutan installationsraden med en kopieringsknapp. Webbdriften saknar inställning
 
 Provat i en Pi-container med polkit: en avsiktligt äldre 0.47.9 upptäckte 0.48.0 i det publika
 förrådet, knappens anrop startade uppdateringen och Pi:n körde 0.48.0 efter 28 sekunder.
+
+## CHARLOTTENDAL i en egen rad, ingen zoom (0.50.0)
+
+Casper granskade statusraden: zoomen behövs inte nu när delaren mellan planen och nederraden går
+att dra, Simulering-chipet tillförde inget, metadata-raden ("Charlottendal · lokal drift · 49 växlar
+· 66 signaler") skulle bort, och knapparna fick inte täcka signaler men utan onödigt tomrum upptill.
+
+- **Rubriken** är CHARLOTTENDAL. Notiser står direkt till höger: kärnans meddelanden en stund, annars
+  den stående notisen i turordning "Ingen kontakt med anläggningen" (ersätter Simulering-chipets röda
+  prick), en tågväg som väntar eller hålls, och "Fjärrläge · lokal manövrering spärrad".
+- **Till höger** bara Återställ och Styra RBG, och Uppdatering X respektive Ny version · ladda om när
+  de gäller.
+- **Egen rad.** Planen har bara 6 enheters tomrum i överkant, så statusraden kan inte ligga ovanpå
+  utan att täcka något. Den är nu en 32 px hög rad ovanför planen (`--plan-inset-top:32px`, också på
+  iPad stående; iPhone liggande 34 px). Mätt i Chrome vid 1920, 1772, 1440, 1280, 1024 och iPad
+  stående: inget i planen under rubriken eller knapparna.
+- **Ingen zoom.** Zoomchipet, zoomrutan, menyposten Zoom, zoominställningen under Utseende och
+  nypzoom på pekskärm är borta, liksom en sparad zoom i webbläsaren. `public/panel-fit.js` ersätter
+  panel-zoom.js och passar alltid in planen: hel i bredden, på iPad stående och telefon fyller den
+  höjden och panoreras i sidled med en indikator under. Storleken väljs med delaren.
+- **Rättat:** i 0.49.0 hade statusraden två metoder med samma namn, så notisen "Uppdatering X" skrevs
+  över och kunde aldrig visas. Nu heter den `updateNotice`, och ett prov kontrollerar att namnen är unika.

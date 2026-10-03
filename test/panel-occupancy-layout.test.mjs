@@ -26,7 +26,6 @@ test('0.45.1: short chip words, one simulation chip, Styra RBG struck through wh
   assert.match(console_,/textContent='Styra RBG'/);
   assert.match(console_,/classList\.toggle\('chip-off',delegated\)/);
   assert.match(css,/\.chip\.chip-off>span\{text-decoration:line-through/);
-  assert.match(head,/id="plan-head-zoom">Zoom</);
   assert.doesNotMatch(head,/plan-head-sim/);
 });
 
@@ -40,3 +39,18 @@ test('0.45.2: a focus ring only after Tab, and a reload chip for a new release',
   assert.match(server,/return \{ \.\.\.state,release,/);
   assert.match(server,/\.\.\.panelProfile,release,/);
 });
+
+test('0.50.0: CHARLOTTENDAL in its own status row, no zoom, no simulation chip, notices beside the name',()=>{
+  const head=fs.readFileSync(new URL('../public/panel-head.js',import.meta.url),'utf8');
+  const app=fs.readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
+  assert.match(head,/<span class="plan-head-title">Charlottendal<\/span><span class="chip chip-status" id="plan-head-status"/);
+  assert.doesNotMatch(head,/plan-head-zoom|plan-head-gateway|plan-head-sub/);
+  // One method per name: a duplicate key silently replaced the update notice in 0.49.0.
+  const keys=[...head.matchAll(/^    ([a-zA-Z]+)\(/gm)].map(m=>m[1]);assert.deepEqual(keys,[...new Set(keys)]);
+  assert.match(app,/panelHead\?\.updateNotice\(state\.update\)/);
+  assert.match(app,/Ingen kontakt med anläggningen/);
+  assert.doesNotMatch(app,/panel-zoom|zoomDialog/);
+  assert.match(css,/--plan-inset-top:32px;--plan-fit:contain/);
+  assert.ok(!fs.existsSync(new URL('../public/panel-zoom.js',import.meta.url)));
+});
+

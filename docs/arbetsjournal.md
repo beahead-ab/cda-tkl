@@ -1087,3 +1087,10 @@ administratör kan skriva i utan sudo, och bara annars i hemkatalogens Program. 
 Mac flyttades för hand. Bara installationen ändrades, så 0.49.1 läggs ut i cda-tkl-install men
 inte i webbdriften.
 
+## 3 oktober 2026, 0.50.0 lokalt: CHARLOTTENDAL, ingen zoom
+
+Statusraden enligt Caspers granskning: CHARLOTTENDAL med notiser bredvid, Återställ och Styra RBG
+till höger, ingen Simulering, ingen metadata, egen 32 px rad så att ingenting i planen täcks. Zoomen
+borttagen helt; delaren väljer storleken. Rättat dubbelnamnet som gjorde att notisen om ny version
+aldrig visades i 0.49.x. Provat i headless Chrome via DevTools-protokollet vid sex skärmstorlekar.
+
