@@ -1094,3 +1094,17 @@ till höger, ingen Simulering, ingen metadata, egen 32 px rad så att ingenting 
 borttagen helt; delaren väljer storleken. Rättat dubbelnamnet som gjorde att notisen om ny version
 aldrig visades i 0.49.x. Provat i headless Chrome via DevTools-protokollet vid sex skärmstorlekar.
 
+## 3 oktober 2026, 0.50.0 i drift och 0.50.1: Mac-installationens driftdata
+
+0.50.0 publicerad 10:04 (webbdriften och cda-tkl-install). Ominstallationen på Caspers Mac
+avslöjade två fel i Mac-installationen. 1) launchctl bootstrap direkt efter bootout gav
+"Bootstrap failed: 5" eftersom den gamla agenten inte hunnit försvinna; installationen
+avbröts och TKL stod stilla. 2) Sökvägen "Application Support" har mellanslag och skrevs
+utan citattecken i app.env; run.sh läser filen med `.`, så CHARLOTTENDAL_STATE_DIR sattes
+aldrig och TKL sparade driftdata i versionskatalogens var/, som försvinner när versionen
+roteras bort. På Macen flyttades datan för hand till state och värdet citerades. I 0.50.1
+skriver installationen värdet citerat, rättar äldre ociterade värden, flyttar data från
+föregående versions var/ till state om state är tomt, och väntar tills den gamla agenten är
+borta innan den registrerar den nya (med omförsök). Provat i en testkatalog med mellanslag
+(ny installation och uppdatering ovanpå det gamla felet) och skarpt på Caspers Mac.
+

@@ -77,3 +77,11 @@ test('the Mac app goes in Program when it can, else Program in the home folder',
   assert.match(mac,/osacompile -o "\$APPS\/Charlottendal TKL\.app"/);
 });
 
+test('the Mac keeps its data in state although the path has a space, and re-registers launchd reliably',()=>{
+  const mac=read('scripts/install-mac.sh');
+  assert.match(mac,/CHARLOTTENDAL_STATE_DIR=\\"\$APP\/state\\"/,'the value is written quoted');
+  assert.match(mac,/sed -i '' -E 's\|\^\(CHARLOTTENDAL_STATE_DIR\)=/,'older unquoted values are repaired');
+  assert.match(mac,/cp -Rp "\$PREVIOUS\/var"\/\. "\$APP\/state"\//,'data kept in the old release is brought into state');
+  assert.match(mac,/launchctl print "gui\/\$\(id -u\)\/\$LABEL" >\/dev\/null 2>&1 \|\| break/,'waits until the old agent is gone');
+});
+
