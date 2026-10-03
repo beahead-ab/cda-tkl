@@ -1060,3 +1060,15 @@ administratörsrättigheter. Syntaxen kontrollerad med PowerShell 7.6 på arm64;
 Windows. Översikten i docs/installation.md; den fullständiga Pi-anvisningen ligger på GitHub i
 docs/raspberry-pi.md.
 
+## 3 oktober 2026, publikt installationsförråd
+
+Utvecklingsförrådet `beahead-ab/cda-tkl` förblir privat. Det publika
+`beahead-ab/cda-tkl-install` innehåller bara programmet, installerarna och
+installationsanvisningarna, en commit per release med taggen v<version>, utan historik,
+dokument, prov eller driftfiler; issues, wiki och projekt är avstängda och ingen licensfil
+finns (all rätt förbehållen). `deploy/publish-install.sh` lägger dit en release och
+`deploy/publish-release.sh` gör det automatiskt efter varje publicering till webbdriften.
+Första releasen 0.48.0 (767991d). Provat: install.sh, install.ps1 och paketet hämtas utan
+inloggning, och en ren Debian 12-container med systemd installerade och uppdaterade TKL
+direkt från GitHub med enradaren.
+

@@ -88,3 +88,9 @@ remote "journalctl -u charlottendal-tkl --since '2 minutes ago' -p err --no-page
 remote "cd $STATE && md5sum -c --quiet $BK/state.md5 && echo 'Driftdata oförändrade.' || echo 'Driftdata ändrade sedan backupen (se ovan); kontrollera att det är väntat.'"
 trap - ERR
 say "Klart · $SHA (version $VERSION) publicerad $(date '+%Y-%m-%d %H:%M %Z') · backup $BK · föregående release $OLD"
+# The same release becomes installable from the public repository (Raspberry Pi, Mac, PC).
+if [ -z "${CHARLOTTENDAL_SKIP_INSTALL_REPO:-}" ]; then
+  say "Publicerar $SHA i cda-tkl-install"
+  deploy/publish-install.sh "$FULL" || echo "Varning: cda-tkl-install uppdaterades inte; kör deploy/publish-install.sh $SHA för hand."
+fi
+
