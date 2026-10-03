@@ -49,3 +49,8 @@ test('the harmonised plan reads its colours from scoped tokens and only restyles
   assert.match(css,/#track-plan \.hilite\{fill:none;stroke:var\(--yellow\)/);
   assert.ok(!read('public/panel-head.js').includes('fetch('),'the status bar sends nothing');
 });
+
+test('the page footer names the version in package.json',()=>{
+  const version=JSON.parse(read('package.json')).version;
+  assert.match(read('public/index.html'),new RegExp(`<footer>Charlottendal TKL · version ${version.replace(/\./g,'\\.')}</footer>`),'bump the footer in public/index.html with the version');
+});
