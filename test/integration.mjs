@@ -10,7 +10,8 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
 async function freePort() { const s = net.createServer(); await new Promise((ok, no) => { s.once('error', no); s.listen(0, '127.0.0.1', ok); }); const p = s.address().port; await new Promise(r => s.close(r)); return p; }
 async function until(fn, timeout = 10000) { const end = Date.now() + timeout; let error; while (Date.now() < end) { try { const result = await fn(); if (result) return result; } catch (e) { error = e; } await new Promise(r => setTimeout(r, 100)); } throw error || Error('Timed out waiting for state'); }
-test('network profile runs parallel trains across separate processes and releases only after passage', { timeout: 45000 }, async () => {
+// Takes about 28 s on a laptop and 44–45 s on the one-CPU production server, which runs this before every release.
+test('network profile runs parallel trains across separate processes and releases only after passage', { timeout: 90000 }, async () => {
   const [httpPort, simPort, wirePort] = await Promise.all([freePort(), freePort(), freePort()]);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'charlottendal-network-'));
   const env = { ...process.env, CHARLOTTENDAL_PROFILE: 'network', CHARLOTTENDAL_CONNECTION_MODE:'simulator', CHARLOTTENDAL_AUTH_MODE: 'cloudflare', CHARLOTTENDAL_PUBLIC_ORIGIN: '',
