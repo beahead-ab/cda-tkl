@@ -10,7 +10,7 @@ if [ "$(id -u)" -ne 0 ]; then echo "Kör installationen med sudo."; exit 1; fi
 SOURCE_DIR=$(CDPATH= cd -- "${1:-$(dirname -- "$0")/..}" && pwd)
 if [ ! -f "$SOURCE_DIR/src/server.mjs" ] || [ ! -f "$SOURCE_DIR/packaging/raspberry-pi/cda-tkl.service" ]; then
   echo "Hämtar det fullständiga installationspaketet …"
-  exec sh -c 'curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sh'
+  exec sh -c 'curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh | sh'
 fi
 PACKAGING="$SOURCE_DIR/packaging/raspberry-pi"
 BASE=/opt/cda-tkl

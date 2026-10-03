@@ -7,7 +7,8 @@ test('the public installer fetches the package and hands it to the Raspberry Pi 
   const install=read('install.sh');
   assert.match(install,/INSTALLER="scripts\/install-raspberry-pi\.sh"/);
   assert.match(install,/github\.com\/\$\{REPOSITORY\}\/archive\/refs\/heads\/\$\{BRANCH\}\.tar\.gz/);
-  assert.match(install,/CDA_TKL_TOKEN/,'a private repository can be read with a token');
+  assert.match(install,/REPOSITORY="beahead-ab\/cda-tkl-install"/,'installs from the public install repository');
+  assert.match(install,/CDA_TKL_TOKEN/,'a private fork can be read with a token');
 });
 
 test('every folder the server reads at run time is copied into a release',()=>{

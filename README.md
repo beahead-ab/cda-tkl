@@ -112,8 +112,8 @@ En rad installerar TKL med egen Node.js, autostart och anläggningssimulatorn:
 
 | Plattform | Rad |
 |---|---|
-| Raspberry Pi 5 | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh \| sudo sh` |
-| Mac | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh \| sh` |
-| PC (Windows) | `irm https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.ps1 \| iex` |
+| Raspberry Pi 5 | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh \| sudo sh` |
+| Mac | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh \| sh` |
+| PC (Windows) | `irm https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.ps1 \| iex` |
 
 Se [docs/installation.md](docs/installation.md) och, för Raspberry Pi, [docs/raspberry-pi.md](docs/raspberry-pi.md).

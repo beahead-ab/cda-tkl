@@ -73,7 +73,7 @@ Byt `pi` och `cda-tkl` mot det användarnamn och värdnamn du valde.
 Kör den här raden i terminalen på Pi:n:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo sh
+curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh | sudo sh
 ```
 
 Ange ditt lösenord när `sudo` frågar. Installationen skriver vad den gör och avslutar med:
@@ -87,15 +87,6 @@ Genvägen 'Charlottendal TKL' finns på skrivbordet. Stream Deck kopplas upp av 
 Uppdatera senare med:  sudo cda-tkl-update
 ```
 
-> **Medan förrådet `beahead-ab/cda-tkl` är privat** behövs en GitHub-token med läsrätt till
-> förrådet (GitHub → Settings → Developer settings → Fine-grained tokens, behörighet *Contents: Read*
-> för `beahead-ab/cda-tkl`). Ersätt `TOKEN` i båda ställena:
->
-> ```sh
-> curl -fsSL -H "Authorization: Bearer TOKEN" https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo CDA_TKL_TOKEN=TOKEN sh
-> ```
->
-> Tokenen sparas i `/etc/cda-tkl/github-token`, som bara root kan läsa, så att uppdateringar fungerar.
 
 ## 5. Starta om och kontrollera
 
@@ -205,7 +196,7 @@ sudo systemctl start cda-tkl-simulator cda-tkl
 
 | Symtom | Gör så här |
 |---|---|
-| Installationen avbryts med "Kunde inte hämta" | Kontrollera internet (`ping -c1 github.com`). Är förrådet privat behövs token, se steg 4. |
+| Installationen avbryts med "Kunde inte hämta" | Kontrollera internet (`ping -c1 github.com`). |
 | Ingen helskärm efter omstart | Kör `cat ~/.config/labwc/autostart`; raden `/usr/local/bin/cda-tkl-browser &` ska finnas. Pi:n måste använda skrivbordet labwc (standard i Raspberry Pi OS från hösten 2024): `sudo raspi-config` → Advanced Options → Wayland → labwc. |
 | Ställverket svarar inte | `systemctl status cda-tkl` och `journalctl -u cda-tkl -n 50`. |
 | `● SIMULERING` saknas eller anläggningen är tom | `systemctl status cda-tkl-simulator` och `journalctl -u cda-tkl-simulator -n 50`. |

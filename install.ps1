@@ -1,12 +1,12 @@
 # Installs Charlottendal TKL on a Windows 10/11 PC for the logged-in user. In PowerShell:
 #
-#   irm https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.ps1 | iex
 #
 # Its own Node 22 from nodejs.org (checksum verified), the signal box and the LocoNet
 # simulator started hidden at login and restarted if they stop, and a desktop shortcut
 # that opens the panel in Edge or Chrome (WebHID, for the Stream Deck). Run it again to
 # update; the settings and operating data are kept. No administrator rights are needed.
-# While the repository is private, set a read-only GitHub token first:  $env:CDA_TKL_TOKEN='...'
+# $env:CDA_TKL_TOKEN reads the package from a private repository instead (forks).
 # Everything runs in its own scope, so settings and variables do not leak into the
 # user's PowerShell session, and a failure is reported instead of closing the window.
 & {
@@ -14,7 +14,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$Repository = 'beahead-ab/cda-tkl'
+$Repository = 'beahead-ab/cda-tkl-install'
 $Branch = if ($env:CDA_TKL_BRANCH) { $env:CDA_TKL_BRANCH } else { 'main' }
 $App = if ($env:CDA_TKL_HOME) { $env:CDA_TKL_HOME } else { Join-Path $env:LOCALAPPDATA 'Charlottendal TKL' }
 $NodeDir = Join-Path $App 'node'

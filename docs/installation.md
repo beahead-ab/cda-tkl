@@ -7,16 +7,13 @@ ställverket och anläggningssimulatorn så att de startar av sig själva. Stäl
 
 | Plattform | När den passar | Rad |
 |---|---|---|
-| **Raspberry Pi 5** | Ett fristående ställverk på träffen, helskärm från start | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh \| sudo sh` |
-| **Mac** | Ställverket på en bärbar eller stationär Mac | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh \| sh` |
-| **PC (Windows 10/11)** | Ställverket på en vanlig PC | `irm https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.ps1 \| iex` |
+| **Raspberry Pi 5** | Ett fristående ställverk på träffen, helskärm från start | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh \| sudo sh` |
+| **Mac** | Ställverket på en bärbar eller stationär Mac | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh \| sh` |
+| **PC (Windows 10/11)** | Ställverket på en vanlig PC | `irm https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.ps1 \| iex` |
 
 Raspberry Pi har en egen, fullständig anvisning: **[Installera på Raspberry Pi 5](raspberry-pi.md)**.
 Mac och PC beskrivs nedan.
 
-> **Medan förrådet `beahead-ab/cda-tkl` är privat** behövs en GitHub-token med läsrätt till förrådet
-> (GitHub → Settings → Developer settings → Fine-grained tokens, behörighet *Contents: Read*).
-> Raderna med token står under respektive plattform.
 
 ---
 
@@ -35,14 +32,9 @@ Mac och PC beskrivs nedan.
 2. Kör, **utan** `sudo`:
 
    ```sh
-   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sh
+   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh | sh
    ```
 
-   Medan förrådet är privat:
-
-   ```sh
-   curl -fsSL -H "Authorization: Bearer TOKEN" https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | CDA_TKL_TOKEN=TOKEN sh
-   ```
 
 3. Installationen tar ett par minuter och öppnar sedan ställverket i ett eget Chrome-fönster.
 
@@ -112,15 +104,9 @@ Den sista raden tar även bort driftdata och inställningar.
 2. Kör:
 
    ```powershell
-   irm https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.ps1 | iex
+   irm https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.ps1 | iex
    ```
 
-   Medan förrådet är privat sätts tokenen först, och skriptet hämtas med den:
-
-   ```powershell
-   $env:CDA_TKL_TOKEN = 'TOKEN'
-   irm -Headers @{Authorization = "Bearer $env:CDA_TKL_TOKEN"} https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.ps1 | iex
-   ```
 
 3. Installationen tar ett par minuter och öppnar sedan ställverket i ett eget Edge-fönster.
 

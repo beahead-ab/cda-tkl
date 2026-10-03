@@ -2,17 +2,16 @@
 # Public installer for Charlottendal TKL on a Raspberry Pi 5 (Raspberry Pi OS 64-bit),
 # another Debian/Ubuntu machine, or a Mac:
 #
-#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo sh   (Linux)
-#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sh        (Mac)
+#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh | sudo sh   (Linux)
+#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh | sh        (Mac)
 #
 # It fetches the whole package from GitHub and runs the installer for this system.
 # Run it again, or `sudo cda-tkl-update`, to update; settings and operating data stay.
-# While the repository is private, give a read-only GitHub token:
-#   curl -fsSL -H "Authorization: Bearer $TOKEN" https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo CDA_TKL_TOKEN=$TOKEN sh
+# CDA_TKL_TOKEN=<token> reads the package from a private repository instead (forks).
 # CDA_TKL_SOURCE=/path/to/package.tar.gz or a directory installs from there instead (tests).
 set -eu
 
-REPOSITORY="beahead-ab/cda-tkl"
+REPOSITORY="beahead-ab/cda-tkl-install"
 BRANCH="${CDA_TKL_BRANCH:-main}"
 INSTALLER="scripts/install-raspberry-pi.sh"
 TEMP_DIR=$(mktemp -d)
