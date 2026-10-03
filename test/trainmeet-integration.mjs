@@ -36,17 +36,16 @@ test('TKL process pairs and reads TrainMeet, keeps tokens private, survives rest
   }finally{if(child?.exitCode===null)await stop();await new Promise(r=>gateway.close(r));fs.rmSync(dir,{recursive:true,force:true});}
 });
 
-test('TKL process drives shifts, clearances and movement declarations through TrainMeet and journals accepted steps',{timeout:20000},async()=>{
-  const posts=[];let shift=null,lineState={id:'cda-lek',state:'free',from_station_id:null,to_station_id:null,train_number:null};
+test('TKL process drives clearances and movement declarations through TrainMeet and journals accepted steps',{timeout:20000},async()=>{
+  const posts=[];let lineState={id:'cda-lek',state:'free',from_station_id:null,to_station_id:null,train_number:null};
   const gateway=http.createServer(async(req,res)=>{res.setHeader('Content-Type','application/json');let body='';for await(const c of req)body+=c;const data=body?JSON.parse(body):null;
     if(req.url==='/v1/pair')return res.end(JSON.stringify({protocol_version:1,client_id:data.client_id,access_token:'integration-private-token'}));
     if(req.headers.authorization!=='Bearer integration-private-token'){res.writeHead(401);return res.end('{}');}
     const common={protocol_version:1,publication_id:'pub1',active_day:'Dagl'};
-    if(req.url==='/v1/tkl/context?station_id=cda')return res.end(JSON.stringify({...common,station:{id:'cda',name:'Charlottendal'},shift,previous_shift:null,movements:{},connection_states:[lineState]}));
+    if(req.url==='/v1/tkl/context?station_id=cda')return res.end(JSON.stringify({...common,station:{id:'cda',name:'Charlottendal'},shift:null,previous_shift:null,movements:{},connection_states:[lineState]}));
     if(req.url==='/v1/timetable?station_id=cda')return res.end(JSON.stringify({schema_version:3,publication_id:'pub1',active_day:'Dagl',stations:[{id:'cda'}],tracks:[{id:'track1',station_id:'cda',display_label:'1a'}],trains:[{id:'m1',station_id:'cda',train_number:'3581',track_id:'track1',departure_time:'12:05'}]}));
     if(req.url==='/v1/display')return res.end(JSON.stringify({...common,stations:[{id:'cda',name:'Charlottendal'},{id:'lek',name:'Lekby'}],connections:[{id:'cda-lek',station_a_id:'cda',station_b_id:'lek',track_type:'double'}],revision:1,clock:{configured:true,time:'12:00:00',running:true,speed:4},trains:[{id:'m1',station_id:'cda',train_number:'3581',track:'1a',departure_time:'12:05'}]}));
     if(req.method==='POST'){posts.push({url:req.url,body:data});
-      if(req.url==='/v1/tkl/shift/start'){shift={shift_id:'s1',operator_name:data.operator_name,terminal_name:data.terminal_name,status:'active',started_at:'2026-09-30T06:00:00'};return res.end(JSON.stringify({shift}));}
       if(req.url==='/v1/tkl/clearance'){if(data.action==='request'&&lineState.state!=='free'){res.writeHead(409);return res.end(JSON.stringify({error:'tkl_clearance_action_rejected',message:'Sträckan är redan upptagen'}));}lineState={...lineState,state:data.action==='request'?'requested':lineState.state,from_station_id:'cda',to_station_id:'lek',train_number:data.train_number};return res.end(JSON.stringify({action:data.action,connection:lineState,revision:2}));}
       if(req.url==='/v1/tkl/movement')return res.end(JSON.stringify({movement:{}}));
     }
@@ -61,20 +60,16 @@ test('TKL process drives shifts, clearances and movement declarations through Tr
     const paired=(await call('pair',{...configured,stationId:'cda',code:'test-code'})).body;
     assert.deepEqual(paired.context.lines.map(l=>[l.neighborName,l.state,l.actions]),[['Lekby','free',['request']]]);
     assert.equal((await call('launch',{})).status,404);
-    assert.equal((await call('shift-start',{})).status,404,'no manual shift commands remain');
-    const manned=await until(async()=>{const v=await state();return v.trainMeet.context?.shift?v:null;});
-    assert.equal(manned.trainMeet.context.shift.operatorName,'cda-tkl','pairing puts the station in service under the TKL id');
-    assert.deepEqual(posts.find(p=>p.url==='/v1/tkl/shift/start').body,{station_id:'cda',operator_name:'cda-tkl',terminal_name:'cda-tkl',take_over:false});
-    const named=await call('operator-name',{...manned.trainMeet,operatorName:'Casper'});assert.equal(named.status,200);assert.equal(named.body.context.shift.operatorName,'Casper');
-    assert.deepEqual(posts.at(-1),{url:'/v1/tkl/shift/start',body:{station_id:'cda',operator_name:'Casper',terminal_name:'cda-tkl',take_over:true}});
-    const requested=await call('clearance',{...named.body,connectionId:'cda-lek',action:'request',trainNumber:'3581'});assert.equal(requested.status,200);
+    for(const name of ['shift-start','operator-name'])assert.equal((await call(name,{})).status,404,'no shift commands remain: '+name);
+    const requested=await call('clearance',{...paired,connectionId:'cda-lek',action:'request',trainNumber:'3581'});assert.equal(requested.status,200);
     assert.deepEqual(posts.at(-1),{url:'/v1/tkl/clearance',body:{station_id:'cda',connection_id:'cda-lek',action:'request',train_number:'3581'}});
     assert.deepEqual(requested.body.context.lines[0].actions,['cancel']);assert.equal(requested.body.context.lines[0].direction,'out');
     const refused=await call('clearance',{...requested.body,connectionId:'cda-lek',action:'request',trainNumber:'3581'});assert.equal(refused.status,409);assert.equal(refused.body.error,'Sträckan är redan upptagen');
     const moved=await call('movement',{...requested.body,movementId:'m1',departure:'positioned'});assert.equal(moved.status,200);
     assert.deepEqual(posts.at(-1),{url:'/v1/tkl/movement',body:{station_id:'cda',movement_id:'m1',departure:'positioned',arrival:'none',event_type:'tkl_positioned',actual_track:'track1'}});
     const s=await state();const journal=JSON.stringify(s.events??s.journal??[]);
-    for(const text of ['Stationen i tjänst hos TrainMeet som cda-tkl.','Stationen i tjänst hos TrainMeet som Casper (övertaget).','Klarering begärd · tåg 3581 · Lekby','Tåg 3581: uppställt anmält'])assert.ok(journal.includes(text),'journal: '+text);
+    for(const text of ['Klarering begärd · tåg 3581 · Lekby','Tåg 3581: uppställt anmält'])assert.ok(journal.includes(text),'journal: '+text);
+    assert.ok(posts.every(p=>!p.url.startsWith('/v1/tkl/shift')),'no traffic shift is started');
     assert.equal(s.routes.length,0);assert.ok(Object.values(s.blocks).every(b=>b.occupied===null),'no field state touched by clearances');
   }finally{const exited=new Promise(r=>child.once('exit',r));child.kill('SIGTERM');await exited;await new Promise(r=>gateway.close(r));fs.rmSync(dir,{recursive:true,force:true});}
 });

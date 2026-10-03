@@ -1140,3 +1140,14 @@ tågväg efter 14:30, när ett Stream Deck MK.2 kopplats in, återtogs 0,02–0,
 Samma mönster fanns 10:06 med 0.50.0. Rättat på två ställen: tågvägsbegäran bär avsikten lägg eller
 återta, och bara ett fönster per webbläsare styr decken. Provat i motorprov, i drivrutinsprov med
 två låtsasfönster och genom klick i Chrome mot en lokal TKL. Inte provat med det riktiga decket.
+
+## 3 oktober 2026: inget trafikpass alls (ej publicerad)
+
+Casper: "måste vi ha start av trafikpasset alls?" Nej. Kravet satt i TrainMeet Server, som avvisade
+klarering och tågrörelser från TKL-terminaler utan aktivt pass, medan en TMBox klarar sig utan.
+Servern ändrad på grenen `claude/tkl-no-shift` i trainmeet-server: en parkopplad TKL är i tjänst som
+en tilldelad box, och stegen registreras under terminalens namn. 1145 serverprov godkända.
+I TKL är automatstarten, namnet hos TrainMeet, spärren "tas i tjänst inom en minut" och
+passavslutet vid frånkoppling borttagna. En äldre server som fortfarande kräver pass ger texten att
+TrainMeet Server behöver uppdateras. 369 enhetsprov och 11 integrationsprov godkända.
+Publiceras först när serverändringen är i drift på server.trainmeet.app.
