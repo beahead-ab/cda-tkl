@@ -330,3 +330,16 @@ rörelse ger direkt återgång.
 **Stream Deck utan klick.** Panelen öppnar en Stream Deck som webbläsaren redan tillåter, både vid
 start och när den kopplas in, om man inte valt Koppla bort på enheten. På Raspberry Pi tillåter
 Chromium-policyn Elgatos enheter, så ingen behöver klicka; se raspberry-pi.md.
+
+## Notis om ny version att installera (0.49.0)
+
+Installerade kopior (Raspberry Pi, Mac, PC; `CHARLOTTENDAL_INSTALL_KIND` i app.env) frågar
+`beahead-ab/cda-tkl-install` efter senaste versionen 30 sekunder efter start och sedan var sjätte
+timme (`src/update-check.mjs`; läser bara package.json, skickar inget). Finns en nyare visar
+statusraden `● Uppdatering X` i blått. På Raspberry Pi öppnar chipet en bekräftelse med **Uppdatera
+nu**, som via `POST /api/update/start` startar `cda-tkl-update.service`; polkit-regeln
+`50-cda-tkl-update.rules` låter användaren `cda-tkl` starta just den tjänsten. På Mac och PC visar
+rutan installationsraden med en kopieringsknapp. Webbdriften saknar inställningen och tittar inte.
+
+Provat i en Pi-container med polkit: en avsiktligt äldre 0.47.9 upptäckte 0.48.0 i det publika
+förrådet, knappens anrop startade uppdateringen och Pi:n körde 0.48.0 efter 28 sekunder.

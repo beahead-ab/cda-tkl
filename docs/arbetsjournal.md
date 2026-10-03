@@ -1072,3 +1072,10 @@ Första releasen 0.48.0 (767991d). Provat: install.sh, install.ps1 och paketet h
 inloggning, och en ren Debian 12-container med systemd installerade och uppdaterade TKL
 direkt från GitHub med enradaren.
 
+## 3 oktober 2026, 0.49.0 lokalt: notis om ny version och privat driftjournal
+
+Driftjournalen ligger nu i det privata förrådet `beahead-ab/cda-tkl-drift`. Installerade kopior
+visar `● Uppdatering X` när cda-tkl-install har en nyare release; Pi:n kan uppdatera direkt från
+ställverket (polkit-regel för cda-tkl-update.service), Mac och PC får raden att köra. Provat hela
+vägen i en Pi-container: 0.47.9 → 0.48.0 från GitHub via knappens anrop.
+

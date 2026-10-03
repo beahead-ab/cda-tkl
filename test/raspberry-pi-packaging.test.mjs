@@ -62,3 +62,12 @@ test('the Windows installer never exits the user\'s PowerShell and starts TKL hi
   assert.match(read('packaging/windows/run.ps1'),/scripts\/start\.mjs/);
 });
 
+test('installed copies turn on the update notice, and only the Pi service may start its update',()=>{
+  assert.match(read('packaging/raspberry-pi/app.env'),/^CHARLOTTENDAL_INSTALL_KIND=raspberry-pi$/m);
+  assert.match(read('scripts/install-mac.sh'),/CHARLOTTENDAL_INSTALL_KIND=mac/);
+  assert.match(read('install.ps1'),/CHARLOTTENDAL_INSTALL_KIND=windows/);
+  const rule=read('packaging/raspberry-pi/50-cda-tkl-update.rules');
+  assert.match(rule,/subject\.user === "cda-tkl"/);assert.match(rule,/"cda-tkl-update\.service"/);assert.match(rule,/lookup\("verb"\) === "start"/);
+  assert.match(read('scripts/install-raspberry-pi.sh'),/50-cda-tkl-update\.rules/);
+});
+
