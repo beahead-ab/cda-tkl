@@ -68,3 +68,47 @@ test('several decks run at once, each with the layout saved for its serial numbe
   await sd.detach(false);assert.equal(sd.decks().length,0);
   assert.equal(cleanSerial(' AL31-H2.B_05 '),'AL31-H2.B_05');assert.equal(cleanSerial('__x'),'x');assert.equal(cleanSerial(null),'');
 });
+
+// Web Locks as Chrome has them: one holder, a queue, and steal.
+function fakeLocks(){
+  let holder=null;const queue=[];
+  function run(q){holder=q;Promise.resolve().then(()=>q.cb({name:q.name})).then(v=>{if(holder===q){holder=null;q.resolve(v);next();}});}
+  function next(){if(!holder&&queue.length)run(queue.shift());}
+  return {
+    request(name,options,cb){if(typeof options==='function'){cb=options;options={};}
+      return new Promise((resolve,reject)=>{const q={name,cb,resolve,reject};
+        if(options.steal){if(holder){const old=holder;holder=null;old.reject(Object.assign(Error('stolen'),{name:'AbortError'}));}run(q);}
+        else{queue.push(q);options.signal?.addEventListener('abort',()=>{const i=queue.indexOf(q);if(i>=0){queue.splice(i,1);reject(Object.assign(Error('aborted'),{name:'AbortError'}));}});next();}});},
+    get queued(){return queue.length;},
+    // A window closing releases its lock.
+    close(){if(holder){holder=null;next();}}
+  };
+}
+test('only one window drives the decks; another takes over on request or when the first closes',async t=>{
+  const locks=fakeLocks(),pages=[];
+  // One physical MK.2: each window sees it as its own HID device, and a press reaches every window that has it open.
+  function page(){
+    const handlers={},fills=[],device={vendorId:4057,opened:false},chosen=[];
+    const CONTROLS=Array.from({length:15},(_,i)=>({type:'button',feedbackType:'lcd',index:i,row:Math.floor(i/5),column:i%5,pixelSize:{width:72,height:72}}));
+    const deck={CONTROLS,PRODUCT_NAME:'Stream Deck MK.2',hid:{device},getSerialNumber:async()=>'A00SA5292TUGM9',on:(e,fn)=>{handlers[e]=fn;},clearPanel:async()=>{},setBrightness:async()=>{},fillKeyCanvas:async i=>{fills.push(i);},close:async()=>{deck.closed=true;}};
+    device.deck=deck;
+    const hid={getDevices:async()=>[device],requestDevice:async()=>[device],addEventListener(){}};
+    const sd=createStreamDeck({pluppar:()=>[{id:'p1',kind:'main',label:'Au',node:null}],choose:(id,kind)=>chosen.push(id),clearChoice(){},api(){},message(){},
+      state:()=>({controls:{}}),online:()=>true,chosen:()=>null,trainMeet:()=>null,layout:()=>({version:2,revision:0,decks:{},legacy:null}),hid,library:{openDevice:async d=>d.deck},locks});
+    const p={sd,deck,handlers,chosen,fills};pages.push(p);t.after(()=>sd.detach(false));return p;
+  }
+  async function press(index){for(const p of pages)if(p.handlers.down&&!p.deck.closed){p.handlers.down({type:'button',index});}clock+=50;for(const p of pages)if(p.handlers.up&&!p.deck.closed)p.handlers.up({type:'button',index});await tick();}
+  const a=page();await tick();await tick();const b=page();await tick();await tick();
+  assert.equal(a.sd.driving(),true);assert.equal(b.sd.driving(),false);
+  assert.equal(a.sd.decks().length,1);assert.equal(b.sd.decks().length,0,'the second window leaves the deck alone');
+  // The automatic MK.2 layout: five operating keys, then the plupp.
+  await press(5);assert.deepEqual(a.chosen,['p1']);assert.deepEqual(b.chosen,[],'one press, one choice');
+  // Styr härifrån in the second window takes over; the first lets go without blanking the keys.
+  assert.equal(await b.sd.connect(true),true);await tick();await tick();
+  assert.equal(b.sd.driving(),true);assert.equal(a.sd.driving(),false);assert.equal(a.deck.closed,true);assert.equal(b.sd.decks().length,1);
+  assert.equal(locks.queued,1,'only the first window waits; the second withdrew its place in the queue');
+  await press(5);assert.deepEqual(a.chosen,['p1']);assert.deepEqual(b.chosen,['p1']);
+  // When the driving window closes, the waiting one takes over by itself.
+  await b.sd.detach(false);b.deck.closed=true;locks.close();await tick();await tick();
+  assert.equal(a.sd.driving(),true);
+});

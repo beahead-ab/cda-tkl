@@ -411,3 +411,21 @@ Layouten för varje deck redigeras under **Stream Deck → Layout** enligt skiss
 Provat med enhetsprov för modell, server, tåg på tur och drivrutin (två låtsasdeck med olika
 layouter) och i Chrome mot en lokal TKL parkopplad med en låtsas-TrainMeet: dra och släpp, sidflikar,
 egenskaper, aktivering, kopiering och import. Inte provat med riktiga Stream Deck än.
+
+## En tågväg som lades men försvann direkt (0.51.2)
+
+På Caspers Mac lades varje tågväg från Stream Deck och återtogs inom en sekund. Journalen visade
+begäran, återtagning och frigiven i följd för alla tio tågvägar efter att ett MK.2 kopplats in.
+Samma tågväg kom två gånger, och en andra likadan begäran betydde återta. Troligen styrde två
+fönster decket samtidigt, Macappen och en flik, så att båda skickade varje tryck.
+
+- **Tågvägsbegäran har en avsikt.** Panelen skickar `intent: "build"` eller `"cancel"` enligt det
+  den visade vid valet, som `route-targets` redan anger per mål. Motorn lägger aldrig om avsikten
+  är återta och återtar aldrig om avsikten är lägg. En upprepning loggas som `route-repeat` och
+  syns i händelsekolumnen. Utan avsikt växlar samma val som förut; listvalet och äldre klienter
+  bygger på det.
+- **Ett fönster per webbläsare styr decken.** Drivrutinen tar Web Locks-låset
+  `charlottendal-streamdeck`. Övriga fönster låter decken vara, visar att de styrs från ett annat
+  fönster och tar över när det stängs eller direkt med **Styr härifrån**. Fönstret som lämnar ifrån
+  sig decken släcker dem inte, så att det nya fönstrets bilder står kvar. Låset gäller per adress:
+  `127.0.0.1` och `localhost` räknas som olika, och där skyddar avsikten.
