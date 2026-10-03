@@ -4,7 +4,7 @@ En första körbar lokal applikation med egen TKL-kärna och en separat anläggn
 
 Webbversionen finns på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/), med [separat anläggningssimulator](https://cda-tkl.trainmeet.app/anlaggning/). Logga in med lösenord. Vid första inloggningen väljer du ett eget; därefter finns **Byt lösenord** i panelen. Serverversionen har egna driftdata och är oberoende av den lokala installationen.
 
-Privat källkod finns i [beahead-ab/cda-tkl](https://github.com/beahead-ab/cda-tkl). Se [serveruppgifter och aktuell driftstatus](docs/drift.md).
+Källkoden finns i [beahead-ab/cda-tkl](https://github.com/beahead-ab/cda-tkl). Serveruppgifter och driftjournalen för webbdriften hålls utanför förrådet.
 
 Anläggningsöversikt och diagnostik: [anläggningsöversikt, utvecklingsläge och kommunikationsdiagnostik](docs/anlaggningsoversikt-kommunikation.md).
 

@@ -9,3 +9,5 @@ var/*
 deploy/secrets/
 node_modules/
 __pycache__/
+# Production host and key (see deploy/publish-release.sh)
+deploy/production.env

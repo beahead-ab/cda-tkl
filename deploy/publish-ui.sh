@@ -9,8 +9,12 @@
 # Ändringar i src/, profiles/, scripts/ eller beroenden avvisas; de kräver den vanliga
 # publiceringen med omstart. Vid fel efter att filer börjat bytas återställs de från backupen.
 set -euo pipefail
-HOST="${CHARLOTTENDAL_HOST:-root@161.35.25.62}"
-KEY="${CHARLOTTENDAL_SSH_KEY:-$HOME/.ssh/trainmeet_digitalocean}"
+# The production host and key are kept out of the repository: deploy/production.env
+# (not committed) sets CHARLOTTENDAL_HOST and CHARLOTTENDAL_SSH_KEY.
+ENV_FILE="$(dirname "$0")/production.env"
+[ -f "$ENV_FILE" ] && . "$ENV_FILE"
+HOST="${CHARLOTTENDAL_HOST:?Ange CHARLOTTENDAL_HOST i deploy/production.env}"
+KEY="${CHARLOTTENDAL_SSH_KEY:-$HOME/.ssh/id_ed25519}"
 BASE=/opt/charlottendal
 BACKUPS=/root/charlottendal-backups
 SSH=(ssh -i "$KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$HOST")

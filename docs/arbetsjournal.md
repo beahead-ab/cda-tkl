@@ -6,7 +6,7 @@
 
 Casper: ”jag godkänner allt! Kör på inatt hela vägen.” Hela planen i `../../granskning-2026-09-23/plan.md` (relativt denna dokumentmapp) är godkänd. Arbeta självständigt genom implementation, tester och kontrollerad publicering inom befintlig kostnadsram. Verklig MGP/TrainMeet-verifiering får inte påstås utan underlag. Inga subagenter är beställda.
 
-Utgångspunkt: main `7ca60ea`, arbetskopia ren före nattarbetet. Servern har äldre `31d2f8b`. Driftuppgifter finns i `drift.md`. Referens-XML och granskning är fullständiga; 12 externa Jython-skript saknas även efter sökning i Desktop/Documents och tillgängliga zip-arkiv.
+Utgångspunkt: main `7ca60ea`, arbetskopia ren före nattarbetet. Servern har äldre `31d2f8b`. Driftuppgifter finns i driftjournalen (utanför förrådet). Referens-XML och granskning är fullständiga; 12 externa Jython-skript saknas även efter sökning i Desktop/Documents och tillgängliga zip-arkiv.
 
 Casper har därefter uttryckligen godkänt: ”Ja, nattarbete och kontrollerad publicering”. Automationen `charlottendal-tkl-nattarbete-till-08` är skapad, aktiv var 20:e minut fram till 08:00 den 23 september. Det tidigare avslaget är löst. Stoppa automationen när arbetet är klart eller tidsgränsen nåtts.
 
@@ -810,7 +810,7 @@ utkastlänk utan befintligt utkast och inga JavaScript-fel.
 Alla färdiga ändringar publicerade som `7c1e422` efter uttryckligt godkännande
 av återtagning av Au → Spår 1a och omstart av TKL. Simulatorn och P421 behölls.
 Backup, provning, automatisk återgång vid första efterkontrollen och verifierad
-slutlig aktivering dokumenterade i drift.md. Produktionspanelen visar den nya
+slutlig aktivering dokumenterade i driftjournalen. Produktionspanelen visar den nya
 menyn och rangeröverlämningsknappen utan webbläsarfel.
 
 ## 29 september – sex menyingångar med flikrad (lokalt, ej publicerad)
@@ -907,14 +907,14 @@ processprov och API-prov godkända; webbläsarprov av redigeraren utan fel.
 
 `cacd971` publicerad 1 oktober 17:34 med deploy/publish-release.sh efter
 Caspers begäran, med omstart av enbart TKL. Backup, serverprov och
-efterkontroll dokumenterade i drift.md. Produktionen körde dessförinnan en
+efterkontroll dokumenterade i driftjournalen. Produktionen körde dessförinnan en
 odokumenterad release `142b514`; den finns kvar på servern.
 
 ## Publicering 0.42.1
 
 `8d62b40` publicerad 1 oktober 18:47: parkopplingsdialogen visar träffens
 stationer i en lista med Charlottendal förvald i stället för ett tomt id-fält.
-Backup, serverprov och efterkontroll i drift.md.
+Backup, serverprov och efterkontroll i driftjournalen.
 
 ## Release 0.42.2 · kodfältet och avslag genom Cloudflare
 
@@ -925,7 +925,7 @@ HTML-sida. Avslag svarar nu 409 med serverns förklaring och var en aktuell kod
 hämtas, övriga serverfel 503, och webbläsaren tål svar som inte är JSON.
 Kodfältet visar koden i klartext som 123-456 och adaptern skickar den
 normaliserad som servern jämför den. 309 enhetstester och 10 processprov gröna
-lokalt, 73 + 5 på servern. Backup och efterkontroll i drift.md. Verifierat i
+lokalt, 73 + 5 på servern. Backup och efterkontroll i driftjournalen. Verifierat i
 webbdriften: en felaktig kod besvaras med 409 och serverns förklaring.
 
 ## Release 0.42.3 · stationslistan kan hämtas igen
@@ -933,11 +933,11 @@ webbdriften: en felaktig kod besvaras med 409 och serverns förklaring.
 `e9a905b` publicerad 1 oktober 21:32. Ett stationsanrop direkt efter
 omstarten till 0.42.2 fick tidsgräns och dialogen visade bara id-fältet.
 Adaptern svarar nu 503 med läsbar text och dialogen har knappen Hämta listan
-igen. Serverprov 74 + 5; backup och efterkontroll i drift.md.
+igen. Serverprov 74 + 5; backup och efterkontroll i driftjournalen.
 
 ## Release 0.43.0 · nederrad med tidtabell och händelser
 
-`b635c78` publicerad 1 oktober 22:50; backup och efterkontroll i drift.md. Designunderlaget "Jimri TKL panel
+`b635c78` publicerad 1 oktober 22:50; backup och efterkontroll i driftjournalen. Designunderlaget "Jimri TKL panel
 design3" infört enligt README §1–§7: layoutregeln (planen skalas till bredden,
 nederraden får resten, golv 300 px), klockförankrad tidtabell med Slag, Från,
 Till, Läge och Anmärkning utan bläddring, ny händelsekolumn som bara läser
@@ -958,11 +958,11 @@ Geometri, träffytor, zoom och logik orörda.
 
 ## Release 0.44.1 · händelsekolumnen visar driftskeenden
 
-`3b98895` publicerad 1 oktober 23:44; backup och efterkontroll i drift.md.
+`3b98895` publicerad 1 oktober 23:44; backup och efterkontroll i driftjournalen.
 
 ## Release 0.44.2 · driftskeenden i egen buffert
 
-`5bfe9b9` publicerad 2 oktober 00:21; backup och efterkontroll i drift.md. Efterkontrollen av 0.44.1 visade en
+`5bfe9b9` publicerad 2 oktober 00:21; backup och efterkontroll i driftjournalen. Efterkontrollen av 0.44.1 visade en
 tom händelsekolumn: kärnans enda buffert om 150 rader innehöll bara
 fältrapporter. Produktionsjournalens senaste 3 000 rader var 1 607 rapporter,
 1 332 behörighetsbegäran, 22 ordrar och 39 driftskeenden. Kärnan håller nu tre

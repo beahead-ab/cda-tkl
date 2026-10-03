@@ -9,8 +9,12 @@
 # beroenden och prov på servern, backup av driftdata, byte av current, omstart,
 # efterkontroll. Vid fel efter bytet återställs current och tjänsten startas om.
 set -euo pipefail
-HOST="${CHARLOTTENDAL_HOST:-root@161.35.25.62}"
-KEY="${CHARLOTTENDAL_SSH_KEY:-$HOME/.ssh/trainmeet_digitalocean}"
+# The production host and key are kept out of the repository: deploy/production.env
+# (not committed) sets CHARLOTTENDAL_HOST and CHARLOTTENDAL_SSH_KEY.
+ENV_FILE="$(dirname "$0")/production.env"
+[ -f "$ENV_FILE" ] && . "$ENV_FILE"
+HOST="${CHARLOTTENDAL_HOST:?Ange CHARLOTTENDAL_HOST i deploy/production.env}"
+KEY="${CHARLOTTENDAL_SSH_KEY:-$HOME/.ssh/id_ed25519}"
 BASE=/opt/charlottendal
 BACKUPS=/root/charlottendal-backups
 STATE=/var/lib/charlottendal-tkl
@@ -39,7 +43,10 @@ echo "TKL pid $PID_BEFORE · simulator pid $SIM_BEFORE"
 ROUTES=$(remote "node -e 'try{const d=JSON.parse(require(\"fs\").readFileSync(\"$STATE/routes.json\",\"utf8\"));console.log((d.routes||[]).length)}catch(e){console.log(0)}'")
 echo "Sparade tågvägslås i produktionen: $ROUTES"
 if [ "$ROUTES" != "0" ]; then
-  read -r -p "Det finns $ROUTES sparade tågvägslås. Låsen behålls över omstarten men körmedgivanden återupptas inte. Fortsätt? [j/N] " svar
+  # The ssh calls above read standard input too, so a piped answer never reaches `read`;
+  # CHARLOTTENDAL_CONFIRM_LOCKS=j answers the question in advance.
+  if [ "${CHARLOTTENDAL_CONFIRM_LOCKS:-}" = j ]; then svar=j; echo "Det finns $ROUTES sparade tågvägslås. Fortsätter (CHARLOTTENDAL_CONFIRM_LOCKS=j)."
+  else read -r -p "Det finns $ROUTES sparade tågvägslås. Låsen behålls över omstarten men körmedgivanden återupptas inte. Fortsätt? [j/N] " svar; fi
   [ "$svar" = "j" ] || [ "$svar" = "J" ] || { echo "Avbrutet."; exit 1; }
 fi
 remote "test ! -e $BASE/releases/$SHA" || { echo "$BASE/releases/$SHA finns redan."; exit 1; }
