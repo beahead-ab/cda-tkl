@@ -1126,3 +1126,9 @@ tåg, som tar 44–45 s på den enkla servern mot en gräns på 45 s, med gamla 
 Gränsen höjdes till 90 s. Sidfoten gick ut med "version 0.50.1"; rättat i förrådet med ett prov som
 håller sidfoten och package.json i takt, och följer med nästa release. 0.50.0 och 0.50.1 fördes in i
 driftjournalen i efterhand.
+
+## 3 oktober 2026, 0.51.1: sidfoten
+
+Casper bad om att få ut sidfotsrättelsen direkt ("pusha till prod"). 0.51.1 är 0.51.0 med sidfoten
+"version 0.51.1" och provet som håller sidfoten i takt med package.json. Ny patchversion eftersom
+v0.51.0 redan är taggad i cda-tkl-install. Caspers Mac installerades om till 0.51.0 strax innan.
