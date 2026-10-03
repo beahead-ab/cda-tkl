@@ -71,3 +71,9 @@ test('installed copies turn on the update notice, and only the Pi service may st
   assert.match(read('scripts/install-raspberry-pi.sh'),/50-cda-tkl-update\.rules/);
 });
 
+test('the Mac app goes in Program when it can, else Program in the home folder',()=>{
+  const mac=read('scripts/install-mac.sh');
+  assert.match(mac,/APPS=\/Applications\n\[ -w "\$APPS" \] \|\| \{ APPS="\$HOME\/Applications"/);
+  assert.match(mac,/osacompile -o "\$APPS\/Charlottendal TKL\.app"/);
+});
+

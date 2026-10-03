@@ -1079,3 +1079,11 @@ visar `● Uppdatering X` när cda-tkl-install har en nyare release; Pi:n kan up
 ställverket (polkit-regel för cda-tkl-update.service), Mac och PC får raden att köra. Provat hela
 vägen i en Pi-container: 0.47.9 → 0.48.0 från GitHub via knappens anrop.
 
+## 3 oktober 2026, 0.49.1: Mac-appen i Program
+
+Casper installerade på sin Mac från cda-tkl-install och letade förgäves efter appen i Program:
+den hade hamnat i ~/Applications. Installationen lägger den nu i /Applications, som en
+administratör kan skriva i utan sudo, och bara annars i hemkatalogens Program. Appen på Caspers
+Mac flyttades för hand. Bara installationen ändrades, så 0.49.1 läggs ut i cda-tkl-install men
+inte i webbdriften.
+
