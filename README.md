@@ -106,12 +106,14 @@ Geometri och register kommer från den exporterade Charlottendal-designen och de
 
 Senaste leveransavstämning: [samtliga användningsfall](docs/acceptans-2026-09-23.md), [aktuell status](docs/status.md) och [testresultat](docs/provresultat.md).
 
-## Raspberry Pi
+## Installera
 
-Installera som ett fristående ställverk på en Raspberry Pi 5 med en rad:
+En rad installerar TKL med egen Node.js, autostart och anläggningssimulatorn:
 
-```sh
-curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo sh
-```
+| Plattform | Rad |
+|---|---|
+| Raspberry Pi 5 | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh \| sudo sh` |
+| Mac | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh \| sh` |
+| PC (Windows) | `irm https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.ps1 \| iex` |
 
-Se [docs/raspberry-pi.md](docs/raspberry-pi.md).
+Se [docs/installation.md](docs/installation.md) och, för Raspberry Pi, [docs/raspberry-pi.md](docs/raspberry-pi.md).

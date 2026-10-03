@@ -1047,3 +1047,16 @@ Förrådet är privat, så enradaren kräver en token tills Casper beslutar anna
 öppnar redan tillåten Stream Deck utan klick, och tidtabellen glider tillbaka till NU-strecket
 fyra sekunder efter manuell scrollning. Se raspberry-pi.md.
 
+## 3 oktober 2026, 0.48.0 lokalt: installation på Mac och PC
+
+Casper bad om en process för Mac och PC efter samma mönster som Raspberry Pi. Mac: samma
+install.sh (utan sudo) lämnar över till scripts/install-mac.sh, som lägger egen Node 22 och
+versionerna i ~/Library/Application Support/Charlottendal TKL, en launchd-agent som startar vid
+inloggning och startar om vid fel, och appen Charlottendal TKL som öppnar ställverket i Chrome.
+Provat på Macen i en testkatalog, för hand och under en tillfällig launchd-agent (omstart efter
+dödad process på 2 s). PC: install.ps1 via `irm … | iex` lägger allt under %LOCALAPPDATA%, startar
+dolt vid inloggning via Autostart och skapar en skrivbordsgenväg till Edge eller Chrome; inga
+administratörsrättigheter. Syntaxen kontrollerad med PowerShell 7.6 på arm64; inte provat på
+Windows. Översikten i docs/installation.md; den fullständiga Pi-anvisningen ligger på GitHub i
+docs/raspberry-pi.md.
+

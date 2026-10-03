@@ -38,3 +38,26 @@ test('the Stream Deck is allowed for the panel without a dialog',()=>{
   assert.match(read('packaging/raspberry-pi/50-cda-tkl-streamdeck.rules'),/ATTRS\{idVendor\}=="0fd9", TAG\+="uaccess"/);
   assert.match(read('packaging/raspberry-pi/cda-tkl-browser'),/--kiosk --app="\$URL"/);
 });
+
+test('the Mac and Windows installers copy the same folders as the Raspberry Pi installer',()=>{
+  const pi=/for item in ([^;]+); do/.exec(read('scripts/install-raspberry-pi.sh'))[1].trim().split(/\s+/).sort();
+  const mac=/for item in ([^;]+); do/.exec(read('scripts/install-mac.sh'))[1].trim().split(/\s+/).sort();
+  const win=/foreach \(\$Item in ([^)]+)\)/.exec(read('install.ps1'))[1].split(',').map(s=>s.trim().replace(/'/g,'')).sort();
+  assert.deepEqual(mac,pi);assert.deepEqual(win,pi);
+});
+
+test('install.sh hands a Mac to the per-user installer and refuses sudo there',()=>{
+  const install=read('install.sh');
+  assert.match(install,/Darwin\)[\s\S]*INSTALLER="scripts\/install-mac\.sh"[\s\S]*Kör installationen utan sudo på Mac/);
+  assert.match(read('packaging/mac/launchd.plist'),/<key>KeepAlive<\/key><true\/>/);
+  assert.match(read('packaging/mac/run.sh'),/exec "\$APP\/node\/bin\/node" scripts\/start\.mjs/);
+});
+
+test('the Windows installer never exits the user\'s PowerShell and starts TKL hidden at login',()=>{
+  const ps=read('install.ps1');
+  assert.doesNotMatch(ps,/^\s*exit\b/m,'exit would close the window opened for irm | iex');
+  assert.match(ps,/GetFolderPath\('Startup'\)/);
+  assert.match(ps,/--app=http:\/\/127\.0\.0\.1:8910\/#panel/);
+  assert.match(read('packaging/windows/run.ps1'),/scripts\/start\.mjs/);
+});
+

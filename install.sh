@@ -1,10 +1,11 @@
 #!/bin/sh
-# Public installer for Charlottendal TKL on a Raspberry Pi 5 (Raspberry Pi OS 64-bit)
-# or another Debian/Ubuntu machine:
+# Public installer for Charlottendal TKL on a Raspberry Pi 5 (Raspberry Pi OS 64-bit),
+# another Debian/Ubuntu machine, or a Mac:
 #
-#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo sh
+#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo sh   (Linux)
+#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sh        (Mac)
 #
-# It fetches the whole package from GitHub and runs scripts/install-raspberry-pi.sh.
+# It fetches the whole package from GitHub and runs the installer for this system.
 # Run it again, or `sudo cda-tkl-update`, to update; settings and operating data stay.
 # While the repository is private, give a read-only GitHub token:
 #   curl -fsSL -H "Authorization: Bearer $TOKEN" https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo CDA_TKL_TOKEN=$TOKEN sh
@@ -18,17 +19,30 @@ TEMP_DIR=$(mktemp -d)
 cleanup() { rm -rf "$TEMP_DIR"; }
 trap cleanup EXIT INT TERM
 
-if [ "$(uname -s)" != Linux ]; then
-  echo "Installationen är för Raspberry Pi OS och andra Debian-baserade Linux."
-  echo "På en Mac körs TKL för utveckling med: npm start"
-  exit 1
-fi
-if [ "$(id -u)" -ne 0 ]; then
-  echo "Kör installationen med sudo:"
-  echo "  curl -fsSL https://raw.githubusercontent.com/${REPOSITORY}/${BRANCH}/install.sh | sudo sh"
-  exit 1
-fi
-command -v curl >/dev/null 2>&1 || { apt-get update && apt-get install -y curl ca-certificates; }
+case "$(uname -s)" in
+  Darwin)
+    # The Mac installation is per user (Application Support and a launchd agent in the
+    # user's own session); through sudo it would install everything for root instead.
+    INSTALLER="scripts/install-mac.sh"
+    if [ "$(id -u)" -eq 0 ]; then
+      echo "Kör installationen utan sudo på Mac:"
+      echo "  curl -fsSL https://raw.githubusercontent.com/${REPOSITORY}/${BRANCH}/install.sh | sh"
+      exit 1
+    fi
+    ;;
+  Linux)
+    if [ "$(id -u)" -ne 0 ]; then
+      echo "Kör installationen med sudo:"
+      echo "  curl -fsSL https://raw.githubusercontent.com/${REPOSITORY}/${BRANCH}/install.sh | sudo sh"
+      exit 1
+    fi
+    command -v curl >/dev/null 2>&1 || { apt-get update && apt-get install -y curl ca-certificates; }
+    ;;
+  *)
+    echo "På Windows installeras TKL från PowerShell; se docs/installation.md."
+    exit 1
+    ;;
+esac
 
 SOURCE="${CDA_TKL_SOURCE:-}"
 if [ -n "$SOURCE" ] && [ -d "$SOURCE" ]; then
