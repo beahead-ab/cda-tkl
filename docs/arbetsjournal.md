@@ -1117,3 +1117,12 @@ knappförråd, dra och släpp, sidflikar, egenskaper, egen text, bild och hållt
 RBG och sidknappar, Alla deck med kopiering, export, import och Visa vilket deck. Blinkningen
 kontrollerades inte separat, enligt Casper, eftersom redigeraren är ny och aldrig animerar. Provat
 med enhetsprov och i headless Chrome mot lokal TKL med låtsas-TrainMeet; inte med riktiga deck.
+
+## 3 oktober 2026, 0.51.0 i drift
+
+Publicerad 11:38 som `8cf0f57` i webbdriften och i cda-tkl-install (v0.51.0), med Caspers j på
+frågan om det sparade tågvägslåset. Första försöket stannade på serverns processprov med parallella
+tåg, som tar 44–45 s på den enkla servern mot en gräns på 45 s, med gamla och nya versionen lika.
+Gränsen höjdes till 90 s. Sidfoten gick ut med "version 0.50.1"; rättat i förrådet med ett prov som
+håller sidfoten och package.json i takt, och följer med nästa release. 0.50.0 och 0.50.1 fördes in i
+driftjournalen i efterhand.
