@@ -41,3 +41,13 @@ Sidfoten med Zoom, Fullskärm, Byt lösenord och anslutningsstatus ligger fast; 
 Alla `#`-adresser är oförändrade, så bokmärken, prov och dokumentation gäller fortfarande. Varje undersida ger nu en egen titel i webbläsarflik och historik, till exempel Tågvägar · Charlottendal TKL. Bakåtlänkarna "Tillbaka till … →" och "Avbryt →" på undersidorna är borttagna eftersom flikraden och spalten alltid visar vägen tillbaka. Översiktssidornas kort med förklaringar finns kvar.
 
 Navigationsmodellen ligger i `public/admin-navigation-model.js` och provas i `test/admin-navigation.test.mjs`: sex ingångar i beslutad ordning, varje flik pekar på en registrerad arbetsyta, TrainMeet hör till Tidtabeller, objektsidor faller tillbaka på registrets titel och panelen aktiverar ingen grupp.
+
+## Inställningar i tre grupper · 4 oktober
+
+Adminfönstret heter Inställningar och följer TrainMeet Servers uppdelning
+(docs/installningar-plan.md, steg 2). Sidomenyn har tre grupprubriker: Träffen
+(TrainMeet, Händelser), Den här datorn (Utseende och ljud, Stream Deck, Banan
+(LocoNet), Uppdatering) och Anläggningen (Anläggning). TrainMeet visar sin status
+direkt i menyn. Översiktssidan Avancerat är borttagen; `#advanced` leder till
+Anläggningsregistret och `#tools` till Utseende och ljud. XML-granskning och
+Införandestatus är flikar under Anläggning. Övriga adresser är oförändrade.

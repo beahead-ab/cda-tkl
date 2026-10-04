@@ -94,7 +94,7 @@ Fem regler som hålls i varje avsnitt, hämtade från serverns Inställningar:
 1. **Nederradens Drift-flik** (byggd 4 oktober, se panel-och-verktyg.md; Ljud av/på ligger tills vidare kvar under Utseende). Klareringen och knapparna flyttar in, övre högra hörnet
    töms, gruppen Drift tas bort ur adminfönstret. Händelser och Spårbeläggning rörs
    inte. Störst nytta, lägst risk: inga serverändringar.
-2. **Inställningar.** Nytt namn, tre grupper, avsnitten flyttas till sina platser,
+2. **Inställningar** (byggd 4 oktober; tidtabellssidorna ligger tillfälligt som flikar under TrainMeet, Simulator ↗ som flik under Banan, XML-granskning och Införandestatus som flikar under Anläggning; `#advanced` och `#tools` leder vidare till sin första sida). Nytt namn, tre grupper, avsnitten flyttas till sina platser,
    översiktssidorna tas bort, Anläggning blir en ingång. Innehållet i varje avsnitt är
    oförändrat i det här steget.
 3. **Lokal tidtabell bort.** `public/timetable-import.js`, `timetable-sheet.js`,
