@@ -1,14 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {NAVIGATION_SECTIONS,resolveNavigation} from '../public/admin-navigation-model.js';
+import {NAVIGATION_GROUPS,NAVIGATION_SECTIONS,REDIRECTS,resolveNavigation} from '../public/admin-navigation-model.js';
 
 const registered=['#trainmeet','#import','#import/upload','#import/edit','#tools/appearance','#tools/streamdeck','#tools/streamdeck/layout','#tools/journal',
   '#register','#register/station','#register/destinations','#register/presentation','#register/bindings','#register/object',
   '#advanced','#advanced/xml','#advanced/migration','#advanced/protocol','#advanced/update'];
 
-test('the rail has six entries in the agreed order and every tab keeps an existing address',()=>{
+test('Inställningar has seven entries in three groups and every tab keeps an existing address',()=>{
   // Drift is the bottom row's tab in the signal box, not a page here (docs/installningar-plan.md).
-  assert.deepEqual(NAVIGATION_SECTIONS.map(s=>s.label),['Tidtabeller','Händelser','Utseende','Stream Deck','Anläggning','Avancerat']);
+  assert.deepEqual(NAVIGATION_GROUPS.map(g=>g.label),['Träffen','Den här datorn','Anläggningen']);
+  assert.deepEqual(NAVIGATION_SECTIONS.map(s=>[s.group,s.label]),[
+    ['traffen','TrainMeet'],['traffen','Händelser'],
+    ['datorn','Utseende och ljud'],['datorn','Stream Deck'],['datorn','Banan (LocoNet)'],['datorn','Uppdatering'],
+    ['anlaggningen','Anläggning']]);
+  // A group's entries stand together, so the rail shows each heading once.
+  const order=NAVIGATION_SECTIONS.map(s=>s.group);assert.deepEqual([...new Set(order)],NAVIGATION_GROUPS.map(g=>g.key));
+  assert.ok(order.every((g,i)=>!i||g===order[i-1]||!order.slice(0,i).includes(g)));
   for(const section of NAVIGATION_SECTIONS){
     for(const tab of section.tabs){
       if(tab.external){assert.equal(tab.external,'field-link');continue;}
@@ -35,15 +42,19 @@ test('every registered address resolves to one section with a page title of its 
   assert.equal(titles.get('#import/edit'),'Redigera tidtabell');
   assert.equal(titles.get('#register/destinations'),'Orter och telefonnummer');
   assert.equal(titles.get('#advanced/protocol'),'Protokollinspelning');
+  assert.equal(resolveNavigation('#advanced/protocol').section.label,'Banan (LocoNet)');
+  assert.equal(resolveNavigation('#advanced/update').section.label,'Uppdatering');
+  assert.equal(resolveNavigation('#advanced/xml').section.label,'Anläggning');
   // The register pages must not share one title, and no address is left in the old Drift group.
   assert.equal(resolveNavigation('#tools/operations/blocks').section,null);
   assert.equal(new Set(registered.filter(h=>h.startsWith('#register')).map(h=>titles.get(h))).size,5);
 });
 
-test('TrainMeet lives under Tidtabeller and object pages fall back to the register landing',()=>{
+test('TrainMeet carries the timetable pages and its status; object pages fall back to the register',()=>{
   const trainmeet=resolveNavigation('#trainmeet');
-  assert.equal(trainmeet.section.hash,'#import');assert.equal(trainmeet.tab.label,'TrainMeet');assert.equal(trainmeet.exact,true);
-  assert.equal(trainmeet.tab.status,'menu-trainmeet-status');
+  assert.equal(trainmeet.section.hash,'#trainmeet');assert.equal(trainmeet.tab.label,'Anslutning');assert.equal(trainmeet.exact,true);
+  assert.equal(trainmeet.section.status,'menu-trainmeet-status');assert.equal(trainmeet.title,'TrainMeet');
+  assert.equal(resolveNavigation('#import').section.hash,'#trainmeet');
   const object=resolveNavigation('#register/object');
   assert.equal(object.section.hash,'#register');assert.equal(object.tab.hash,'#register');assert.equal(object.exact,false);
   assert.equal(object.title,'Anläggningsregister');
@@ -53,5 +64,10 @@ test('TrainMeet lives under Tidtabeller and object pages fall back to the regist
 
 test('the panel and unknown addresses never activate a section',()=>{
   for(const hash of ['#panel','',undefined,null]){const r=resolveNavigation(hash);assert.equal(r.section,null);assert.equal(r.title,'Ställverk');}
-  for(const hash of ['#tools','#tools/zoom','#unknown/page','#registerx']){const r=resolveNavigation(hash);assert.equal(r.section,null);assert.equal(r.title,'Administration');}
+  for(const hash of ['#tools','#tools/zoom','#unknown/page','#registerx']){const r=resolveNavigation(hash);assert.equal(r.section,null);assert.equal(r.title,'Inställningar');}
+});
+
+test('pages that only led on to others open their first real page',()=>{
+  assert.deepEqual(REDIRECTS,{'#advanced':'#register','#tools':'#tools/appearance'});
+  for(const to of Object.values(REDIRECTS))assert.ok(resolveNavigation(to).section);
 });
