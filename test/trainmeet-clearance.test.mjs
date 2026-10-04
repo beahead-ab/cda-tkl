@@ -30,6 +30,10 @@ test('lines join the catalogue with live state: neighbour names, direction and t
     ['cda-lek','Lekby','double','free','','',['request']],
     ['vag-cda','Vagnsta','single','requested','in','3581',['accept','reject']]]);
   assert.equal(r.service.view().context.connections.length,3,'the raw state list is still exposed');
+  assert.deepEqual(lines.map(l=>l.neighborMode),['',''],'an older server says nothing about the neighbours');
+  r.context.station_modes={lek:'automatic',vag:'bogus'};await r.service.refresh();
+  assert.deepEqual(r.service.view().context.lines.map(l=>l.neighborMode),['automatic',''],'TrainMeet says who answers; unknown values are dropped');
+  delete r.context.station_modes;
   assert.equal(r.service.view().contract,'TrainMeet HTTP v1 · TKL-terminal');
   for(const [state,direction,expected] of [['free','',['request']],['requested','out',['cancel']],['requested','in',['accept','reject']],['reserved','out',['depart','cancel']],['reserved','in',[]],['occupied','in',['arrive']],['occupied','out',[]],['unknown','',[]]])assert.deepEqual(lineActions(state,direction),expected,state+'/'+direction);
   assert.deepEqual(CLEARANCE_ACTIONS,['request','accept','reject','cancel','depart','arrive']);
@@ -109,7 +113,10 @@ test('movement declarations send unchanged fields with their current values and 
   assert.deepEqual(r.posts().at(-1).body,{station_id:'cda',movement_id:'m1',departure:'none',arrival:'arrived',event_type:'tkl_arrived',actual_track:'4'});
   assert.deepEqual(r.journal,['Tåg 3581: uppställt anmält hos TrainMeet.','Tåg 3581: ankommit anmält hos TrainMeet.']);
   const stop={arrival_time:'05:00',departure_time:'05:05'},departureOnly={departure_time:'05:05'},arrivalOnly={arrival_time:'05:00'};
-  assert.deepEqual(movementActions(undefined,stop).map(a=>a.label),['Närmar sig']);
+  // Not seen coming, the train can also be moved here at once (issue #115), after a question.
+  assert.deepEqual(movementActions(undefined,stop).map(a=>a.label),['Närmar sig','Flytta hit']);
+  assert.deepEqual(movementActions(undefined,{...stop,train_number:'3581'}).at(-1),{field:'arrival',value:'arrived',label:'Flytta hit',primary:false,confirm:'Flytta tåg 3581 hit? Avsändarens del räknas som gjord och sträckan blir fri.'});
+  assert.deepEqual(movementActions(undefined,{...stop,train_number:'93'},true).map(a=>a.label),['Närmar sig'],'on its way on a line: no move');
   assert.deepEqual(movementActions({arrival:'approaching'},stop).map(a=>a.label),['Ankommit']);
   assert.deepEqual(movementActions({arrival:'arrived',departure:'none'},stop).map(a=>a.label),['Uppställt']);
   assert.deepEqual(movementActions({arrival:'arrived',departure:'positioned'},stop).map(a=>a.label),['Förare på plats']);
