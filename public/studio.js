@@ -8,10 +8,10 @@ const pill=(t,k='',dashed=false)=>`<span class="st-pill${k?' st-pill-'+k:''}${da
 const kv=rows=>`<dl class="st-kv">${rows.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
 const card=(title,body,{right='',foot='',id=''}={})=>`<section class="st-card"${id?` id="${id}"`:''}><div class="st-card-head"><h2>${title}</h2><span class="st-grow"></span>${right}</div>${body}${foot?`<div class="st-card-foot">${foot}</div>`:''}</section>`;
 const NAV={
-  konfigurera:[['Stationsplan','#konfigurera'],['Signaler','#data?set=signaler','66'],['Växlar','#data?set=vaxlar','49'],['Spårledningar','#data?set=sparledningar','197'],['Regler','#konfigurera/regler','53'],['Övriga delar',null,'steg 6'],['Prova i simulatorn',null,'steg 4']],
+  konfigurera:[['Stationsplan','#konfigurera'],['Signaler','#data?set=signaler','66'],['Växlar','#data?set=vaxlar','49'],['Spårledningar','#data?set=sparledningar','197'],['Regler','#konfigurera/regler','53'],['Övriga delar',null,'steg 6'],['Prova i simulatorn','#driftsattning/andringar']],
   data:[['Alla mängder','#data'],['Tågvägar','#data?set=tagvagar','340']],
   genomgang:[['Avvikelser och genomgång','#genomgang']],
-  driftsattning:[['Mät objekt',null,'steg 5'],['Lyssna','/#advanced/protocol','i dag'],['Kort och MGP',null,'steg 5'],['Ändringar och aktivering','/#register/bindings','i dag']],
+  driftsattning:[['Ändringar och aktivering','#driftsattning/andringar'],['Mät objekt',null,'steg 5'],['Lyssna','/#advanced/protocol','i dag'],['Kort och MGP',null,'steg 5'],['Driftbindningar','/#register/bindings','i dag']],
   anslutning:[['TrainMeet','/#trainmeet','i dag'],['Stream Deck','/#tools/streamdeck','i dag']]};
 const state={tab:'konfigurera',view:'',sets:new Set(['vaxlar','signaler','sparledningar','tagvagar']),object:null,layers:new Set(['numbers','signalNames','labels','dev']),width:2600,search:{}};
 let model,geo,plan,order;
@@ -30,7 +30,19 @@ async function load(){
   if(saved.layers)state.layers=new Set(saved.layers);if(saved.width)state.width=saved.width;
   render();
 }
-function go(tab){state.tab=tab;state.view='';history.replaceState(null,'',`#${tab}`);render();}
+function go(tab,view=''){state.tab=tab;state.view=view;history.replaceState(null,'',`#${tab}${view?'/'+view:''}`);render();}
+let busy=false,notice='';
+async function draftApi(command,payload={}){
+  if(busy||!model.drafts)return false;busy=true;notice='';
+  try{const r=await fetch('/api/studio/drafts/'+command,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:model.drafts.sessionId,revision:model.drafts.revision,...payload})});
+    if([401,428].includes(r.status)){location.assign('/login');return false;}
+    const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);model.drafts=answer;
+    if(command==='activate'){notice='Regelversion '+answer.activeVersion+' är aktiverad. Kärnan har läst om profilen; AIS kvarstår tills nya stoppbesked kommit.';await reloadStudio();}
+    return true;}
+  catch(e){notice=e.message;if(/annat fönster/.test(e.message))await reloadStudio();return false;}
+  finally{busy=false;render();}
+}
+async function reloadStudio(){try{const studio=await fetch('/api/studio').then(r=>r.json());const profile=await fetch('/api/config').then(r=>r.json());const panel=await fetch('/data/panel.json').then(r=>r.json());model=buildStudioModel({profile,panel,studio});}catch(e){notice=e.message;}}
 function select(id,{center=true}={}){if(!model.objects.has(id))return;state.object=id;session.save();if(state.tab==='konfigurera'){plan?.select(id,{center});renderObjectCard();}else render();}
 function render(){
   $('#st-tabs').innerHTML=TABS.map(t=>`<a href="#${t.id}"${t.id===state.tab?' aria-current="page"':''}>${t.label}</a>`).join('');
@@ -41,7 +53,7 @@ function render(){
     return `<a href="${href}"${current?' aria-current="page"':''}>${esc(label)}${count?`<span class="st-count">${esc(count)}</span>`:''}</a>`;}).join('')
     +`<div class="st-nav-foot"><strong>Ett utkast för hela stationen</strong><br>Allt här är läst ur källorna. Ingenting är uppmätt och ingenting ändras härifrån.<br><span class="mono">profil ${esc(model.sourceHash.slice(0,12))}</span></div>`;
   const main=$('#st-main');
-  if(state.tab==='konfigurera'&&state.view==='regler')renderRegler(main);else if(state.tab==='konfigurera')renderKonfigurera(main);else if(state.tab==='data')renderData(main);else if(state.tab==='genomgang')renderGenomgang(main);else renderLater(main);
+  if(state.tab==='konfigurera'&&state.view==='regler')renderRegler(main);else if(state.tab==='driftsattning'&&state.view==='andringar')renderAndringar(main);else if(state.tab==='konfigurera')renderKonfigurera(main);else if(state.tab==='data')renderData(main);else if(state.tab==='genomgang')renderGenomgang(main);else renderLater(main);
 }
 function stats(){const c=model.counts,d=model.detection;return `<div class="st-stats">
   <div class="st-stat"><small>Växlar</small><b>${c.turnouts}</b><small>Adresser ur JMRI, ej uppmätta</small></div><div class="st-stat"><small>Signaler</small><b>${c.signals}</b><small>Bänkadresser i simulatorn</small></div>
@@ -116,14 +128,56 @@ function renderRegler(main){
   const types=[['alla','Alla',rules.length],['follow','Följer',rules.filter(r=>r.type==='follow').length],['authority','Manöverrätt',rules.filter(r=>r.type==='authority').length],['condition','Villkor',rules.filter(r=>r.type==='condition').length]];
   const shown=rules.filter(r=>f==='alla'||r.type===f);
   const eff=model.ruleEffects;
-  main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">KONFIGURERA · REGLER</div><h1>Regler</h1><p>Det som gäller i dag uttryckt i regelspråket, kompilerat tillbaka till kärnans fragment utan skillnad. Inget här ändrar driften.</p></div><span class="st-grow"></span>${model.compiledIdentical?pill('Kompilerar identiskt med profilen','',true):pill('Kompileringen skiljer sig från profilen','red')}</div>
+  const dr=model.drafts,ver=dr?.activeVersion||0,bd=model.baseDiff;
+  const statusPill=ver?pill(`Regelversion ${ver} aktiv · ${bd?.fragments??0} kopplingar och ${bd?.routes??0} tågvägar skiljer sig från grundprofilen`,'amber'):model.compiledIdentical?pill('Kompilerar identiskt med grundprofilen','',true):pill('Kompileringen skiljer sig från profilen','red');
+  const draftBtn=dr?.draft?`<a class="st-btn st-btn-primary" href="#driftsattning/andringar">Visa utkastet</a>`:props.length?`<button type="button" class="st-btn st-btn-primary" data-draft-from-proposal>Skapa utkast av förslaget</button>`:'';
+  main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">KONFIGURERA · REGLER</div><h1>Regler</h1><p>Det som gäller uttryckt i regelspråket, kompilerat till kärnans fragment. Inget här ändrar driften förrän ett utkast aktiveras.</p></div><span class="st-grow"></span>${statusPill}${draftBtn}</div>
     <div class="st-stats">${types.map(([k,l,n])=>`<div class="st-stat"><small>${l}</small><b>${n}</b></div>`).join('')}<div class="st-stat amber"><small>Förslag</small><b>${props.length}</b><small>${eff?eff.routesChanged+' tågvägar ändrar växelläge':''}</small></div></div>
     ${props.length?card('Förslag ur spårgrafen · dubbelkorsväxlarna',`<div style="padding:12px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:12px">${props.map(ruleCard).join('')}</div>`
       +(eff?`<div class="st-note">Med förslaget ändrar ${eff.routesChanged} tågvägar växelläge (${eff.main} huvud, ${eff.shunt} växling). Exempel: ${eff.examples.slice(0,3).map(e=>`<b>${esc(e.label)}</b> ${esc(Object.entries(e.before).map(([k,v])=>k.slice(2)+' '+v).join(' '))} → ${esc(Object.entries(e.after).map(([k,v])=>k.slice(2)+' '+v).join(' '))}`).join('; ')}.</div>`:''),
       {right:pill('Ej uppmätt','amber'),foot:'Förslaget blir ett utkast som provas i simulatorn och aktiveras med skillnadslista i steg 4. Tågvägstabellen är oförändrad tills dess.'}):''}
     <div class="st-chips">${types.map(([k,l,n])=>`<button type="button" class="st-chip-set" data-rule-type="${k}" aria-pressed="${f===k}">${l}<b>${n}</b></button>`).join('')}<span class="st-grow"></span><span class="st-eyebrow">KÄLLA · ${esc(model.ruleSource.toUpperCase())}</span></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:12px">${shown.map(ruleCard).join('')}</div>`;
-  main.onclick=e=>{const t=e.target.closest('[data-rule-type]');if(t){state.ruleType=t.dataset.ruleType;renderRegler(main);return;}const b=e.target.closest('[data-select]');if(b){state.object=b.dataset.select;session.save();location.hash='#konfigurera?objekt='+encodeURIComponent(b.dataset.select);}};
+  main.onclick=async e=>{const t=e.target.closest('[data-rule-type]');if(t){state.ruleType=t.dataset.ruleType;renderRegler(main);return;}if(e.target.closest('[data-draft-from-proposal]')){if(await draftApi('create',{source:'proposal',note:'Förslag ur spårgrafen: dubbelkorsväxlarna X1 och X2'}))go('driftsattning','andringar');return;}const b=e.target.closest('[data-select]');if(b){state.object=b.dataset.select;session.save();location.hash='#konfigurera?objekt='+encodeURIComponent(b.dataset.select);}};
+}
+// ---------- Ändringar och aktivering ----------
+function renderAndringar(main){
+  const dr=model.drafts;
+  if(!dr){main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">DRIFTSÄTTNING</div><h1>Ändringar och aktivering</h1></div></div><p class="st-error">Servern svarade utan utkastdata.</p>`;return;}
+  const d=dr.draft,fmt=t=>t?new Date(t).toLocaleString('sv-SE'):'–';
+  const versions=card('Regelversioner',`<ul class="st-list">${dr.versions.map(v=>`<li><span class="mono"><b>${v.id}</b></span><span style="flex-grow:1">${esc(v.reason)}<br><span style="font-size:12px;color:var(--kr-mute)">${v.at?fmt(v.at):'grundprofilen'} · ${v.rules} regler</span></span>${v.id===dr.activeVersion?pill('Aktiv','',true):d?'':`<button type="button" class="st-btn" data-restore="${v.id}">Återställ</button>`}</li>`).join('')}</ul>`,
+    {foot:'Återställning skapar ett utkast som provas och aktiveras som alla andra.'});
+  const head=`<div class="st-title"><div><div class="st-eyebrow">DRIFTSÄTTNING · ÄNDRINGAR OCH AKTIVERING</div><h1>${d?'Utkast':'Inget utkast'}</h1><p>${d?esc(d.note||'Utan anteckning')+' · skapat '+fmt(d.createdAt)+' på version '+d.baseVersion:'Regelversion '+dr.activeVersion+' är aktiv. Ett utkast skapas från ett förslag under Regler, eller genom återställning av en version.'}</p></div><span class="st-grow"></span>${notice?`<span class="st-pill ${/aktiverad/.test(notice)?'':'st-pill-amber'}">${esc(notice)}</span>`:''}</div>`;
+  if(!d){main.innerHTML=head+`<div class="st-two">${versions}${card('Så aktiveras en ändring',`<ol style="margin:0;padding:12px 16px 12px 36px;display:flex;flex-direction:column;gap:8px;font-size:13.5px"><li>Utkastet valideras: objekten finns, lägena är möjliga, ingen växel i två följgrupper.</li><li>Simulatorprovet etablerar varje tågväg som ändras, plus ett urval oförändrade.</li><li>Aktivering kräver AIS, inga lås och färska rapporter, samma villkor som driftbindningarna, och ett skäl.</li><li>Kärnan läser om den kompilerade profilen. Simulatorn får samma koppling vid nästa start.</li></ol>`)}</div>`;bindAndringar(main);return;}
+  const tr=d.trial,act=d.activation;
+  const changes=card(`Regler som ändras <span class="mono" style="color:var(--kr-mute)">+${d.added.length} −${d.removed.length}</span>`,
+    `<div style="padding:12px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:12px">${d.added.map(r=>`<div class="st-card" style="border-style:dashed"><div class="st-card-head"><span class="st-eyebrow">LÄGGS TILL · ${esc(r.typeLabel.toUpperCase())}</span><span class="st-grow"></span>${pill('Verkställs i '+r.runsInLabel)}</div><div style="padding:10px 14px"><b class="mono">${esc(r.id.replace(/^(follow|authority|condition):(manual:|line:)?/,''))}</b><br><span style="font-size:13px">${esc(r.explain)}</span></div></div>`).join('')}
+    ${d.removed.map(r=>`<div class="st-card"><div class="st-card-head"><span class="st-eyebrow" style="color:var(--kr-red)">TAS BORT · ${esc(r.typeLabel.toUpperCase())}</span></div><div style="padding:10px 14px"><b class="mono" style="text-decoration:line-through">${esc(r.id.replace(/^(follow|authority|condition):(manual:|line:)?/,''))}</b><br><span style="font-size:13px;color:var(--kr-ink-2)">${esc(r.explain)}</span></div></div>`).join('')}</div>`);
+  const frag=d.changes.fragments,rt=d.changes.routes;
+  const diff=card(`Skillnadslista`,kv([['Kopplingar som ändras',frag.filter(f=>f.kind==='coupled').map(f=>`${mono(f.object)}: ${esc(f.before.join('+'))} → ${esc(f.after.join('+'))}`).join('<br>')||'Inga'],
+      ['Manöverregler som berörs',frag.filter(f=>f.kind==='manual').map(f=>`${mono(f.object)}: ${esc(f.before)} → ${esc(f.after)}`).join('<br>')||'Inga'],
+      ['Övriga fragment',frag.filter(f=>!['coupled','manual'].includes(f.kind)).map(f=>`${esc(f.kind)} ${mono(f.object)}`).join(', ')||'Inga'],
+      ['Tågvägar som ändrar växelläge',`${mono(rt.count)} · ${rt.main} huvud, ${rt.shunt} växling`]])
+    +(rt.examples.length?`<div class="st-grid-wrap"><table class="st-grid"><thead><tr><th>Tågväg</th><th>Före</th><th>Efter</th></tr></thead><tbody>${rt.examples.map(e=>`<tr><td>${esc(e.label)}</td><td class="mono" style="font-size:12px">${esc(Object.entries(e.before).map(([k,v])=>k.slice(2)+' '+v).join(' '))}</td><td class="mono" style="font-size:12px">${esc(Object.entries(e.after).map(([k,v])=>k.slice(2)+' '+v).join(' '))}</td></tr>`).join('')}</tbody></table></div>`:''),
+    {foot:rt.count>rt.examples.length?`Visar ${rt.examples.length} av ${rt.count} ändrade tågvägar. Tabellen räknas om vid aktivering; 340 vägar kvar.`:'Tabellen räknas om vid aktivering.'});
+  const probl=d.problems.length?card('Validering',`<ul class="st-list">${d.problems.map(p=>`<li><span class="mono">${esc(p.rule)}</span><span style="color:var(--kr-red)">${esc(p.problem)}</span></li>`).join('')}</ul>`,{right:pill(d.problems.length+' fel','red')}):card('Validering',`<p class="st-note">Alla objekt finns, lägena är möjliga och ingen växel följer två grupper.</p>`,{right:pill('Inga fel','',true)});
+  const trial=card('Simulatorprov',(tr?`<div class="st-note">${tr.ok} av ${tr.total} tågvägar etablerade · ${tr.changed} ändrade och ${tr.sampled} oförändrade provade · ${fmt(tr.at)}</div><div class="st-grid-wrap"><table class="st-grid"><thead><tr><th>Tågväg</th><th>Resultat</th><th>Order till</th><th class="num">ms</th></tr></thead><tbody>${tr.results.slice(0,200).map(r=>`<tr><td>${esc(r.label)}</td><td>${r.result==='etablerad'?pill('Etablerad','',true):pill(esc(r.result)+(r.reason?' · '+esc(r.reason):''),'red')}</td><td class="mono" style="font-size:12px">${esc(r.ordered.map(x=>x.slice(2)).join(' '))}</td><td class="num">${r.ms}</td></tr>`).join('')}</tbody></table></div>`:'<p class="st-empty">Inte provat. Provet kör kärnan och den oberoende fältmodellen i samma process, en tågväg i taget.</p>')
+    +`<div class="st-toolbar" style="border-top:1px solid var(--kr-line);border-bottom:0">${b44ish('Prova i simulatorn','data-test',busy)}</div>`,{right:tr?(tr.ok===tr.total?pill('Godkänt · beräknat',''):pill(`${tr.total-tr.ok} misslyckade`,'red')):pill('Inte provat','amber')});
+  const activate=card('Aktivera',`<div style="padding:12px 16px;display:flex;flex-direction:column;gap:10px"><span>${act.allowed?pill('Villkoren är uppfyllda','',true):pill(esc(act.reason),'amber')}</span>
+    <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:600;color:var(--kr-ink-2)">Underlag för ändringen<input id="st-reason" type="text" maxlength="500" placeholder="T.ex. Diagonala par bekräftade i ritningen och på banan" style="height:36px;padding:0 10px;border-radius:8px;border:1px solid var(--kr-line-2);background:var(--kr-panel-2);color:var(--kr-ink);font:13px var(--font)"></label>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">${b44ish('Aktivera regelversionen','data-activate',busy||!act.allowed,true)}${b44ish('Förkasta utkastet','data-discard',busy)}</div>
+    <span style="font-size:12.5px;color:var(--kr-mute)">Samma villkor som driftbindningarna: AIS, inga lås, färska rapporter. Kärnan läser om profilen, alla fältlägen blir okända och AIS kvarstår tills nya stoppbesked kommit. Ingen MGP-modul omprogrammeras.</span></div>`);
+  main.innerHTML=head+changes+`<div class="st-two"><div style="display:flex;flex-direction:column;gap:16px">${diff}${trial}</div><div style="display:flex;flex-direction:column;gap:16px">${probl}${activate}${versions}</div></div>`;
+  bindAndringar(main);
+}
+function b44ish(text,attr,disabled=false,primary=false){return `<button type="button" class="st-btn${primary?' st-btn-primary':''}" ${attr}${disabled?' disabled':''}>${esc(text)}</button>`;}
+function bindAndringar(main){
+  main.onclick=async e=>{
+    if(e.target.closest('[data-test]'))return draftApi('test');
+    if(e.target.closest('[data-discard]'))return draftApi('discard');
+    if(e.target.closest('[data-activate]'))return draftApi('activate',{reason:$('#st-reason')?.value||''});
+    const r=e.target.closest('[data-restore]');if(r)return draftApi('restore',{version:Number(r.dataset.restore)});
+  };
 }
 // ---------- Data ----------
 function renderData(main){
@@ -171,7 +225,8 @@ function renderGenomgang(main){
       ${model.crossovers.map(x=>`<li><span>${esc(x.crossing)} · förslag</span><span class="st-grow"></span><span class="mono">${esc(x.pairs.map(p=>p.join(' + ')).join(' och '))}</span>${pill('Förslag · ej uppmätt','amber')}</li>`).join('')}</ul>`,{foot:'Förslaget ändrar ingenting. Det blir ett regelutkast när regelspråket finns (steg 3).'})}`;
 }
 function renderLater(main){
-  const text=state.tab==='driftsattning'?'Mätning objekt för objekt, Lyssna, Kort och MGP och aktivering med skillnadslista kommer i steg 5. Tills dess finns Protokollinspelning och Driftinställningar i dagens admin.':'TrainMeet och Stream Deck flyttas in sist. De finns i dagens admin.';
+  if(state.tab==='driftsattning'){state.view='andringar';return renderAndringar(main);}
+  const text='TrainMeet och Stream Deck flyttas in sist. De finns i dagens admin.';
   main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">${esc(state.tab.toUpperCase())}</div><h1>${esc(TABS.find(t=>t.id===state.tab).label)}</h1><p>${esc(text)}</p></div></div>`;
 }
 // ---------- händelser ----------

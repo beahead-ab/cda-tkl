@@ -51,3 +51,19 @@ Logiken utan DOM ligger i `public/studio-model.js` och provas i `test/studio-vie
 **Validering och tillbakaläsning.** `validateRules` stoppar okända objekt, ogiltiga lägen, en växel i två följgrupper och regler som dagens kärna inte kan verkställa (`forbid` prövas först i steg 4, `detection`, `aspect` och `crossing` kommer i steg 6). `explainRule` återger varje regel på svenska, så att det som godkänns är det som faktiskt kommer att gälla.
 
 **I Studio** finns reglerna under Konfigurera → Regler, med klartext, objekt, var de verkställs, status och källa, och förslaget för X1 och X2 överst med sin effekt. Data-vyn har fått mängden Regler, och ett valt objekt filtrerar fram sina regler.
+
+## Steg 4: tågvägar ur modellen, utkast, simulatorprov och aktivering
+
+**Tillämpning.** `src/studio/apply.mjs` tar en regeluppsättning och en profil och ger den kompilerade profilen: fragmenten ur reglerna, tågvägarnas och alternativens växellägen omräknade som vägens växlar utvidgade med följreglerna, och samma omräkning för simulatorns skyddsvillkor och scenarier. Med dagens regler blir profil och simulatorprofil identiska med filerna. Programmeringsreläets adresser ägs fortfarande av driftbindningarna.
+
+**Utkast.** `src/studio/drafts.mjs` håller regelversionerna i `studio-rules.json` i tillståndskatalogen. Version 0 följer alltid den granskade grundprofilen. Ett utkast skapas från spårgrafens förslag eller genom återställning av en tidigare version, valideras, provas och aktiveras. Revisionskontroll med sessions-id som i driftbindningarna: ett annat fönster får "läs in senaste läget".
+
+**Simulatorprovet.** `src/studio/trial.mjs` kör kärnan och den oberoende fältmodellen i samma process, en tågväg i taget, med utkastets profil och utkastets simulatorprofil. Varje tågväg som ändras provas, plus ett urval oförändrade. Resultatet per tågväg är etablerad eller inte, med order och lås. Det är samma rigg som testerna använder, inte ett påstående.
+
+**Aktivering.** Kräver att utkastet validerar, att provet är kört på just den regeluppsättningen och gick igenom, ett skäl på 3–500 tecken, och samma driftvillkor som bindningarna: AIS, inga lås, färska rapporter. Kärnan får den kompilerade profilen genom samma `prepare`/`installRuntime` som bindningarna; reglerna läggs ovanpå bindningarnas profil, och bindningarnas aktivering tar med de aktiva reglerna. Den aktiverade simulatorprofilen skrivs till `studio-field-profile.json`, och den fristående simulatorn läser den vid start i stället för grundfilen, vilket motsvarar att MGP-korten programmerats om. Versioner kan återställas; återställningen är ett nytt utkast som provas och aktiveras som alla andra.
+
+**Förbjudna kombinationer.** Kärnan prövar nu `forbid`-regler i den aktiva profilen före varje manuell order och i varje tågvägskontroll. Utan sådana regler ändras ingenting, vilket testerna låser.
+
+**I Studio** finns allt under Driftsättning → Ändringar och aktivering: reglerna som läggs till och tas bort, skillnadslistan med kopplingar och tågvägar före och efter, valideringen, simulatorprovet med resultat per tågväg, aktiveringen med villkor och skäl, och versionshistoriken. Under Regler skapas utkastet av förslaget med en knapp. API: `POST /api/studio/drafts/{create,test,activate,discard,restore}`.
+
+Kvar till steg 5 och 6: chatten och AI-genomgången som ger regelkort ur fritext, mätningen mot MGP, och typerna detection, aspect och crossing.

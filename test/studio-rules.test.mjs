@@ -31,7 +31,7 @@ test('valideringen stoppar okända objekt, dubbla följgrupper och det kärnan i
   assert.ok(problems.includes('follow:Vx100+Vx999: Växeln Vx999 finns inte'));
   assert.ok(problems.includes('follow:Vx100+Vx999: Vx100 följer redan gruppen follow:Vx100+Vx101'));
   assert.ok(problems.includes('follow:Vx95+Vx96: Bara same med bothWays stöds av dagens kärna'));
-  assert.ok(problems.includes('forbid:1: Ogiltigt läge X') && problems.some(p => p.startsWith('forbid:1: forbid prövas inte')));
+  assert.ok(problems.includes('forbid:1: Ogiltigt läge X') && !problems.some(p => p.startsWith('forbid:1: forbid prövas inte')));
   assert.ok(problems.includes('aspect:1/5: aspect tas in i steg 6'));
   assert.throws(() => compileRules([...rules, { ...rules.find(r => r.id === 'condition:manual:vxv113'), id: 'condition:manual:dubblett' }], { turnoutNames: Object.keys(profile.turnouts) }), /Två manöverregler/);
 });

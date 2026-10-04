@@ -93,7 +93,7 @@ export function validateRules(rules, names) {
       if (r.requiredPosition && !POS.includes(r.requiredPosition)) add(r, `Ogiltigt läge ${r.requiredPosition}`);
     } else if (r.type === 'forbid') {
       for (const [o, p] of Object.entries(r.positions || {})) { if (!has(names.turnouts, o)) add(r, `Växeln ${o} finns inte`); if (!POS.includes(p)) add(r, `Ogiltigt läge ${p}`); }
-      add(r, 'forbid prövas inte av dagens kärna ännu (steg 4)');
+      if (!Object.keys(r.positions || {}).length) add(r, 'En förbjuden kombination behöver minst ett läge');
     } else add(r, `${r.type} tas in i steg 6`);
   }
   return problems;
@@ -154,4 +154,14 @@ export function proposeCrossoverRules(profile, rules, crossovers, companions) {
   const { coupled } = compileRules(next, { turnoutNames: Object.keys(profile.turnouts) });
   const diff = routeDiff(profile, coupled);
   return { proposals, replaces, coupled, effects: { routesChanged: diff.length, main: diff.filter(d => d.kind === 'main').length, shunt: diff.filter(d => d.kind === 'shunt').length, examples: diff.slice(0, 6) } };
+}
+
+// Förbjudna kombinationer prövas av kärnan före varje order: manuell manöver och tågväg.
+export function forbidReason(rules, settings) {
+  for (const r of rules || []) {
+    if (r.type !== 'forbid' || !isLive(r)) continue;
+    const entries = Object.entries(r.positions || {});
+    if (entries.length && entries.every(([o, p]) => settings[o] === p)) return `${entries.map(([o, p]) => `${o}=${p}`).join(' och ')} är en förbjuden kombination (${r.id}).`;
+  }
+  return null;
 }

@@ -29,7 +29,7 @@ export function buildStudioModel({profile,panel,studio}) {
   const deviations=(studio.deviations||[]).map((d,i)=>add({...d,kind:'deviation',id:'avv:'+d.id,code:d.id,order:i,objects:deviationObjects(d)}));
   const rules=[...(studio.rules?.rules||[]),...(studio.rules?.proposals||[])].map(r=>add({...r,kind:'rule',label:r.id,touches:[...(r.objects||(r.object?[r.object]:[])),...(r.requires?.blocks||[]),...(r.requires?.signals||[])]}));
   const rulesByObject=new Map();for(const r of rules)for(const o of r.touches)(rulesByObject.get(o)||rulesByObject.set(o,[]).get(o)).push(r.id);
-  return {objects,turnouts,signals,blocks,routes,modules,deviations,rules,rulesByObject,ruleEffects:studio.rules?.effects||null,ruleSource:studio.rules?.source||'',compiledIdentical:studio.rules?.compiledIdentical??null,counts:studio.counts,sourceHash:studio.sourceHash,companions:studio.companions,crossovers:studio.crossovers,detection:studio.detection,blocking:studio.blocking};
+  return {objects,turnouts,signals,blocks,routes,modules,deviations,rules,rulesByObject,ruleEffects:studio.rules?.effects||null,ruleSource:studio.rules?.source||'',compiledIdentical:studio.rules?.compiledIdentical??null,baseDiff:studio.rules?.baseDiff||null,drafts:studio.drafts||null,counts:studio.counts,sourceHash:studio.sourceHash,companions:studio.companions,crossovers:studio.crossovers,detection:studio.detection,blocking:studio.blocking};
 }
 export function deviationObjects(d){
   const out=new Set();

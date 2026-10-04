@@ -5,6 +5,7 @@ import { RoutePolicy } from './route-policy.mjs';
 import { OperatingControls } from './operating-controls.mjs';
 import { splitRouteAt } from './route-sections.mjs';
 import { boundaryCommandReason } from './yard-boundaries.mjs';
+import { forbidReason } from './studio/rules.mjs';
 import { YardControl } from './yard-control.mjs';
 
 const FIELD_ROWS = new Set(['report', 'transport']), FIELD_ORDERS = new Set(['order', 'permission']);
@@ -208,7 +209,10 @@ export class Engine extends EventEmitter {
   }
   // Candidate checks are read-only. Reserve and issue commands exactly once,
   // after a complete source-approved path has passed every live interlock.
+  // Rapporterade lägen för alla växlar med färsk rapport. Används för förbjudna kombinationer.
+  knownPositions(){const out={};for(const [n,s] of Object.entries(this.turnouts))if(this.fresh(s)&&['C','T'].includes(s.position))out[n]=s.position;return out;}
   checkRoute(def) {
+    const forbidden=forbidReason(this.profile.rules,{...Object.assign({},...this.routes.map(r=>r.turnouts)),...def.turnouts});if(forbidden)throw Error(forbidden);
     const operatingReason=this.operating.routeReason(def);if(operatingReason)throw Error(operatingReason);
     const blocked = def.blocks.find(b => this.trackBlocked(b));
     if (blocked) throw Error(`${blocked} är administrativt spärrat.`);
@@ -318,6 +322,7 @@ export class Engine extends EventEmitter {
     const names=this.profile.coupled?.[name]||[name];
     const boundaryReason=boundaryCommandReason(this.profile.yardBoundaries,names,position,operator,this.profile.yardArea?.turnouts);
     if(boundaryReason)throw Error(boundaryReason);
+    const forbidden=forbidReason(this.profile.rules,{...this.knownPositions(),...Object.fromEntries(names.map(n=>[n,position]))});if(forbidden)throw Error(forbidden);
     const condition=this.manualStatus(name,operator); if(!condition.allowed) throw Error(condition.reason);
     for (const n of condition.names) this.turnoutOrder(n, position);
   }
