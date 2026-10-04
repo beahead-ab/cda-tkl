@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {NAVIGATION_GROUPS,NAVIGATION_SECTIONS,REDIRECTS,resolveNavigation} from '../public/admin-navigation-model.js';
 
-const registered=['#trainmeet','#import','#import/upload','#import/edit','#tools/appearance','#tools/streamdeck','#tools/streamdeck/layout','#tools/journal',
+const registered=['#trainmeet','#tools/appearance','#tools/streamdeck','#tools/streamdeck/layout','#tools/journal',
   '#register','#register/station','#register/destinations','#register/presentation','#register/bindings','#register/object',
   '#advanced','#advanced/xml','#advanced/migration','#advanced/protocol','#advanced/update'];
 
@@ -38,8 +38,6 @@ test('every registered address resolves to one section with a page title of its 
   }
   assert.equal(titles.get('#tools/appearance'),'Utseende och ljud');
   assert.equal(titles.get('#tools/journal'),'Händelser');
-  assert.equal(titles.get('#import/upload'),'Importera tidtabell');
-  assert.equal(titles.get('#import/edit'),'Redigera tidtabell');
   assert.equal(titles.get('#register/destinations'),'Orter och telefonnummer');
   assert.equal(titles.get('#advanced/protocol'),'Protokollinspelning');
   assert.equal(resolveNavigation('#advanced/protocol').section.label,'Banan (LocoNet)');
@@ -50,16 +48,16 @@ test('every registered address resolves to one section with a page title of its 
   assert.equal(new Set(registered.filter(h=>h.startsWith('#register')).map(h=>titles.get(h))).size,5);
 });
 
-test('TrainMeet carries the timetable pages and its status; object pages fall back to the register',()=>{
+test('TrainMeet carries its status, the local timetable is gone; object pages fall back to the register',()=>{
   const trainmeet=resolveNavigation('#trainmeet');
-  assert.equal(trainmeet.section.hash,'#trainmeet');assert.equal(trainmeet.tab.label,'Anslutning');assert.equal(trainmeet.exact,true);
+  assert.equal(trainmeet.section.hash,'#trainmeet');assert.deepEqual(trainmeet.section.tabs,[]);
   assert.equal(trainmeet.section.status,'menu-trainmeet-status');assert.equal(trainmeet.title,'TrainMeet');
-  assert.equal(resolveNavigation('#import').section.hash,'#trainmeet');
+  assert.equal(resolveNavigation('#import/upload').section,null,'no page of the local timetable is left');
   const object=resolveNavigation('#register/object');
   assert.equal(object.section.hash,'#register');assert.equal(object.tab.hash,'#register');assert.equal(object.exact,false);
   assert.equal(object.title,'Anläggningsregister');
-  const deep=resolveNavigation('#import/upload?x=1');
-  assert.equal(deep.tab.hash,'#import/upload');assert.equal(deep.exact,true);
+  const deep=resolveNavigation('#register/bindings?x=1');
+  assert.equal(deep.tab.hash,'#register/bindings');assert.equal(deep.exact,true);
 });
 
 test('the panel and unknown addresses never activate a section',()=>{
