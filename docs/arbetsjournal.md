@@ -1198,3 +1198,14 @@ kalkylbladsredigeraren och källvalet är borttagna; TrainMeet är tidtabellens 
 csv-parse, read-excel-file, yauzl, saxes och fflate är borta. En sparad äldre tidtabell
 ligger kvar på disken men läses inte. Mergat som cda-tkl#7. 346 enhetsprov,
 10 integrationsprov, Chromium.
+
+## 4 oktober 2026, 0.57.0: Det pedagogiska lagret i Inställningar
+
+Steg 4 i installningar-plan.md, sista steget. Alla sex avsnitt (TrainMeet, Händelser,
+Utseende och ljud, Stream Deck, Banan (LocoNet), Uppdatering) har en räckviddsrad, rader
+med etikett · värde · grå konsekvens, status som text och form (● ▲ ○), konsekvensen
+bredvid varje knapp och en fotnot om vad avsnittet inte gör. Redigeringsdialogerna har
+Spara släckt med "Inget ändrat" tills något ändras. Händelser visar hela serverns journal
+(150 senaste) med sök, och Banan har anslutningsstatus överst med kommunikationsvyn
+bakom en knapp. Mergat som cda-tkl#8. 346 enhetsprov, 10 integrationsprov, Chromium på
+1280 och 390 px.
