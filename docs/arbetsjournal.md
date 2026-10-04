@@ -1152,3 +1152,13 @@ passavslutet vid frånkoppling borttagna. En äldre server som fortfarande kräv
 TrainMeet Server behöver uppdateras. 369 enhetsprov och 11 integrationsprov godkända.
 Serverändringen mergades som trainmeet-server#113 (version 2.5.0) och är enligt Casper i drift på
 server.trainmeet.app. TKL-ändringen mergades som cda-tkl#2 och ges ut som 0.52.0.
+
+## 4 oktober 2026, 0.53.0: grannens läge och Flytta hit
+
+Del av TrainMeet Server #115, där obemannade stationer nu sköts automatiskt
+(trainmeet-server#118) och TMBox frågar FLYTTA 93 HIT? (#117). Logiken ligger i
+servern. I TKL visar varje sträckruta under Tågklarering vem som svarar i andra
+änden (automatisk, bemannad, kontakt saknas) när servern skickar `station_modes`,
+och ett tåg som inte syns komma har knappen Flytta hit efter en fråga. Mergat som
+cda-tkl#3. Servern är enligt Casper uppdaterad på server.trainmeet.app.
+369 enhetsprov och 11 integrationsprov godkända.
