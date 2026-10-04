@@ -247,3 +247,12 @@ test('field reports and orders cannot push operating events out of the journal t
   assert.ok(s.events.length<=150&&s.operatingEvents.length<=150);
   assert.deepEqual(s.operatingEvents.map(e=>e.id),[...s.operatingEvents].sort((a,b)=>b.id-a.id).map(e=>e.id),'newest first');
 });
+
+test('a long disconnection is written to the journal once, not at every reconnect attempt', () => {
+  const e = new Engine(profile), lost = () => e.journal.filter(x => x.kind === 'disconnected').length;
+  for (let i = 0; i < 5; i++) e.connection(false);
+  assert.equal(lost(), 1);
+  e.connection(true); e.connection(false); e.connection(false);
+  assert.equal(lost(), 2);
+  assert.equal(e.journal.filter(x => x.kind === 'connected').length, 1);
+});
