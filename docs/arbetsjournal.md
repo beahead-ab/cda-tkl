@@ -1180,3 +1180,12 @@ lokalt läge, uppdateringschipen, Tågklarering och hopfällbart Tågvägar, Sp�
 Linjer, Tågnummer och Modellklocka. Övre högra hörnet är tomt och Drift-gruppen borta ur
 adminfönstret; `#tools/operations…` öppnar fliken. Mergat som cda-tkl#5. 369 enhetsprov,
 11 integrationsprov, Chromium på 1440, 1920 och 390 px.
+
+## 4 oktober 2026, 0.55.0: Inställningar i tre grupper
+
+Steg 2 i installningar-plan.md. Adminfönstret heter Inställningar, med grupperna Träffen
+(TrainMeet, Händelser), Den här datorn (Utseende och ljud, Stream Deck, Banan (LocoNet),
+Uppdatering) och Anläggningen (Anläggning). Översiktssidan Avancerat är borta; `#advanced`
+leder till registret och `#tools` till Utseende och ljud. Tidtabellssidorna ligger
+tillfälligt under TrainMeet till steg 3. Mergat som cda-tkl#6. 371 enhetsprov, 11
+integrationsprov, Chromium på 1440 och 390 px.
