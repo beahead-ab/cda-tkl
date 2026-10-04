@@ -1170,3 +1170,13 @@ Uppdatering (cda-tkl#4): installerad och senaste version, och på Mac eller PC r
 för Terminal eller PowerShell med Kopiera raden, alltid synlig. Pi:n får Uppdatera
 nu där, webbdriften en förklaring. Provat i Chromium mot en lokal TKL som Mac-
 installation; 369 enhetsprov godkända.
+
+## 4 oktober 2026, 0.54.0: Drift som flik i nederraden
+
+Steg 1 i installningar-plan.md, efter Caspers beslut att ställverket är Drift och att
+adminfönstret blir Inställningar. Nederraden har flikarna Händelser, Spårbeläggning och
+Drift. Drift har knapparna Återställ, Styra RBG, Alla signaler i stopp, Nödåterta alla och
+lokalt läge, uppdateringschipen, Tågklarering och hopfällbart Tågvägar, Spårspärrar,
+Linjer, Tågnummer och Modellklocka. Övre högra hörnet är tomt och Drift-gruppen borta ur
+adminfönstret; `#tools/operations…` öppnar fliken. Mergat som cda-tkl#5. 369 enhetsprov,
+11 integrationsprov, Chromium på 1440, 1920 och 390 px.
