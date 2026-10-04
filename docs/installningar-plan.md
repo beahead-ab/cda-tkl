@@ -91,7 +91,7 @@ Fem regler som hålls i varje avsnitt, hämtade från serverns Inställningar:
 
 ## Byggordning, en release per steg
 
-1. **Nederradens Drift-flik.** Klareringen och knapparna flyttar in, övre högra hörnet
+1. **Nederradens Drift-flik** (byggd 4 oktober, se panel-och-verktyg.md; Ljud av/på ligger tills vidare kvar under Utseende). Klareringen och knapparna flyttar in, övre högra hörnet
    töms, gruppen Drift tas bort ur adminfönstret. Händelser och Spårbeläggning rörs
    inte. Störst nytta, lägst risk: inga serverändringar.
 2. **Inställningar.** Nytt namn, tre grupper, avsnitten flyttas till sina platser,
