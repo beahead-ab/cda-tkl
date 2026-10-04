@@ -1209,3 +1209,11 @@ Spara släckt med "Inget ändrat" tills något ändras. Händelser visar hela se
 (150 senaste) med sök, och Banan har anslutningsstatus överst med kommunikationsvyn
 bakom en knapp. Mergat som cda-tkl#8. 346 enhetsprov, 10 integrationsprov, Chromium på
 1280 och 390 px.
+
+## 4 oktober 2026, 0.57.1: LocoNet frånkopplad en gång i journalen
+
+Varje misslyckat återanslutningsförsök, ungefär en gång i sekunden, skrev "LocoNet
+frånkopplad" i journalen och trängde ut allt annat ur de 150 raderna i Inställningar →
+Händelser och nederraden. Nu skrivs raden bara när anslutningen bryts; hanteringen av
+läget vid varje rapport är oförändrad. Mergat som cda-tkl#9. 347 enhetsprov,
+10 integrationsprov, lokalt prov utan bana.
