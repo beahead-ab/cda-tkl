@@ -8,12 +8,12 @@ const pill=(t,k='',dashed=false)=>`<span class="st-pill${k?' st-pill-'+k:''}${da
 const kv=rows=>`<dl class="st-kv">${rows.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
 const card=(title,body,{right='',foot='',id=''}={})=>`<section class="st-card"${id?` id="${id}"`:''}><div class="st-card-head"><h2>${title}</h2><span class="st-grow"></span>${right}</div>${body}${foot?`<div class="st-card-foot">${foot}</div>`:''}</section>`;
 const NAV={
-  konfigurera:[['Stationsplan','#konfigurera'],['Signaler','#data?set=signaler','66'],['Växlar','#data?set=vaxlar','49'],['Spårledningar','#data?set=sparledningar','197'],['Regler',null,'steg 3'],['Övriga delar',null,'steg 3'],['Prova i simulatorn',null,'steg 4']],
+  konfigurera:[['Stationsplan','#konfigurera'],['Signaler','#data?set=signaler','66'],['Växlar','#data?set=vaxlar','49'],['Spårledningar','#data?set=sparledningar','197'],['Regler','#konfigurera/regler','53'],['Övriga delar',null,'steg 6'],['Prova i simulatorn',null,'steg 4']],
   data:[['Alla mängder','#data'],['Tågvägar','#data?set=tagvagar','340']],
   genomgang:[['Avvikelser och genomgång','#genomgang']],
   driftsattning:[['Mät objekt',null,'steg 5'],['Lyssna','/#advanced/protocol','i dag'],['Kort och MGP',null,'steg 5'],['Ändringar och aktivering','/#register/bindings','i dag']],
   anslutning:[['TrainMeet','/#trainmeet','i dag'],['Stream Deck','/#tools/streamdeck','i dag']]};
-const state={tab:'konfigurera',sets:new Set(['vaxlar','signaler','sparledningar','tagvagar']),object:null,layers:new Set(['numbers','signalNames','labels','dev']),width:2600,search:{}};
+const state={tab:'konfigurera',view:'',sets:new Set(['vaxlar','signaler','sparledningar','tagvagar']),object:null,layers:new Set(['numbers','signalNames','labels','dev']),width:2600,search:{}};
 let model,geo,plan,order;
 const session={load(){try{return JSON.parse(sessionStorage.getItem('studio-state')||'{}');}catch{return {};}},save(){try{sessionStorage.setItem('studio-state',JSON.stringify({sets:[...state.sets],object:state.object,layers:[...state.layers],width:state.width}));}catch{}}};
 
@@ -25,22 +25,23 @@ async function load(){
   geo=planGeometry(panel,undetected);
   $('#st-mode').textContent=profile.commissioned?'DRIFT':'SIMULERING · ingen hårdvara';
   const saved=session.load(),link=parseHash(location.hash);
-  state.tab=link.tab;if(link.sets.length)state.sets=new Set(link.sets);else if(saved.sets)state.sets=new Set(saved.sets);
+  state.tab=link.tab;state.view=link.view;if(link.sets.length)state.sets=new Set(link.sets);else if(saved.sets)state.sets=new Set(saved.sets);
   state.object=link.object&&model.objects.has(link.object)?link.object:(saved.object&&model.objects.has(saved.object)?saved.object:null);
   if(saved.layers)state.layers=new Set(saved.layers);if(saved.width)state.width=saved.width;
   render();
 }
-function go(tab){state.tab=tab;history.replaceState(null,'',`#${tab}`);render();}
+function go(tab){state.tab=tab;state.view='';history.replaceState(null,'',`#${tab}`);render();}
 function select(id,{center=true}={}){if(!model.objects.has(id))return;state.object=id;session.save();if(state.tab==='konfigurera'){plan?.select(id,{center});renderObjectCard();}else render();}
 function render(){
   $('#st-tabs').innerHTML=TABS.map(t=>`<a href="#${t.id}"${t.id===state.tab?' aria-current="page"':''}>${t.label}</a>`).join('');
+  const here='#'+state.tab+(state.view?'/'+state.view:'')+(state.tab==='data'&&state.sets.size===1?'?set='+[...state.sets][0]:'');
   $('#st-nav').innerHTML=`<span class="st-nav-title">${esc(TABS.find(t=>t.id===state.tab).label.toUpperCase())}</span>`+NAV[state.tab].map(([label,href,count])=>{
-    const current=href&&href.replace('#','')===(state.tab+(state.tab==='data'&&[...state.sets].length===1&&href.includes('set=')?'?set='+[...state.sets][0]:''))||(href==='#'+state.tab&&!(state.tab==='data'&&href.includes('set=')));
     if(!href)return `<span class="st-nav-item" title="Kommer i ett senare steg">${esc(label)}<span class="st-count">${esc(count||'')}</span></span>`;
+    const current=href===here||(href==='#'+state.tab&&!state.view&&!(state.tab==='data'&&state.sets.size===1));
     return `<a href="${href}"${current?' aria-current="page"':''}>${esc(label)}${count?`<span class="st-count">${esc(count)}</span>`:''}</a>`;}).join('')
     +`<div class="st-nav-foot"><strong>Ett utkast för hela stationen</strong><br>Allt här är läst ur källorna. Ingenting är uppmätt och ingenting ändras härifrån.<br><span class="mono">profil ${esc(model.sourceHash.slice(0,12))}</span></div>`;
   const main=$('#st-main');
-  if(state.tab==='konfigurera')renderKonfigurera(main);else if(state.tab==='data')renderData(main);else if(state.tab==='genomgang')renderGenomgang(main);else renderLater(main);
+  if(state.tab==='konfigurera'&&state.view==='regler')renderRegler(main);else if(state.tab==='konfigurera')renderKonfigurera(main);else if(state.tab==='data')renderData(main);else if(state.tab==='genomgang')renderGenomgang(main);else renderLater(main);
 }
 function stats(){const c=model.counts,d=model.detection;return `<div class="st-stats">
   <div class="st-stat"><small>Växlar</small><b>${c.turnouts}</b><small>Adresser ur JMRI, ej uppmätta</small></div><div class="st-stat"><small>Signaler</small><b>${c.signals}</b><small>Bänkadresser i simulatorn</small></div>
@@ -100,6 +101,30 @@ function deviationCard(){
   const rows=model.deviations.slice(0,8).map(d=>`<li><span>${esc(d.title)}</span><span class="st-grow"></span><span class="st-count">${d.count}</span>${d.blocking?pill('Blockerar','red'):''}</li>`).join('');
   return card(`Avvikelser <span class="mono" style="color:var(--kr-red)">${model.deviations.length}</span>`,`<ul class="st-list">${rows}</ul>`,{right:`<a class="st-btn" href="#genomgang">Visa alla</a>`,foot:`Räknas om vid varje läsning. ${model.blocking} blockerar driftsättning.`});
 }
+// ---------- Regler ----------
+function ruleCard(r){
+  const st={active:['Gäller',''],unresolved:['Olöst','amber'],proposal:['Förslag · ej uppmätt','amber'],unsupported:['Stöds inte','red']}[r.status]||[r.status,''];
+  const objs=r.touches.filter(x=>model.objects.has(x)).slice(0,8).map(x=>`<button type="button" data-select="${esc(x)}" class="mono" style="border:0;background:transparent;color:var(--kr-blue);padding:0;font-weight:700">${esc(x)}</button>`).join(', ');
+  const src=[r.source?.jmri,r.source?.button,r.source?.studio&&'Studio '+r.source.studio+(r.source.crossing?' · '+r.source.crossing:'')].filter(Boolean).map(esc).join(' · ');
+  return `<div class="st-card" style="border-style:${r.status==='proposal'?'dashed':'solid'}"><div class="st-card-head"><span class="st-eyebrow">${esc(r.typeLabel.toUpperCase())}${r.trigger?' · '+esc({manual:'MANUELL MANÖVER',line:'LINJESPÄRR',programming:'PROGRAMMERINGSSPÅR'}[r.trigger]||r.trigger.toUpperCase()):''}</span><span class="st-grow"></span>${pill('Verkställs i '+r.runsInLabel)}${pill(st[0],st[1],r.status==='proposal')}</div>
+    <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px"><b style="font:700 15px var(--mono)">${esc(r.id.replace(/^(follow|authority|condition):(manual:|line:)?/,''))}</b><span style="font-size:13.5px">${esc(r.explain)}</span>
+    <span style="font-size:12.5px;color:var(--kr-ink-2)">Objekt: ${objs||'–'}${r.touches.length>8?` … (${r.touches.length})`:''} · Tågvägar ${mono((r.routes||[]).length)}${src?' · Källa '+src:''}</span>
+    ${r.problems?.length?`<span style="font-size:12.5px;color:var(--kr-red)">${r.problems.map(esc).join(' · ')}</span>`:''}${r.replaces?.length?`<span style="font-size:12.5px;color:var(--kr-amber)">Ersätter ${r.replaces.map(x=>esc(x.replace('follow:',''))).join(', ')}</span>`:''}</div></div>`;
+}
+function renderRegler(main){
+  const rules=model.rules.filter(r=>r.status!=='proposal'),props=model.rules.filter(r=>r.status==='proposal'),f=state.ruleType||'alla';
+  const types=[['alla','Alla',rules.length],['follow','Följer',rules.filter(r=>r.type==='follow').length],['authority','Manöverrätt',rules.filter(r=>r.type==='authority').length],['condition','Villkor',rules.filter(r=>r.type==='condition').length]];
+  const shown=rules.filter(r=>f==='alla'||r.type===f);
+  const eff=model.ruleEffects;
+  main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">KONFIGURERA · REGLER</div><h1>Regler</h1><p>Det som gäller i dag uttryckt i regelspråket, kompilerat tillbaka till kärnans fragment utan skillnad. Inget här ändrar driften.</p></div><span class="st-grow"></span>${model.compiledIdentical?pill('Kompilerar identiskt med profilen','',true):pill('Kompileringen skiljer sig från profilen','red')}</div>
+    <div class="st-stats">${types.map(([k,l,n])=>`<div class="st-stat"><small>${l}</small><b>${n}</b></div>`).join('')}<div class="st-stat amber"><small>Förslag</small><b>${props.length}</b><small>${eff?eff.routesChanged+' tågvägar ändrar växelläge':''}</small></div></div>
+    ${props.length?card('Förslag ur spårgrafen · dubbelkorsväxlarna',`<div style="padding:12px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:12px">${props.map(ruleCard).join('')}</div>`
+      +(eff?`<div class="st-note">Med förslaget ändrar ${eff.routesChanged} tågvägar växelläge (${eff.main} huvud, ${eff.shunt} växling). Exempel: ${eff.examples.slice(0,3).map(e=>`<b>${esc(e.label)}</b> ${esc(Object.entries(e.before).map(([k,v])=>k.slice(2)+' '+v).join(' '))} → ${esc(Object.entries(e.after).map(([k,v])=>k.slice(2)+' '+v).join(' '))}`).join('; ')}.</div>`:''),
+      {right:pill('Ej uppmätt','amber'),foot:'Förslaget blir ett utkast som provas i simulatorn och aktiveras med skillnadslista i steg 4. Tågvägstabellen är oförändrad tills dess.'}):''}
+    <div class="st-chips">${types.map(([k,l,n])=>`<button type="button" class="st-chip-set" data-rule-type="${k}" aria-pressed="${f===k}">${l}<b>${n}</b></button>`).join('')}<span class="st-grow"></span><span class="st-eyebrow">KÄLLA · ${esc(model.ruleSource.toUpperCase())}</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:12px">${shown.map(ruleCard).join('')}</div>`;
+  main.onclick=e=>{const t=e.target.closest('[data-rule-type]');if(t){state.ruleType=t.dataset.ruleType;renderRegler(main);return;}const b=e.target.closest('[data-select]');if(b){state.object=b.dataset.select;session.save();location.hash='#konfigurera?objekt='+encodeURIComponent(b.dataset.select);}};
+}
 // ---------- Data ----------
 function renderData(main){
   const f=state.object&&model.objects.has(state.object)?model.objects.get(state.object):null;
@@ -150,7 +175,7 @@ function renderLater(main){
   main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">${esc(state.tab.toUpperCase())}</div><h1>${esc(TABS.find(t=>t.id===state.tab).label)}</h1><p>${esc(text)}</p></div></div>`;
 }
 // ---------- händelser ----------
-window.addEventListener('hashchange',()=>{const link=parseHash(location.hash);if(link.object&&model?.objects.has(link.object))state.object=link.object;if(link.sets.length)state.sets=new Set(link.sets);state.tab=link.tab;session.save();render();});
+window.addEventListener('hashchange',()=>{const link=parseHash(location.hash);if(link.object&&model?.objects.has(link.object))state.object=link.object;if(link.sets.length)state.sets=new Set(link.sets);state.tab=link.tab;state.view=link.view;session.save();render();});
 $('#st-search').addEventListener('keydown',e=>{if(e.key!=='Enter'||!model)return;const q=e.target.value.trim().toLocaleLowerCase('sv');const hit=[...model.objects.keys()].find(id=>id.toLocaleLowerCase('sv')===q)||[...model.objects.values()].find(o=>(o.label||'').toLocaleLowerCase('sv')===q)?.id;if(hit){select(hit);if(state.tab!=='konfigurera'&&state.tab!=='data')go('konfigurera');}});
 $('#st-theme').addEventListener('click',e=>{const light=document.documentElement.dataset.theme!=='light';document.documentElement.dataset.theme=light?'light':'';e.currentTarget.textContent=light?'Mörkt':'Ljust';e.currentTarget.setAttribute('aria-pressed',light);try{localStorage.setItem('studio-theme',light?'light':'dark');}catch{}});
 try{if(localStorage.getItem('studio-theme')==='light'){document.documentElement.dataset.theme='light';$('#st-theme').textContent='Mörkt';}}catch{}

@@ -2,7 +2,7 @@
 // En last (driftprofil, panelgeometri och /api/studio) blir objekt, relationer och projektioner.
 export const SETS=[
   {id:'vaxlar',label:'Växlar',kind:'turnout'},{id:'signaler',label:'Signaler',kind:'signal'},{id:'sparledningar',label:'Spårledningar',kind:'block'},
-  {id:'tagvagar',label:'Tågvägar',kind:'route'},{id:'moduler',label:'Moduler',kind:'module'},{id:'avvikelser',label:'Avvikelser',kind:'deviation'}];
+  {id:'tagvagar',label:'Tågvägar',kind:'route'},{id:'regler',label:'Regler',kind:'rule'},{id:'moduler',label:'Moduler',kind:'module'},{id:'avvikelser',label:'Avvikelser',kind:'deviation'}];
 export const TABS=[{id:'konfigurera',label:'Konfigurera'},{id:'data',label:'Data'},{id:'genomgang',label:'Genomgång'},{id:'driftsattning',label:'Driftsättning'},{id:'anslutning',label:'Anslutning'}];
 export const SHAPE_LABEL={single:'En ingång',any:'Någon av flera',all:'Alla av flera',turnoutPart:'Växelberoende del',noRule:'Sensor utan regel',noSensor:'Utan sensor'};
 const OBJECT_RE=/^(Vx\d+|\d+\/\d+|S[A-Z0-9a-z]+|Slokstall\d|SL\d\w*|SU\d\w*|SN\d\w*|SG\d+|M\d\d|LS\d+|LT\d+|V\d|X\d)$/;
@@ -27,7 +27,9 @@ export function buildStudioModel({profile,panel,studio}) {
   for(const s of signals)for(const src of s.source){const m=moduleOf(src);if(m&&!m.objects.includes(s.id))m.objects.push(s.id);}
   for(const b of blocks)for(const d of b.section?.inputDetails||[]){const m=d.module&&objects.get(d.module);if(m&&!m.objects.includes(b.id))m.objects.push(b.id);}
   const deviations=(studio.deviations||[]).map((d,i)=>add({...d,kind:'deviation',id:'avv:'+d.id,code:d.id,order:i,objects:deviationObjects(d)}));
-  return {objects,turnouts,signals,blocks,routes,modules,deviations,counts:studio.counts,sourceHash:studio.sourceHash,companions:studio.companions,crossovers:studio.crossovers,detection:studio.detection,blocking:studio.blocking};
+  const rules=[...(studio.rules?.rules||[]),...(studio.rules?.proposals||[])].map(r=>add({...r,kind:'rule',label:r.id,touches:[...(r.objects||(r.object?[r.object]:[])),...(r.requires?.blocks||[]),...(r.requires?.signals||[])]}));
+  const rulesByObject=new Map();for(const r of rules)for(const o of r.touches)(rulesByObject.get(o)||rulesByObject.set(o,[]).get(o)).push(r.id);
+  return {objects,turnouts,signals,blocks,routes,modules,deviations,rules,rulesByObject,ruleEffects:studio.rules?.effects||null,ruleSource:studio.rules?.source||'',compiledIdentical:studio.rules?.compiledIdentical??null,counts:studio.counts,sourceHash:studio.sourceHash,companions:studio.companions,crossovers:studio.crossovers,detection:studio.detection,blocking:studio.blocking};
 }
 export function deviationObjects(d){
   const out=new Set();
@@ -36,7 +38,7 @@ export function deviationObjects(d){
 }
 // Alla objekt som hör ihop med ett valt objekt. Det är korsfiltret i Data-vyn.
 export function relationsFor(model,id){
-  const o=model.objects.get(id),empty={routes:[],turnouts:[],signals:[],blocks:[],modules:[],deviations:[]};
+  const o=model.objects.get(id),empty={routes:[],turnouts:[],signals:[],blocks:[],modules:[],deviations:[],rules:[]};
   if(!o)return empty;
   const uniq=a=>[...new Set(a)];
   let routeIds=[];
@@ -44,6 +46,7 @@ export function relationsFor(model,id){
   else if(o.kind==='signal')routeIds=uniq([...o.routes,...o.guards]);
   else if(o.kind==='module')routeIds=uniq(o.objects.flatMap(x=>model.objects.get(x)?.routes||[]));
   else if(o.kind==='deviation')routeIds=uniq(o.objects.flatMap(x=>model.objects.get(x)?.routes||[]));
+  else if(o.kind==='rule')routeIds=o.routes||[];
   else routeIds=o.routes;
   const rs=routeIds.map(r=>model.objects.get(r)).filter(Boolean);
   const rel={routes:routeIds,
@@ -51,16 +54,18 @@ export function relationsFor(model,id){
     signals:uniq(o.kind==='module'?o.objects.filter(x=>model.objects.get(x)?.kind==='signal'):o.kind==='deviation'?o.objects.filter(x=>model.objects.get(x)?.kind==='signal'):rs.flatMap(r=>[...r.signals,...r.guardSignals])),
     blocks:uniq(o.kind==='deviation'?o.objects.filter(x=>model.objects.get(x)?.kind==='block'):o.kind==='module'?o.objects.filter(x=>model.objects.get(x)?.kind==='block'):rs.flatMap(r=>r.blocks)),
     modules:uniq(o.kind==='turnout'?[o.source?.module?.name].filter(Boolean):o.kind==='signal'?o.source.map(s=>s.module?.name).filter(Boolean):o.kind==='block'?(o.section?.inputDetails||[]).map(d=>d.module).filter(Boolean):o.kind==='module'?[o.id]:[]),
-    deviations:model.deviations.filter(d=>d.objects.includes(id)||(o.kind==='module'&&d.objects.some(x=>o.objects.includes(x)))).map(d=>d.id)};
+    deviations:model.deviations.filter(d=>d.objects.includes(id)||(o.kind==='module'&&d.objects.some(x=>o.objects.includes(x)))).map(d=>d.id),
+    rules:o.kind==='rule'?[o.id]:o.kind==='route'?model.rules.filter(r=>(r.routes||[]).includes(o.id)).map(r=>r.id):uniq((o.kind==='module'?o.objects:[id]).flatMap(x=>model.rulesByObject.get(x)||[]))};
+  if(o.kind==='rule'){const t=o.touches;rel.turnouts=uniq([...t.filter(x=>model.objects.get(x)?.kind==='turnout'),...rel.turnouts]);rel.blocks=uniq([...t.filter(x=>model.objects.get(x)?.kind==='block'),...rel.blocks]);rel.signals=uniq([...t.filter(x=>model.objects.get(x)?.kind==='signal'),...rel.signals]);}
   if(o.kind==='turnout'){rel.turnouts=uniq([o.id,...o.companions,...rel.turnouts]);rel.blocks=uniq([o.block,...rel.blocks]);}
   if(o.kind==='block')rel.blocks=uniq([o.id,...rel.blocks]);
   if(o.kind==='signal')rel.signals=uniq([o.id,...rel.signals]);
   return rel;
 }
-const KIND_TO_SET={turnout:'vaxlar',signal:'signaler',block:'sparledningar',route:'tagvagar',module:'moduler',deviation:'avvikelser'};
-const REL_KEY={vaxlar:'turnouts',signaler:'signals',sparledningar:'blocks',tagvagar:'routes',moduler:'modules',avvikelser:'deviations'};
+const KIND_TO_SET={turnout:'vaxlar',signal:'signaler',block:'sparledningar',route:'tagvagar',rule:'regler',module:'moduler',deviation:'avvikelser'};
+const REL_KEY={vaxlar:'turnouts',signaler:'signals',sparledningar:'blocks',tagvagar:'routes',regler:'rules',moduler:'modules',avvikelser:'deviations'};
 export function rowsFor(model,setId,filterId=null){
-  const all={vaxlar:model.turnouts,signaler:model.signals,sparledningar:model.blocks,tagvagar:model.routes,moduler:model.modules,avvikelser:model.deviations}[setId]||[];
+  const all={vaxlar:model.turnouts,signaler:model.signals,sparledningar:model.blocks,tagvagar:model.routes,regler:model.rules,moduler:model.modules,avvikelser:model.deviations}[setId]||[];
   if(!filterId||!model.objects.has(filterId))return all;
   const keep=new Set(relationsFor(model,filterId)[REL_KEY[setId]]);
   return all.filter(o=>keep.has(o.id));
@@ -73,6 +78,7 @@ export function columnsFor(setId){
     signaler:[['id','Signal'],['mastType','Masttyp'],['address','Adress'],['outputs','Utgångar i XML'],['cleared','Klareras i','num'],['guard','Skydd i','num'],['status','Status']],
     sparledningar:[['id','Spårledning'],['sourceSensor','Källsensor'],['inputs','Ingångar'],['shape','Regelform'],['address','Adress'],['routes','Tågvägar','num'],['status','Status']],
     tagvagar:[['label','Tågväg'],['routeKind','Typ'],['turnouts','Växlar med läge'],['blocks','Spårledningar i ordning'],['signals','Klareras'],['guardSignals','Skydd'],['source','Källa']],
+    regler:[['id','Regel'],['typeLabel','Typ'],['explain','Klartext'],['touches','Objekt'],['runsInLabel','Verkställs i'],['routes','Tågvägar','num'],['status','Status'],['source','Källa']],
     moduler:[['id','Modul'],['refs','Ref.','num'],['outputs','Utgångar','num'],['inputs','Ingångar','num'],['turnouts','Växlar'],['signals','Signaler'],['status','Status']],
     avvikelser:[['title','Avvikelse'],['count','Antal','num'],['resolvedBy','Löses av'],['items','Objekt'],['blocking','Blockerar']]}[setId]||[];
 }
@@ -83,6 +89,7 @@ export function cellsFor(model,setId,o){
     case 'signaler':return {id:o.id,mastType:o.mastType,address:n(o.loconet.order),outputs:o.source.map(s=>s.system+' '+(s.module?.name||'')).join(', '),cleared:n(o.routes.length),guard:n(o.guards.length),status:o.status};
     case 'sparledningar':{const s=o.section;return {id:o.id,sourceSensor:n(o.sourceSensor||'–'),inputs:s?list(s.inputs,4):'',shape:s?SHAPE_LABEL[s.shape]||s.shape:'',address:n(o.loconet.report),routes:n(o.routes.length),status:s&&(s.shape==='noRule'||s.shape==='noSensor')&&s.track?'Ingen detektering':o.status};}
     case 'tagvagar':return {label:o.label,routeKind:o.routeKind==='main'?'huvud':'växling',turnouts:Object.entries(o.turnouts).map(([k,v])=>k.slice(2)+' '+v).join(' '),blocks:list(o.blocks,8),signals:o.signals.join(', '),guardSignals:list(o.guardSignals,6),source:(o.source?.rules||[]).join(', ')};
+    case 'regler':return {id:o.id,typeLabel:o.typeLabel,explain:o.explain,touches:list(o.touches,6),runsInLabel:o.runsInLabel,routes:n((o.routes||[]).length),status:{active:'Gäller',unresolved:'Olöst',proposal:'Förslag',unsupported:'Stöds inte'}[o.status]||o.status,source:[o.source?.jmri,o.source?.profile,o.source?.studio].filter(Boolean).join(' · ')};
     case 'moduler':return {id:o.id,refs:n(o.refs),outputs:n(o.outputs),inputs:n(o.inputs),turnouts:list(o.turnouts,5),signals:list(o.signals,5),status:o.status};
     case 'avvikelser':return {title:o.title,count:n(o.count),resolvedBy:o.resolvedBy+(o.note?' · '+o.note:''),items:list(o.items||[],5),blocking:o.blocking?'Ja':''};
   }
@@ -95,9 +102,9 @@ export function walkOrder(panel){
 }
 // Djuplänken läses en gång: #data?set=tagvagar,signaler&objekt=Vx100
 export function parseHash(hash){
-  const [path,query]=String(hash||'').replace(/^#/,'').split('?'),params=new URLSearchParams(query||'');
-  const tab=TABS.some(t=>t.id===path)?path:'konfigurera';
-  return {tab,sets:(params.get('set')||'').split(',').filter(s=>SETS.some(x=>x.id===s)),object:params.get('objekt')||null};
+  const [path,query]=String(hash||'').replace(/^#/,'').split('?'),params=new URLSearchParams(query||''),[head,view='']=path.split('/');
+  const tab=TABS.some(t=>t.id===head)?head:'konfigurera';
+  return {tab,view,sets:(params.get('set')||'').split(',').filter(s=>SETS.some(x=>x.id===s)),object:params.get('objekt')||null};
 }
 // Geometrin ur panel.json, ritad av Studios egen kod. Ramen och dekorationerna utgår.
 export function planGeometry(panel,undetected=new Set()){

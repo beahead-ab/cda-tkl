@@ -35,3 +35,19 @@ Sidan `/studio.html` är Studios eget skal, bredvid dagens admin och länkad dä
 **Genomgång.** Avvikelselistan med objekt och länkar till Data och planen, samt kompisparen enligt spårgrafen och förslaget för X1 och X2. AI-genomgången kommer i steg 4.
 
 Logiken utan DOM ligger i `public/studio-model.js` och provas i `test/studio-view.test.mjs` mot den riktiga lasten. Sidan har inga inline-skript och laddar bara egna filer, så den går under serverns CSP. Ingen redigering finns ännu: steg 3 är regelspråket för det som redan finns.
+
+## Steg 3: regelspråket för det som redan finns
+
+`src/studio/rules.mjs` är regelspråket med sju typer: `follow`, `forbid`, `authority`, `condition`, `detection`, `aspect` och `crossing`. Steg 3 fyller de tre som täcker dagens beteende och låter kompilatorn bevisa att ingenting ändras.
+
+**Dagens profil som regler.** `rulesFromProfile` ger 53 regler: 7 `follow` ur `coupled`, 3 `authority` ur `yardBoundaries`, 35 `condition` med utlösaren manuell manöver ur `manualPolicies.rules`, 7 `condition` för linjespärrarna och 1 för programmeringsspåret ur `operatingControls`. Fem manuella villkor bär statusen olöst, precis som i dag.
+
+**Kompilatorn.** `compileRules` ger tillbaka `coupled`, `manualPolicies` (med `byTurnout` och `boundaryOverrides`), `yardBoundaries` och `operatingControls`. `node scripts/make-rules.mjs` skriver `profiles/charlottendal-rules.json` och faller om kompileringen skiljer sig från profilen på någon punkt. `--check` ingår i `verify:operations`, så filen kan inte bli inaktuell obemärkt. Kärnan läser fortfarande fragmenten, och de är bevisat identiska, så beteendet är exakt detsamma: alla tester är gröna utan att en rad i `src/engine.mjs` ändrats.
+
+**Tågvägarna ur reglerna.** `recomputeRouteTurnouts` visar att varje tågvägs växellägen är vägens egna växlar utvidgade med följreglerna. Det reproducerar alla 340 rader i tabellen. Därmed kan Studio visa vad en ändrad följregel skulle göra, utan att röra den frysta tabellen.
+
+**Förslaget för X1 och X2.** `proposeCrossoverRules` byter de två paren som inte bildar förbindelse mot de fyra diagonala paren ur spårgrafen. Effekten är räknad: 137 tågvägar ändrar växellägen, 104 huvudtågvägar och 33 växlingsvägar. De 67 diagonala vägarna får rätt par, och de 70 raka vägarna låser de diagonala växlarna rakt i stället för grannen på samma spår. Förslaget har status förslag, kompileras inte och ändrar ingenting. Det blir ett utkast med simulatorprov och aktivering i steg 4.
+
+**Validering och tillbakaläsning.** `validateRules` stoppar okända objekt, ogiltiga lägen, en växel i två följgrupper och regler som dagens kärna inte kan verkställa (`forbid` prövas först i steg 4, `detection`, `aspect` och `crossing` kommer i steg 6). `explainRule` återger varje regel på svenska, så att det som godkänns är det som faktiskt kommer att gälla.
+
+**I Studio** finns reglerna under Konfigurera → Regler, med klartext, objekt, var de verkställs, status och källa, och förslaget för X1 och X2 överst med sin effekt. Data-vyn har fått mängden Regler, och ett valt objekt filtrerar fram sina regler.

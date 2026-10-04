@@ -40,6 +40,8 @@ export function loadSources(root = ROOT) {
     xml: parseLayoutXml(readText('public/data/source/Cda60.xml', root)) };
   for (const [name, doc] of [['route-coverage', sources.coverage], ['indications', sources.indications], ['migration', sources.migration]])
     if (doc.sourceHash !== profile.sourceHash) throw Error(`${name}.json hör till en annan källversion än driftprofilen.`);
+  try { const rules = readJson('profiles/charlottendal-rules.json', root); if (rules.sourceHash !== profile.sourceHash) throw Error('charlottendal-rules.json hör till en annan källversion än driftprofilen.'); sources.rules = rules; }
+  catch (e) { if (e.code !== 'ENOENT') throw e; sources.rules = null; }
   cache = { root: root.href, sources };
   return sources;
 }

@@ -14,7 +14,9 @@ test('lasten till Studio-sidan bär objekten, sektionerna och relationerna utan 
 });
 
 test('modellen i webbläsaren räknar relationerna ur samma last', () => {
-  assert.equal(model.objects.size, 49 + 66 + 197 + 340 + 12 + 18);
+  assert.equal(model.objects.size, 49 + 66 + 197 + 340 + 12 + 18 + 53 + 4);
+  assert.equal(relationsFor(model, 'Vx100').rules.sort().join(','), 'condition:manual:vxv100/101,follow:Vx100+Vx101');
+  assert.ok(rowsFor(model, 'regler', 'Vx140').some(r => r.id === 'follow:Vx140+Vx143'));
   const vx100 = relationsFor(model, 'Vx100');
   assert.equal(vx100.routes.length, 132); assert.ok(vx100.turnouts.includes('Vx101')); assert.deepEqual(vx100.modules, ['M02']);
   const s15 = relationsFor(model, '1/5');
@@ -40,8 +42,9 @@ test('Data-vyns projektioner filtreras genom relationerna och har kolumner för 
 test('gå igenom går från vänster till höger genom 115 objekt och djuplänken läses', () => {
   const order = walkOrder(sources.panel);
   assert.equal(order.length, 115); assert.ok(order.indexOf('Vx95') < order.indexOf('Vx100')); assert.ok(order.indexOf('Vx100') < order.indexOf('Vx140'));
-  assert.deepEqual(parseHash('#data?set=tagvagar,signaler&objekt=Vx100'), { tab: 'data', sets: ['tagvagar', 'signaler'], object: 'Vx100' });
-  assert.deepEqual(parseHash(''), { tab: 'konfigurera', sets: [], object: null });
+  assert.deepEqual(parseHash('#data?set=tagvagar,signaler&objekt=Vx100'), { tab: 'data', view: '', sets: ['tagvagar', 'signaler'], object: 'Vx100' });
+  assert.deepEqual(parseHash(''), { tab: 'konfigurera', view: '', sets: [], object: null });
+  assert.equal(parseHash('#konfigurera/regler').view, 'regler');
   assert.equal(parseHash('#nonsense?set=fel').tab, 'konfigurera');
 });
 

@@ -4,7 +4,8 @@ import { buildRegistry } from './registry.mjs';
 import { companionCheck, crossoverProposals } from './graph.mjs';
 import { detectionInventory } from './detection.mjs';
 import { deviations, signalRelationCoverage } from './deviations.mjs';
-export { loadSources, buildRegistry, companionCheck, crossoverProposals, detectionInventory, deviations, signalRelationCoverage };
+import { rulesFromProfile, compileRules, profileFragments, validateRules, explainRule, ruleRoutes, proposeCrossoverRules, TYPE_LABEL, RUNS_IN } from './rules.mjs';
+export { loadSources, buildRegistry, companionCheck, crossoverProposals, detectionInventory, deviations, signalRelationCoverage, rulesFromProfile, compileRules, profileFragments, validateRules, explainRule, proposeCrossoverRules };
 
 export function studioOverview(sources = loadSources()) {
   const registry = buildRegistry(sources), det = detectionInventory(sources), rows = deviations(sources);
@@ -21,7 +22,21 @@ export function studioOverview(sources = loadSources()) {
 // Hela lasten för Studio-sidan: översikten plus objekten, spåravkänningens sektioner och signalrelationerna utan tågväg.
 export function studioData(sources = loadSources()) {
   const registry = buildRegistry(sources), det = detectionInventory(sources), rel = signalRelationCoverage(sources);
-  return { ...studioOverview(sources), objects: { turnouts: registry.turnouts, signals: registry.signals, blocks: registry.blocks, modules: registry.modules },
+  return { ...studioOverview(sources), objects: { turnouts: registry.turnouts, signals: registry.signals, blocks: registry.blocks, modules: registry.modules }, rules: studioRules(sources),
     detection: { ...studioOverview(sources).detection, sections: det.sections, unboundInputs: det.inputs.unbound, sharedInputs: det.inputs.shared },
     signalRelations: { total: rel.total, matched: rel.matched.length, unmatched: rel.unmatched } };
+}
+
+// Reglerna som Studio visar: regelfilen om den finns, annars härledda ur profilen. Varje regel får klartext,
+// berörda tågvägar och valideringens anmärkningar. Förslagen för X1 och X2 kommer ur spårgrafen.
+export function studioRules(sources = loadSources()) {
+  const { profile } = sources, rules = sources.rules?.rules || rulesFromProfile(profile);
+  const names = { turnouts: new Set(Object.keys(profile.turnouts)), blocks: new Set(Object.keys(profile.blocks)), signals: new Set(Object.keys(profile.signals)), lines: new Set(Object.keys(profile.operatingControls.lines)) };
+  const problems = validateRules(rules, names);
+  const compiled = compileRules(rules, { turnoutNames: Object.keys(profile.turnouts) });
+  const identical = JSON.stringify(compiled) === JSON.stringify(JSON.parse(JSON.stringify(profileFragments(profile))));
+  const decorate = r => ({ ...r, typeLabel: TYPE_LABEL[r.type], runsInLabel: RUNS_IN[r.type], explain: explainRule(r), routes: ruleRoutes(profile, r), problems: problems.filter(p => p.rule === r.id).map(p => p.problem) });
+  const proposal = proposeCrossoverRules(profile, rules, crossoverProposals(sources.xml), companionCheck(sources.xml, profile.coupled));
+  return { rules: rules.map(decorate), proposals: proposal.proposals.map(decorate), replaces: proposal.replaces, effects: proposal.effects,
+    source: sources.rules ? 'profiles/charlottendal-rules.json' : 'härledda ur driftprofilen', compiledIdentical: identical, problems };
 }
