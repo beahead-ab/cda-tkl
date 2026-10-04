@@ -23,3 +23,15 @@ skriver objektregistrets mängder, kompisparen enligt spårgrafen, spåravkänni
 ## Avgränsning
 
 Steg 1 ritar ingenting och har ingen redigering. Nästa steg enligt planen är vyn utan redigering och Data-vyn, därefter regelspråket för det som redan finns med kravet att alla befintliga tester förblir gröna.
+
+## Steg 2: vyn och Data-vyn
+
+Sidan `/studio.html` är Studios eget skal, bredvid dagens admin och länkad därifrån under Anläggning → Objekt och regler. Den ligger bakom samma inloggning som resten av TKL, läser allt i tre anrop (`/api/config`, `/api/studio` och `/data/panel.json`) och gör resten som projektioner i webbläsaren. Fem flikar: Konfigurera, Data, Genomgång, Driftsättning och Anslutning. De två sista pekar tills vidare på dagens adminsidor.
+
+**Konfigurera · Stationsplan.** Planen ritas ur `panel.json` av Studios egen kod (`public/studio-plan.js`), utan ställverkets ram och dekorationer, 2600 px bred som standard och rullbar i sidled med minikarta. Lager: växelnummer, signalnamn, spårledningar, adresser, MGP-modul och avvikelser. Spår utan detektering i källan är streckade, avvikelser är röda punkter. *Gå igenom* stegar genom de 115 växlarna och signalerna från vänster till höger. Objektkortet visar bindning, modulhypotes, kompis med grafkontrollens svar, tågvägar och status, och leder vidare till Data.
+
+**Data.** Sex mängder som chips med antal: växlar, signaler, spårledningar, tågvägar, moduler och avvikelser. Relationerna är avnormaliserade kolumner, som i TrainMeet Cloud. Ett valt objekt filtrerar alla mängder genom sina relationer, och högerkolumnen visar relationerna med antal. Djuplänken `#data?set=tagvagar,signaler&objekt=Vx100` läses en gång; därefter lever valet i sessionslagring.
+
+**Genomgång.** Avvikelselistan med objekt och länkar till Data och planen, samt kompisparen enligt spårgrafen och förslaget för X1 och X2. AI-genomgången kommer i steg 4.
+
+Logiken utan DOM ligger i `public/studio-model.js` och provas i `test/studio-view.test.mjs` mot den riktiga lasten. Sidan har inga inline-skript och laddar bara egna filer, så den går under serverns CSP. Ingen redigering finns ännu: steg 3 är regelspråket för det som redan finns.

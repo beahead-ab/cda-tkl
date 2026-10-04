@@ -26,7 +26,7 @@ export function createAdminNavigation({account=false}={}) {
     const row=document.createElement('div');row.className='admin-tab-row';row.hidden=true;row.dataset.section=section.hash;
     for(const tab of section.tabs){
       const a=document.createElement('a');a.textContent=tab.label;
-      if(tab.external){a.id=tab.external;a.hidden=true;a.target='_blank';a.rel='noopener';}
+      if(tab.external){a.id=tab.external;a.hidden=!tab.href;if(tab.href)a.href=prefix+tab.href.slice(1);a.target='_blank';a.rel='noopener';}
       else{a.href=prefix+tab.hash;a.dataset.navHash=tab.hash;if(tab.id)a.id=tab.id;}
       if(tab.status){const status=document.createElement('span');status.id=tab.status;a.append(status);}
       row.append(a);

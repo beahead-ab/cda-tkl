@@ -17,3 +17,11 @@ export function studioOverview(sources = loadSources()) {
     signalRelations: (r => ({ total: r.total, matched: r.matched.length, unmatched: r.unmatched.length }))(signalRelationCoverage(sources)),
     deviations: rows, blocking: rows.filter(r => r.blocking && r.count > 0).length };
 }
+
+// Hela lasten för Studio-sidan: översikten plus objekten, spåravkänningens sektioner och signalrelationerna utan tågväg.
+export function studioData(sources = loadSources()) {
+  const registry = buildRegistry(sources), det = detectionInventory(sources), rel = signalRelationCoverage(sources);
+  return { ...studioOverview(sources), objects: { turnouts: registry.turnouts, signals: registry.signals, blocks: registry.blocks, modules: registry.modules },
+    detection: { ...studioOverview(sources).detection, sections: det.sections, unboundInputs: det.inputs.unbound, sharedInputs: det.inputs.shared },
+    signalRelations: { total: rel.total, matched: rel.matched.length, unmatched: rel.unmatched } };
+}

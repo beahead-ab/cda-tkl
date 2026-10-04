@@ -26,7 +26,8 @@ export const NAVIGATION_SECTIONS=[
     {hash:'#register/station',label:'Anläggningsöversikt'},
     {hash:'#register/destinations',label:'Orter och telefon',title:'Orter och telefonnummer'},
     {hash:'#register/presentation',label:'Visningsinställningar'},
-    {hash:'#register/bindings',label:'Driftinställningar'}]},
+    {hash:'#register/bindings',label:'Driftinställningar'},
+    {external:'studio-link',href:'/studio.html',label:'Objekt och regler ↗'}]},
   {hash:'#advanced',label:'Avancerat',id:'advanced-tab',title:'Avancerat',tabs:[
     {hash:'#advanced',label:'Avancerat'},
     {hash:'#advanced/xml',label:'XML-granskning'},

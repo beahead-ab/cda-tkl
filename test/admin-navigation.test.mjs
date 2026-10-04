@@ -11,7 +11,7 @@ test('the rail has seven entries in the agreed order and every tab keeps an exis
   assert.deepEqual(NAVIGATION_SECTIONS.map(s=>s.label),['Drift','Tidtabeller','Händelser','Utseende','Stream Deck','Anläggning','Avancerat']);
   for(const section of NAVIGATION_SECTIONS){
     for(const tab of section.tabs){
-      if(tab.external){assert.equal(tab.external,'field-link');continue;}
+      if(tab.external){assert.ok(['field-link','studio-link'].includes(tab.external));if(tab.href)assert.equal(tab.href,'/studio.html');continue;}
       const allowed=[section.hash,...(section.members||[])];
       assert.ok(allowed.some(base=>tab.hash===base||tab.hash.startsWith(base+'/')),`${tab.hash} belongs to ${section.hash}`);
       assert.ok(registered.includes(tab.hash),`${tab.hash} is a registered workspace`);
