@@ -1189,3 +1189,12 @@ Uppdatering) och Anläggningen (Anläggning). Översiktssidan Avancerat är bort
 leder till registret och `#tools` till Utseende och ljud. Tidtabellssidorna ligger
 tillfälligt under TrainMeet till steg 3. Mergat som cda-tkl#6. 371 enhetsprov, 11
 integrationsprov, Chromium på 1440 och 390 px.
+
+## 4 oktober 2026, 0.56.0: Lokal tidtabell borttagen
+
+Steg 3 i installningar-plan.md. Manuell tidtabell, Excel/CSV- och AI-import,
+kalkylbladsredigeraren och källvalet är borttagna; TrainMeet är tidtabellens enda källa.
+`/api/timetable-import` finns inte längre, `#import…` leder till TrainMeet och beroendena
+csv-parse, read-excel-file, yauzl, saxes och fflate är borta. En sparad äldre tidtabell
+ligger kvar på disken men läses inte. Mergat som cda-tkl#7. 346 enhetsprov,
+10 integrationsprov, Chromium.
