@@ -15,8 +15,8 @@ test('0.45: the console row is gone and the push buttons are chips in the status
 
 test('0.45: the right column has a Spårbeläggning tab that widens the column on wide screens',()=>{
   assert.match(events,/data-view="occupancy"/);
-  assert.match(css,/#panel-bottom\[data-right=occupancy\] :is\(#ev-content,\.ev-filters\)\{display:none\}/);
-  assert.match(css,/@media\(min-width:1800px\)[^{]*\{#panel-bottom\[data-right=occupancy\]\{grid-template-columns:minmax\(0,1fr\) 820px\}\}/);
+  assert.match(css,/#panel-bottom:is\(\[data-right=occupancy\],\[data-right=drift\]\) :is\(#ev-content,\.ev-filters\)\{display:none\}/);
+  assert.match(css,/@media\(min-width:1800px\)[^{]*\{#panel-bottom:is\(\[data-right=occupancy\],\[data-right=drift\]\)\{grid-template-columns:minmax\(0,1fr\) 820px\}\}/);
   assert.match(css,/\.occ-bar\.occ-now\{color:#f5d76e\}/);
 });
 
@@ -54,3 +54,21 @@ test('0.50.0: CHARLOTTENDAL in its own status row, no zoom, no simulation chip, 
   assert.ok(!fs.existsSync(new URL('../public/panel-zoom.js',import.meta.url)));
 });
 
+test('Drift tab: operating parts live in the bottom row, nothing in the frame or the admin window',()=>{
+  const app=fs.readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
+  const clearance=fs.readFileSync(new URL('../public/clearance.js',import.meta.url),'utf8');
+  const nav=fs.readFileSync(new URL('../public/admin-navigation-model.js',import.meta.url),'utf8');
+  assert.match(events,/data-view="drift"[^>]*>Drift<span id="drift-tab-count"/);
+  assert.match(console_,/drift\.id='panel-drift'/);
+  // Återställ, Styra RBG, stop, emergency and local mode are the tab's buttons.
+  assert.match(console_,/actions\.append\(\$\('panel-quick-actions'\),\$\('all-stop'\),\$\('reset-ais'\),\$\('emergency-cancel'\),\$\('toggle-authority'\)\)/);
+  // The update chips leave the frame for the same row.
+  assert.match(app,/drift-actions'\)\?\.append\(\.\.\.headRight\.children\);headRight\.remove\(\)/);
+  // A clearance request counts on the tab and brings it forward unless a tab was just picked.
+  assert.match(clearance,/getElementById\('drift-tab-count'\)/);
+  assert.match(events,/if\(auto&&Date\.now\(\)-chosenAt<15000\)return/);
+  // The old Drift pages are addresses into the tab, not pages of the admin window.
+  assert.match(console_,/#tools\\\/operations/);
+  assert.doesNotMatch(nav,/'#tools\/operations'/);
+  assert.match(css,/#panel-bottom:not\(\[data-right=drift\]\) #panel-drift\{display:none\}/);
+});

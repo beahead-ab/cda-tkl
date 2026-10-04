@@ -429,3 +429,17 @@ fönster decket samtidigt, Macappen och en flik, så att båda skickade varje tr
   fönster och tar över när det stängs eller direkt med **Styr härifrån**. Fönstret som lämnar ifrån
   sig decken släcker dem inte, så att det nya fönstrets bilder står kvar. Låset gäller per adress:
   `127.0.0.1` och `localhost` räknas som olika, och där skyddar avsikten.
+
+## Drift som tredje flik i nederraden (steg 1 i installningar-plan.md)
+
+Nederradens högra kolumn har tre flikar: Händelser, Spårbeläggning och Drift. Drift har
+överst knapparna Återställ, Styra RBG, Alla signaler i stopp, Nödåterta alla och Spärra
+lokal manövrering, och när det gäller uppdateringschipet och "Ny version · ladda om".
+Därunder manöverläget i text, Tågklarering och de hopfällbara delarna Tågvägar,
+Spårspärrar, Linjer och programmeringsspår, Tågnummer och Modellklocka.
+
+Ställverkets övre högra hörn är tomt; ramen visar bara CHARLOTTENDAL och statuschipet.
+Gruppen Drift finns inte längre i adminfönstret. Adresserna `#tools/operations…` öppnar
+motsvarande del av fliken, så bokmärken fungerar. En ny klareringsförfrågan räknas på
+fliken, "Drift 2", och tar fram fliken om operatören inte valt en annan flik de senaste
+15 sekunderna. Elementen och deras händelser är desamma som förut; bara platsen är ny.
