@@ -1162,3 +1162,11 @@ servern. I TKL visar varje sträckruta under Tågklarering vem som svarar i andr
 och ett tåg som inte syns komma har knappen Flytta hit efter en fråga. Mergat som
 cda-tkl#3. Servern är enligt Casper uppdaterad på server.trainmeet.app.
 369 enhetsprov och 11 integrationsprov godkända.
+
+## 4 oktober 2026, 0.53.1: uppdateringsraden i gränssnittet
+
+Casper ville kunna kopiera uppdateringsraden direkt ur TKL. Ny sida Avancerat →
+Uppdatering (cda-tkl#4): installerad och senaste version, och på Mac eller PC raden
+för Terminal eller PowerShell med Kopiera raden, alltid synlig. Pi:n får Uppdatera
+nu där, webbdriften en förklaring. Provat i Chromium mot en lokal TKL som Mac-
+installation; 369 enhetsprov godkända.
