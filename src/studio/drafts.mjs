@@ -54,6 +54,13 @@ export class StudioDrafts {
     this.check(data); if (this.data.draft) fail('Det finns redan ett utkast. Granska eller kasta det först.', 409);
     let rules;
     if (data.source === 'proposal') { const { proposals, replaces } = this.proposal(); if (!proposals.length) fail('Det finns inget förslag att göra utkast av.'); rules = [...this.activeRules().filter(r => !replaces.includes(r.id)), ...proposals.map(p => ({ ...strip(p), status: 'active' }))]; }
+    else if (Array.isArray(data.add)) {
+      // Från chatten eller genomgången: nya regler ovanpå de aktiva, minus dem de ersätter.
+      if (!data.add.length) fail('Inga regler att lägga till.');
+      if (data.add.some(r => !r || typeof r.id !== 'string' || typeof r.type !== 'string')) fail('Ogiltigt regelkort.');
+      const replaces = (Array.isArray(data.replaces) ? data.replaces : []).map(String);
+      rules = [...this.activeRules().filter(r => !replaces.includes(r.id)), ...data.add.map(r => ({ ...strip(r), status: 'active' }))];
+    }
     else if (Array.isArray(data.rules)) rules = data.rules.map(strip);
     else fail('Ange källa för utkastet: proposal eller rules.');
     const note = String(data.note || '').trim().slice(0, 500); if (/[\u0000-\u001f]/.test(note)) fail('Ogiltig anteckning.');

@@ -84,6 +84,7 @@ export function validateRules(rules, names) {
       if (!has(names.turnouts, r.object)) add(r, `Växeln ${r.object} finns inte`);
       for (const p of [...(r.tkl || []), ...(r.ranger || [])]) if (!POS.includes(p)) add(r, `Ogiltigt läge ${p}`);
       if (!r.ranger?.length) add(r, 'Rangeraren behöver minst ett tillåtet läge');
+      if (!r.detail?.ports) add(r, 'Portarna mot rangerbangården är inte kända för växeln; bara gränsväxlarna i källan kan få manöverrätt');
     } else if (r.type === 'condition') {
       if (!['manual', 'line', 'programming', 'route'].includes(r.trigger)) add(r, `Okänd utlösare ${r.trigger}`);
       if (r.trigger === 'manual' || r.trigger === 'programming') for (const o of objs) if (!has(names.turnouts, o)) add(r, `Växeln ${o} finns inte`);
@@ -102,7 +103,7 @@ export function validateRules(rules, names) {
 // Tillbakaläsning på svenska: det här är vad som faktiskt kommer att gälla.
 export function explainRule(r) {
   if (r.type === 'follow') return `${list(r.objects)} läggs alltid lika. En order till den ena går till båda, och en tågväg låser båda.`;
-  if (r.type === 'authority') { const legs = r.detail?.tklLegs?.join(' och ') || '?'; return `${r.object}: TKL får lägga ${r.tkl.join(' och ')}, rangeraren bara ${r.ranger.join(' och ')}. I ${r.ranger[0]} är ben ${legs} mot TKL:s område frånkopplat.`; }
+  if (r.type === 'authority') { const legs = r.detail?.tklLegs?.join(' och ') || '?'; return `${r.object}: TKL får lägga ${(r.tkl || []).join(' och ') || '?'}, rangeraren bara ${(r.ranger || []).join(' och ') || '?'}. I ${r.ranger?.[0] ?? '?'} är ben ${legs} mot TKL:s område frånkopplat.`; }
   if (r.type === 'condition' && r.trigger === 'manual') {
     const q = r.requires; const parts = [];
     if (q.blocks?.length) parts.push(`${list(q.blocks)} ${q.blocks.length > 1 ? 'är fria' : 'är fri'}`);
@@ -164,4 +165,18 @@ export function forbidReason(rules, settings) {
     if (entries.length && entries.every(([o, p]) => settings[o] === p)) return `${entries.map(([o, p]) => `${o}=${p}`).join(' och ')} är en förbjuden kombination (${r.id}).`;
   }
   return null;
+}
+
+// Vilka aktiva regler en ny regel tar över: samma id, en följregel som delar växel, en manöverregel som delar växel,
+// eller manöverrätten för samma växel. Det är det utkastet tar bort när regeln läggs till.
+export function replacedBy(newRules, rules) {
+  const out = new Set();
+  for (const n of newRules) for (const r of rules || []) {
+    if (r.id === n.id) { out.add(r.id); continue; }
+    if (!isLive(r)) continue;
+    if (n.type === 'follow' && r.type === 'follow' && r.objects.some(o => n.objects.includes(o))) out.add(r.id);
+    if (n.type === 'condition' && n.trigger === 'manual' && r.type === 'condition' && r.trigger === 'manual' && r.objects.some(o => n.objects.includes(o))) out.add(r.id);
+    if (n.type === 'authority' && r.type === 'authority' && r.object === n.object) out.add(r.id);
+  }
+  return [...out];
 }

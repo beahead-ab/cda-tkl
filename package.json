@@ -22,6 +22,7 @@
     "verify:operations": "python3 scripts/import-operations.py --check && node scripts/make-network-profile.mjs --check && node scripts/make-rules.mjs --check && node scripts/make-migration.mjs --check && node scripts/make-train-fields.mjs --check && python3 scripts/make-signal-catalog.py --check && node scripts/make-indications.mjs --check && node scripts/make-signal-endpoints.mjs --check"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.131.0",
     "csv-parse": "7.0.2",
     "jose": "6.2.12",
     "read-excel-file": "9.3.10",

@@ -4,6 +4,7 @@ export const SETS=[
   {id:'vaxlar',label:'Växlar',kind:'turnout'},{id:'signaler',label:'Signaler',kind:'signal'},{id:'sparledningar',label:'Spårledningar',kind:'block'},
   {id:'tagvagar',label:'Tågvägar',kind:'route'},{id:'regler',label:'Regler',kind:'rule'},{id:'moduler',label:'Moduler',kind:'module'},{id:'avvikelser',label:'Avvikelser',kind:'deviation'}];
 export const TABS=[{id:'konfigurera',label:'Konfigurera'},{id:'data',label:'Data'},{id:'genomgang',label:'Genomgång'},{id:'driftsattning',label:'Driftsättning'},{id:'anslutning',label:'Anslutning'}];
+export const CARD_TYPES=['förslag','saknas','beslut','underlag'],CARD_LABEL={förslag:'Förslag',saknas:'Saknas',beslut:'Beslut',underlag:'Underlag'},TYPE_CLASS={förslag:'st-type-forslag',saknas:'st-type-saknas',beslut:'st-type-beslut',underlag:'st-type-underlag'};
 export const SHAPE_LABEL={single:'En ingång',any:'Någon av flera',all:'Alla av flera',turnoutPart:'Växelberoende del',noRule:'Sensor utan regel',noSensor:'Utan sensor'};
 const OBJECT_RE=/^(Vx\d+|\d+\/\d+|S[A-Z0-9a-z]+|Slokstall\d|SL\d\w*|SU\d\w*|SN\d\w*|SG\d+|M\d\d|LS\d+|LT\d+|V\d|X\d)$/;
 
@@ -29,7 +30,7 @@ export function buildStudioModel({profile,panel,studio}) {
   const deviations=(studio.deviations||[]).map((d,i)=>add({...d,kind:'deviation',id:'avv:'+d.id,code:d.id,order:i,objects:deviationObjects(d)}));
   const rules=[...(studio.rules?.rules||[]),...(studio.rules?.proposals||[])].map(r=>add({...r,kind:'rule',label:r.id,touches:[...(r.objects||(r.object?[r.object]:[])),...(r.requires?.blocks||[]),...(r.requires?.signals||[])]}));
   const rulesByObject=new Map();for(const r of rules)for(const o of r.touches)(rulesByObject.get(o)||rulesByObject.set(o,[]).get(o)).push(r.id);
-  return {objects,turnouts,signals,blocks,routes,modules,deviations,rules,rulesByObject,ruleEffects:studio.rules?.effects||null,ruleSource:studio.rules?.source||'',compiledIdentical:studio.rules?.compiledIdentical??null,baseDiff:studio.rules?.baseDiff||null,drafts:studio.drafts||null,counts:studio.counts,sourceHash:studio.sourceHash,companions:studio.companions,crossovers:studio.crossovers,detection:studio.detection,blocking:studio.blocking};
+  return {objects,turnouts,signals,blocks,routes,modules,deviations,rules,rulesByObject,ruleEffects:studio.rules?.effects||null,ruleSource:studio.rules?.source||'',compiledIdentical:studio.rules?.compiledIdentical??null,baseDiff:studio.rules?.baseDiff||null,drafts:studio.drafts||null,review:studio.review||null,counts:studio.counts,sourceHash:studio.sourceHash,companions:studio.companions,crossovers:studio.crossovers,detection:studio.detection,blocking:studio.blocking};
 }
 export function deviationObjects(d){
   const out=new Set();

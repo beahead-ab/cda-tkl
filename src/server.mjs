@@ -26,6 +26,8 @@ import { studioData, studioRules } from './studio/index.mjs';
 import { loadSources } from './studio/sources.mjs';
 import { rulesFromProfile } from './studio/rules.mjs';
 import { StudioDrafts } from './studio/drafts.mjs';
+import { StudioAssistant } from './studio/assistant.mjs';
+import { StudioReview } from './studio/review.mjs';
 import { spawn } from 'node:child_process';
 
 const baseProfile=loadProfile();
@@ -65,6 +67,9 @@ const studioSources=loadSources();
 const studioDrafts=new StudioDrafts({base:baseProfile,field:loadProfile('field',{activated:false}),rules:studioSources.rules?.rules||rulesFromProfile(baseProfile),storage,canActivate:activationStatus,
   prepare:(p,f)=>{storage.save('studio-field-profile.json',f);const next=createRuntime(p);return ()=>installRuntime(next);},
   proposal:()=>{const r=studioRules(studioSources,studioDrafts.activeRules());return {proposals:r.proposals,replaces:r.replaces};}});
+// Chatten och AI-genomgången: Claude API med nyckeln på servern. Webbläsaren talar bara med TKL.
+const studioAssistant=new StudioAssistant();
+const studioReview=new StudioReview({sources:studioSources,assistant:studioAssistant,storage,activeRules:()=>studioDrafts.activeRules(),baseProfile:()=>bindings.profile()});
 const trainMeet=new TrainMeet({storage,origin:process.env.CHARLOTTENDAL_TRAINMEET_ORIGIN||''});
 const timetableImport=new TimetableImport({storage,reader:new TimetableAI()});let importUploading=false;
 const destinations=new Destinations(storage);
@@ -108,7 +113,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
       if(url.pathname==='/api/communication')return json(res,{connection:connectionInfo(profile),connectionState:engine.connected?'connected':'disconnected',expectations:commandExpectations(profile,engine.snapshot()),trace:protocolTrace});
-      if(url.pathname==='/api/studio')return json(res,{...studioData(studioSources,studioDrafts.activeRules()),drafts:studioDrafts.view(bindings.profile())});
+      if(url.pathname==='/api/studio')return json(res,{...studioData(studioSources,studioDrafts.activeRules()),drafts:studioDrafts.view(bindings.profile()),review:studioReview.view()});
       if(url.pathname==='/api/route-targets')return json(res,{targets:engine.routeTargets(url.searchParams.get('from'),url.searchParams.get('kind')||'main')});
       if(url.pathname==='/api/timetable-import')return json(res,timetableImport.view());
       const templateMatch=url.pathname.match(/^\/api\/timetable-import\/template\.(csv|xlsx)$/);
@@ -155,6 +160,8 @@ const server = http.createServer(async (req, res) => {
     }
     const data = await body(req,url.pathname==='/api/timetable-import/save'?2*1024*1024:65536);
     if(url.pathname.startsWith('/api/timetable-import/')){const command=url.pathname.slice('/api/timetable-import/'.length);if(!['manual','edit','append','save','sheet','activate','discard','select'].includes(command))return json(res,{error:'Okänd tidtabellsåtgärd'},404);return json(res,timetableImport[command](data));}
+    if(url.pathname==='/api/studio/assistant/propose')return json(res,await studioAssistant.propose(data,{profile:bindings.profile(),xml:studioSources.xml,activeRules:studioDrafts.activeRules(),names:studioDrafts.names}));
+    if(url.pathname==='/api/studio/review/run')return json(res,await studioReview.run());
     if(url.pathname.startsWith('/api/studio/drafts/')){const command=url.pathname.slice('/api/studio/drafts/'.length);if(!['create','test','activate','discard','restore'].includes(command))return json(res,{error:'Okänt utkastkommando'},404);const result=studioDrafts[command](data,bindings.profile());if(command==='activate')engine.log('studio','Regelversion '+result.activeVersion+' aktiverad. AIS kvarstår, alla rapporter läses in på nytt.');dirty=true;return json(res,result);}
     if(url.pathname.startsWith('/api/bindings/')){const command=url.pathname.slice('/api/bindings/'.length);if(!['save','discard','restore','activate'].includes(command))return json(res,{error:'Okänd driftinställning'},404);const result=bindings[command](data);engine.log('bindings',command==='activate'?'Driftprofil version '+result.activeVersion+' aktiverad. AIS kvarstår, alla rapporter läses in på nytt.':'Driftinställningarnas utkast uppdaterat.');dirty=true;return json(res,result);}
     if(url.pathname.startsWith('/api/streamdeck/')){

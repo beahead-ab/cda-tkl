@@ -1,5 +1,6 @@
-// Studio: Konfigurera (stationsplanen), Data (alla mängder med korsfilter) och Genomgång (avvikelserna). Bara läsning.
-import {buildStudioModel,SETS,TABS,relationsFor,rowsFor,columnsFor,cellsFor,walkOrder,parseHash,planGeometry,setOf,SHAPE_LABEL} from './studio-model.js';
+// Studio: Konfigurera (stationsplanen och reglerna med chatten), Data (alla mängder med korsfilter), Genomgång (korten och avvikelserna)
+// och Driftsättning (utkast, prov och aktivering). AI:n nås bara via TKL-servern; ingenting aktiveras härifrån utan utkast.
+import {buildStudioModel,SETS,TABS,relationsFor,rowsFor,columnsFor,cellsFor,walkOrder,parseHash,planGeometry,setOf,SHAPE_LABEL,CARD_TYPES,CARD_LABEL,TYPE_CLASS} from './studio-model.js';
 import {createPlan} from './studio-plan.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=(s,r=document)=>r.querySelector(s);
@@ -7,12 +8,12 @@ const mono=s=>`<span class="mono">${esc(s)}</span>`;
 const pill=(t,k='',dashed=false)=>`<span class="st-pill${k?' st-pill-'+k:''}${dashed?' st-pill-dashed':''}">${esc(t)}</span>`;
 const kv=rows=>`<dl class="st-kv">${rows.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
 const card=(title,body,{right='',foot='',id=''}={})=>`<section class="st-card"${id?` id="${id}"`:''}><div class="st-card-head"><h2>${title}</h2><span class="st-grow"></span>${right}</div>${body}${foot?`<div class="st-card-foot">${foot}</div>`:''}</section>`;
-const NAV={
-  konfigurera:[['Stationsplan','#konfigurera'],['Signaler','#data?set=signaler','66'],['Växlar','#data?set=vaxlar','49'],['Spårledningar','#data?set=sparledningar','197'],['Regler','#konfigurera/regler','53'],['Övriga delar',null,'steg 6'],['Prova i simulatorn','#driftsattning/andringar']],
+const NAV=()=>({
+  konfigurera:[['Stationsplan','#konfigurera'],['Signaler','#data?set=signaler','66'],['Växlar','#data?set=vaxlar','49'],['Spårledningar','#data?set=sparledningar','197'],['Regler och chatten','#konfigurera/regler',String(model.rules.filter(r=>r.status!=='proposal').length)],['Övriga delar',null,'steg 6'],['Prova i simulatorn','#driftsattning/andringar']],
   data:[['Alla mängder','#data'],['Tågvägar','#data?set=tagvagar','340']],
-  genomgang:[['Avvikelser och genomgång','#genomgang']],
+  genomgang:[['Genomgång och avvikelser','#genomgang',model.review?.last?String(model.review.last.cards.length)+' kort':'']],
   driftsattning:[['Ändringar och aktivering','#driftsattning/andringar'],['Mät objekt',null,'steg 5'],['Lyssna','/#advanced/protocol','i dag'],['Kort och MGP',null,'steg 5'],['Driftbindningar','/#register/bindings','i dag']],
-  anslutning:[['TrainMeet','/#trainmeet','i dag'],['Stream Deck','/#tools/streamdeck','i dag']]};
+  anslutning:[['TrainMeet','/#trainmeet','i dag'],['Stream Deck','/#tools/streamdeck','i dag']]});
 const state={tab:'konfigurera',view:'',sets:new Set(['vaxlar','signaler','sparledningar','tagvagar']),object:null,layers:new Set(['numbers','signalNames','labels','dev']),width:2600,search:{}};
 let model,geo,plan,order;
 const session={load(){try{return JSON.parse(sessionStorage.getItem('studio-state')||'{}');}catch{return {};}},save(){try{sessionStorage.setItem('studio-state',JSON.stringify({sets:[...state.sets],object:state.object,layers:[...state.layers],width:state.width}));}catch{}}};
@@ -47,7 +48,7 @@ function select(id,{center=true}={}){if(!model.objects.has(id))return;state.obje
 function render(){
   $('#st-tabs').innerHTML=TABS.map(t=>`<a href="#${t.id}"${t.id===state.tab?' aria-current="page"':''}>${t.label}</a>`).join('');
   const here='#'+state.tab+(state.view?'/'+state.view:'')+(state.tab==='data'&&state.sets.size===1?'?set='+[...state.sets][0]:'');
-  $('#st-nav').innerHTML=`<span class="st-nav-title">${esc(TABS.find(t=>t.id===state.tab).label.toUpperCase())}</span>`+NAV[state.tab].map(([label,href,count])=>{
+  $('#st-nav').innerHTML=`<span class="st-nav-title">${esc(TABS.find(t=>t.id===state.tab).label.toUpperCase())}</span>`+NAV()[state.tab].map(([label,href,count])=>{
     if(!href)return `<span class="st-nav-item" title="Kommer i ett senare steg">${esc(label)}<span class="st-count">${esc(count||'')}</span></span>`;
     const current=href===here||(href==='#'+state.tab&&!state.view&&!(state.tab==='data'&&state.sets.size===1));
     return `<a href="${href}"${current?' aria-current="page"':''}>${esc(label)}${count?`<span class="st-count">${esc(count)}</span>`:''}</a>`;}).join('')
@@ -131,14 +132,17 @@ function renderRegler(main){
   const dr=model.drafts,ver=dr?.activeVersion||0,bd=model.baseDiff;
   const statusPill=ver?pill(`Regelversion ${ver} aktiv · ${bd?.fragments??0} kopplingar och ${bd?.routes??0} tågvägar skiljer sig från grundprofilen`,'amber'):model.compiledIdentical?pill('Kompilerar identiskt med grundprofilen','',true):pill('Kompileringen skiljer sig från profilen','red');
   const draftBtn=dr?.draft?`<a class="st-btn st-btn-primary" href="#driftsattning/andringar">Visa utkastet</a>`:props.length?`<button type="button" class="st-btn st-btn-primary" data-draft-from-proposal>Skapa utkast av förslaget</button>`:'';
-  main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">KONFIGURERA · REGLER</div><h1>Regler</h1><p>Det som gäller uttryckt i regelspråket, kompilerat till kärnans fragment. Inget här ändrar driften förrän ett utkast aktiveras.</p></div><span class="st-grow"></span>${statusPill}${draftBtn}</div>
+  main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">KONFIGURERA · REGLER</div><h1>Regler</h1><p>Det som gäller uttryckt i regelspråket, kompilerat till kärnans fragment. Beskriv en ny regel i fritext; inget här ändrar driften förrän ett utkast aktiveras.</p></div><span class="st-grow"></span>${statusPill}${draftBtn}</div>
+    ${renderBeskriv()}
     <div class="st-stats">${types.map(([k,l,n])=>`<div class="st-stat"><small>${l}</small><b>${n}</b></div>`).join('')}<div class="st-stat amber"><small>Förslag</small><b>${props.length}</b><small>${eff?eff.routesChanged+' tågvägar ändrar växelläge':''}</small></div></div>
     ${props.length?card('Förslag ur spårgrafen · dubbelkorsväxlarna',`<div style="padding:12px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:12px">${props.map(ruleCard).join('')}</div>`
       +(eff?`<div class="st-note">Med förslaget ändrar ${eff.routesChanged} tågvägar växelläge (${eff.main} huvud, ${eff.shunt} växling). Exempel: ${eff.examples.slice(0,3).map(e=>`<b>${esc(e.label)}</b> ${esc(Object.entries(e.before).map(([k,v])=>k.slice(2)+' '+v).join(' '))} → ${esc(Object.entries(e.after).map(([k,v])=>k.slice(2)+' '+v).join(' '))}`).join('; ')}.</div>`:''),
       {right:pill('Ej uppmätt','amber'),foot:'Förslaget blir ett utkast som provas i simulatorn och aktiveras med skillnadslista i steg 4. Tågvägstabellen är oförändrad tills dess.'}):''}
     <div class="st-chips">${types.map(([k,l,n])=>`<button type="button" class="st-chip-set" data-rule-type="${k}" aria-pressed="${f===k}">${l}<b>${n}</b></button>`).join('')}<span class="st-grow"></span><span class="st-eyebrow">KÄLLA · ${esc(model.ruleSource.toUpperCase())}</span></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:12px">${shown.map(ruleCard).join('')}</div>`;
-  main.onclick=async e=>{const t=e.target.closest('[data-rule-type]');if(t){state.ruleType=t.dataset.ruleType;renderRegler(main);return;}if(e.target.closest('[data-draft-from-proposal]')){if(await draftApi('create',{source:'proposal',note:'Förslag ur spårgrafen: dubbelkorsväxlarna X1 och X2'}))go('driftsattning','andringar');return;}const b=e.target.closest('[data-select]');if(b){state.object=b.dataset.select;session.save();location.hash='#konfigurera?objekt='+encodeURIComponent(b.dataset.select);}};
+  wireChat(main);
+  main.onclick=async e=>{const t=e.target.closest('[data-rule-type]');if(t){state.ruleType=t.dataset.ruleType;renderRegler(main);return;}if(e.target.closest('[data-draft-from-proposal]')){if(await draftApi('create',{source:'proposal',note:'Förslag ur spårgrafen: dubbelkorsväxlarna X1 och X2'}))go('driftsattning','andringar');return;}
+    if(await chatClick(e))return;const b=e.target.closest('[data-select]');if(b){state.object=b.dataset.select;session.save();location.hash='#konfigurera?objekt='+encodeURIComponent(b.dataset.select);}};
 }
 // ---------- Ändringar och aktivering ----------
 function renderAndringar(main){
@@ -216,13 +220,116 @@ function renderRelations(){
 }
 // ---------- Genomgång ----------
 function renderGenomgang(main){
-  main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">GENOMGÅNG</div><h1>Avvikelser</h1><p>Det som saknas eller strider i källorna, räknat vid varje läsning. AI-genomgången och regelförslagen kommer i steg 4.</p></div><span class="st-grow"></span>${pill(model.blocking+' blockerar driftsättning','red')}</div>
+  const rv=model.review,last=rv?.last,ai=rv?.assistant||{configured:false},f=state.cardType||'alla',fmt=t=>t?new Date(t).toLocaleString('sv-SE'):'–';
+  const cards=(last?.cards||[]).filter(c=>f==='alla'||c.type===f);
+  const types=[['alla','Alla',last?.cards.length||0],...CARD_TYPES.map(t=>[t,CARD_LABEL[t],last?.counts?.[t]||0])];
+  main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">GENOMGÅNG</div><h1>Genomgång</h1><p>Hela anläggningen mot det som är ritat: förslag, saknas, beslut och underlag. Varje förslag blir ett utkast som provas i simulatorn innan det aktiveras.</p></div><span class="st-grow"></span>${pill(model.blocking+' blockerar driftsättning','red')}<button type="button" class="st-btn st-btn-primary" data-run-review ${reviewBusy?'disabled':''}>${reviewBusy?'Genomgången körs…':last?'Kör genomgången igen':'Kör genomgången'}</button></div>
+    ${notice?`<p class="st-error">${esc(notice)}</p>`:''}
+    ${last?`<div class="st-stats">${types.slice(1).map(([k,l,n])=>`<div class="st-stat ${TYPE_CLASS[k]}"><small>${l}</small><b>${n}</b></div>`).join('')}<div class="st-stat"><small>Körd</small><b style="font-size:15px">${esc(fmt(last.at))}</b><small>${last.mode==='ai'?esc(last.model)+(last.usage?` · ${last.usage.input} in, ${last.usage.output} ut`:''):'utan AI · korten ur källorna'}</small></div></div>
+      ${last.summary?card('Sammanfattning',`<p class="st-note">${esc(last.summary)}</p>`):''}
+      <div class="st-chips">${types.map(([k,l,n])=>`<button type="button" class="st-chip-set" data-card-type="${k}" aria-pressed="${f===k}">${l}<b>${n}</b></button>`).join('')}<span class="st-grow"></span><span class="st-eyebrow">${ai.configured?'AI · '+esc(ai.model.toUpperCase()):'AI EJ ANSLUTEN'}</span></div>
+      <div class="st-review">${cards.map(reviewCard).join('')||'<p class="st-empty">Inga kort av den typen.</p>'}</div>`
+    :card('Ingen genomgång är körd',`<p class="st-note">Korten räknas deterministiskt ur källorna: avvikelserna, spårgrafen och reglerna. ${ai.configured?'AI-tjänsten är ansluten ('+esc(ai.model)+'): den ordnar och bedömer korten och kan lägga till egna. ':'AI-tjänsten är inte ansluten; genomgången ger korten utan bedömning. '}Ingenting aktiveras av genomgången.</p>`,{foot:'Körningen tar upp till någon minut med AI. Resultatet sparas på servern tills nästa körning.'})}
     ${card(`Avvikelser <span class="mono" style="color:var(--kr-red)">${model.deviations.length}</span>`,`<div class="st-grid-wrap"><table class="st-grid"><thead><tr><th>Avvikelse</th><th class="num">Antal</th><th>Löses av</th><th>Objekt</th><th></th></tr></thead><tbody>
       ${model.deviations.map(d=>`<tr><td style="font-family:var(--font)">${esc(d.title)}${d.blocking?' '+pill('Blockerar','red'):''}</td><td class="num">${d.count}</td><td>${esc(d.resolvedBy)}${d.note?' <span style="color:var(--kr-mute)">· '+esc(d.note)+'</span>':''}</td><td style="font-family:var(--mono);font-size:12px">${esc((d.items||[]).slice(0,8).join(', '))}${(d.items||[]).length>8?' …':''}</td>
       <td style="white-space:nowrap">${d.objects.length?`<a href="#data?objekt=${encodeURIComponent(d.objects[0])}">Visa i data</a> · <a href="#konfigurera?objekt=${encodeURIComponent(d.objects[0])}">Visa i planen</a>`:''}</td></tr>`).join('')}</tbody></table></div>`,
       {foot:'Listan är deterministisk och kommer från src/studio. Samma rader finns på npm run studio.'})}
     ${card('Kompispar enligt spårgrafen',`<ul class="st-list">${model.companions.map(c=>`<li><span class="mono"><b>${esc(c.pair.join(' + '))}</b></span><span class="st-grow"></span>${c.ok?pill('Hel förbindelse','',true):pill(`Ingen förbindelse: ${c.pair[0]} → ${c.aLeadsTo}, ${c.pair[1]} → ${c.bLeadsTo}`,'red')}</li>`).join('')}
-      ${model.crossovers.map(x=>`<li><span>${esc(x.crossing)} · förslag</span><span class="st-grow"></span><span class="mono">${esc(x.pairs.map(p=>p.join(' + ')).join(' och '))}</span>${pill('Förslag · ej uppmätt','amber')}</li>`).join('')}</ul>`,{foot:'Förslaget ändrar ingenting. Det blir ett regelutkast när regelspråket finns (steg 3).'})}`;
+      ${model.crossovers.map(x=>`<li><span>${esc(x.crossing)} · förslag</span><span class="st-grow"></span><span class="mono">${esc(x.pairs.map(p=>p.join(' + ')).join(' och '))}</span>${pill('Förslag · ej uppmätt','amber')}</li>`).join('')}</ul>`,{foot:'Förslaget blir ett utkast under Regler eller från kortet ovan.'})}`;
+  main.onclick=async e=>{
+    if(e.target.closest('[data-run-review]')){runReview();return;}
+    const t=e.target.closest('[data-card-type]');if(t){state.cardType=t.dataset.cardType;renderGenomgang(main);return;}
+    const d=e.target.closest('[data-card-draft]');if(d){const c=model.review?.last?.cards.find(x=>x.id===d.dataset.cardDraft);if(c&&await draftApi('create',{add:c.rules.map(bareRule),replaces:c.replaces,note:'Genomgång: '+c.title.slice(0,120)}))go('driftsattning','andringar');return;}
+    const b=e.target.closest('[data-select]');if(b){state.object=b.dataset.select;session.save();location.hash='#data?objekt='+encodeURIComponent(b.dataset.select);}};
+}
+function reviewCard(c){
+  const canDraft=c.rules.length&&c.rules.every(r=>!r.problems.length);
+  const objs=c.objects.slice(0,10).map(o=>`<a class="mono" href="#data?objekt=${encodeURIComponent(o)}">${esc(o)}</a>`).join(', ');
+  const action=c.action==='draft'?(model.drafts?.draft?`<a class="st-btn" href="#driftsattning/andringar">Visa utkastet</a>`:`<button type="button" class="st-btn st-btn-primary" data-card-draft="${esc(c.id)}" ${canDraft?'':'disabled'}>Skapa utkast</button>`)
+    :c.action==='chat'?`<a class="st-btn" href="#konfigurera/regler">Beskriv i chatten</a>`
+    :c.action==='data'?`<a class="st-btn" href="${c.objects[0]?'#data?objekt='+encodeURIComponent(c.objects[0]):'#data?set=tagvagar'}">Visa i data</a>`
+    :c.action==='step6'?pill('Steg 6: mätning och nya regeltyper','',true):'';
+  return `<section class="st-card st-review-card ${TYPE_CLASS[c.type]||''}"><div class="st-card-head"><span class="st-eyebrow st-type-ink">${esc((CARD_LABEL[c.type]||c.type).toUpperCase())}${c.typeFromSources?` · KÄLLORNA: ${esc(c.typeFromSources.toUpperCase())}`:''}${c.origin==='ai'?' · AI':''}</span><span class="st-grow"></span>${c.priority?`<span class="st-prio" title="Prioritet enligt AI">${c.priority}</span>`:''}<span class="mono st-count">${c.count}</span></div>
+    <div class="st-review-body"><h3>${esc(c.title)}</h3>${c.assessment?`<p class="st-assess">${esc(c.assessment)}</p>`:''}<p class="st-source">${esc(c.text)}</p>
+    ${c.rules.length?`<div class="st-proposals">${c.rules.map(proposalCard).join('')}</div>`:''}
+    ${c.items.length&&!c.rules.length?`<p class="st-items mono">${esc(c.items.slice(0,8).join(', '))}${c.items.length>8?' …':''}</p>`:''}
+    <div class="st-chat-actions">${objs?`<span class="st-meta">${objs}${c.objects.length>10?' …':''}</span>`:''}<span class="st-grow"></span>${action}</div></div></section>`;
+}
+let reviewBusy=false;
+async function runReview(){
+  if(reviewBusy)return;reviewBusy=true;notice='';render();
+  try{const r=await fetch('/api/studio/review/run',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    if([401,428].includes(r.status)){location.assign('/login');return;}
+    const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);model.review=answer;}
+  catch(e){notice=e.message;}
+  finally{reviewBusy=false;render();}
+}
+// ---------- chatten: fritext eller diktering → regelkort ----------
+const chat={log:[],text:'',busy:false,error:''};
+try{const saved=JSON.parse(sessionStorage.getItem('studio-chat')||'{}');if(Array.isArray(saved.log))chat.log=saved.log;if(typeof saved.text==='string')chat.text=saved.text;}catch{}
+const saveChat=()=>{try{sessionStorage.setItem('studio-chat',JSON.stringify({log:chat.log.slice(-12),text:chat.text}));}catch{}};
+const bareRule=({routes,explain,problems,typeLabel,runsInLabel,replaces,...r})=>r;
+const chatObjects=()=>state.object&&['turnout','block','signal'].includes(model.objects.get(state.object)?.kind)?[state.object]:[];
+function renderBeskriv(){
+  const ai=model.review?.assistant||{configured:false},sel=chatObjects()[0]||null;
+  const turns=chat.log.map(t=>t.role==='user'?`<div class="st-bubble st-bubble-user">${esc(t.text)}</div>`:answerHtml(t.answer)).join('');
+  const mic=('SpeechRecognition' in window)||('webkitSpeechRecognition' in window);
+  return `<section class="st-card" id="st-chat"><div class="st-card-head"><h2>Beskriv en regel</h2><span class="st-grow"></span>${sel?`<span class="st-filter">Gäller ${esc(sel)}<button type="button" data-chat-clear-object aria-label="Ta bort objektet">×</button></span>`:''}${ai.configured?pill('AI · '+ai.model,'',true):pill('AI ej ansluten','amber')}</div>
+    ${turns?`<div class="st-chat-log">${turns}</div>`:`<p class="st-note">Skriv eller diktera vad som ska gälla, till exempel <i>Vx140 och Vx143 ska alltid ligga lika</i> eller <i>Vx112 får bara läggas om när S112 är fri</i>. AI:n översätter till regelkort; TKL validerar, läser tillbaka på svenska och provar i simulatorn innan något blir utkast.</p>`}
+    ${chat.error?`<p class="st-error" style="margin:0 16px 12px">${esc(chat.error)}</p>`:''}
+    <form class="st-chat-form" id="st-chat-form"><textarea id="st-chat-text" rows="2" aria-label="Beskriv regeln" placeholder="Vad ska gälla?" ${chat.busy?'disabled':''}>${esc(chat.text)}</textarea>
+      <div class="st-chat-actions">${mic?`<button type="button" class="st-btn" data-chat-mic aria-pressed="false">🎙 Diktera</button>`:''}<span class="st-grow"></span>${chat.log.length?`<button type="button" class="st-btn" data-chat-clear>Rensa</button>`:''}<button type="submit" class="st-btn st-btn-primary" ${chat.busy||!ai.configured?'disabled':''}>${chat.busy?'Tolkar…':'Tolka'}</button></div></form>
+    <div class="st-card-foot">${ai.configured?'Texten och objektnamnen går från TKL-servern till AI-tjänsten; nyckeln ligger på servern. Ingenting ändras förrän ett utkast aktiveras.':'Lägg till ANTHROPIC_API_KEY i serverns miljöfil och starta om tjänsten. Datorns egen diktering fungerar i textfältet redan nu.'}</div></section>`;
+}
+function answerHtml(a){
+  const canDraft=a.rules.length&&a.rules.every(r=>!r.problems.length);
+  return `<div class="st-bubble st-bubble-ai"><p>${esc(a.message)}</p>${a.questions.length?`<ul class="st-questions">${a.questions.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>`:''}
+    ${a.rules.length?`<div class="st-proposals">${a.rules.map(proposalCard).join('')}</div><div class="st-chat-actions">${a.replaces.length?`<span class="st-meta">Ersätter ${mono(a.replaces.join(', '))}</span>`:''}<span class="st-grow"></span>${model.drafts?.draft?`<a class="st-btn" href="#driftsattning/andringar">Visa utkastet</a>`:`<button type="button" class="st-btn st-btn-primary" data-chat-draft="${esc(a.at)}" ${canDraft?'':'disabled'}>Skapa utkast av ${a.rules.length} ${a.rules.length===1?'regel':'regler'}</button>`}</div>`:''}
+    <small>${esc(a.model)} · ${a.usage.input} in, ${a.usage.output} ut${a.usage.cached?', '+a.usage.cached+' ur cache':''}</small></div>`;
+}
+function proposalCard(r){
+  const touches=[...(r.objects||(r.object?[r.object]:[])),...(r.requires?.blocks||[]),...(r.requires?.signals||[]),...Object.keys(r.positions||{})];
+  const objs=touches.filter(x=>model.objects.has(x)).slice(0,8).map(x=>`<button type="button" data-select="${esc(x)}" class="mono st-link">${esc(x)}</button>`).join(', ');
+  return `<div class="st-card st-proposal${r.problems.length?' st-proposal-bad':''}"><div class="st-card-head"><span class="st-eyebrow">${esc((r.typeLabel||r.type).toUpperCase())}</span><span class="st-grow"></span>${pill('Verkställs i '+(r.runsInLabel||'TKL'))}${r.problems.length?pill('Validerar inte','red'):pill('Förslag · ej provad','amber',true)}</div>
+    <div class="st-proposal-body"><b class="mono">${esc(r.id.replace(/^(follow|authority|condition|forbid):(manual:|line:)?/,''))}</b><span>${esc(r.explain)}</span>
+    ${r.problems.length?`<ul class="st-problems">${r.problems.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`:''}
+    <span class="st-meta">Objekt: ${objs||'–'} · Tågvägar ${mono((r.routes||[]).length)}${r.replaces?.length?' · Ersätter '+mono(r.replaces.join(', ')):''}</span></div></div>`;
+}
+function wireChat(main){
+  const form=$('#st-chat-form',main),ta=$('#st-chat-text',main);if(!form||!ta)return;
+  ta.oninput=()=>{chat.text=ta.value;saveChat();};
+  ta.onkeydown=e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault();form.requestSubmit();}};
+  form.onsubmit=e=>{e.preventDefault();sendChat();};
+  const log=$('.st-chat-log',main);if(log)log.scrollTop=log.scrollHeight;
+}
+async function sendChat(){
+  const text=chat.text.trim();if(!text||chat.busy)return;
+  chat.busy=true;chat.error='';chat.log.push({role:'user',text});render();
+  try{const r=await fetch('/api/studio/assistant/propose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,objects:chatObjects()})});
+    if([401,428].includes(r.status)){location.assign('/login');return;}
+    const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);
+    chat.log.push({role:'ai',answer});chat.text='';}
+  catch(e){chat.error=e.message;chat.log.pop();}
+  finally{chat.busy=false;saveChat();render();}
+}
+let recognizer=null;
+function toggleMic(btn){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;
+  if(recognizer){recognizer.stop();return;}
+  recognizer=new SR();recognizer.lang='sv-SE';recognizer.interimResults=true;recognizer.continuous=true;
+  const base=chat.text.trim()?chat.text.trim()+' ':'';
+  recognizer.onresult=e=>{chat.text=base+[...e.results].map(r=>r[0].transcript).join(' ');const ta=$('#st-chat-text');if(ta)ta.value=chat.text;};
+  recognizer.onerror=e=>{chat.error=e.error==='not-allowed'?'Mikrofonen är inte tillåten i webbläsaren. Datorns egen diktering fungerar i textfältet.':'Dikteringen avbröts: '+e.error;};
+  recognizer.onend=()=>{recognizer=null;saveChat();const b=$('[data-chat-mic]');if(b){b.setAttribute('aria-pressed','false');b.textContent='🎙 Diktera';}if(chat.error)render();};
+  recognizer.start();btn.setAttribute('aria-pressed','true');btn.textContent='■ Stoppa dikteringen';
+}
+async function chatClick(e){
+  const mic=e.target.closest('[data-chat-mic]');if(mic){toggleMic(mic);return true;}
+  if(e.target.closest('[data-chat-clear]')){chat.log=[];chat.error='';saveChat();render();return true;}
+  if(e.target.closest('[data-chat-clear-object]')){state.object=null;session.save();render();return true;}
+  const d=e.target.closest('[data-chat-draft]');
+  if(d){const t=chat.log.find(x=>x.role==='ai'&&String(x.answer.at)===d.dataset.chatDraft);if(t&&await draftApi('create',{add:t.answer.rules.map(bareRule),replaces:t.answer.replaces,note:'Chatt: '+t.answer.text.slice(0,120)}))go('driftsattning','andringar');return true;}
+  return false;
 }
 function renderLater(main){
   if(state.tab==='driftsattning'){state.view='andringar';return renderAndringar(main);}
