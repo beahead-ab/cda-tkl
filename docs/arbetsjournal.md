@@ -1217,3 +1217,9 @@ frånkopplad" i journalen och trängde ut allt annat ur de 150 raderna i Instäl
 Händelser och nederraden. Nu skrivs raden bara när anslutningen bryts; hanteringen av
 läget vid varje rapport är oförändrad. Mergat som cda-tkl#9. 347 enhetsprov,
 10 integrationsprov, lokalt prov utan bana.
+
+## 4 oktober 2026, 18:23: webbdriften kör 0.57.1
+
+Casper publicerade 0.57.1 (`84ee4e3`) till cda-tkl.trainmeet.app med deploy/publish-release.sh.
+Webbdriften gick därmed från 0.52.0 till 0.57.1. Taggarna v0.52.0–v0.57.1 i cda-tkl-install
+sätts av Casper.
