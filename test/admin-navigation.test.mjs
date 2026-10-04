@@ -5,7 +5,7 @@ import {NAVIGATION_SECTIONS,resolveNavigation} from '../public/admin-navigation-
 const registered=['#tools/operations','#tools/operations/routes','#tools/operations/clearance','#tools/operations/blocks','#tools/operations/lines','#tools/operations/trains','#tools/operations/clock','#tools/operations/authority',
   '#trainmeet','#import','#import/upload','#import/edit','#tools/appearance','#tools/streamdeck','#tools/streamdeck/layout','#tools/journal',
   '#register','#register/station','#register/destinations','#register/presentation','#register/bindings','#register/object',
-  '#advanced','#advanced/xml','#advanced/migration','#advanced/protocol'];
+  '#advanced','#advanced/xml','#advanced/migration','#advanced/protocol','#advanced/update'];
 
 test('the rail has seven entries in the agreed order and every tab keeps an existing address',()=>{
   assert.deepEqual(NAVIGATION_SECTIONS.map(s=>s.label),['Drift','Tidtabeller','Händelser','Utseende','Stream Deck','Anläggning','Avancerat']);
