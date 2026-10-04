@@ -103,7 +103,7 @@ Fem regler som hålls i varje avsnitt, hämtade från serverns Inställningar:
    `timetable-import.test.mjs`, `timetable-sheet.test.mjs`,
    `timetable-import-integration.mjs`, `docs/tidtabellsimport.md` och raderna i README.
    Tidtabellsfältet under spårplanen visar bara TrainMeet.
-4. **Det pedagogiska lagret**, avsnitt för avsnitt (TrainMeet byggt 4 oktober; gemensamma klasser `settings-*` i `admin-line.css`, `unchanged` och `canSave` i `createAdminDialog`): TrainMeet, Banan, Utseende och
+4. **Det pedagogiska lagret**, avsnitt för avsnitt (alla sex byggda 4 oktober; Händelser visar nu hela serverns journal med sök i stället för sju rader, Banan har anslutningsstatus överst och kommunikationsvyn bakom en knapp; gemensamma klasser `settings-*` i `admin-line.css`, `unchanged` och `canSave` i `createAdminDialog`): TrainMeet, Banan, Utseende och
    ljud, Uppdatering, Stream Deck, Händelser.
 
 Varje steg provas i Chromium på 1280 och 390 px innan det publiceras. Adresserna

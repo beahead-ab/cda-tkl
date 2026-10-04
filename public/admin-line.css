@@ -281,3 +281,11 @@ body[data-admin-nav-open] #admin-shell .admin-shell-drawer-shade{display:block;p
   .settings-actions{grid-template-columns:1fr;gap:4px}
   .settings-actions>p{margin-bottom:10px}
 }
+.journal-search{display:flex;flex-direction:column;gap:7px;margin:20px 0 10px;font-size:12px;color:var(--muted)}
+.journal-search input{width:min(420px,100%);padding:9px 10px}
+.recording-history-heading{margin:24px 0 6px;font-size:12px;font-weight:500}
+#loconet-communication .communication-view{margin-top:12px}
+.card-heading+.settings-scope{margin:-10px 0 14px}
+.settings-rows #recording-status{color:var(--text)}
+#journal-tools .settings-scope{margin:6px 0 18px}
+@media(max-width:700px){.settings-rows dd:not(.settings-consequence){border:0}}

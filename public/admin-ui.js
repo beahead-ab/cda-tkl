@@ -86,3 +86,16 @@ window.addEventListener('hashchange',()=>{
   }
   lastWorkspaceHash=next;
 });
+// Inställningar rows: label · value · grey consequence (docs/installningar-plan.md).
+// A value may be text or a node, such as settingsState().
+export function settingsRows(list,rows){
+  list.classList.add('settings-rows');
+  list.replaceChildren(...rows.map(([label,value,note])=>{
+    const row=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd'),consequence=document.createElement('dd');
+    dt.textContent=label;if(value instanceof Node)dd.append(value);else dd.textContent=value;consequence.className='settings-consequence';consequence.textContent=note||'';
+    row.append(dt,dd,consequence);return row;
+  }));
+}
+// Status as text and shape, never colour alone: ok ●, warn ▲, off ○.
+export function settingsState(mode,text){const span=document.createElement('span');span.className='settings-state';span.dataset.state=mode;span.textContent=text;return span;}
+export function settingsNote(className,text){const p=document.createElement('p');p.className=className;p.textContent=text;return p;}
