@@ -22,6 +22,7 @@ import { TimetableAI } from './timetable-ai.mjs';
 import { ModelClock } from './model-clock.mjs';
 import { describeProtocol, TelegramRecorder } from './telegram-recorder.mjs';
 import { UpdateCheck } from './update-check.mjs';
+import { studioOverview } from './studio/index.mjs';
 import { spawn } from 'node:child_process';
 
 const baseProfile=loadProfile();
@@ -99,6 +100,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
       if(url.pathname==='/api/communication')return json(res,{connection:connectionInfo(profile),connectionState:engine.connected?'connected':'disconnected',expectations:commandExpectations(profile,engine.snapshot()),trace:protocolTrace});
+      if(url.pathname==='/api/studio')return json(res,studioOverview());
       if(url.pathname==='/api/route-targets')return json(res,{targets:engine.routeTargets(url.searchParams.get('from'),url.searchParams.get('kind')||'main')});
       if(url.pathname==='/api/timetable-import')return json(res,timetableImport.view());
       const templateMatch=url.pathname.match(/^\/api\/timetable-import\/template\.(csv|xlsx)$/);

@@ -1,0 +1,69 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { loadSources, buildRegistry, companionCheck, crossoverProposals, detectionInventory, deviations, signalRelationCoverage, studioOverview } from '../src/studio/index.mjs';
+const sources = loadSources();
+const row = (rows, id) => rows.find(r => r.id === id);
+
+test('objektregistret har stationens mängder och bara spårbarhet ur XML, inget uppmätt', () => {
+  const r = buildRegistry(sources);
+  assert.deepEqual(r.counts, { turnouts: 49, signals: 66, blocks: 197, routes: 340, modules: 12, measured: 0 });
+  const vx100 = r.turnouts.find(t => t.id === 'Vx100');
+  assert.deepEqual(vx100.source, { system: 'LT100', comment: 'M02-100-1', module: { name: 'M02', base: 100, channel: 1 } });
+  assert.deepEqual(vx100.companions, ['Vx101']);
+  assert.equal(vx100.status, 'ur XML, ej uppmätt');
+  const s15 = r.signals.find(s => s.id === '1/5');
+  assert.equal(s15.mastType, 'hsi_5');
+  assert.deepEqual(s15.source.map(x => x.system), ['LT210', 'LT402', 'LT403']);
+  assert.deepEqual([...new Set(s15.source.map(x => x.module.name))], ['M02', 'M01']);
+  assert.ok(r.signals.every(s => /bänkadress/.test(s.status)) && r.blocks.every(b => /bänkadress/.test(b.status)));
+  assert.deepEqual(r.xmlOnlyTurnouts, ['Vx124']);
+  assert.equal(r.modules.map(m => m.id).join(','), 'M00,M01,M02,M03,M04,M05,M06,M07,M08,M09,M10,M11');
+});
+
+test('spårgrafen bekräftar fem kompispar och avvisar paren i dubbelkorsväxlarna X1 och X2', () => {
+  const pairs = companionCheck(sources.xml, sources.profile.coupled);
+  assert.equal(pairs.length, 7);
+  assert.deepEqual(pairs.filter(p => !p.ok).map(p => p.pair.join('+')), ['Vx140+Vx142', 'Vx162+Vx165']);
+  const bad = pairs.find(p => p.pair[0] === 'Vx140');
+  assert.equal(bad.aLeadsTo, 'Vx143'); assert.equal(bad.bLeadsTo, 'Vx141');
+  assert.deepEqual(crossoverProposals(sources.xml), [
+    { crossing: 'X1', turnouts: ['Vx140', 'Vx141', 'Vx142', 'Vx143'], pairs: [['Vx140', 'Vx143'], ['Vx141', 'Vx142']] },
+    { crossing: 'X2', turnouts: ['Vx162', 'Vx163', 'Vx165', 'Vx166'], pairs: [['Vx162', 'Vx166'], ['Vx163', 'Vx165']] }]);
+});
+
+test('spåravkänningen läser JMRI:s regelformer med logiktypen, inte villkorstexten', () => {
+  const d = detectionInventory(sources);
+  assert.deepEqual(d.shapes, { single: 130, any: 20, turnoutPart: 10, noRule: 10, noSensor: 27 });
+  const sic = d.sections.find(s => s.name === 'SIC');           // villkorstexten säger "R1 and R2", logiktypen är 2 = någon av
+  assert.equal(sic.shape, 'any'); assert.deepEqual(sic.inputs, ['LS156', 'LS170']);
+  assert.deepEqual(d.sections.find(s => s.name === 'SIA').inputs, ['LS90', 'LS100']);
+  assert.equal(d.inputs.total, 184); assert.equal(d.inputs.used, 97); assert.equal(d.inputs.unbound.length, 87); assert.equal(d.inputs.withoutModule, 70);
+  assert.deepEqual(d.inputs.unbound.filter(u => u.namedBlock).map(u => [u.system, u.namedBlock]), [['LS124', 'S125a']]);
+  assert.deepEqual(d.undetected.noSensor, ['Slokstall1', 'Slokstall2', 'Slokstall3', 'Slokstall4', 'Slokstall5', 'Slokstall6', 'Slokstall7', 'Slokstall8', 'Slokstall9', 'SL1a', 'SL1b']);
+  assert.deepEqual([...d.undetected.noRule].sort(), ['S112b', 'S155', 'S155b', 'S155c', 'S164', 'S164b', 'S170', 'S171', 'S172', 'S96b']);
+  assert.deepEqual(d.blockedByButton, ['slS1b', 'slS1c', 'slS2b', 'slS2c', 'slS3b', 'slS4b', 'slS5b']);
+  assert.equal(d.inputs.shared[0].system, 'LS73'); assert.equal(d.inputs.shared[0].rules, 4);
+  assert.deepEqual(d.debounce, { goingActive: 0, goingInactive: 3000 });
+});
+
+test('avvikelselistan reproducerar planens kända luckor och de nya fynden', () => {
+  const rows = deviations(sources);
+  const counts = Object.fromEntries(rows.map(r => [r.id, r.count]));
+  assert.deepEqual(counts, { 'signal-bench': 66, 'block-bench': 197, 'turnout-unmeasured': 49, 'signal-relations': 44, 'nx-without-route': 20, 'shunt-excluded': 15,
+    'manual-groups': 5, 'contradicting-rules': 4, 'yard-boundaries': 3, 'crossing-v4': 4, 'swedish-aspects': 7, 'vx95-vx96': 1, 'xml-only-turnouts': 1, 'turntable': 1,
+    'programming-relay': 1, 'companion-pairs': 2, 'undetected-blocks': 21, 'unbound-inputs': 87 });
+  assert.equal(row(rows, 'block-bench').note, '132 bänkadresser');
+  assert.equal(row(rows, 'contradicting-rules').note, '3 huvud + 1 växling');
+  assert.deepEqual(row(rows, 'yard-boundaries').items, ['Vx112', 'Vx131', 'Vx154']);
+  assert.deepEqual(row(rows, 'companion-pairs').items, ['Vx140 + Vx142', 'Vx162 + Vx165']);
+  assert.equal(signalRelationCoverage(sources).total, 117);
+  assert.equal(rows.filter(r => r.blocking).length, 6);
+});
+
+test('översikten är ren läsning och hör till driftprofilens källversion', () => {
+  const o = studioOverview();
+  assert.equal(o.sourceHash, sources.profile.sourceHash);
+  assert.equal(o.deviations.length, 18); assert.equal(o.blocking, 6);
+  assert.equal(o.counts.measured, 0);
+  assert.equal(JSON.stringify(sources.profile.coupled.Vx140), JSON.stringify(['Vx140', 'Vx142']), 'profilen ändras inte av läsningen');
+});
