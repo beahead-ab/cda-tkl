@@ -32,7 +32,7 @@ test('phone widths read only: no touch targets on the plan, timetable tabs inste
 
 test('the event column reads the journal and hides the field-level rows',()=>{
   const app=read('public/app.js');
-  assert.ok(app.includes("state.events.filter(e => !['report', 'transport'].includes(e.kind))"),'the tools page keeps its own filter');
+  assert.ok(app.includes("state.events.filter(e=>!['report','transport'].includes(e.kind))"),'the journal page keeps its own filter');
   assert.match(read('public/panel-events-model.js'),/HIDDEN_KINDS=\['report','transport','order','permission'/);
   assert.ok(app.includes('panelEvents?.update(state,online)'));
   assert.ok(read('public/panel-events.js').includes('state?.operatingEvents'),'the column reads the operating events');
