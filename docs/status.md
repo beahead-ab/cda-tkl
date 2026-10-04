@@ -26,10 +26,8 @@ Version **0.33.0**, release `8bef196`, publicerades 26 september kl. 02:51 på [
 - V1–V3 har släckta vilolampor och som standard lugn, dämpad röd växelblinkning (3 s per lampa och mjuka kanter). Meny → Utseende och ljud erbjuder även fast rött sken. Det ursprungliga snabba läget är borttaget. Aktiveringsvillkoren är oförändrade.
 - Stödfunktioner ligger i menyn. Objektinformation öppnas med högerklick nära objektet. Endast Återställ panel finns direkt under spårplanen; övriga manövrer ligger under Driftverktyg. Återställningen nollställer tågvägar efter nya stoppbesked och bevarar spårledningarnas beläggningar. Spårtexterna har normalvikt.
 - TrainMeet har en egen anslutningssida och en läsande tidtabellsadapter. Serveradress `https://server.trainmeet.app` och TKL-id `cda-tkl` är sparade. Serverns version 1.11.0 har identifierats; stationsval, anslutningskod och verklig parkoppling återstår.
-- Adminsidorna visar översikter med separat redigering. Tidtabeller redigeras på en egen kalkylbladssida med celler, tangentbordsstyrning, områdesmarkering, kopiera/klistra in, ångra/gör om och sparade utkast. Aktivering kräver godkännande. [Inventering och kvarvarande avstämning](admin-forenkling.md).
-- Samma enkla vita rader visar tidtabellen från TrainMeet, manuell inmatning eller importerade filer. Högst tre kolumner fylls nedåt och sedan åt höger; utrymme till höger är reserverat för senare valda funktioner.
-- Excel-/CSV-import med tio fasta kolumner och nedladdningsbara mallar fungerar utan AI-nyckel. Underlagen granskas och godkänns före användning. [Format och handhavande](tidtabellsimport.md).
-- Bilder/PDF kan förberedas för AI-tolkning, men serverns OpenAI-nyckel behöver fortfarande läggas in. Verklig tolkningskvalitet är ännu inte verifierad.
+- Adminfönstret heter Inställningar och har grupperna Träffen, Den här datorn och Anläggningen; driftverktygen ligger i nederradens Drift-flik. [Plan](installningar-plan.md).
+- Tidtabellsfältet visar TrainMeets tidtabell. Den lokala tidtabellen (manuell inmatning, Excel/CSV- och AI-import) är borttagen 4 oktober 2026; TrainMeet är enda källan.
 
 Version 0.30.0 klarade 188 enhetsprov och åtta processhelhetsprov både lokalt och på servern. Återställning med beläggning, väntande stoppbesked, omstart och lagringsfel samt bevarad övergångsvarning har verifierats.
 

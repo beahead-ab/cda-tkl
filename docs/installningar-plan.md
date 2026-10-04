@@ -97,7 +97,7 @@ Fem regler som hålls i varje avsnitt, hämtade från serverns Inställningar:
 2. **Inställningar** (byggd 4 oktober; tidtabellssidorna ligger tillfälligt som flikar under TrainMeet, Simulator ↗ som flik under Banan, XML-granskning och Införandestatus som flikar under Anläggning; `#advanced` och `#tools` leder vidare till sin första sida). Nytt namn, tre grupper, avsnitten flyttas till sina platser,
    översiktssidorna tas bort, Anläggning blir en ingång. Innehållet i varje avsnitt är
    oförändrat i det här steget.
-3. **Lokal tidtabell bort.** `public/timetable-import.js`, `timetable-sheet.js`,
+3. **Lokal tidtabell bort** (byggd 4 oktober; `#import…` leder till TrainMeet, beroendena csv-parse, read-excel-file, yauzl, saxes och fflate borttagna). `public/timetable-import.js`, `timetable-sheet.js`,
    `timetable-sheet-model.js`, `timetable-format.js`, `src/timetable-import.mjs`,
    API-vägarna under `/api/timetable-import`, mallarna, proven
    `timetable-import.test.mjs`, `timetable-sheet.test.mjs`,
