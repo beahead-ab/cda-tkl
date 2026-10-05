@@ -1259,3 +1259,16 @@ Casper installerade uppdateringstjänsten och körde `charlottendal-update` på 
 0.59.1 (`v0.59.1-406e5f8` ur cda-tkl-install) installerad, föregående 0.53.0; TKL och
 simulatorn aktiva. polkit och git fanns redan. Knappen Uppdatera nu, som startar
 tjänsten via polkit, provas skarpt vid nästa release.
+
+## 5 oktober 2026, 0.60.0: Studio, objekt och regler, steg 1–6
+
+Admin v2 "Objekt och regler" som fristående modul i `src/studio/` med egen sida på
+`/studio.html`, byggd i sex körbara steg enligt planens §9: objektregister och
+avvikelselista, stationsplanen och Data-vyn, regelspråket för det som redan finns,
+tågvägar ur modellen med utkast, simulatorprov och aktivering, chatten och
+AI-genomgången via Claude API, samt mätning, SV2-kortinventering, Lyssna och
+regeltyperna detection, aspect och crossing. Allt är läsning tills ett utkast
+aktiveras med driftbindningarnas villkor. Riktiga Claude-anrop och riktiga MGP-kort är
+inte provade; simulatorn svarar som tolv kort med påhittade identiteter. Mergat som
+cda-tkl#12. Simulatorn i webbdriften kan inte läsa TKL:s katalog och följer därför inte
+en aktiverad fältprofil; grundprofilen gäller där tills tjänstefilerna ger den en kopia.
