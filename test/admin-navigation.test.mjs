@@ -18,7 +18,7 @@ test('Inställningar has seven entries in three groups and every tab keeps an ex
   assert.ok(order.every((g,i)=>!i||g===order[i-1]||!order.slice(0,i).includes(g)));
   for(const section of NAVIGATION_SECTIONS){
     for(const tab of section.tabs){
-      if(tab.external){assert.equal(tab.external,'field-link');continue;}
+      if(tab.external){assert.ok(['field-link','studio-link'].includes(tab.external));if(tab.href)assert.equal(tab.href,'/studio.html');continue;}
       const allowed=[section.hash,...(section.members||[])];
       assert.ok(allowed.some(base=>tab.hash===base||tab.hash.startsWith(base+'/')),`${tab.hash} belongs to ${section.hash}`);
       assert.ok(registered.includes(tab.hash),`${tab.hash} is a registered workspace`);

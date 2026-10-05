@@ -7,6 +7,7 @@ import { compileManualPolicies } from '../src/manual-policy.mjs';
 import { compileOperatingControls } from '../src/operating-policy.mjs';
 import { compileYardBoundaries } from '../src/yard-boundaries.mjs';
 import { compileYardArea,yardTurnoutNames } from '../src/yard-area.mjs';
+import { parseLayoutXml, moduleOf } from '../src/studio/sources.mjs';
 const read = file => JSON.parse(fs.readFileSync(new URL('../' + file, import.meta.url)));
 const write = (file, data) => {
   const target = new URL('../' + file, import.meta.url), content = JSON.stringify(data, null, 2) + '\n';
@@ -141,9 +142,15 @@ const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:
   turnouts,blocks,signals,routes,routeAlternatives,coupled,manualPolicies,yardBoundaries,operatingControls,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),
   sourcePolicy:[...source.mainRoutePolicies,...source.shuntRoutePolicies],excluded,releasePolicy:'whole-route-after-ordered-passage-and-stop-feedback'};
 profile.yardArea=compileYardArea(panel,profile);
+// Simulerade kort för SV2 i simulatorn: ett per modulkommentar M00–M11 i Cda60.xml. Identiteterna är påhittade
+// (tillverkare 13 = DIY) tills riktiga kort svarat på Discover; adresserna 16–27 ligger i LocoNet PE:s intervall för andra enheter.
+const xml=parseLayoutXml(fs.readFileSync(new URL('../public/data/source/Cda60.xml',import.meta.url),'utf8'));
+const moduleNames=[...new Set([...xml.turnouts,...xml.sensors].map(t=>moduleOf(t.comment)?.name).filter(Boolean))].sort();
+const modules=moduleNames.map((name,i)=>{const outputs=xml.turnouts.filter(t=>moduleOf(t.comment)?.name===name),signalOutputs=outputs.filter(t=>/signal/i.test(t.comment)).length,serial=1000+i;
+  return {name,address:16+i,manufacturer:13,developer:1,product:signalOutputs?10:5,serial,sv:{1:2,2:1,3:serial&0xff,4:serial>>8},outputs:outputs.length,inputs:xml.sensors.filter(s=>moduleOf(s.comment)?.name===name).length,simulated:true};});
 const scenario=r=>({id:r.id,...(r.variantId?{variantId:r.variantId}:{}),label:r.label,blocks:r.blocks,signal:r.signals[0],signals:r.signals,signalEntries:r.signalEntries,turnouts:r.turnouts});
 const simulator={id:'charlottendal-independent-network-field',turnouts,blocks,signals,coupled,protection,programming:operatingControls.programming,
-  scenarios:routes.map(scenario),scenarioAlternatives:routeAlternatives.map(scenario),
+  scenarios:routes.map(scenario),scenarioAlternatives:routeAlternatives.map(scenario),modules,
   note:'Independent plant model. Only LocoNet bytes are received from TKL. Static scenarios are not TKL runtime state.'};
 write('profiles/charlottendal-network.json',profile); write('profiles/simulator-network.json',simulator);
 write('public/data/route-coverage.json',{sourceHash:source.sourceHash,allowedRules:policy.allowed().length,routes:routes.map(r=>({id:r.id,kind:r.kind,from:r.from,to:r.to,label:r.label,source:r.source,signals:r.signals,nxIds:r.nxIds})),excluded,

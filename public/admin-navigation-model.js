@@ -29,7 +29,8 @@ export const NAVIGATION_SECTIONS=[
     {hash:'#register/presentation',label:'Visningsinställningar'},
     {hash:'#register/bindings',label:'Driftinställningar'},
     {hash:'#advanced/xml',label:'XML-granskning'},
-    {hash:'#advanced/migration',label:'Införandestatus'}]}
+    {hash:'#advanced/migration',label:'Införandestatus'},
+    {external:'studio-link',href:'/studio.html',label:'Objekt och regler ↗'}]}
 ];
 // Pages that only led on to others: they open their first real page instead.
 export const REDIRECTS={'#advanced':'#register','#tools':'#tools/appearance'};
