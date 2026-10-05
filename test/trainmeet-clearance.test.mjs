@@ -23,7 +23,6 @@ function rig(){
   return {service,calls,context,display,responses,journal,storage,fetcher,now:n=>{now=n;},posts:()=>calls.filter(c=>c.method==='POST'&&c.path!=='/v1/pair')};
 }
 const pair=r=>r.service.pair({...r.service.view(),stationId:'cda',code:'458982'});
-const shift={shift_id:'s1',operator_name:'Casper',terminal_name:'cda-tkl',status:'active',started_at:'2026-09-30T06:00:00',ended_at:null,handover_note:null,updated_at:'2026-09-30T06:00:00'};
 
 test('lines join the catalogue with live state: neighbour names, direction and the actions this station may take',async()=>{
   const r=rig();await pair(r);const lines=r.service.view().context.lines;
@@ -31,6 +30,10 @@ test('lines join the catalogue with live state: neighbour names, direction and t
     ['cda-lek','Lekby','double','free','','',['request']],
     ['vag-cda','Vagnsta','single','requested','in','3581',['accept','reject']]]);
   assert.equal(r.service.view().context.connections.length,3,'the raw state list is still exposed');
+  assert.deepEqual(lines.map(l=>l.neighborMode),['',''],'an older server says nothing about the neighbours');
+  r.context.station_modes={lek:'automatic',vag:'bogus'};await r.service.refresh();
+  assert.deepEqual(r.service.view().context.lines.map(l=>l.neighborMode),['automatic',''],'TrainMeet says who answers; unknown values are dropped');
+  delete r.context.station_modes;
   assert.equal(r.service.view().contract,'TrainMeet HTTP v1 · TKL-terminal');
   for(const [state,direction,expected] of [['free','',['request']],['requested','out',['cancel']],['requested','in',['accept','reject']],['reserved','out',['depart','cancel']],['reserved','in',[]],['occupied','in',['arrive']],['occupied','out',[]],['unknown','',[]]])assert.deepEqual(lineActions(state,direction),expected,state+'/'+direction);
   assert.deepEqual(CLEARANCE_ACTIONS,['request','accept','reject','cancel','depart','arrive']);
@@ -39,10 +42,8 @@ test('lines join the catalogue with live state: neighbour names, direction and t
   await r.service.refresh();assert.equal(r.service.view().context.lines[0].state,'unknown');assert.deepEqual(r.service.view().context.lines[0].actions,[]);
 });
 
-test('clearance steps are posted only for own lines during a shift; refusals keep the server wording and re-read the context',async()=>{
+test('clearance steps are posted only for own lines, with no traffic shift; refusals keep the server wording and re-read the context',async()=>{
   const r=rig();await pair(r);
-  await assert.rejects(()=>r.service.clearance({...r.service.view(),connectionId:'vag-cda',action:'accept'}),/tas i tjänst/);
-  r.context.shift=shift;await r.service.refresh();
   await assert.rejects(()=>r.service.clearance({...r.service.view(),connectionId:'x-y',action:'arrive'}),/hör inte till stationen/);
   await assert.rejects(()=>r.service.clearance({...r.service.view(),connectionId:'cda-lek',action:'request',trainNumber:'P12'}),/tågnumret med siffror/);
   await assert.rejects(()=>r.service.clearance({...r.service.view(),connectionId:'cda-lek',action:'launch'}),/Okänd klareringsåtgärd/);
@@ -63,10 +64,14 @@ test('clearance steps are posted only for own lines during a shift; refusals kee
   await r.service.clearance({...r.service.view(),connectionId:'cda-lek',action:'request',trainNumber:'3581'});
   assert.deepEqual(r.posts().at(-1).body,{station_id:'cda',connection_id:'cda-lek',action:'request',train_number:'3581'});
   assert.deepEqual(r.journal,['Klarering godkänd · tåg 3581 · Vagnsta.','Klarering begärd · tåg 3581 · Lekby.']);
+  assert.ok(r.calls.every(c=>!c.path.startsWith('/v1/tkl/shift')),'a paired station is in service like an assigned box: no shift is started');
+  // A server from before the shift-free contract says so plainly, not "start a shift".
+  r.responses['/v1/tkl/clearance']={status:409,body:{error:'tkl_shift_not_started',message:'Starta trafikpasset innan en tågklarering hanteras'}};
+  await assert.rejects(()=>r.service.clearance({...r.service.view(),connectionId:'cda-lek',action:'cancel'}),/för gammal: den kräver trafikpass/);
 });
 
 test('an action waits for a poll in flight instead of interleaving with it',async()=>{
-  const r=rig();await pair(r);r.context.shift=shift;
+  const r=rig();await pair(r);
   r.now(200000);const poll=r.service.refresh();
   assert.equal(r.service.view().busy,true);
   const action=r.service.clearance({...r.service.view(),connectionId:'vag-cda',action:'reject'});
@@ -93,8 +98,6 @@ test('line wording follows state and direction; only incoming requests demand at
 import {movementStatus,movementActions,movementDone} from '../public/clearance-text.js';
 test('movement declarations send unchanged fields with their current values and follow the TMBox order',async()=>{
   const r=rig();await pair(r);
-  await assert.rejects(()=>r.service.movement({...r.service.view(),movementId:'m1',departure:'positioned'}),/tas i tjänst/);
-  r.context.shift=shift;await r.service.refresh();
   await assert.rejects(()=>r.service.movement({...r.service.view(),movementId:'',departure:'positioned'}),/vilken tågrörelse/);
   await assert.rejects(()=>r.service.movement({...r.service.view(),movementId:'m1',departure:'flying'}),/Okänt avgångsläge/);
   await assert.rejects(()=>r.service.movement({...r.service.view(),movementId:'m1',arrival:'gone'}),/Okänt ankomstläge/);
@@ -110,7 +113,10 @@ test('movement declarations send unchanged fields with their current values and 
   assert.deepEqual(r.posts().at(-1).body,{station_id:'cda',movement_id:'m1',departure:'none',arrival:'arrived',event_type:'tkl_arrived',actual_track:'4'});
   assert.deepEqual(r.journal,['Tåg 3581: uppställt anmält hos TrainMeet.','Tåg 3581: ankommit anmält hos TrainMeet.']);
   const stop={arrival_time:'05:00',departure_time:'05:05'},departureOnly={departure_time:'05:05'},arrivalOnly={arrival_time:'05:00'};
-  assert.deepEqual(movementActions(undefined,stop).map(a=>a.label),['Närmar sig']);
+  // Not seen coming, the train can also be moved here at once (issue #115), after a question.
+  assert.deepEqual(movementActions(undefined,stop).map(a=>a.label),['Närmar sig','Flytta hit']);
+  assert.deepEqual(movementActions(undefined,{...stop,train_number:'3581'}).at(-1),{field:'arrival',value:'arrived',label:'Flytta hit',primary:false,confirm:'Flytta tåg 3581 hit? Avsändarens del räknas som gjord och sträckan blir fri.'});
+  assert.deepEqual(movementActions(undefined,{...stop,train_number:'93'},true).map(a=>a.label),['Närmar sig'],'on its way on a line: no move');
   assert.deepEqual(movementActions({arrival:'approaching'},stop).map(a=>a.label),['Ankommit']);
   assert.deepEqual(movementActions({arrival:'arrived',departure:'none'},stop).map(a=>a.label),['Uppställt']);
   assert.deepEqual(movementActions({arrival:'arrived',departure:'positioned'},stop).map(a=>a.label),['Förare på plats']);
@@ -124,36 +130,17 @@ test('movement declarations send unchanged fields with their current values and 
   assert.equal(movementDone({arrival:'arrived'},arrivalOnly),true);
 });
 
-test('pairing puts the station in service and keeps it, at most once a minute and never taking over; the name renames our own shift; disconnect closes it',async()=>{
-  const r=rig();assert.equal(r.service.view().operatorName,'');await pair(r);
-  const starts=()=>r.posts().filter(p=>p.path==='/v1/tkl/shift/start');
-  r.responses['/v1/tkl/shift/start']={status:200,body:{shift}};
-  r.now(150000);await r.service.refresh();
-  assert.deepEqual(starts().map(p=>p.body),[{station_id:'cda',operator_name:'cda-tkl',terminal_name:'cda-tkl',take_over:false}],'the TKL id names the station until an operator chooses a name');
-  r.now(180000);await r.service.refresh();assert.equal(starts().length,1,'no retry within a minute');
-  r.now(220000);await r.service.refresh();assert.equal(starts().length,2);
-  r.context.shift={...shift,operator_name:'cda-tkl',terminal_name:'cda-tkl'};r.now(300000);await r.service.refresh();assert.equal(starts().length,2,'nothing to do once the station is manned');
-  assert.ok(r.journal.includes('Stationen i tjänst hos TrainMeet som cda-tkl.'));
-  await assert.rejects(()=>r.service.setOperatorName({sessionId:'x',revision:0,operatorName:'Casper'}),/ändrats/);
-  await assert.rejects(()=>r.service.setOperatorName({...r.service.view(),operatorName:'x'.repeat(81)}),/80 tecken/);
-  const named=await r.service.setOperatorName({...r.service.view(),operatorName:' Casper '});
-  assert.equal(named.operatorName,'Casper');assert.equal(r.storage.load('trainmeet.json',{}).operatorName,'Casper');
-  assert.deepEqual(starts().at(-1).body,{station_id:'cda',operator_name:'Casper',terminal_name:'cda-tkl',take_over:true},'our own shift is renamed by taking it over');
-  r.context.shift={...shift,operator_name:'Webb',terminal_name:'browser-tkl'};await r.service.refresh();const before=starts().length;
-  await r.service.setOperatorName({...r.service.view(),operatorName:'Anna'});assert.equal(starts().length,before,'another terminal\x27s shift is never taken over by a rename');
-  r.context.shift=null;r.responses['/v1/tkl/shift/start']={status:409,body:{error:'tkl_unavailable',message:'TKL-driftlagret är inte tillgängligt'}};
-  r.now(400000);await r.service.refresh();assert.equal(r.service.view().serviceError,'TKL-driftlagret är inte tillgängligt');assert.equal(r.service.view().status,'connected');
-  const again=new TrainMeet({origin:'https://trainmeet.example',storage:r.storage,fetcher:r.fetcher,now:()=>500000});
-  assert.equal(again.view().operatorName,'Anna');assert.equal(again.view().paired,true);
-  r.context.shift={...shift,operator_name:'Anna',terminal_name:'cda-tkl'};await r.service.refresh();r.responses['/v1/tkl/shift/finish']={status:200,body:{}};
+test('pairing, polling and disconnecting never start or finish a traffic shift',async()=>{
+  const r=rig();await pair(r);
+  for(const t of [150000,220000,300000])(r.now(t),await r.service.refresh());
   await r.service.disconnect(r.service.view());
-  assert.deepEqual(r.posts().at(-1),{path:'/v1/tkl/shift/finish',method:'POST',body:{station_id:'cda',shift_id:'s1',status:'closed',note:''}});
-  assert.equal(r.service.view().paired,false);assert.ok(r.journal.includes('Stationen ur tjänst hos TrainMeet (frånkopplad).'));
+  assert.equal(r.service.view().paired,false);assert.deepEqual(r.posts(),[],'nothing posted beyond the pairing');
+  assert.ok(!('operatorName' in r.service.view())&&!('serviceError' in r.service.view()));
 });
-test('an older file with the TMBox-mode setting keeps its operator name',()=>{
-  const legacy={version:1,clientId:'cda-tkl',stationId:'cda',token:'t',origin:'https://trainmeet.example',autoShift:{enabled:false,operatorName:'Casper'}};
+test('an older file with a shift operator name still loads, without the name',()=>{
+  const legacy={version:1,clientId:'cda-tkl',stationId:'cda',token:'t',origin:'https://trainmeet.example',operatorName:'Anna',autoShift:{enabled:false,operatorName:'Casper'}};
   const service=new TrainMeet({storage:{load:()=>structuredClone(legacy),save(){}}});
-  assert.equal(service.view().operatorName,'Casper');assert.equal(service.view().paired,true);assert.ok(!('autoShift' in service.data));
+  assert.equal(service.view().paired,true);assert.ok(!('autoShift' in service.data)&&!('operatorName' in service.data));
 });
 
 test('the station list comes from the public display without credentials and is validated',async()=>{
@@ -166,7 +153,7 @@ test('the station list comes from the public display without credentials and is 
 });
 
 test('what a poll shows to have happened becomes journal rows: announcement, arrival, departure',async()=>{
-  const r=rig();r.context.shift={shift_id:'s1',operator_name:'Rig',terminal_name:'cda-tkl'};await pair(r);r.journal.length=0;
+  const r=rig();await pair(r);r.journal.length=0;
   r.context.connection_states[0]={id:'cda-lek',state:'requested',from_station_id:'lek',to_station_id:'cda',train_number:'9'};
   await r.service.refresh();assert.deepEqual(r.journal,['Tåganmälan 9 från Lekby.']);
   r.context.connection_states[1]={id:'vag-cda',state:'free',from_station_id:null,to_station_id:null,train_number:null};

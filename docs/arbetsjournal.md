@@ -1132,3 +1132,114 @@ driftjournalen i efterhand.
 Casper bad om att få ut sidfotsrättelsen direkt ("pusha till prod"). 0.51.1 är 0.51.0 med sidfoten
 "version 0.51.1" och provet som håller sidfoten i takt med package.json. Ny patchversion eftersom
 v0.51.0 redan är taggad i cda-tkl-install. Caspers Mac installerades om till 0.51.0 strax innan.
+
+## 3 oktober 2026, 0.51.2: tågvägar som försvann direkt
+
+Casper: tågvägen lades men försvann direkt på Mac-versionen. Journalen på Macen visade att varje
+tågväg efter 14:30, när ett Stream Deck MK.2 kopplats in, återtogs 0,02–0,8 s efter begäran.
+Samma mönster fanns 10:06 med 0.50.0. Rättat på två ställen: tågvägsbegäran bär avsikten lägg eller
+återta, och bara ett fönster per webbläsare styr decken. Provat i motorprov, i drivrutinsprov med
+två låtsasfönster och genom klick i Chrome mot en lokal TKL. Inte provat med det riktiga decket.
+
+## 3 oktober 2026, 0.52.0: inget trafikpass alls
+
+Casper: "måste vi ha start av trafikpasset alls?" Nej. Kravet satt i TrainMeet Server, som avvisade
+klarering och tågrörelser från TKL-terminaler utan aktivt pass, medan en TMBox klarar sig utan.
+Servern ändrad på grenen `claude/tkl-no-shift` i trainmeet-server: en parkopplad TKL är i tjänst som
+en tilldelad box, och stegen registreras under terminalens namn. 1145 serverprov godkända.
+I TKL är automatstarten, namnet hos TrainMeet, spärren "tas i tjänst inom en minut" och
+passavslutet vid frånkoppling borttagna. En äldre server som fortfarande kräver pass ger texten att
+TrainMeet Server behöver uppdateras. 369 enhetsprov och 11 integrationsprov godkända.
+Serverändringen mergades som trainmeet-server#113 (version 2.5.0) och är enligt Casper i drift på
+server.trainmeet.app. TKL-ändringen mergades som cda-tkl#2 och ges ut som 0.52.0.
+
+## 4 oktober 2026, 0.53.0: grannens läge och Flytta hit
+
+Del av TrainMeet Server #115, där obemannade stationer nu sköts automatiskt
+(trainmeet-server#118) och TMBox frågar FLYTTA 93 HIT? (#117). Logiken ligger i
+servern. I TKL visar varje sträckruta under Tågklarering vem som svarar i andra
+änden (automatisk, bemannad, kontakt saknas) när servern skickar `station_modes`,
+och ett tåg som inte syns komma har knappen Flytta hit efter en fråga. Mergat som
+cda-tkl#3. Servern är enligt Casper uppdaterad på server.trainmeet.app.
+369 enhetsprov och 11 integrationsprov godkända.
+
+## 4 oktober 2026, 0.53.1: uppdateringsraden i gränssnittet
+
+Casper ville kunna kopiera uppdateringsraden direkt ur TKL. Ny sida Avancerat →
+Uppdatering (cda-tkl#4): installerad och senaste version, och på Mac eller PC raden
+för Terminal eller PowerShell med Kopiera raden, alltid synlig. Pi:n får Uppdatera
+nu där, webbdriften en förklaring. Provat i Chromium mot en lokal TKL som Mac-
+installation; 369 enhetsprov godkända.
+
+## 4 oktober 2026, 0.54.0: Drift som flik i nederraden
+
+Steg 1 i installningar-plan.md, efter Caspers beslut att ställverket är Drift och att
+adminfönstret blir Inställningar. Nederraden har flikarna Händelser, Spårbeläggning och
+Drift. Drift har knapparna Återställ, Styra RBG, Alla signaler i stopp, Nödåterta alla och
+lokalt läge, uppdateringschipen, Tågklarering och hopfällbart Tågvägar, Spårspärrar,
+Linjer, Tågnummer och Modellklocka. Övre högra hörnet är tomt och Drift-gruppen borta ur
+adminfönstret; `#tools/operations…` öppnar fliken. Mergat som cda-tkl#5. 369 enhetsprov,
+11 integrationsprov, Chromium på 1440, 1920 och 390 px.
+
+## 4 oktober 2026, 0.55.0: Inställningar i tre grupper
+
+Steg 2 i installningar-plan.md. Adminfönstret heter Inställningar, med grupperna Träffen
+(TrainMeet, Händelser), Den här datorn (Utseende och ljud, Stream Deck, Banan (LocoNet),
+Uppdatering) och Anläggningen (Anläggning). Översiktssidan Avancerat är borta; `#advanced`
+leder till registret och `#tools` till Utseende och ljud. Tidtabellssidorna ligger
+tillfälligt under TrainMeet till steg 3. Mergat som cda-tkl#6. 371 enhetsprov, 11
+integrationsprov, Chromium på 1440 och 390 px.
+
+## 4 oktober 2026, 0.56.0: Lokal tidtabell borttagen
+
+Steg 3 i installningar-plan.md. Manuell tidtabell, Excel/CSV- och AI-import,
+kalkylbladsredigeraren och källvalet är borttagna; TrainMeet är tidtabellens enda källa.
+`/api/timetable-import` finns inte längre, `#import…` leder till TrainMeet och beroendena
+csv-parse, read-excel-file, yauzl, saxes och fflate är borta. En sparad äldre tidtabell
+ligger kvar på disken men läses inte. Mergat som cda-tkl#7. 346 enhetsprov,
+10 integrationsprov, Chromium.
+
+## 4 oktober 2026, 0.57.0: Det pedagogiska lagret i Inställningar
+
+Steg 4 i installningar-plan.md, sista steget. Alla sex avsnitt (TrainMeet, Händelser,
+Utseende och ljud, Stream Deck, Banan (LocoNet), Uppdatering) har en räckviddsrad, rader
+med etikett · värde · grå konsekvens, status som text och form (● ▲ ○), konsekvensen
+bredvid varje knapp och en fotnot om vad avsnittet inte gör. Redigeringsdialogerna har
+Spara släckt med "Inget ändrat" tills något ändras. Händelser visar hela serverns journal
+(150 senaste) med sök, och Banan har anslutningsstatus överst med kommunikationsvyn
+bakom en knapp. Mergat som cda-tkl#8. 346 enhetsprov, 10 integrationsprov, Chromium på
+1280 och 390 px.
+
+## 4 oktober 2026, 0.57.1: LocoNet frånkopplad en gång i journalen
+
+Varje misslyckat återanslutningsförsök, ungefär en gång i sekunden, skrev "LocoNet
+frånkopplad" i journalen och trängde ut allt annat ur de 150 raderna i Inställningar →
+Händelser och nederraden. Nu skrivs raden bara när anslutningen bryts; hanteringen av
+läget vid varje rapport är oförändrad. Mergat som cda-tkl#9. 347 enhetsprov,
+10 integrationsprov, lokalt prov utan bana.
+
+## 4 oktober 2026, 18:23: webbdriften kör 0.57.1
+
+Casper publicerade 0.57.1 (`84ee4e3`) till cda-tkl.trainmeet.app med deploy/publish-release.sh.
+Webbdriften gick därmed från 0.52.0 till 0.57.1. Taggarna v0.52.0–v0.57.1 i cda-tkl-install
+sätts av Casper.
+
+## 5 oktober 2026, 0.58.0: Vad är nytt under Uppdatering
+
+Inställningar → Uppdatering visar vad varje version gjorde, på rubriknivå, ur
+`public/releases.json`: de tio senaste och resten bakom en knapp; en installerad dator
+visar också vad en tillgänglig version innehåller, läst ur cda-tkl-install. Varje
+release lägger nu till sin rubrik i `public/releases.json`, och ett prov fallerar om
+den saknas. Samma sak finns i TrainMeet Server, TKL och Cloud, där versionsroboten
+skriver rubrikerna ur PR-titlarna. Mergat som cda-tkl#10.
+
+## 5 oktober 2026, 0.59.0: webbdriften uppdaterar sig själv
+
+`packaging/web/charlottendal-update` gör på webbservern det `deploy/publish-release.sh` gör
+från Macen: hämtar senaste releasen ur cda-tkl-install, ny releasekatalog med beroenden,
+syntaxkontroll, backup, byte av current, omstart av TKL och kontroll, och återställer
+föregående release om TKL inte kommer upp. En systemd-tjänst kör den som root; en
+polkit-regel låter TKL-tjänsten starta den och inget annat. publish-release.sh
+installerar filerna vid varje publicering. Uppdatering visar Uppdatera nu och hur den
+senaste uppdateringen gick. Provad i sandlåda (lyckad och återställd), inte ännu på
+servern. Mergat som cda-tkl#11.

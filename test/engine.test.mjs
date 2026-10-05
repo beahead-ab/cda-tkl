@@ -31,6 +31,24 @@ test('complete route waits for reports, clears downstream first, and same endpoi
   assert.throws(() => r.engine.manual('Vx121', 'T'), /låst/);
   r.request('cu-2b'); r.drain(); r.advance(200); assert.equal(r.engine.routes.length, 0);
 });
+test('with an intent a repeated request never undoes the first: build never cancels, cancel never builds', () => {
+  const r = rig(), def = profile.routes.find(x => x.id === 'cu-2b');
+  const route = r.engine.request(def.from, def.to, 'build'); assert.equal(route.state, 'setting');
+  // A second window or a doubled press sends the same build a moment later.
+  assert.equal(r.engine.request(def.from, def.to, 'build'), route, 'the second build returns the route already laid');
+  assert.equal(r.engine.routes.length, 1); assert.equal(route.cancelRequested, false);
+  assert.match(r.engine.events[0].message, /begärd igen men ligger redan/); assert.equal(r.engine.events[0].kind, 'route-repeat');
+  r.drain(); r.advance(4000); assert.equal(route.state, 'active');
+  assert.equal(r.engine.request(def.from, def.to, 'build'), route); assert.equal(route.state, 'active', 'still laid after a late repeat');
+  // Taking it back works once; a repeated cancel never lays it again.
+  r.engine.request(def.from, def.to, 'cancel'); r.drain(); r.advance(200); assert.equal(r.engine.routes.length, 0);
+  assert.equal(r.engine.request(def.from, def.to, 'cancel'), null); assert.equal(r.engine.routes.length, 0, 'a repeated cancel lays nothing');
+  assert.match(r.engine.events[0].message, /tågvägen ligger inte. Ingenting lades/);
+  assert.throws(() => r.engine.request(def.from, def.to, 'toggle'), /Okänd avsikt/);
+  // A cancel for something that cannot be planned at all is quiet too.
+  r.engine.connection(false); assert.equal(r.engine.request(def.from, def.to, 'cancel'), null);
+  assert.throws(() => r.engine.request(def.from, def.to, 'build'), /LocoNet/);
+});
 test('occupied block holds route and prevents releasing locks until clear and stopped', () => {
   const r = rig(), route = r.request('2b-2c'); r.advance(3500);
   r.field.setBlock('S121', true); r.drain(); assert.equal(route.state, 'occupied'); assert.equal(r.engine.signals['2/8'].desired, 'STOP');
@@ -228,4 +246,13 @@ test('field reports and orders cannot push operating events out of the journal t
   assert.ok(s.events.some(e=>e.kind==='permission')&&s.events.some(e=>e.kind==='order'),'the tools journal keeps orders and permissions');
   assert.ok(s.events.length<=150&&s.operatingEvents.length<=150);
   assert.deepEqual(s.operatingEvents.map(e=>e.id),[...s.operatingEvents].sort((a,b)=>b.id-a.id).map(e=>e.id),'newest first');
+});
+
+test('a long disconnection is written to the journal once, not at every reconnect attempt', () => {
+  const e = new Engine(profile), lost = () => e.journal.filter(x => x.kind === 'disconnected').length;
+  for (let i = 0; i < 5; i++) e.connection(false);
+  assert.equal(lost(), 1);
+  e.connection(true); e.connection(false); e.connection(false);
+  assert.equal(lost(), 2);
+  assert.equal(e.journal.filter(x => x.kind === 'connected').length, 1);
 });

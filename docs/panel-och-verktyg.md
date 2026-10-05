@@ -133,7 +133,7 @@ Läs uppifrån och ned i en kolumn, sedan nästa till höger. Källans radordnin
 
 Tågnummer, ankomst, avgång, spår och från/till syns direkt. Anmärkningar och extra uppgifter sammanfattas på en tredje rad; lång text kortas visuellt. Klick, högerklick, Enter eller Skift+F10 öppnar samtliga uppgifter i en modal nära tåget. Muspekning öppnar inget. Ändrat spår markeras med en stjärna; detaljrutan visar både aktuellt och planerat spår. Kontaktbortfall markerar hela tidtabellen som gamla uppgifter. Tidtabellen skickar inga manöverorder.
 
-**Meny → Tidtabell och import** samlar källval, manuell inmatning och uppladdning. Välj mellan TrainMeet och **Egen tidtabell**. Den egna tidtabellen kan från 0.24.0 skrivas för hand eller tolkas från bilder/PDF; båda visas i samma kolumnfält. Källbytet bevarar båda och påverkar inga signaler, tågvägar eller klockor. Se [handhavande och installation](tidtabellsimport.md).
+*(Historiskt: den lokala tidtabellen togs bort 4 oktober 2026, se installningar-plan.md.)* **Meny → Tidtabell och import** samlade källval, manuell inmatning och uppladdning. Välj mellan TrainMeet och **Egen tidtabell**. Den egna tidtabellen kan från 0.24.0 skrivas för hand eller tolkas från bilder/PDF; båda visas i samma kolumnfält. Källbytet bevarar båda och påverkar inga signaler, tågvägar eller klockor. Se [handhavande och installation](tidtabellsimport.md).
 
 Kolumnlayouten är provad med 37 tydligt märkta provrörelser: samtliga sidor, tom ankomst, tid över 24:00, flera trafikdagar, lång anmärkning, text som innehåller HTML-tecken, TrainMeet-spårbyte och levande klocka. Tre skins, fullskärm, detaljmodal, tangentbord och 390-pixlars vy utan horisontellt sidöverflöde är granskade i webbläsaren. Backend och importformat är oförändrade.
 
@@ -411,3 +411,35 @@ Layouten för varje deck redigeras under **Stream Deck → Layout** enligt skiss
 Provat med enhetsprov för modell, server, tåg på tur och drivrutin (två låtsasdeck med olika
 layouter) och i Chrome mot en lokal TKL parkopplad med en låtsas-TrainMeet: dra och släpp, sidflikar,
 egenskaper, aktivering, kopiering och import. Inte provat med riktiga Stream Deck än.
+
+## En tågväg som lades men försvann direkt (0.51.2)
+
+På Caspers Mac lades varje tågväg från Stream Deck och återtogs inom en sekund. Journalen visade
+begäran, återtagning och frigiven i följd för alla tio tågvägar efter att ett MK.2 kopplats in.
+Samma tågväg kom två gånger, och en andra likadan begäran betydde återta. Troligen styrde två
+fönster decket samtidigt, Macappen och en flik, så att båda skickade varje tryck.
+
+- **Tågvägsbegäran har en avsikt.** Panelen skickar `intent: "build"` eller `"cancel"` enligt det
+  den visade vid valet, som `route-targets` redan anger per mål. Motorn lägger aldrig om avsikten
+  är återta och återtar aldrig om avsikten är lägg. En upprepning loggas som `route-repeat` och
+  syns i händelsekolumnen. Utan avsikt växlar samma val som förut; listvalet och äldre klienter
+  bygger på det.
+- **Ett fönster per webbläsare styr decken.** Drivrutinen tar Web Locks-låset
+  `charlottendal-streamdeck`. Övriga fönster låter decken vara, visar att de styrs från ett annat
+  fönster och tar över när det stängs eller direkt med **Styr härifrån**. Fönstret som lämnar ifrån
+  sig decken släcker dem inte, så att det nya fönstrets bilder står kvar. Låset gäller per adress:
+  `127.0.0.1` och `localhost` räknas som olika, och där skyddar avsikten.
+
+## Drift som tredje flik i nederraden (steg 1 i installningar-plan.md)
+
+Nederradens högra kolumn har tre flikar: Händelser, Spårbeläggning och Drift. Drift har
+överst knapparna Återställ, Styra RBG, Alla signaler i stopp, Nödåterta alla och Spärra
+lokal manövrering, och när det gäller uppdateringschipet och "Ny version · ladda om".
+Därunder manöverläget i text, Tågklarering och de hopfällbara delarna Tågvägar,
+Spårspärrar, Linjer och programmeringsspår, Tågnummer och Modellklocka.
+
+Ställverkets övre högra hörn är tomt; ramen visar bara CHARLOTTENDAL och statuschipet.
+Gruppen Drift finns inte längre i adminfönstret. Adresserna `#tools/operations…` öppnar
+motsvarande del av fliken, så bokmärken fungerar. En ny klareringsförfrågan räknas på
+fliken, "Drift 2", och tar fram fliken om operatören inte valt en annan flik de senaste
+15 sekunderna. Elementen och deras händelser är desamma som förut; bara platsen är ny.

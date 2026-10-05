@@ -1,8 +1,8 @@
 // "Uppdatering X" in the status bar when the public install repository has a newer
-// release than this installed copy. On a Raspberry Pi the dialog starts the update; on a
-// Mac or PC it shows the line to run. The page itself sends nothing until asked.
+// release than this installed copy. On a Raspberry Pi and on the web deployment the dialog
+// starts the update; on a Mac or PC it shows the line to run. The page itself sends nothing until asked.
 import {confirmAdmin,createAdminDialog} from './admin-ui.js';
-const LINES={
+export const UPDATE_LINES={
   mac:{where:'Terminal',line:'curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh | sh'},
   windows:{where:'PowerShell',line:'irm https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.ps1 | iex'}
 };
@@ -11,11 +11,11 @@ export function openUpdateNotice(view,{api,message}){
   const title='Charlottendal TKL '+view.latest+' finns';
   if(view.canStart){
     confirmAdmin({title,button:'Uppdatera nu',
-      message:'Den här Pi:n kör '+view.current+'. Uppdateringen hämtar '+view.latest+', installerar den och startar om TKL, vilket tar ett par minuter. Lagda tågvägar behåller sina lås men måste läggas om för att signalerna ska gå till kör. Inställningar och driftdata ligger kvar, och om den nya versionen inte startar återställs den gamla.',
+      message:(view.kind==='web'?'Webbdriften kör ':'Den här Pi:n kör ')+view.current+'. Uppdateringen hämtar '+view.latest+' från cda-tkl-install, tar en säkerhetskopia, installerar och startar om TKL, vilket tar ett par minuter. Panelen är borta en kort stund för alla som är inne. Lagda tågvägar behåller sina lås men måste läggas om för att signalerna ska gå till kör. Inställningar och driftdata ligger kvar, och om den nya versionen inte startar återställs den gamla.',
       action:async()=>{const answer=await api('update/start',{});if(!answer)return false;message('Uppdateringen har startat. Ställverket visar "Ny version · ladda om" när den är klar.',{error:false,duration:8000});}});
     return;
   }
-  const how=LINES[view.kind]||LINES.mac;
+  const how=UPDATE_LINES[view.kind]||UPDATE_LINES.mac;
   const body=document.createElement('div');
   body.innerHTML='<p></p><p></p><pre class="update-line"><code></code></pre><button type="button" class="update-copy">Kopiera raden</button>';
   body.querySelector('p').textContent='Den här datorn kör '+view.current+'. Inställningar och driftdata ligger kvar vid uppdateringen, och om den nya versionen inte startar återställs den gamla.';

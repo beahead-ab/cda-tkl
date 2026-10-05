@@ -71,6 +71,11 @@ rollback() {
 }
 trap rollback ERR
 
+say "Uppdateringstjänsten (Inställningar → Uppdatering → Uppdatera nu)"
+# Installed or refreshed on every publish, so the web deployment can update itself from
+# cda-tkl-install afterwards. polkit lets the TKL service start the update, and only that.
+remote "W=$BASE/releases/$SHA/packaging/web; install -m 0755 \$W/charlottendal-update /usr/local/sbin/charlottendal-update && install -m 0644 \$W/charlottendal-update.service /etc/systemd/system/charlottendal-update.service && systemctl daemon-reload && if [ -d /etc/polkit-1/rules.d ]; then install -m 0644 \$W/50-charlottendal-update.rules /etc/polkit-1/rules.d/50-charlottendal-update.rules; echo 'Uppdateringstjänsten installerad.'; else echo 'Varning: polkit saknas, så panelen kan inte starta uppdateringen. Installera med: apt-get install -y polkitd'; fi"
+
 say "Aktiverar $SHA och startar om TKL"
 remote "ln -sfn $BASE/releases/$SHA $BASE/current.new && mv -Tf $BASE/current.new $BASE/current && readlink -f $BASE/current && systemctl restart charlottendal-tkl && sleep 4 && systemctl is-active charlottendal-tkl"
 

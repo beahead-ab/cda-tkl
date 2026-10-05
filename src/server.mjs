@@ -17,11 +17,9 @@ import { Configuration } from './configuration.mjs';
 import { TrainInformation } from './train-information.mjs';
 import { PanelIndications } from './panel-indications.mjs';
 import { TrainMeet } from './trainmeet.mjs';
-import { TimetableImport, IMPORT_LIMITS } from './timetable-import.mjs';
-import { TimetableAI } from './timetable-ai.mjs';
 import { ModelClock } from './model-clock.mjs';
 import { describeProtocol, TelegramRecorder } from './telegram-recorder.mjs';
-import { UpdateCheck } from './update-check.mjs';
+import { UpdateCheck, UPDATE_UNITS } from './update-check.mjs';
 import { studioData, studioRules, buildRegistry, detectionInventory } from './studio/index.mjs';
 import { CardInventory, mgpSummary } from './studio/cards.mjs';
 import { Measurements } from './studio/measure.mjs';
@@ -80,7 +78,6 @@ const studioReview=new StudioReview({sources:studioSources,assistant:studioAssis
 const studioCards=new CardInventory({storage,send:b=>!!client?.send(b)});
 const studioMeasure=new Measurements({storage,send:b=>!!client?.send(b),guard:()=>{const s=activationStatus(null);return s.allowed?null:s.reason;},mode:()=>connectionInfo(profile).mode});
 const trainMeet=new TrainMeet({storage,origin:process.env.CHARLOTTENDAL_TRAINMEET_ORIGIN||''});
-const timetableImport=new TimetableImport({storage,reader:new TimetableAI()});let importUploading=false;
 const destinations=new Destinations(storage);
 const modelClock=new ModelClock(storage);let clockPublished=0;
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = [], protocolTrace=[]; let dirty = true;
@@ -103,7 +100,6 @@ function installRuntime(next,start=true){
   if(start)c.start();dirty=true;
 }
 trainMeet.on('change',()=>{dirty=true;});trainMeet.on('journal',text=>{engine.log('trainmeet',text);dirty=true;});
-timetableImport.on('change',()=>{dirty=true;});
 installRuntime(createRuntime(studioDrafts.apply(bindings.profile()).profile),false);
 // Layouts are checked against the live profile's pluppar, so the store is created once the runtime exists.
 const streamDeckLayouts=new StreamDeckLayouts(storage,{pluppIds:()=>Object.keys(profile?.buttons||{})});
@@ -111,9 +107,12 @@ const streamDeckLayouts=new StreamDeckLayouts(storage,{pluppIds:()=>Object.keys(
 // version it was loaded from and offers a reload after a release.
 const release=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version;
 // Installed copies look for a newer release in the public install repository.
-const updateCheck=process.env.CHARLOTTENDAL_INSTALL_KIND?new UpdateCheck({current:release,kind:process.env.CHARLOTTENDAL_INSTALL_KIND}):null;
+// The web deployment sets no install kind; its own updater (installed by publish-release)
+// makes it one, so Inställningar → Uppdatering can update it from cda-tkl-install.
+const installKind=process.env.CHARLOTTENDAL_INSTALL_KIND||(fs.existsSync('/usr/local/sbin/charlottendal-update')?'web':'');
+const updateCheck=installKind?new UpdateCheck({current:release,kind:installKind,statusFile:path.join(storage.directory,'update.json'),readFile:file=>fs.readFileSync(file,'utf8')}):null;
 updateCheck?.start();
-const snapshot = () => {const state=engine.snapshot();return { ...state,release,update:updateCheck?.view()??null,connectionInfo:connectionInfo(profile),destinations:destinations.view(),streamDeck:streamDeckLayouts.view(),bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),timetableImport:timetableImport.summary(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
+const snapshot = () => {const state=engine.snapshot();return { ...state,release,update:updateCheck?.view()??null,connectionInfo:connectionInfo(profile),destinations:destinations.view(),streamDeck:streamDeckLayouts.view(),bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot() };};
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
@@ -129,20 +128,6 @@ const server = http.createServer(async (req, res) => {
       if(url.pathname==='/api/studio/mgp/export'){const measured=studioMeasure.measured(profile);const doc={format:'charlottendal-mgp-v1',at:Date.now(),sourceHash:studioSources.profile.sourceHash,mode:connectionInfo(profile).mode,cards:studioCards.view().cards,modules:mgpSummary({profile,xml:studioSources.xml},buildRegistry(studioSources,measured),studioCards.view().cards,{sections:detectionInventory(studioSources).sections,measured})};
         res.writeHead(200,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Disposition':'attachment; filename="charlottendal-mgp.json"'});return res.end(req.method==='HEAD'?undefined:JSON.stringify(doc,null,2)+'\n');}
       if(url.pathname==='/api/route-targets')return json(res,{targets:engine.routeTargets(url.searchParams.get('from'),url.searchParams.get('kind')||'main')});
-      if(url.pathname==='/api/timetable-import')return json(res,timetableImport.view());
-      const templateMatch=url.pathname.match(/^\/api\/timetable-import\/template\.(csv|xlsx)$/);
-      if(templateMatch){
-        const ext=templateMatch[1],bytes=fs.readFileSync(path.join(root,'templates','cda-tkl-tidtabell.'+ext));
-        res.writeHead(200,{'Content-Type':ext==='csv'?'text/csv; charset=utf-8':'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Content-Disposition':`attachment; filename="cda-tkl-tidtabell.${ext}"`,'Cache-Control':'no-cache','X-Content-Type-Options':'nosniff'});
-        return res.end(req.method==='HEAD'?undefined:bytes);
-      }
-      const sourceMatch=url.pathname.match(/^\/api\/timetable-import\/source\/([a-f0-9-]{36})\/(\d+)$/);
-      if(sourceMatch){
-        const file=timetableImport.sourceFile(sourceMatch[1],sourceMatch[2]);
-        const bytes=fs.readFileSync(file.path);
-        res.writeHead(200,{'Content-Type':file.mime,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"sandbox; default-src 'none'",'Content-Disposition':(file.mime.startsWith('image/')?'inline':'attachment')+"; filename*=UTF-8''"+encodeURIComponent(file.name)});
-        return res.end(req.method==='HEAD'?undefined:bytes);
-      }
       if (url.pathname === '/api/config') { const {routeAlternatives,...panelProfile}=profile; return json(res, { ...panelProfile,release,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null }); }
       if (url.pathname === '/api/train-information') return json(res, {...trainInformation.snapshot(),...trainInformation.catalog()});
       if(url.pathname==='/api/bindings')return json(res,bindings.view());
@@ -165,15 +150,7 @@ const server = http.createServer(async (req, res) => {
       if (url.pathname.startsWith('/api/')) return json(res, { error: 'Finns inte' }, 404);
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
-    if(['/api/timetable-import/begin','/api/timetable-import/table'].includes(url.pathname)){
-      if(importUploading)return json(res,{error:'En uppladdning pågår redan.'},409);
-      const table=url.pathname.endsWith('/table');
-      if(!table&&!timetableImport.reader.configured)return json(res,{error:'AI-tolkning är inte ansluten. Lägg till serverns API-nyckel först.'},503);
-      importUploading=true;
-      try{const data=await body(req,table?3*1024*1024:IMPORT_LIMITS.requestBytes);return json(res,table?await timetableImport.table(data):timetableImport.begin(data),table?200:202);}finally{importUploading=false;}
-    }
-    const data = await body(req,url.pathname==='/api/timetable-import/save'?2*1024*1024:65536);
-    if(url.pathname.startsWith('/api/timetable-import/')){const command=url.pathname.slice('/api/timetable-import/'.length);if(!['manual','edit','append','save','sheet','activate','discard','select'].includes(command))return json(res,{error:'Okänd tidtabellsåtgärd'},404);return json(res,timetableImport[command](data));}
+    const data = await body(req,65536);
     if(url.pathname==='/api/studio/assistant/propose')return json(res,await studioAssistant.propose(data,{profile:bindings.profile(),xml:studioSources.xml,activeRules:studioDrafts.activeRules(),names:studioDrafts.names}));
     if(url.pathname==='/api/studio/review/run')return json(res,await studioReview.run());
     if(url.pathname==='/api/studio/bindings/propose-signals'){
@@ -199,15 +176,16 @@ const server = http.createServer(async (req, res) => {
       return json(res,result);
     }
     if(url.pathname==='/api/destinations'){const result=destinations.save(data,trainMeet.context?.stations||[]);dirty=true;return json(res,result);}
-    if(url.pathname.startsWith('/api/trainmeet/')){const command={configure:'configure',pair:'pair',refresh:'refresh',disconnect:'disconnect',stations:'stations','operator-name':'setOperatorName',clearance:'clearance',movement:'movement'}[url.pathname.slice('/api/trainmeet/'.length)];if(!command)return json(res,{error:'Okänd TrainMeet-åtgärd'},404);return json(res,await trainMeet[command](data));}
+    if(url.pathname.startsWith('/api/trainmeet/')){const command={configure:'configure',pair:'pair',refresh:'refresh',disconnect:'disconnect',stations:'stations',clearance:'clearance',movement:'movement'}[url.pathname.slice('/api/trainmeet/'.length)];if(!command)return json(res,{error:'Okänd TrainMeet-åtgärd'},404);return json(res,await trainMeet[command](data));}
     // On a Raspberry Pi the panel can start cda-tkl-update.service (allowed for the cda-tkl
     // user by the installer's polkit rule). It reinstalls and restarts TKL; the panel then
     // offers a reload. Elsewhere the update is started from Terminal or PowerShell.
     if(url.pathname==='/api/update/start'){
       if(!updateCheck?.view().canStart)return json(res,{error:'Uppdateringen startas från Terminal eller PowerShell på den här datorn.'},409);
-      const run=spawn('systemctl',['start','--no-block','cda-tkl-update.service'],{stdio:'ignore'});
+      const unit=UPDATE_UNITS[updateCheck.kind];
+      const run=spawn('systemctl',['start','--no-block',unit],{stdio:'ignore'});
       const code=await new Promise(r=>{run.on('error',()=>r(-1));run.on('exit',r);});
-      if(code!==0)return json(res,{error:'Uppdateringen kunde inte startas (systemctl '+code+'). Kör sudo cda-tkl-update på Pi:n.'},409);
+      if(code!==0)return json(res,{error:'Uppdateringen kunde inte startas (systemctl '+code+'). Kör sudo '+unit.replace('.service','')+' på '+(updateCheck.kind==='web'?'servern':'Pi:n')+'.'},409);
       engine.log('update','Uppdatering till '+(updateCheck.view().latest||'senaste versionen')+' startad. TKL startar om när den är installerad.');dirty=true;
       return json(res,{started:true});
     }
@@ -228,7 +206,7 @@ const server = http.createServer(async (req, res) => {
       engine.log('train-information',({move:'Tågnummer flyttat manuellt mellan informationsfält.',follow:'Tågnummer kopplat till rapporterad passage.',unfollow:'Tågnummerföljning avslutad av operatören.',save:'Tåginformation registrerad eller kontrollerad manuellt.'})[command]);
       return json(res,result);
     }
-    if (url.pathname === '/api/route') engine.request(data.from, data.to);
+    if (url.pathname === '/api/route') engine.request(data.from, data.to, data.intent);
     else if (url.pathname === '/api/cancel') engine.cancel(data.id);
     else if (url.pathname === '/api/turnout') engine.manual(data.name, data.position);
     else if (url.pathname === '/api/track-block') engine.blockTrack(data.name, data.blocked);
