@@ -94,18 +94,35 @@ const mapError = e => {
 };
 
 export class StudioAssistant {
-  constructor({ key = process.env.ANTHROPIC_API_KEY || '', model = process.env.CHARLOTTENDAL_STUDIO_MODEL || 'claude-opus-5-5', fetcher = undefined, timeout = 600000 } = {}) {
-    this.key = key; this.model = model; this.configured = !!key; this.provider = 'Anthropic';
-    this.client = key ? new Anthropic({ apiKey: key, maxRetries: 1, timeout, ...(fetcher ? { fetch: fetcher } : {}) }) : null;
+  // Nyckel och modell läses vid varje anrop: ur appens inställningar (AiSettings, Inställningar → AI-tjänst) när sådana finns,
+  // annars ur miljön. Klienten byggs om när nyckeln byts, så ett sparat byte gäller utan omstart.
+  constructor({ settings = null, key = undefined, model = undefined, fetcher = undefined, timeout = 600000 } = {}) {
+    this.settings = settings || { key: key ?? (process.env.ANTHROPIC_API_KEY || ''), model: model ?? (process.env.CHARLOTTENDAL_STUDIO_MODEL || 'claude-opus-5-5') };
+    this.fetcher = fetcher; this.timeout = timeout; this.provider = 'Anthropic'; this.cached = null;
+  }
+  get key() { return this.settings.key || ''; }
+  get model() { return this.settings.model || 'claude-opus-5-5'; }
+  get configured() { return !!this.key; }
+  get client() {
+    const key = this.key; if (!key) return null;
+    if (!this.cached || this.cached.key !== key) this.cached = { key, client: new Anthropic({ apiKey: key, maxRetries: 1, timeout: this.timeout, ...(this.fetcher ? { fetch: this.fetcher } : {}) }) };
+    return this.cached.client;
   }
   view() { return { configured: this.configured, provider: this.provider, model: this.model }; }
+  // Provanropet från Inställningar: ett litet riktigt anrop med strukturerat svar, så att nyckel, modell och nätväg prövas på riktigt.
+  async probe() {
+    const schema = { type: 'object', properties: { ok: { type: 'boolean' }, greeting: { type: 'string' } }, required: ['ok', 'greeting'], additionalProperties: false };
+    const { parsed, model, usage } = await this.ask({ system: 'Du är AI-tjänsten i Charlottendal TKL. Svara enligt schemat: ok är true och greeting en kort hälsning på svenska.', input: { test: 'anslutning' }, schema, maxTokens: 2000, effort: 'low' });
+    if (parsed.ok !== true) fail('AI-tjänsten svarade, men inte enligt schemat.', 502);
+    return { ok: true, model, greeting: String(parsed.greeting || ''), usage };
+  }
   // Ett anrop, ett strukturerat svar enligt schemat. Systemtexten är stabil och cachas; urvalet ligger i meddelandet.
-  async ask({ system, input, schema, maxTokens = 16000 }) {
+  async ask({ system, input, schema, maxTokens = 16000, effort = 'high' }) {
     if (!this.configured) fail('AI-tjänsten är inte ansluten. Lägg till serverns API-nyckel först.', 503);
     let response;
     try {
       response = await this.client.beta.messages.create({ model: this.model, max_tokens: maxTokens, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default', thinking: { type: 'adaptive' },
-        output_config: { effort: 'high', format: { type: 'json_schema', schema } },
+        output_config: { effort, format: { type: 'json_schema', schema } },
         system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }], messages: [{ role: 'user', content: JSON.stringify(input) }] });
     } catch (e) { throw mapError(e); }
     if (response.stop_reason === 'refusal') fail('AI-tjänsten avböjde att behandla underlaget.');

@@ -27,6 +27,7 @@ import { loadSources } from './studio/sources.mjs';
 import { rulesFromProfile } from './studio/rules.mjs';
 import { StudioDrafts } from './studio/drafts.mjs';
 import { StudioAssistant } from './studio/assistant.mjs';
+import { AiSettings } from './ai-settings.mjs';
 import { StudioReview } from './studio/review.mjs';
 import { spawn } from 'node:child_process';
 
@@ -71,7 +72,9 @@ const studioDrafts=new StudioDrafts({base:baseProfile,field:loadProfile('field',
   prepare:(p,f)=>{storage.save('studio-field-profile.json',f);const next=createRuntime(p);return ()=>installRuntime(next);},
   proposal:()=>{const r=studioRules(studioSources,studioDrafts.activeRules());return {proposals:r.proposals,replaces:r.replaces};}});
 // Chatten och AI-genomgången: Claude API med nyckeln på servern. Webbläsaren talar bara med TKL.
-const studioAssistant=new StudioAssistant();
+// AI-tjänsten: modell och nyckel ur Inställningar → Den här datorn → AI-tjänst (ai.json), med miljön som reservvärde.
+const aiSettings=new AiSettings({storage});
+const studioAssistant=new StudioAssistant({settings:aiSettings});
 const studioReview=new StudioReview({sources:studioSources,assistant:studioAssistant,storage,activeRules:()=>studioDrafts.activeRules(),baseProfile:()=>bindings.profile()});
 // Driftsättning: kortinventering över SV2 och mätning objekt för objekt. Båda går genom den aktiva LocoNet-klienten,
 // bara när AIS är aktiv och inga lås finns, och inget av dem aktiverar något.
@@ -123,6 +126,7 @@ const server = http.createServer(async (req, res) => {
       if(url.pathname==='/api/communication')return json(res,{connection:connectionInfo(profile),connectionState:engine.connected?'connected':'disconnected',expectations:commandExpectations(profile,engine.snapshot()),trace:protocolTrace});
       if(url.pathname==='/api/studio'){const measured=studioMeasure.measured(profile);return json(res,{...studioData(studioSources,studioDrafts.activeRules(),measured),drafts:studioDrafts.view(bindings.profile()),review:studioReview.view(),
         measure:studioMeasure.view(profile),cards:studioCards.view(),mgp:mgpSummary({profile,xml:studioSources.xml},buildRegistry(studioSources,measured),studioCards.view().cards,{sections:detectionInventory(studioSources).sections,measured})});}
+      if(url.pathname==='/api/ai')return json(res,aiSettings.view());
       if(url.pathname==='/api/studio/measure')return json(res,studioMeasure.view(profile));
       if(url.pathname==='/api/studio/cards')return json(res,studioCards.view());
       if(url.pathname==='/api/studio/mgp/export'){const measured=studioMeasure.measured(profile);const doc={format:'charlottendal-mgp-v1',at:Date.now(),sourceHash:studioSources.profile.sourceHash,mode:connectionInfo(profile).mode,cards:studioCards.view().cards,modules:mgpSummary({profile,xml:studioSources.xml},buildRegistry(studioSources,measured),studioCards.view().cards,{sections:detectionInventory(studioSources).sections,measured})};
@@ -151,6 +155,13 @@ const server = http.createServer(async (req, res) => {
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
     const data = await body(req,65536);
+    if(url.pathname==='/api/ai/save')return json(res,aiSettings.save(data));
+    if(url.pathname==='/api/ai/clear')return json(res,aiSettings.clear());
+    if(url.pathname==='/api/ai/test'){
+      // Provet går med de sparade inställningarna; utfallet sparas så att sidan visar när anslutningen senast fungerade.
+      try{const r=await studioAssistant.probe();return json(res,{...aiSettings.recordTest({ok:true,model:r.model,greeting:r.greeting}),probe:r});}
+      catch(e){aiSettings.recordTest({ok:false,error:e.message});throw e;}
+    }
     if(url.pathname==='/api/studio/assistant/propose')return json(res,await studioAssistant.propose(data,{profile:bindings.profile(),xml:studioSources.xml,activeRules:studioDrafts.activeRules(),names:studioDrafts.names}));
     if(url.pathname==='/api/studio/review/run')return json(res,await studioReview.run());
     if(url.pathname==='/api/studio/bindings/propose-signals'){

@@ -30,6 +30,7 @@ import {createPanelHead} from './panel-head.js';
 import {createPanelSplit} from './panel-split.js';
 import {openUpdateNotice} from './update-notice.js';
 import {createUpdatePage} from './update-page.js';
+import {createAiPage} from './ai-page.js';
 import {labelClass,objectFromMessage} from './plan-objects.js';
 const $ = id => document.getElementById(id);
 const adminNavigation=createAdminNavigation();
@@ -707,8 +708,10 @@ async function start() {
   createAdminAppearance();
   for(const id of ['appearance','journal','streamdeck'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   $('journal-filter').oninput=paintJournal;
-  for(const id of ['xml','migration','protocol','update'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
+  for(const id of ['xml','migration','protocol','update','ai'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
   updatePage=createUpdatePage({root:$('advanced-update-content'),api,message});
+  const aiPage=createAiPage({root:$('advanced-ai-content'),api,message});
+  const loadAiPage=()=>{if(location.hash.startsWith('#advanced/ai'))aiPage?.load();};window.addEventListener('hashchange',loadAiPage);loadAiPage();
   document.addEventListener('click',e=>{
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}
