@@ -1232,3 +1232,14 @@ visar också vad en tillgänglig version innehåller, läst ur cda-tkl-install. 
 release lägger nu till sin rubrik i `public/releases.json`, och ett prov fallerar om
 den saknas. Samma sak finns i TrainMeet Server, TKL och Cloud, där versionsroboten
 skriver rubrikerna ur PR-titlarna. Mergat som cda-tkl#10.
+
+## 5 oktober 2026, 0.59.0: webbdriften uppdaterar sig själv
+
+`packaging/web/charlottendal-update` gör på webbservern det `deploy/publish-release.sh` gör
+från Macen: hämtar senaste releasen ur cda-tkl-install, ny releasekatalog med beroenden,
+syntaxkontroll, backup, byte av current, omstart av TKL och kontroll, och återställer
+föregående release om TKL inte kommer upp. En systemd-tjänst kör den som root; en
+polkit-regel låter TKL-tjänsten starta den och inget annat. publish-release.sh
+installerar filerna vid varje publicering. Uppdatering visar Uppdatera nu och hur den
+senaste uppdateringen gick. Provad i sandlåda (lyckad och återställd), inte ännu på
+servern. Mergat som cda-tkl#11.
