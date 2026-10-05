@@ -54,6 +54,16 @@ Ett nyinstallerat system ska inte kunna missa det som krävs för att det ska fu
 - Fler uppgifter som visar sig krävas vid installation läggs till som steg här, inte som
   fotnoter i installationsguiden.
 
+## Status 5 oktober 2026: byggt
+
+Allt ovan finns i 0.61.0. Var det ligger: `src/ai-settings.mjs` och `public/ai-page.js` (AI-tjänst),
+`src/users.mjs`, `src/auth.mjs`, `public/auth.html`, `public/users-page.js`, `scripts/create-owner.mjs`,
+`scripts/recover-user.mjs` (användare, beskrivet i `docs/anvandare.md`), `src/onboarding.mjs` och
+`public/start-page.js` (Kom igång). Avvikelser från planen: Kom igång har fyra steg (ägare, AI-tjänst,
+banan, TrainMeet) och "klart" är en knapp på sidan; TrainMeet-steget pekar till Träffen → TrainMeet
+i stället för att upprepa parkopplingen. Öppet: en operatörsroll för molnet finns inte, eftersom
+TrainMeet Server bara har ägare och administratör; i webbdriften är alla inloggade administratörer.
+
 ## Byggordning
 
 1. AI-tjänst: inställning, sida, prov, Studio använder inställningen.

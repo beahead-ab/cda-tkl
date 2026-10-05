@@ -284,11 +284,14 @@ body[data-admin-nav-open] #admin-shell .admin-shell-drawer-shade{display:block;p
 .start-step .start-number{font:600 15px/34px "IBM Plex Sans",system-ui,sans-serif;width:34px;height:34px;text-align:center;border-radius:50%;background:#1d1d1c;color:var(--muted)}
 .start-step[data-done=true] .start-number{background:#1f2d22;color:#8fd19e}
 .start-step h3{margin:6px 0 2px;font-size:14px;font-weight:600}.start-step p{margin:4px 0 0;font-size:12px;line-height:1.55;color:var(--muted)}
-.start-step .start-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end;grid-row:1/span 2}
-.start-step .start-actions button,.start-step .start-actions a.button{padding:6px 12px;font-size:12px;white-space:nowrap}
+.start-step .start-actions{grid-column:3;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.start-step .start-actions button,.start-step .start-actions a.button{display:inline-block;padding:6px 12px;font:inherit;font-size:12px;line-height:1.4;white-space:nowrap;border:1px solid #414140;border-radius:3px;background:#1d1d1c;color:var(--text);text-decoration:none;cursor:pointer}
+.start-step .start-actions a.button.primary{background:#efefed;color:#171716;border-color:#efefed;font-weight:600}
+.start-step .start-actions a.button:hover,.start-step .start-actions button:hover{border-color:#6a6a68}
+.start-list{margin:8px 0 12px 18px;padding:0;font-size:13px;line-height:1.7}
 .start-command{display:flex;gap:10px;align-items:center;margin:8px 0 0}.start-command code{font-size:12px;padding:6px 10px;background:#1d1d1c;border:1px solid #414140;border-radius:3px;overflow-wrap:anywhere}
 .chip-start{cursor:pointer}
-@media(max-width:700px){.start-step{grid-template-columns:34px minmax(0,1fr)}.start-step .start-actions{grid-column:2;grid-row:auto;align-items:flex-start;flex-direction:row;flex-wrap:wrap}}
+@media(max-width:700px){.start-step{grid-template-columns:34px minmax(0,1fr)}.start-step .start-actions{grid-column:2;align-items:flex-start;flex-direction:row;flex-wrap:wrap}}
 /* Inställningar → Användare: tabellen, ägarens knappar och engångskoden i dialogen. */
 .users-table{width:100%;border-collapse:collapse;margin:14px 0 0;font-size:13px}
 .users-table th{text-align:left;font-weight:500;color:var(--muted);padding:0 14px 8px 0;border-bottom:1px solid #292928}
