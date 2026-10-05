@@ -8,7 +8,7 @@ import {signalRouteControls,signalImage} from './signal-route-controls.js';
 import {createAdminNavigation} from './admin-navigation.js';
 import {createAdminAppearance} from './admin-appearance.js';
 import {createPanelFit} from './panel-fit.js';
-import {syncAdminWorkspaces,registerAdminWorkspace,settingsRows} from './admin-ui.js';
+import {syncAdminWorkspaces,registerAdminWorkspace,settingsRows,createAdminDialog} from './admin-ui.js';
 import {attribute,style,text as setText,flowProgress,createPanelFrames,preparingEndpoints} from './panel-rendering.js';
 import { createManualFeedback } from './manual-feedback.js';
 import { createSourceRegister } from './source-register.js';
@@ -32,6 +32,7 @@ import {openUpdateNotice} from './update-notice.js';
 import {createUpdatePage} from './update-page.js';
 import {createAiPage} from './ai-page.js';
 import {createUsersPage} from './users-page.js';
+import {createStartPage} from './start-page.js';
 import {labelClass,objectFromMessage} from './plan-objects.js';
 const $ = id => document.getElementById(id);
 const adminNavigation=createAdminNavigation();
@@ -132,6 +133,17 @@ function resumeMessage(){
   pauseMessage();const toast=$('message');
   if(toast.hidden||(messageCanPause&&(toast.matches(':hover')||toast.contains(document.activeElement))))return;
   messageTimer=setTimeout(()=>{toast.classList.add('toast-leaving');messageHideTimer=setTimeout(()=>{toast.hidden=true;toast.classList.remove('toast-leaving');},180);},messageDuration);
+}
+// Kom igång at first start: which steps remain, and a way there. Shown once per browser session.
+function openStartNotice(view){
+  const body=document.createElement('div');
+  body.innerHTML='<p>Det här ställverket är nyinstallerat och inte färdigt att användas. Kom igång visar stegen och leder till rätt sida för varje.</p><ul class="start-list"></ul><p class="settings-consequence">Ägaren gör stegen; operatören kan köra panelen redan nu.</p>';
+  const list=body.querySelector('ul');for(const s of view.steps||[]){const li=document.createElement('li');li.textContent=(s.done?'✓ ':s.skipped?'– ':'○ ')+s.label;list.append(li);}
+  const go=document.createElement('button');go.type='button';go.textContent='Öppna Kom igång';
+  const modal=createAdminDialog({title:'Kom igång · '+view.remaining+' steg kvar',body,saveButton:go});
+  const cancel=modal.footer.querySelector('[data-cancel]');if(cancel)cancel.textContent='Senare';
+  // Only the hash changes; the hashchange handler opens the page with the whole address kept.
+  go.onclick=()=>{modal.close();location.hash='#advanced/start';};modal.open();
 }
 function message(text,{error=true,duration=4000}={}) {
   messageDuration=duration;messageCanPause=error;
@@ -714,11 +726,16 @@ async function start() {
   createAdminAppearance();
   for(const id of ['appearance','journal','streamdeck'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   $('journal-filter').oninput=paintJournal;
-  for(const id of ['xml','migration','protocol','update','ai','users'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
+  for(const id of ['xml','migration','protocol','update','ai','users','start'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
   updatePage=createUpdatePage({root:$('advanced-update-content'),api,message});
   const aiPage=createAiPage({root:$('advanced-ai-content'),api,message});
   const usersPage=createUsersPage({root:$('advanced-users-content'),api,message,session:()=>authSession});
-  const loadSettingsPages=()=>{if(location.hash.startsWith('#advanced/ai'))aiPage?.load();if(location.hash.startsWith('#advanced/users'))usersPage?.load();};window.addEventListener('hashchange',loadSettingsPages);loadSettingsPages();
+  const startPage=createStartPage({root:$('advanced-start-content'),api,message,session:()=>authSession,onChange:v=>{config.onboarding={done:v.done,remaining:v.remaining};panelHead?.startNotice(config.onboarding);startStatus();}});
+  const startStatus=()=>{const o=config.onboarding,el=$('start-status');if(el)el.textContent=o&&!o.done?'· '+o.remaining+' kvar':'';};
+  panelHead?.startNotice(config.onboarding);startStatus();
+  // First start: tell the owner once per browser session that Kom igång is waiting; the chip stays until it is done.
+  if(config.onboarding&&!config.onboarding.done&&!(()=>{try{return sessionStorage.getItem('start-seen');}catch{return false;}})()){try{sessionStorage.setItem('start-seen','1');}catch{}openStartNotice(config.onboarding);}
+  const loadSettingsPages=()=>{if(location.hash.startsWith('#advanced/ai'))aiPage?.load();if(location.hash.startsWith('#advanced/users'))usersPage?.load();if(location.hash.startsWith('#advanced/start'))startPage?.load();};window.addEventListener('hashchange',loadSettingsPages);loadSettingsPages();
   document.addEventListener('click',e=>{
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}
