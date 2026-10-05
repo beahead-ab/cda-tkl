@@ -170,7 +170,9 @@ Den sista raden tar även bort driftdata och inställningar.
 
 - **Simulator.** Alla installationer kör mot den inbyggda anläggningssimulatorn. Riktig anläggning via
   LocoBuffer kopplas in i driftsättningssteget.
-- **Ingen inloggning.** TKL svarar bara på datorn själv och kräver därför ingen inloggning.
+- **Inloggning.** TKL svarar bara på datorn själv. Operatören behöver ingen inloggning; Inställningar och
+  Objekt och regler kräver en inloggad ägare eller administratör så snart ägaren är skapad (se
+  `docs/anvandare.md`). Ägaren skapas i Kom igång vid första starten.
 - **En TKL per dator.** Alla använder portarna 8910–8912.
 - **Ny version.** Varje installation tittar efter nya versioner i `beahead-ab/cda-tkl-install` när den
   startar och sedan var sjätte timme; den läser bara versionsnumret och skickar inget om datorn.

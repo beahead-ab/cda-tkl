@@ -67,6 +67,8 @@ sidolåda som i dag. Sidfoten behåller Zoom, Fullskärm, Byt lösenord och Simu
 - **Stream Deck** · anslutning och layout, oförändrat.
 - **Banan (LocoNet)** · anslutningsstatus, port, Lyssna/inspelning bakom en knapp.
   Dagens LocoNet-rad i sidfoten plus Protokollinspelning.
+- **AI-tjänst** · modell och nyckel för chatten och AI-genomgången i Objekt och regler.
+- **Användare** · ägare och administratörer, inbjudan med engångskod (docs/anvandare.md).
 - **Uppdatering** · dagens Avancerat → Uppdatering.
 
 **Anläggningen** · beskriver stationen, ändras sällan

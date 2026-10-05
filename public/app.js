@@ -31,6 +31,7 @@ import {createPanelSplit} from './panel-split.js';
 import {openUpdateNotice} from './update-notice.js';
 import {createUpdatePage} from './update-page.js';
 import {createAiPage} from './ai-page.js';
+import {createUsersPage} from './users-page.js';
 import {labelClass,objectFromMessage} from './plan-objects.js';
 const $ = id => document.getElementById(id);
 const adminNavigation=createAdminNavigation();
@@ -59,6 +60,7 @@ const routeTargets=createRouteTargets({load:async(from,kind)=>{
   return response.json();
 },onChange:()=>paint()});
 let currentPage='panel',appMenu,contextDialog,panelConsole,panelEvents,panelHead,signalControls,chosenKind=null,clearanceView,streamDeck,streamDeckAdmin,updatePage;
+let authSession=null;
 const pageFromHash=()=>{
   if(location.hash==='#tools/zoom')history.replaceState(null,'','#tools/appearance');
   if(location.hash==='#tools')history.replaceState(null,'','#tools/appearance');
@@ -70,6 +72,8 @@ const pageFromHash=()=>{
 function setPage(page,{historyMode='push'}={}) {
   let hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet',advanced:'#advanced'}[page];
   if(!hash)return;
+  // Lokalt kräver Inställningar en inloggad ägare eller administratör så snart en ägare finns; operatören stannar i panelen.
+  if(page!=='panel'&&authSession?.mode==='local'&&!authSession.user&&!authSession.setup?.needed){const target=location.hash.startsWith(hash)?location.hash:hash;location.assign('/login?next='+encodeURIComponent('/'+target));return;}
   if(historyMode==='replace'&&location.hash.startsWith(hash+'/'))hash=location.hash;
   if(historyMode!=='none'&&location.hash!==hash)history[historyMode==='replace'?'replaceState':'pushState'](null,'',hash);
   closeInspector(false);manualFeedback?.clear();
@@ -645,6 +649,7 @@ async function start() {
   operatingControls=createOperatingControls({api,openSource});
   modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable'),stationHint:()=>config?.profile?.title||'Charlottendal'});feedback=createFeedback();clearanceView=createClearance({api,message,onRequest:()=>panelEvents?.showDrift({auto:true})});
   panelEvents=createPanelEvents();panelConsole=createPanelConsole({onOpen:()=>{appMenu?.close();},onResetComplete:text=>message(text,{error:false,duration:4000}),showDrift:()=>panelEvents?.showDrift()});
+  authSession=await fetch('/api/auth/session').then(r=>r.ok?r.json():null).catch(()=>null);
   [config, panel, registry, signalEndpoints] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json', '/data/signal-endpoints.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.
@@ -675,6 +680,7 @@ async function start() {
   $('reset-ais').onclick=()=>api('all-stop',{enabled:false});
   $('account-link').hidden = !config.accountUrl;
   adminNavigation.setAccount(!!config.accountUrl);
+  adminNavigation.setSession?.(authSession);
   $('field-link').href = config.fieldUrl || 'http://127.0.0.1:8911/'; $('field-link').hidden = false;
   $('route-catalog').innerHTML=`<label>Från<select id="catalog-from"></select></label><label>Till<select id="catalog-to"></select></label><button id="catalog-request" class="primary" disabled>Lägg / återta tågväg</button><p id="catalog-hint" class="muted" hidden></p>`;
   function catalogHint(){const ids=[$('catalog-from').value,$('catalog-to').value].filter(id=>config.buttons[id]?.presentation==='catalog');$('catalog-hint').hidden=!ids.length;$('catalog-hint').textContent=ids.map(label).join(', ')+' väljs i listan. Använd Lägg / återta tågväg även för återtagning.';}
@@ -708,10 +714,11 @@ async function start() {
   createAdminAppearance();
   for(const id of ['appearance','journal','streamdeck'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   $('journal-filter').oninput=paintJournal;
-  for(const id of ['xml','migration','protocol','update','ai'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
+  for(const id of ['xml','migration','protocol','update','ai','users'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
   updatePage=createUpdatePage({root:$('advanced-update-content'),api,message});
   const aiPage=createAiPage({root:$('advanced-ai-content'),api,message});
-  const loadAiPage=()=>{if(location.hash.startsWith('#advanced/ai'))aiPage?.load();};window.addEventListener('hashchange',loadAiPage);loadAiPage();
+  const usersPage=createUsersPage({root:$('advanced-users-content'),api,message,session:()=>authSession});
+  const loadSettingsPages=()=>{if(location.hash.startsWith('#advanced/ai'))aiPage?.load();if(location.hash.startsWith('#advanced/users'))usersPage?.load();};window.addEventListener('hashchange',loadSettingsPages);loadSettingsPages();
   document.addEventListener('click',e=>{
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}

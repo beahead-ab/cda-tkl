@@ -272,6 +272,19 @@ body[data-admin-nav-open] #admin-shell .admin-shell-drawer-shade{display:block;p
 .settings-state[data-state=ok]::before{content:"●";color:#8fd19e}
 .settings-state[data-state=warn]{color:#edc785}.settings-state[data-state=warn]::before{content:"▲";color:#edc785}
 .settings-alert{margin:14px 0 0;padding:10px 12px;border-left:2px solid #edc785;background:#211f1a;font-size:12px;line-height:1.55}
+/* Sidomenyns fot: vem som är inloggad och Logga ut / Logga in. */
+#admin-sidebar .admin-nav-session{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:8px 12px;font-size:12px;color:var(--muted)}
+#admin-sidebar .admin-nav-session #account-user{flex:1 1 100%}
+#admin-sidebar .admin-nav-session [hidden]{display:none}
+#admin-sidebar .admin-nav-session a,#admin-sidebar .admin-nav-session button{width:auto;min-height:0;padding:2px 0;font-size:12px;color:var(--text);text-decoration:underline;text-underline-offset:3px;background:transparent;border:0;cursor:pointer}
+/* Inställningar → Användare: tabellen, ägarens knappar och engångskoden i dialogen. */
+.users-table{width:100%;border-collapse:collapse;margin:14px 0 0;font-size:13px}
+.users-table th{text-align:left;font-weight:500;color:var(--muted);padding:0 14px 8px 0;border-bottom:1px solid #292928}
+.users-table td{padding:10px 14px 10px 0;border-bottom:1px solid #292928;vertical-align:middle}
+.users-table tr:last-child td{border-bottom:0}
+.users-actions{text-align:right;white-space:nowrap}.users-actions button{margin-left:6px;padding:5px 10px;font-size:12px}
+.users-code{display:flex;align-items:center;gap:12px;margin:14px 0}.users-code code{font-size:22px;letter-spacing:.12em;padding:8px 14px;background:#1d1d1c;border:1px solid #414140;border-radius:3px}
+.admin-form{display:grid;gap:10px}.admin-form label{display:grid;gap:6px;font-size:13px}.admin-form input,.admin-form select{width:100%;padding:9px 10px;font:inherit}.admin-form .settings-consequence{margin:-4px 0 4px}
 /* Inställningar → AI-tjänst: modell och nyckel som en kort blankett i en kolumn. */
 .ai-form{display:grid;gap:12px;margin:14px 0 0;max-width:560px}
 .ai-form label{display:grid;gap:6px;font-size:13px}

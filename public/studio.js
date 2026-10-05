@@ -35,7 +35,7 @@ let busy=false,notice='';
 async function draftApi(command,payload={}){
   if(busy||!model.drafts)return false;busy=true;notice='';
   try{const r=await fetch('/api/studio/drafts/'+command,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:model.drafts.sessionId,revision:model.drafts.revision,...payload})});
-    if([401,428].includes(r.status)){location.assign('/login');return false;}
+    if([401,428].includes(r.status)){location.assign('/login?next='+encodeURIComponent(location.pathname+location.hash));return false;}
     const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);model.drafts=answer;
     if(command==='activate'){notice='Regelversion '+answer.activeVersion+' är aktiverad. Kärnan har läst om profilen; AIS kvarstår tills nya stoppbesked kommit.';await reloadStudio();}
     return true;}
@@ -264,7 +264,7 @@ let reviewBusy=false;
 async function runReview(){
   if(reviewBusy)return;reviewBusy=true;notice='';render();
   try{const r=await fetch('/api/studio/review/run',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
-    if([401,428].includes(r.status)){location.assign('/login');return;}
+    if([401,428].includes(r.status)){location.assign('/login?next='+encodeURIComponent(location.pathname+location.hash));return;}
     const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);model.review=answer;}
   catch(e){notice=e.message;}
   finally{reviewBusy=false;render();}
@@ -311,7 +311,7 @@ async function sendChat(){
   const text=chat.text.trim();if(!text||chat.busy)return;
   chat.busy=true;chat.error='';chat.log.push({role:'user',text});render();
   try{const r=await fetch('/api/studio/assistant/propose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,objects:chatObjects()})});
-    if([401,428].includes(r.status)){location.assign('/login');return;}
+    if([401,428].includes(r.status)){location.assign('/login?next='+encodeURIComponent(location.pathname+location.hash));return;}
     const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);
     chat.log.push({role:'ai',answer});chat.text='';}
   catch(e){chat.error=e.message;chat.log.pop();}
