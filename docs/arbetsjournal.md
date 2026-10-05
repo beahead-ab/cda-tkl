@@ -1260,6 +1260,15 @@ Casper installerade uppdateringstjänsten och körde `charlottendal-update` på 
 simulatorn aktiva. polkit och git fanns redan. Knappen Uppdatera nu, som startar
 tjänsten via polkit, provas skarpt vid nästa release.
 
+## 5 oktober 2026, 0.59.2: inga rutor över ställverket
+
+AIS-rutan, nödåtertagningen, fjärrlägesrutan och meddelanden (`#global-status`) låg över
+spårplanens övre högra hörn i webbdriften. På ställverket är statusfältet bredvid
+CHARLOTTENDAL nu enda platsen: ingen kontakt, nödåtertagning pågår, AIS aktiv (med
+"nödåtertagning klar" efteråt), väntande tågväg, fjärrläge. Rutorna finns kvar i
+Inställningar. Mergat som cda-tkl#13. Första releasen att installera med Uppdatera nu i
+webbdriften.
+
 ## 5 oktober 2026, 0.60.0: Studio, objekt och regler, steg 1–6
 
 Admin v2 "Objekt och regler" som fristående modul i `src/studio/` med egen sida på
