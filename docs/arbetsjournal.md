@@ -1223,3 +1223,12 @@ läget vid varje rapport är oförändrad. Mergat som cda-tkl#9. 347 enhetsprov,
 Casper publicerade 0.57.1 (`84ee4e3`) till cda-tkl.trainmeet.app med deploy/publish-release.sh.
 Webbdriften gick därmed från 0.52.0 till 0.57.1. Taggarna v0.52.0–v0.57.1 i cda-tkl-install
 sätts av Casper.
+
+## 5 oktober 2026, 0.58.0: Vad är nytt under Uppdatering
+
+Inställningar → Uppdatering visar vad varje version gjorde, på rubriknivå, ur
+`public/releases.json`: de tio senaste och resten bakom en knapp; en installerad dator
+visar också vad en tillgänglig version innehåller, läst ur cda-tkl-install. Varje
+release lägger nu till sin rubrik i `public/releases.json`, och ett prov fallerar om
+den saknas. Samma sak finns i TrainMeet Server, TKL och Cloud, där versionsroboten
+skriver rubrikerna ur PR-titlarna. Mergat som cda-tkl#10.
