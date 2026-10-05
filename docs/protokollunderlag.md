@@ -103,6 +103,18 @@ TKL:s inläsning bör därför vara: byte → validerad ram → meddelandetyp/ad
 
 Testpanelen i simulatorn ska kunna välja utebliven rapport, långsam växel, kvarstående stopp trots GO, lokal manöver, förbindelseavbrott och dekoderomstart. Dessa scenarier får inte specialhanteras inne i TKL.
 
+## SV2-programmering (steg 6 i Studio)
+
+`src/sv2.mjs` följer SV Programming Message Formats v13, format 2: `E5 10 SRC SV_CMD 02 SVX1 DST_L DST_H SV_ADRL SV_ADRH SVX2 D1 D2 D3 D4 CHK`, där SVX1 och SVX2 bär bit 7 för de fyra följande bytena. Discover (07) och Identify (08) besvaras med MANUFACTURER_ID i SV_ADRL, DEVELOPER_ID i SV_ADRH, PRODUCT_ID i D1–D2 och serienummer i D3–D4, låg byte först. Standard-SV: 1 EEPROM-storlek, 2 programversion, 3–4 serienummer. Studio skickar Discover, Identify och läsning; skrivning, adressbyte och omstart finns som meddelanden men skickas inte förrän läsningen är verifierad på ett riktigt kort. Simulatorns tolv kort svarar med påhittade identiteter.
+
+| Betydelse | Hexbyte |
+| --- | --- |
+| Discover från PC (SRC 1) | `E5 10 01 07 02 10 00 00 00 00 10 00 00 00 00 0E` |
+| Identify till kort 80 | `E5 10 01 08 02 10 50 00 00 00 10 00 00 00 00 51` |
+| Läs SV1–4 på kort 17 | `E5 10 01 06 02 10 11 00 01 00 10 00 00 00 00 1F` |
+
+Oklart tills bänkprovet är gjort: om kortet skriver sin adress i DST eller bara i SRC när det svarar, vilka id MGP:s kort svarar med, och om Signal10 och Servo5 stöder fyra-byte-operationer och maskad skrivning.
+
 ## Vad som återstår att verifiera på Charlottendal
 
 - Exakt LocoBuffer-modell, portinställningar, eko och beteende vid frånkoppling.

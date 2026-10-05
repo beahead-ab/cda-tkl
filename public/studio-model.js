@@ -28,9 +28,10 @@ export function buildStudioModel({profile,panel,studio}) {
   for(const s of signals)for(const src of s.source){const m=moduleOf(src);if(m&&!m.objects.includes(s.id))m.objects.push(s.id);}
   for(const b of blocks)for(const d of b.section?.inputDetails||[]){const m=d.module&&objects.get(d.module);if(m&&!m.objects.includes(b.id))m.objects.push(b.id);}
   const deviations=(studio.deviations||[]).map((d,i)=>add({...d,kind:'deviation',id:'avv:'+d.id,code:d.id,order:i,objects:deviationObjects(d)}));
-  const rules=[...(studio.rules?.rules||[]),...(studio.rules?.proposals||[])].map(r=>add({...r,kind:'rule',label:r.id,touches:[...(r.objects||(r.object?[r.object]:[])),...(r.requires?.blocks||[]),...(r.requires?.signals||[])]}));
+  const touches=r=>[...(r.type==='aspect'?r.signals||[]:r.type==='crossing'?r.blocks||[]:r.objects||(r.object?[r.object]:[])),...(r.requires?.blocks||[]),...(r.requires?.signals||[]),...Object.keys(r.positions||{})];
+  const rules=[...(studio.rules?.rules||[]),...(studio.rules?.proposals||[])].map(r=>add({...r,kind:'rule',label:r.id,touches:touches(r)}));
   const rulesByObject=new Map();for(const r of rules)for(const o of r.touches)(rulesByObject.get(o)||rulesByObject.set(o,[]).get(o)).push(r.id);
-  return {objects,turnouts,signals,blocks,routes,modules,deviations,rules,rulesByObject,ruleEffects:studio.rules?.effects||null,ruleSource:studio.rules?.source||'',compiledIdentical:studio.rules?.compiledIdentical??null,baseDiff:studio.rules?.baseDiff||null,drafts:studio.drafts||null,review:studio.review||null,counts:studio.counts,sourceHash:studio.sourceHash,companions:studio.companions,crossovers:studio.crossovers,detection:studio.detection,blocking:studio.blocking};
+  return {objects,turnouts,signals,blocks,routes,modules,deviations,rules,rulesByObject,ruleEffects:studio.rules?.effects||null,ruleSource:studio.rules?.source||'',compiledIdentical:studio.rules?.compiledIdentical??null,baseDiff:studio.rules?.baseDiff||null,drafts:studio.drafts||null,review:studio.review||null,measure:studio.measure||null,cards:studio.cards||null,mgp:studio.mgp||[],detectionProposals:(studio.rules?.detectionProposals||[]).length,counts:studio.counts,sourceHash:studio.sourceHash,companions:studio.companions,crossovers:studio.crossovers,detection:studio.detection,blocking:studio.blocking};
 }
 export function deviationObjects(d){
   const out=new Set();

@@ -5,11 +5,13 @@ import { deviations, signalRelationCoverage } from './deviations.mjs';
 import { companionCheck, crossoverProposals } from './graph.mjs';
 import { proposeCrossoverRules, explainRule } from './rules.mjs';
 import { toRules, decorateProposals, RULE_SCHEMA, RULE_LANGUAGE, nameLists, namesOf, nameSets } from './assistant.mjs';
+import { detectionInventory } from './detection.mjs';
+import { proposeDetectionRules } from './rules.mjs';
 
 const fail = (message, status = 400) => { throw Object.assign(Error(message), { status }); };
 export const CARD_TYPES = ['förslag', 'saknas', 'beslut', 'underlag'];
 export const CARD_LABEL = { förslag: 'Förslag', saknas: 'Saknas', beslut: 'Beslut', underlag: 'Underlag' };
-export const ACTION_LABEL = { draft: 'Skapa utkast', chat: 'Beskriv i chatten', data: 'Visa i data', step6: 'Steg 6', none: '' };
+export const ACTION_LABEL = { draft: 'Skapa utkast', chat: 'Beskriv i chatten', data: 'Visa i data', bindings: 'Föreslå adresser ur XML', measure: 'Mät objekt', none: '' };
 const object = (properties, required = Object.keys(properties)) => ({ type: 'object', properties, required, additionalProperties: false });
 const string = { type: 'string' }, strings = { type: 'array', items: string };
 export const REVIEW_SCHEMA = object({
@@ -41,22 +43,25 @@ export function reviewItems(sources, activeRules, profile = sources.profile) {
   }
   const ok = companions.filter(c => c.ok);
   if (ok.length) push('companions-ok', 'förslag', 'Kompispar som stämmer med ritningen: behåll följreglerna', { count: ok.length, objects: ok.flatMap(c => c.pair), list: ok.map(c => c.pair.join(' + ')), related: activeRules.filter(r => r.type === 'follow' && ok.some(c => c.pair.every(t => r.objects.includes(t)))).map(r => r.id),
-    text: `${ok.length} av ${companions.length} par bildar förbindelse i ritningen. Reglerna finns i dag och behålls; läget bekräftas vid mätningen i steg 6.` });
+    text: `${ok.length} av ${companions.length} par bildar förbindelse i ritningen. Reglerna finns i dag och behålls; läget bekräftas under Mät objekt.` });
   if (dev['vx95-vx96']?.count) { const d = decorateProposals(toRules([{ type: 'follow', objects: ['Vx95', 'Vx96'], relation: 'same', bothWays: true }], { origin: 'genomgång', text: 'Vx95/Vx96-automatiken i JMRI', activeRules }), { profile, activeRules, names });
     push('vx95-vx96', 'förslag', 'Vx95 och Vx96: JMRI:s automatik saknas som följregel', { count: 1, objects: ['Vx95', 'Vx96'], rules: d.rules, replaces: d.replaces, basis: ['avv:vx95-vx96'], action: 'draft', list: dev['vx95-vx96'].items,
       text: `Logix ${dev['vx95-vx96'].items.join(' och ')} lägger Vx95 och Vx96 tillsammans, men i profilen är de inte kopplade. Förslag: en följregel. Bekräfta på banan att de ska ligga lika innan aktivering.` }); }
   fromDev('yard-boundaries', 'förslag', 'Gränsväxlar mot rangerbangården: manöverrätten finns, TKL-lägena kontrolleras inte', { action: 'chat', related: activeRules.filter(r => r.type === 'authority').map(r => r.id),
-    text: `${dev['yard-boundaries']?.items.join(', ')} har manöverrätt i dag (${activeRules.filter(r => r.type === 'authority').map(explainRule).join(' ')}) Kärnan prövar bara rangerarens lägen. Ska TKL:s lägen begränsas, beskriv det i chatten; den fysiska överlämningen mäts i steg 6.` });
-  fromDev('signal-bench', 'förslag', 'Signaladresser: utgångarna ur XML ersätter bänkadresserna', { action: 'step6', text: `${dev['signal-bench']?.count} signaler har bänkadresser i simulatorn. Utgångarna ur Cda60.xml (LT200–LT467 med modulkommentar) föreslås som bindning med status ej uppmätt och verifieras i driftsättningsläget i steg 6.` });
-  fromDev('block-bench', 'förslag', 'Spårledningar: ingångarna ur XML ersätter bänkadresserna', { action: 'step6', text: `${dev['block-bench']?.count} spårledningar saknar verklig ingång (${dev['block-bench']?.note}). Ingångarna ur XML med modulkommentar föreslås som bindning och mäts i steg 6.` });
+    text: `${dev['yard-boundaries']?.items.join(', ')} har manöverrätt i dag (${activeRules.filter(r => r.type === 'authority').map(explainRule).join(' ')}) Kärnan prövar bara rangerarens lägen. Ska TKL:s lägen begränsas, beskriv det i chatten; den fysiska överlämningen mäts under Mät objekt när rangerpanelen är ansluten.` });
+  fromDev('signal-bench', 'förslag', 'Signaladresser: utgångarna ur XML ersätter bänkadresserna', { action: 'bindings', text: `${dev['signal-bench']?.count} signaler har bänkadresser i simulatorn. Utgången LTn i Cda60.xml blir order- och rapportadress n som utkast till driftbindningar, status ej uppmätt, och mäts under Mät objekt. Rapportadressen för Signal10:s besked är ett antagande tills bänkprovet gjorts.` });
+  const detection = decorateProposals(proposeDetectionRules(detectionInventory(sources).sections, activeRules), { profile, activeRules, names });
+  fromDev('block-bench', 'förslag', 'Spårledningar: ingångarna ur XML ersätter bänkadresserna', { action: 'draft', rules: detection.rules, replaces: detection.replaces, objects: detection.rules.map(r => r.object),
+    text: `${dev['block-bench']?.count} spårledningar saknar verklig ingång (${dev['block-bench']?.note}). ${detection.rules.length} detekteringsregler ur Cda60.xml: LS-numret som adress, någon av eller alla ingångar, polaritet antagen. Utkastet provas i simulatorn; aktivering kräver färska rapporter på de nya adresserna, alltså mätning på banan.` });
   // Saknas
   fromDev('manual-groups', 'saknas', 'Manuella växelgrupper utan entydig manöverregel', { action: 'chat', objects: activeRules.filter(r => r.type === 'condition' && r.trigger === 'manual' && r.status === 'unresolved').flatMap(r => r.objects),
     related: activeRules.filter(r => r.type === 'condition' && r.trigger === 'manual' && r.status === 'unresolved').map(r => r.id),
     text: `Knappgrupperna ${dev['manual-groups']?.items.join(', ')} har ingen verifierad koppling i ritningen, så direktmanövern är spärrad. Beskriv villkoret för varje grupp i chatten: vilka växlar, vilka spårledningar som ska vara fria och vilka signaler i stopp.` });
   const indicators = (sources.indications?.indicators || []).map(i => i.name);
   if (indicators.length) push('crossings', 'saknas', `Vägövergångarna ${indicators[0]}–${indicators.at(-1)} saknar regler`, { count: indicators.length, list: indicators, basis: dev['crossing-v4']?.count ? ['avv:crossing-v4'] : [], action: 'step6',
-    text: `Regeltypen crossing kommer i steg 6: aktivering av tågväg eller beläggning, förringning och bomåterrapport.${dev['crossing-v4']?.count ? ` V4 saknar dessutom ${dev['crossing-v4'].count} villkor i källan (${list(dev['crossing-v4'].items, 4)}).` : ''}` });
-  fromDev('undetected-blocks', 'saknas', 'Spårledningar utan detektering i källan', { action: 'step6', text: `${dev['undetected-blocks']?.count} spårledningar har ingen sensor eller ingen regel i XML. Regeltypen detection kommer i steg 6; till dess ska var och en antingen få en ingång eller märkas uttryckligt odetekterad.` });
+    related: activeRules.filter(r => r.type === 'crossing').map(r => r.id),
+    text: `Vägövergångarna finns som crossing-regler med tågvägarna och spårledningarna som aktiverar dem, men bara för visning i panelen. Förringning, bomåterrapport och spärr av tågväg väntar på MGP-underlag.${dev['crossing-v4']?.count ? ` V4 saknar dessutom ${dev['crossing-v4'].count} villkor i källan (${list(dev['crossing-v4'].items, 4)}).` : ''}` });
+  fromDev('undetected-blocks', 'saknas', 'Spårledningar utan detektering i källan', { action: 'chat', text: `${dev['undetected-blocks']?.count} spårledningar har ingen sensor eller ingen regel i XML. Beskriv ingången i chatten (detection: spårledning och LS-ingång), eller märk spårledningen uttryckligt odetekterad.` });
   // Beslut
   fromDev('contradicting-rules', 'beslut', 'Motsägande tågvägsregler i källan', { action: 'data', text: `${dev['contradicting-rules']?.note}: ${dev['contradicting-rules']?.items.join(', ')}. Varje regel behöver ett beslut: gäller tågvägen eller inte.` });
   fromDev('signal-relations', 'beslut', 'Signalrelationer i JMRI utan tågväg', { action: 'data', text: `${dev['signal-relations']?.count} av ${signalRelationCoverage(sources).total} relationer från signal till signal saknar tågväg i TKL. Antingen saknas en tågväg, eller så används relationen inte och det ska sägas uttryckligen.` });
@@ -64,10 +69,10 @@ export function reviewItems(sources, activeRules, profile = sources.profile) {
   fromDev('shunt-excluded', 'beslut', 'Undantagna växeltågvägar', { action: 'data' });
   fromDev('xml-only-turnouts', 'beslut', 'Växlar i källan utan plats i planen', { action: 'data', objects: [], text: `${dev['xml-only-turnouts']?.items.join(', ')} finns i Cda60.xml men inte i planen. Beslut: ta in i planen eller lämna utanför.` });
   // Underlag
-  fromDev('turnout-unmeasured', 'underlag', 'Växeladresser ur JMRI, ej uppmätta', { action: 'step6' });
-  fromDev('swedish-aspects', 'underlag', 'Svenska beskedskoder per masttyp', { action: 'step6', objects: [], text: `Beskedskoderna saknas för alla ${dev['swedish-aspects']?.count} masttyper (${dev['swedish-aspects']?.items.join(', ')}). Regeltypen aspect kommer i steg 6; koderna är MGP-underlag från Signal10-dekodrarna.` });
+  fromDev('turnout-unmeasured', 'underlag', 'Växeladresser ur JMRI, ej uppmätta i fält', { action: 'measure', objects: [] });
+  fromDev('swedish-aspects', 'underlag', 'Svenska beskedskoder per masttyp', { action: 'none', objects: [], related: activeRules.filter(r => r.type === 'aspect').map(r => r.id), text: `Beskedskoderna saknas för alla ${dev['swedish-aspects']?.count} masttyper (${dev['swedish-aspects']?.items.join(', ')}). Reglerna aspect:<masttyp> håller CZ-provkoderna tills Signal10:s svenska koder finns; då blir regeln regelägd och ersätter bindningarnas koder.` });
   fromDev('turntable', 'underlag', 'Vändskivans anslutning okänd', { text: `Vändskivan har utgångar i XML utan modul (${dev['turntable']?.note}). Bara MGP-uppgifterna kan avgöra kopplingen.` });
-  fromDev('programming-relay', 'underlag', 'Programmeringsspårets relä ej verifierat', { action: 'step6' });
+  fromDev('programming-relay', 'underlag', 'Programmeringsspårets relä ej verifierat', { action: 'measure' });
   fromDev('unbound-inputs', 'underlag', 'Detektoringångar som ingen spårledning använder', { action: 'data', objects: [], text: `${dev['unbound-inputs']?.count} ingångar i XML används av ingen spårledning. Gås igenom på banan; en del är troligen reserver eller knappar.` });
   return items;
 }

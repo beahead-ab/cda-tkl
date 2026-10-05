@@ -11,16 +11,16 @@ export function signalRelationCoverage({ profile, xml }) {
   return { total: xml.signalRelations.length, matched, unmatched };
 }
 
-export function deviations(sources) {
+export function deviations(sources, measured = {}) {
   const { profile, xml, coverage, indications } = sources;
-  const registry = buildRegistry(sources), det = detectionInventory(sources), pairs = companionCheck(xml, profile.coupled), rel = signalRelationCoverage(sources);
+  const registry = buildRegistry(sources, measured), det = detectionInventory(sources), pairs = companionCheck(xml, profile.coupled), rel = signalRelationCoverage(sources);
   const rows = [];
   const add = (id, title, count, resolvedBy, extra = {}) => rows.push({ id, title, count, resolvedBy, blocking: extra.blocking ?? false, items: extra.items ?? [], note: extra.note ?? '' });
   const benchSignals = registry.signals.filter(s => /bänkadress/.test(s.status));
   add('signal-bench', 'Signaler med bänkadress', benchSignals.length, 'Bindning ur XML och mätning', { blocking: true });
   const benchBlocks = registry.blocks.filter(b => /bänkadress/.test(b.status));
   add('block-bench', 'Spårledningar utan verklig ingång', benchBlocks.length, 'detection och mätning', { blocking: true, note: `${new Set(benchBlocks.map(b => b.loconet.report)).size} bänkadresser` });
-  add('turnout-unmeasured', 'Växeladresser ej uppmätta', registry.turnouts.filter(t => /ej uppmätt/.test(t.status)).length, 'Driftsättningsläget', { blocking: true });
+  add('turnout-unmeasured', 'Växeladresser ej uppmätta i fält', registry.turnouts.filter(t => !t.measured?.field).length, 'Mät objekt', { blocking: true, items: registry.turnouts.filter(t => !t.measured?.field).map(t => t.id) });
   add('signal-relations', 'Signalrelationer i JMRI utan tågväg', rel.unmatched.length, 'Tågväg eller uttryckligt undantag', { items: rel.unmatched.map(r => `${r.from} → ${r.to}`) });
   const nxWithout = coverage.nx.filter(n => !n.routes.length);
   add('nx-without-route', 'NX-definitioner utan tågväg', nxWithout.length, 'Beslut per par', { items: nxWithout.map(n => `${n.fromSensor} → ${n.toSensor}`) });

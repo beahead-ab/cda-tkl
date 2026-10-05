@@ -3,7 +3,9 @@
 import { moduleOf } from './sources.mjs';
 const STATUS = { xml: 'ur XML, ej uppmätt', bench: 'bänkadress i simulatorn', none: 'ingen bindning' };
 
-export function buildRegistry({ profile, panel, xml }) {
+// measured: nyckel kind:namn → giltig mätning (samma adress som profilen). Fältmätning räknas för drift, bänkmätning bara i simulatorn.
+export function buildRegistry({ profile, panel, xml }, measured = {}) {
+  const measure = (kind, id) => measured[kind + ':' + id] || null;
   const lt = Object.fromEntries(xml.turnouts.map(t => [t.user, t])), ls = xml.sensors;
   const panelTurnouts = new Set(Object.values(panel.turnouts).map(t => t.name));
   const trace = (system, comment) => ({ system, comment, module: moduleOf(comment) });
@@ -11,16 +13,16 @@ export function buildRegistry({ profile, panel, xml }) {
     const src = lt[id];
     return { id, kind: 'turnout', inPlan: panelTurnouts.has(id), loconet: { order: t.address, report: t.address }, block: t.block,
       companions: (profile.coupled[id] || [id]).filter(x => x !== id), status: /not measured|ej uppmätt/i.test(t.provenance) ? STATUS.xml : t.provenance,
-      source: src ? trace(src.system, src.comment) : null };
+      measured: measure('turnout', id), source: src ? trace(src.system, src.comment) : null };
   });
   const signalOutputs = {};
   for (const t of xml.turnouts) { const m = /(?:signal|siganl)\s+([^,]+)/i.exec(t.comment); if (m) (signalOutputs[m[1].trim()] ??= []).push(trace(t.system, t.comment)); }
   const masts = Object.fromEntries(panel.micons.map(m => [m.mast, m]));
   const signals = Object.entries(profile.signals).map(([id, s]) => ({ id, kind: 'signal', mastType: s.sourceType, inPlan: !!masts[id],
     loconet: { order: s.address, report: s.reportAddress, stopCodes: s.stopCodes, goCodes: s.goCodes }, status: /bench/i.test(s.provenance) ? STATUS.bench : s.provenance,
-    source: signalOutputs[id] || [], swedishAspects: false }));
+    measured: measure('signal', id), source: signalOutputs[id] || [], swedishAspects: false }));
   const blocks = Object.entries(profile.blocks).map(([id, b]) => ({ id, kind: 'block', loconet: { report: b.address, activeMeansOccupied: b.activeMeansOccupied },
-    sourceSensor: b.sourceSensor, status: /bench/i.test(b.provenance) ? STATUS.bench : b.provenance }));
+    sourceSensor: b.sourceSensor, status: /bench/i.test(b.provenance) ? STATUS.bench : b.provenance, measured: measure('block', id) }));
   const modules = {};
   for (const item of [...xml.turnouts.map(t => ({ ...t, io: 'out' })), ...ls.map(s => ({ ...s, io: 'in' }))]) {
     const m = moduleOf(item.comment); if (!m) continue;
@@ -31,5 +33,6 @@ export function buildRegistry({ profile, panel, xml }) {
   }
   const xmlOnlyTurnouts = xml.turnouts.filter(t => /^Vx\d+$/.test(t.user || '') && !profile.turnouts[t.user]).map(t => t.user);
   return { turnouts, signals, blocks, modules: Object.values(modules).sort((a, b) => a.id.localeCompare(b.id)), xmlOnlyTurnouts,
-    counts: { turnouts: turnouts.length, signals: signals.length, blocks: blocks.length, routes: profile.routes.length, modules: Object.keys(modules).length, measured: 0 } };
+    counts: { turnouts: turnouts.length, signals: signals.length, blocks: blocks.length, routes: profile.routes.length, modules: Object.keys(modules).length,
+      measured: { field: [...turnouts, ...signals, ...blocks].filter(o => o.measured?.field).length, bench: [...turnouts, ...signals, ...blocks].filter(o => o.measured && !o.measured.field).length } } };
 }

@@ -2,18 +2,15 @@
 // och Driftsättning (utkast, prov och aktivering). AI:n nås bara via TKL-servern; ingenting aktiveras härifrån utan utkast.
 import {buildStudioModel,SETS,TABS,relationsFor,rowsFor,columnsFor,cellsFor,walkOrder,parseHash,planGeometry,setOf,SHAPE_LABEL,CARD_TYPES,CARD_LABEL,TYPE_CLASS} from './studio-model.js';
 import {createPlan} from './studio-plan.js';
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const $=(s,r=document)=>r.querySelector(s);
-const mono=s=>`<span class="mono">${esc(s)}</span>`;
-const pill=(t,k='',dashed=false)=>`<span class="st-pill${k?' st-pill-'+k:''}${dashed?' st-pill-dashed':''}">${esc(t)}</span>`;
-const kv=rows=>`<dl class="st-kv">${rows.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
-const card=(title,body,{right='',foot='',id=''}={})=>`<section class="st-card"${id?` id="${id}"`:''}><div class="st-card-head"><h2>${title}</h2><span class="st-grow"></span>${right}</div>${body}${foot?`<div class="st-card-foot">${foot}</div>`:''}</section>`;
+import {esc,$,mono,pill,kv,card,measuredPill} from './studio-ui.js';
+import * as drift from './studio-drift.js';
 const NAV=()=>({
-  konfigurera:[['Stationsplan','#konfigurera'],['Signaler','#data?set=signaler','66'],['Växlar','#data?set=vaxlar','49'],['Spårledningar','#data?set=sparledningar','197'],['Regler och chatten','#konfigurera/regler',String(model.rules.filter(r=>r.status!=='proposal').length)],['Övriga delar',null,'steg 6'],['Prova i simulatorn','#driftsattning/andringar']],
+  konfigurera:[['Stationsplan','#konfigurera'],['Signaler','#data?set=signaler','66'],['Växlar','#data?set=vaxlar','49'],['Spårledningar','#data?set=sparledningar','197'],['Regler och chatten','#konfigurera/regler',String(model.rules.filter(r=>r.status!=='proposal').length)],['Övriga delar','#konfigurera/ovriga'],['Prova i simulatorn','#driftsattning/andringar']],
   data:[['Alla mängder','#data'],['Tågvägar','#data?set=tagvagar','340']],
   genomgang:[['Genomgång och avvikelser','#genomgang',model.review?.last?String(model.review.last.cards.length)+' kort':'']],
-  driftsattning:[['Ändringar och aktivering','#driftsattning/andringar'],['Mät objekt',null,'steg 5'],['Lyssna','/#advanced/protocol','i dag'],['Kort och MGP',null,'steg 5'],['Driftbindningar','/#register/bindings','i dag']],
+  driftsattning:[['Ändringar och aktivering','#driftsattning/andringar'],['Mät objekt','#driftsattning/mat',measuredLabel()],['Lyssna','#driftsattning/lyssna'],['Kort och MGP','#driftsattning/kort',model.cards?.cards.length?String(model.cards.cards.length)+' kort':''],['Driftbindningar','/#register/bindings','i dag']],
   anslutning:[['TrainMeet','/#trainmeet','i dag'],['Stream Deck','/#tools/streamdeck','i dag']]});
+const measuredLabel=()=>{const c=model.counts.measured,t=model.counts.turnouts+model.counts.signals+model.counts.blocks;return c.field?`${c.field}/${t}`:c.bench?`${c.bench} bänk`:'0/'+t;};
 const state={tab:'konfigurera',view:'',sets:new Set(['vaxlar','signaler','sparledningar','tagvagar']),object:null,layers:new Set(['numbers','signalNames','labels','dev']),width:2600,search:{}};
 let model,geo,plan,order;
 const session={load(){try{return JSON.parse(sessionStorage.getItem('studio-state')||'{}');}catch{return {};}},save(){try{sessionStorage.setItem('studio-state',JSON.stringify({sets:[...state.sets],object:state.object,layers:[...state.layers],width:state.width}));}catch{}}};
@@ -28,6 +25,8 @@ async function load(){
   const saved=session.load(),link=parseHash(location.hash);
   state.tab=link.tab;state.view=link.view;if(link.sets.length)state.sets=new Set(link.sets);else if(saved.sets)state.sets=new Set(saved.sets);
   state.object=link.object&&model.objects.has(link.object)?link.object:(saved.object&&model.objects.has(saved.object)?saved.object:null);
+  if(link.view==='mat'&&state.object)state.measureObject=state.object;
+  drift.init({model:()=>model,state,session,notice:()=>notice,setNotice:v=>{notice=v;},reloadStudio,render});
   if(saved.layers)state.layers=new Set(saved.layers);if(saved.width)state.width=saved.width;
   render();
 }
@@ -54,12 +53,15 @@ function render(){
     return `<a href="${href}"${current?' aria-current="page"':''}>${esc(label)}${count?`<span class="st-count">${esc(count)}</span>`:''}</a>`;}).join('')
     +`<div class="st-nav-foot"><strong>Ett utkast för hela stationen</strong><br>Allt här är läst ur källorna. Ingenting är uppmätt och ingenting ändras härifrån.<br><span class="mono">profil ${esc(model.sourceHash.slice(0,12))}</span></div>`;
   const main=$('#st-main');
-  if(state.tab==='konfigurera'&&state.view==='regler')renderRegler(main);else if(state.tab==='driftsattning'&&state.view==='andringar')renderAndringar(main);else if(state.tab==='konfigurera')renderKonfigurera(main);else if(state.tab==='data')renderData(main);else if(state.tab==='genomgang')renderGenomgang(main);else renderLater(main);
+  drift.stopPoll();
+  if(state.tab==='konfigurera'&&state.view==='regler')renderRegler(main);else if(state.tab==='konfigurera'&&state.view==='ovriga')drift.renderOvriga(main);else if(state.tab==='driftsattning'&&state.view==='andringar')renderAndringar(main);
+  else if(state.tab==='driftsattning'&&state.view==='mat')drift.renderMat(main);else if(state.tab==='driftsattning'&&state.view==='lyssna')drift.renderLyssna(main);else if(state.tab==='driftsattning'&&state.view==='kort')drift.renderKort(main);
+  else if(state.tab==='konfigurera')renderKonfigurera(main);else if(state.tab==='data')renderData(main);else if(state.tab==='genomgang')renderGenomgang(main);else renderLater(main);
 }
 function stats(){const c=model.counts,d=model.detection;return `<div class="st-stats">
   <div class="st-stat"><small>Växlar</small><b>${c.turnouts}</b><small>Adresser ur JMRI, ej uppmätta</small></div><div class="st-stat"><small>Signaler</small><b>${c.signals}</b><small>Bänkadresser i simulatorn</small></div>
   <div class="st-stat"><small>Spårledningar</small><b>${c.blocks}</b><small>${d.inputs.used} av ${d.inputs.total} ingångar bundna</small></div><div class="st-stat"><small>Tågvägar</small><b>${c.routes}</b><small>210 huvud, 130 växling</small></div>
-  <div class="st-stat amber"><small>Avvikelser</small><b>${model.deviations.length}</b><small>${model.blocking} blockerar driftsättning</small></div><div class="st-stat amber"><small>Uppmätt i fält</small><b>0 av ${c.turnouts+c.signals+c.blocks}</b><small>Inga bindningar uppmätta</small></div></div>`;}
+  <div class="st-stat amber"><small>Avvikelser</small><b>${model.deviations.length}</b><small>${model.blocking} blockerar driftsättning</small></div><div class="st-stat${c.measured.field?'':' amber'}"><small>Uppmätt i fält</small><b>${c.measured.field} av ${c.turnouts+c.signals+c.blocks}</b><small>${c.measured.bench?c.measured.bench+' bänkmätta i simulatorn':'Inga bindningar uppmätta'}</small></div></div>`;}
 // ---------- Konfigurera ----------
 function renderKonfigurera(main){
   const layers=[['numbers','Växelnummer'],['signalNames','Signalnamn'],['blockLabels','Spårledningar'],['addresses','Adresser'],['modules','MGP-modul'],['dev','Avvikelser']];
@@ -87,24 +89,24 @@ function renderWalk(){const i=order.indexOf(state.object);const host=$('#st-walk
 function renderObjectCard(){
   renderWalk();const host=$('#st-object');if(!host)return;const o=model.objects.get(state.object);
   if(!o){host.innerHTML=card('Inget objekt valt','<p class="st-empty">Klicka på en växel, signal eller spårledning i planen.</p>');return;}
-  const rel=relationsFor(model,o.id),actions=`<div class="st-toolbar" style="border-top:1px solid var(--kr-line);border-bottom:0"><a class="st-btn" href="#data?objekt=${encodeURIComponent(o.id)}" data-select-data="${esc(o.id)}">Visa i data</a>${rel.deviations.length?`<a class="st-btn" href="#genomgang">${rel.deviations.length} avvikelse${rel.deviations.length>1?'r':''}</a>`:''}</div>`;
+  const rel=relationsFor(model,o.id),actions=`<div class="st-toolbar" style="border-top:1px solid var(--kr-line);border-bottom:0"><a class="st-btn" href="#data?objekt=${encodeURIComponent(o.id)}" data-select-data="${esc(o.id)}">Visa i data</a>${['turnout','signal','block'].includes(o.kind)?`<a class="st-btn" href="#driftsattning/mat?objekt=${encodeURIComponent(o.id)}">Mät</a>`:''}${rel.deviations.length?`<a class="st-btn" href="#genomgang">${rel.deviations.length} avvikelse${rel.deviations.length>1?'r':''}</a>`:''}</div>`;
   let title='',body='',right='';
   if(o.kind==='turnout'){
     const comp=model.companions.find(c=>c.pair.includes(o.id)),straight=rel.routes.filter(r=>model.objects.get(r).turnouts[o.id]==='C').length;
-    title=`${mono(o.id)} · växel`;right=pill(o.inPlan?'Ej uppmätt':'Utan plats i planen','amber');
+    title=`${mono(o.id)} · växel`;right=o.inPlan?measuredPill(o):pill('Utan plats i planen','amber');
     body=kv([['LocoNet-adress',mono(o.loconet.order)+' '+pill('Ur JMRI, ej uppmätt','amber')],['JMRI',o.source?mono(o.source.system)+' · kommentar '+mono(o.source.comment):'–'],
       ['Modul och kanal',o.source?.module?mono(o.source.module.name)+(o.source.module.channel?' kanal '+mono(o.source.module.channel):'')+' '+pill('Hypotes'):'Ingen modulreferens'],['Spårledning',mono(o.block||'–')],
       ['Kompis',o.companions.length?o.companions.map(mono).join(', ')+(comp?' · '+(comp.ok?pill('Hel förbindelse','',true):pill('Ingen förbindelse: '+comp.pair[0]+' → '+comp.aLeadsTo+', '+comp.pair[1]+' → '+comp.bLeadsTo,'red')):''):'Ingen'],
       ['Tågvägar',mono(rel.routes.length)+` · ${straight} rakt, ${rel.routes.length-straight} avvikande`],['Status',esc(o.status)]]);
   } else if(o.kind==='signal'){
     const mods=[...new Set(o.source.map(s=>s.module?.name).filter(Boolean))];
-    title=`${mono(o.id)} · signal`;right=pill('Bänkadress','amber');
+    title=`${mono(o.id)} · signal`;right=measuredPill(o,'Bänkadress');
     body=kv([['Masttyp',mono(o.mastType)+(o.aspects.length?` · ${o.aspects.length} besked`:'')],['Adress',mono(o.loconet.order)+' · stopp '+mono(o.loconet.stopCodes.join(', '))+', kör '+mono(o.loconet.goCodes.join(', '))+' <span style="color:var(--kr-mute)">CZ-prov, ej svenskt</span>'],
       ['Utgångar i Cda60.xml',o.source.length?o.source.map(s=>mono(s.system)+' <span style="color:var(--kr-mute)">'+esc(s.comment)+'</span>').join('<br>'):'Ingen'],['Modul',mods.length>1?mods.map(mono).join(' och ')+' '+pill('Två moduler, oklart','amber'):mods.map(mono).join('')||'–'],
       ['Tågvägar','klareras i '+mono(o.routes.length)+', skyddssignal i '+mono(o.guards.length)],['Svenska beskedskoder',pill('Saknas','amber')]]);
   } else if(o.kind==='block'){
     const s=o.section,undet=s&&(s.shape==='noRule'||s.shape==='noSensor')&&s.track;
-    title=`${mono(o.id)} · spårledning`;right=undet?pill('Ingen detektering','red'):pill('Ej uppmätt','amber');
+    title=`${mono(o.id)} · spårledning`;right=undet?pill('Ingen detektering','red'):measuredPill(o);
     body=kv([['Källsensor i JMRI',o.sourceSensor?mono(o.sourceSensor)+(s?.sharedWith>1?` · delas av ${s.sharedWith} spårledningar`:''):'Ingen'],['Ingångar',s?.inputDetails?.length?s.inputDetails.map(d=>mono(d.system)+(d.module?' <span style="color:var(--kr-mute)">'+esc(d.module)+'</span>':'')).join(', '):'Inga'],
       ['Regelform',s?esc(SHAPE_LABEL[s.shape]||s.shape):'–'],['Bänkadress',mono(o.loconet.report)+' · aktiv betyder '+(o.loconet.activeMeansOccupied?'belagt':'ledigt')],['Tågvägar',mono(rel.routes.length)],['Status',esc(o.status)]]);
   } else {title=mono(o.id);body=`<p class="st-note">${esc(o.title||o.label||'')}</p>`;}
@@ -126,7 +128,7 @@ function ruleCard(r){
 }
 function renderRegler(main){
   const rules=model.rules.filter(r=>r.status!=='proposal'),props=model.rules.filter(r=>r.status==='proposal'),f=state.ruleType||'alla';
-  const types=[['alla','Alla',rules.length],['follow','Följer',rules.filter(r=>r.type==='follow').length],['authority','Manöverrätt',rules.filter(r=>r.type==='authority').length],['condition','Villkor',rules.filter(r=>r.type==='condition').length]];
+  const types=[['alla','Alla',rules.length],['follow','Följer',rules.filter(r=>r.type==='follow').length],['authority','Manöverrätt',rules.filter(r=>r.type==='authority').length],['condition','Villkor',rules.filter(r=>r.type==='condition').length],['detection','Detektering',rules.filter(r=>r.type==='detection').length],['aspect','Signalbesked',rules.filter(r=>r.type==='aspect').length],['crossing','Vägövergång',rules.filter(r=>r.type==='crossing').length]];
   const shown=rules.filter(r=>f==='alla'||r.type===f);
   const eff=model.ruleEffects;
   const dr=model.drafts,ver=dr?.activeVersion||0,bd=model.baseDiff;
@@ -134,7 +136,7 @@ function renderRegler(main){
   const draftBtn=dr?.draft?`<a class="st-btn st-btn-primary" href="#driftsattning/andringar">Visa utkastet</a>`:props.length?`<button type="button" class="st-btn st-btn-primary" data-draft-from-proposal>Skapa utkast av förslaget</button>`:'';
   main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">KONFIGURERA · REGLER</div><h1>Regler</h1><p>Det som gäller uttryckt i regelspråket, kompilerat till kärnans fragment. Beskriv en ny regel i fritext; inget här ändrar driften förrän ett utkast aktiveras.</p></div><span class="st-grow"></span>${statusPill}${draftBtn}</div>
     ${renderBeskriv()}
-    <div class="st-stats">${types.map(([k,l,n])=>`<div class="st-stat"><small>${l}</small><b>${n}</b></div>`).join('')}<div class="st-stat amber"><small>Förslag</small><b>${props.length}</b><small>${eff?eff.routesChanged+' tågvägar ändrar växelläge':''}</small></div></div>
+    <div class="st-stats">${types.map(([k,l,n])=>`<div class="st-stat"><small>${l}</small><b>${n}</b></div>`).join('')}<div class="st-stat amber"><small>Förslag</small><b>${props.length}</b><small>${eff?eff.routesChanged+' tågvägar ändrar växelläge':''}</small></div><div class="st-stat"><small>Detektering ur XML</small><b>${model.detectionProposals}</b><small><a href="#genomgang">förslag i genomgången</a></small></div></div>
     ${props.length?card('Förslag ur spårgrafen · dubbelkorsväxlarna',`<div style="padding:12px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:12px">${props.map(ruleCard).join('')}</div>`
       +(eff?`<div class="st-note">Med förslaget ändrar ${eff.routesChanged} tågvägar växelläge (${eff.main} huvud, ${eff.shunt} växling). Exempel: ${eff.examples.slice(0,3).map(e=>`<b>${esc(e.label)}</b> ${esc(Object.entries(e.before).map(([k,v])=>k.slice(2)+' '+v).join(' '))} → ${esc(Object.entries(e.after).map(([k,v])=>k.slice(2)+' '+v).join(' '))}`).join('; ')}.</div>`:''),
       {right:pill('Ej uppmätt','amber'),foot:'Förslaget blir ett utkast som provas i simulatorn och aktiveras med skillnadslista i steg 4. Tågvägstabellen är oförändrad tills dess.'}):''}
@@ -239,6 +241,7 @@ function renderGenomgang(main){
   main.onclick=async e=>{
     if(e.target.closest('[data-run-review]')){runReview();return;}
     const t=e.target.closest('[data-card-type]');if(t){state.cardType=t.dataset.cardType;renderGenomgang(main);return;}
+    if(e.target.closest('[data-propose-bindings]')){const b=e.target.closest('button');b.disabled=true;try{notice='';const r=await fetch('/api/studio/bindings/propose-signals',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});const a=await r.json();if(!r.ok)throw Error(a.error||r.statusText);notice=`${a.proposed} signaladresser ur XML ligger nu som utkast till driftbindningar. Granska och aktivera under Driftbindningar.${a.skipped.length?' Hoppade över: '+a.skipped.slice(0,3).join('; ')+(a.skipped.length>3?' …':''):''}`;}catch(err){notice=err.message;}render();return;}
     const d=e.target.closest('[data-card-draft]');if(d){const c=model.review?.last?.cards.find(x=>x.id===d.dataset.cardDraft);if(c&&await draftApi('create',{add:c.rules.map(bareRule),replaces:c.replaces,note:'Genomgång: '+c.title.slice(0,120)}))go('driftsattning','andringar');return;}
     const b=e.target.closest('[data-select]');if(b){state.object=b.dataset.select;session.save();location.hash='#data?objekt='+encodeURIComponent(b.dataset.select);}};
 }
@@ -248,10 +251,12 @@ function reviewCard(c){
   const action=c.action==='draft'?(model.drafts?.draft?`<a class="st-btn" href="#driftsattning/andringar">Visa utkastet</a>`:`<button type="button" class="st-btn st-btn-primary" data-card-draft="${esc(c.id)}" ${canDraft?'':'disabled'}>Skapa utkast</button>`)
     :c.action==='chat'?`<a class="st-btn" href="#konfigurera/regler">Beskriv i chatten</a>`
     :c.action==='data'?`<a class="st-btn" href="${c.objects[0]?'#data?objekt='+encodeURIComponent(c.objects[0]):'#data?set=tagvagar'}">Visa i data</a>`
-    :c.action==='step6'?pill('Steg 6: mätning och nya regeltyper','',true):'';
+    :c.action==='bindings'?`<button type="button" class="st-btn st-btn-primary" data-propose-bindings>Föreslå adresser ur XML</button>`
+    :c.action==='measure'?`<a class="st-btn" href="#driftsattning/mat">Mät objekt</a>`:'';
   return `<section class="st-card st-review-card ${TYPE_CLASS[c.type]||''}"><div class="st-card-head"><span class="st-eyebrow st-type-ink">${esc((CARD_LABEL[c.type]||c.type).toUpperCase())}${c.typeFromSources?` · KÄLLORNA: ${esc(c.typeFromSources.toUpperCase())}`:''}${c.origin==='ai'?' · AI':''}</span><span class="st-grow"></span>${c.priority?`<span class="st-prio" title="Prioritet enligt AI">${c.priority}</span>`:''}<span class="mono st-count">${c.count}</span></div>
     <div class="st-review-body"><h3>${esc(c.title)}</h3>${c.assessment?`<p class="st-assess">${esc(c.assessment)}</p>`:''}<p class="st-source">${esc(c.text)}</p>
-    ${c.rules.length?`<div class="st-proposals">${c.rules.map(proposalCard).join('')}</div>`:''}
+    ${c.rules.length?`<div class="st-proposals">${c.rules.slice(0,6).map(proposalCard).join('')}</div>${c.rules.length>6?`<p class="st-items">… och ${c.rules.length-6} regler till i samma utkast${c.rules.some(r=>r.problems.length)?`, ${c.rules.filter(r=>r.problems.length).length} validerar inte`:''}.</p>`:''}`:''}
+    ${c.related?.length&&!c.rules.length?`<p class="st-items mono">Regler: ${c.related.slice(0,6).map(id=>`<a href="#data?objekt=${encodeURIComponent(id)}">${esc(id)}</a>`).join(', ')}${c.related.length>6?' …':''}</p>`:''}
     ${c.items.length&&!c.rules.length?`<p class="st-items mono">${esc(c.items.slice(0,8).join(', '))}${c.items.length>8?' …':''}</p>`:''}
     <div class="st-chat-actions">${objs?`<span class="st-meta">${objs}${c.objects.length>10?' …':''}</span>`:''}<span class="st-grow"></span>${action}</div></div></section>`;
 }
@@ -337,7 +342,7 @@ function renderLater(main){
   main.innerHTML=`<div class="st-title"><div><div class="st-eyebrow">${esc(state.tab.toUpperCase())}</div><h1>${esc(TABS.find(t=>t.id===state.tab).label)}</h1><p>${esc(text)}</p></div></div>`;
 }
 // ---------- händelser ----------
-window.addEventListener('hashchange',()=>{const link=parseHash(location.hash);if(link.object&&model?.objects.has(link.object))state.object=link.object;if(link.sets.length)state.sets=new Set(link.sets);state.tab=link.tab;state.view=link.view;session.save();render();});
+window.addEventListener('hashchange',()=>{const link=parseHash(location.hash);if(link.object&&model?.objects.has(link.object)){state.object=link.object;if(link.tab==='driftsattning'&&link.view==='mat')state.measureObject=link.object;}if(link.sets.length)state.sets=new Set(link.sets);state.tab=link.tab;state.view=link.view;session.save();render();});
 $('#st-search').addEventListener('keydown',e=>{if(e.key!=='Enter'||!model)return;const q=e.target.value.trim().toLocaleLowerCase('sv');const hit=[...model.objects.keys()].find(id=>id.toLocaleLowerCase('sv')===q)||[...model.objects.values()].find(o=>(o.label||'').toLocaleLowerCase('sv')===q)?.id;if(hit){select(hit);if(state.tab!=='konfigurera'&&state.tab!=='data')go('konfigurera');}});
 $('#st-theme').addEventListener('click',e=>{const light=document.documentElement.dataset.theme!=='light';document.documentElement.dataset.theme=light?'light':'';e.currentTarget.textContent=light?'Mörkt':'Ljust';e.currentTarget.setAttribute('aria-pressed',light);try{localStorage.setItem('studio-theme',light?'light':'dark');}catch{}});
 try{if(localStorage.getItem('studio-theme')==='light'){document.documentElement.dataset.theme='light';$('#st-theme').textContent='Mörkt';}}catch{}

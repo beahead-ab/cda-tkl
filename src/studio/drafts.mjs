@@ -6,7 +6,8 @@ import { applyRules } from './apply.mjs';
 import { runTrial } from './trial.mjs';
 const copy = structuredClone, hash = v => createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const fail = (message, status = 400) => { throw Object.assign(Error(message), { status }); };
-const KEEP = ['id', 'type', 'objects', 'object', 'relation', 'bothWays', 'runsIn', 'status', 'source', 'trigger', 'button', 'requires', 'reason', 'label', 'sourceSensor', 'requiredPosition', 'relay', 'tkl', 'ranger', 'detail', 'positions'];
+const KEEP = ['id', 'type', 'objects', 'object', 'relation', 'bothWays', 'runsIn', 'status', 'source', 'trigger', 'button', 'requires', 'reason', 'label', 'sourceSensor', 'requiredPosition', 'relay', 'tkl', 'ranger', 'detail', 'positions',
+  'inputs', 'logic', 'owner', 'signals', 'stopCodes', 'goCodes', 'aspects', 'conditions', 'blocks', 'lamps', 'preRingMs', 'feedback'];
 const strip = r => Object.fromEntries(KEEP.filter(k => r[k] !== undefined).map(k => [k, copy(r[k])]));
 const decorate = r => ({ ...r, typeLabel: TYPE_LABEL[r.type], runsInLabel: RUNS_IN[r.type], explain: explainRule(r) });
 

@@ -85,7 +85,7 @@ test('genomgången med AI ordnar korten, bedömer dem och validerar extra försl
       extra: [{ title: 'Vx100 och Vx999', type: 'förslag', text: 'Prov', objects: ['Vx100', 'Vx999'], rules: [card('follow', ['Vx100', 'Vx999'])] }, { title: 'Bara text', type: 'nonsens', text: 'Utan regel', objects: [], rules: [] }] }); };
   const review = new StudioReview({ sources, assistant: new StudioAssistant({ key: 'k', fetcher: fakeFetch(answer, calls) }), storage: tempStorage(), activeRules: () => rules, baseProfile: () => profile });
   const v = await review.run(); const last = v.last;
-  assert.equal(last.mode, 'ai'); assert.equal(last.model, 'claude-opus-5-5'); assert.equal(last.summary, 'Börja med dubbelkorsväxlarna.'); assert.equal(calls[0].body.output_config.format.schema.properties.extra.items.properties.rules.items.properties.type.enum.length, 4);
+  assert.equal(last.mode, 'ai'); assert.equal(last.model, 'claude-opus-5-5'); assert.equal(last.summary, 'Börja med dubbelkorsväxlarna.'); assert.equal(calls[0].body.output_config.format.schema.properties.extra.items.properties.rules.items.properties.type.enum.length, 5);
   assert.deepEqual(last.cards.slice(0, 3).map(c => c.id), ['x-X1', 'manual-groups', 'turntable']); assert.equal(last.cards[0].assessment, 'Ritningen är entydig.'); assert.equal(last.cards[2].type, 'beslut'); assert.equal(last.cards[2].typeFromSources, 'underlag');
   const extra = last.cards.filter(c => c.origin === 'ai'); assert.equal(extra.length, 2); assert.equal(extra[0].id, 'ai:1'); assert.deepEqual(extra[0].objects, ['Vx100']); assert.equal(extra[0].action, 'draft');
   assert.deepEqual(extra[0].rules[0].problems, ['Växeln Vx999 finns inte']); assert.equal(extra[1].type, 'underlag'); assert.equal(extra[1].action, 'none');

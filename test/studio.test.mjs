@@ -6,7 +6,7 @@ const row = (rows, id) => rows.find(r => r.id === id);
 
 test('objektregistret har stationens mängder och bara spårbarhet ur XML, inget uppmätt', () => {
   const r = buildRegistry(sources);
-  assert.deepEqual(r.counts, { turnouts: 49, signals: 66, blocks: 197, routes: 340, modules: 12, measured: 0 });
+  assert.deepEqual(r.counts, { turnouts: 49, signals: 66, blocks: 197, routes: 340, modules: 12, measured: { field: 0, bench: 0 } });
   const vx100 = r.turnouts.find(t => t.id === 'Vx100');
   assert.deepEqual(vx100.source, { system: 'LT100', comment: 'M02-100-1', module: { name: 'M02', base: 100, channel: 1 } });
   assert.deepEqual(vx100.companions, ['Vx101']);
@@ -64,6 +64,6 @@ test('översikten är ren läsning och hör till driftprofilens källversion', (
   const o = studioOverview();
   assert.equal(o.sourceHash, sources.profile.sourceHash);
   assert.equal(o.deviations.length, 18); assert.equal(o.blocking, 6);
-  assert.equal(o.counts.measured, 0);
+  assert.deepEqual(o.counts.measured, { field: 0, bench: 0 });
   assert.equal(JSON.stringify(sources.profile.coupled.Vx140), JSON.stringify(['Vx140', 'Vx142']), 'profilen ändras inte av läsningen');
 });

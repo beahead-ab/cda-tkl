@@ -108,9 +108,16 @@ export class Engine extends EventEmitter {
       state.position = pos; state.updatedAt = now; state.reportSequence=sequence;
     }
     if (d.kind === 'sensor') for (const [name, binding] of Object.entries(this.profile.blocks)) {
-      if (binding.address !== d.address) continue;
-      const occupied = binding.activeMeansOccupied ? d.active : !d.active;
-      const state = this.blocks[name]; changed ||= state.occupied !== occupied;
+      // En spårledning med flera ingångar (detection-regel): belagd när någon av, eller alla, ingångarna säger belagd.
+      const inputs = binding.inputs || [binding]; if (!inputs.some(i => i.address === d.address)) continue;
+      const state = this.blocks[name]; let occupied;
+      if (binding.inputs) {
+        state.inputs ||= {}; state.inputs[d.address] = d.active;
+        const known = inputs.map(i => state.inputs[i.address] === undefined ? null : (i.activeMeansOccupied ? state.inputs[i.address] : !state.inputs[i.address]));
+        occupied = binding.logic === 'all' ? (known.some(v => v === false) ? false : known.every(v => v === true) ? true : null) : (known.some(v => v === true) ? true : known.every(v => v === false) ? false : null);
+        if (occupied === null) continue;
+      } else occupied = binding.activeMeansOccupied ? d.active : !d.active;
+      changed ||= state.occupied !== occupied;
       state.occupied = occupied; state.updatedAt = now; state.reportSequence=sequence;
     }
     if (d.kind === 'signal') for (const [name, binding] of Object.entries(this.profile.signals)) {
