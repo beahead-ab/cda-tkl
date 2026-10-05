@@ -1269,6 +1269,14 @@ CHARLOTTENDAL nu enda platsen: ingen kontakt, nödåtertagning pågår, AIS akti
 Inställningar. Mergat som cda-tkl#13. Första releasen att installera med Uppdatera nu i
 webbdriften.
 
+## 5 oktober 2026, 0.59.3: händelsekolumnen och Sök efter ny version
+
+Händelsekolumnen växte förbi sin ruta i ett smalare fönster (rubrikraden fick inte
+radbrytas och den implicita gridkolumnen tog dess bredd), så rader och Kvittera klipptes.
+Kolumnen är nu minmax(0,1fr) och filtren radbryts. Uppdateringskontrollen frågar varje
+timme i stället för var sjätte, och Uppdatering har Sök efter ny version. Webbdriften
+såg inte 0.59.2 av samma skäl. Mergat som cda-tkl#14.
+
 ## 5 oktober 2026, 0.60.0: Studio, objekt och regler, steg 1–6
 
 Admin v2 "Objekt och regler" som fristående modul i `src/studio/` med egen sida på
