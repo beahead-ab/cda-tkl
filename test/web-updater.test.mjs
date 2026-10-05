@@ -19,13 +19,14 @@ function sandbox({answer}){
   execFileSync('git',['init','-q','-b','main'],{cwd:repo});execFileSync('git',['-c','user.email=t@t','-c','user.name=t','commit','-qam','x','--allow-empty'],{cwd:repo});
   execFileSync('git',['add','-A'],{cwd:repo});execFileSync('git',['-c','user.email=t@t','-c','user.name=t','commit','-qm','0.58.0'],{cwd:repo});
   fs.writeFileSync(path.join(bin,'systemctl'),`#!/bin/sh\necho "$@" >> ${dir}/systemctl.log\n[ "$1" = is-active ] && exit ${answer==='ok'?0:3}\nexit 0\n`,{mode:0o755});
-  fs.writeFileSync(path.join(bin,'curl'),`#!/bin/sh\necho ${answer==='ok'?200:502}\n`,{mode:0o755});
+  fs.writeFileSync(path.join(bin,'curl'),`#!/bin/sh\necho ${answer==='ok'?400:502}\n`,{mode:0o755});
   const run=spawnSync('bash',[SCRIPT],{encoding:'utf8',env:{...process.env,PATH:bin+':'+process.env.PATH,CHARLOTTENDAL_UPDATE_SOURCE:repo,CHARLOTTENDAL_BASE:base,CHARLOTTENDAL_STATE:state,
     CHARLOTTENDAL_BACKUPS:path.join(dir,'backups'),CHARLOTTENDAL_NODE:process.execPath,CHARLOTTENDAL_NPM:'true',CHARLOTTENDAL_LOCK:path.join(dir,'lock'),CHARLOTTENDAL_BACKUP_PATHS:path.relative('/',state)}});
   const status=JSON.parse(fs.readFileSync(path.join(state,'update.json'),'utf8'));
   return {run,status,current:fs.readlinkSync(path.join(base,'current')),log:fs.readFileSync(path.join(dir,'systemctl.log'),'utf8'),base,dir};
 }
 test('a new release is installed, switched to and checked',{skip:!root&&'needs root'},()=>{
+  // 400 is what the public deployment answers on 127.0.0.1: TKL is up.
   const {run,status,current,log,dir}=sandbox({answer:'ok'});
   assert.equal(run.status,0,run.stderr);
   assert.equal(status.phase,'done');assert.equal(status.from,'0.57.1');assert.equal(status.to,'0.58.0');

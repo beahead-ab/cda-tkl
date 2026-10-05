@@ -1243,3 +1243,19 @@ polkit-regel låter TKL-tjänsten starta den och inget annat. publish-release.sh
 installerar filerna vid varje publicering. Uppdatering visar Uppdatera nu och hur den
 senaste uppdateringen gick. Provad i sandlåda (lyckad och återställd), inte ännu på
 servern. Mergat som cda-tkl#11.
+
+## 5 oktober 2026, 0.59.1: hälsokontrollen i webbdriftens uppdatering
+
+Första körningen av `charlottendal-update` på webbservern (19:44) installerade 0.59.0,
+som startade, men rullade tillbaka: webbdriften svarar på 127.0.0.1 med 400 (Otillåten
+värd, den tjänar bara sin publika adress), och kontrollen godtog bara 2xx, 3xx, 401 och
+403. Nu räknas varje svar som att TKL är uppe, utom inget svar eller 5xx. Provet i
+sandlådan använder nu 400 och fallerade mot den gamla kontrollen. Servern visade också
+att webbdriften körde 0.53.0 (`4f0ebcc`), inte 0.57.1 som status.md angav; rättat.
+
+## 5 oktober 2026, 19:50: webbdriften kör 0.59.1
+
+Casper installerade uppdateringstjänsten och körde `charlottendal-update` på webbservern:
+0.59.1 (`v0.59.1-406e5f8` ur cda-tkl-install) installerad, föregående 0.53.0; TKL och
+simulatorn aktiva. polkit och git fanns redan. Knappen Uppdatera nu, som startar
+tjänsten via polkit, provas skarpt vid nästa release.
