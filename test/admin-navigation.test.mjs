@@ -4,14 +4,14 @@ import {NAVIGATION_GROUPS,NAVIGATION_SECTIONS,REDIRECTS,resolveNavigation} from 
 
 const registered=['#trainmeet','#tools/appearance','#tools/streamdeck','#tools/streamdeck/layout','#tools/journal',
   '#register','#register/station','#register/destinations','#register/presentation','#register/bindings','#register/object',
-  '#advanced','#advanced/xml','#advanced/migration','#advanced/protocol','#advanced/update'];
+  '#advanced','#advanced/start','#advanced/xml','#advanced/migration','#advanced/protocol','#advanced/ai','#advanced/users','#advanced/update'];
 
-test('Inställningar has seven entries in three groups and every tab keeps an existing address',()=>{
+test('Inställningar has ten entries in three groups and every tab keeps an existing address',()=>{
   // Drift is the bottom row's tab in the signal box, not a page here (docs/installningar-plan.md).
   assert.deepEqual(NAVIGATION_GROUPS.map(g=>g.label),['Träffen','Den här datorn','Anläggningen']);
   assert.deepEqual(NAVIGATION_SECTIONS.map(s=>[s.group,s.label]),[
     ['traffen','TrainMeet'],['traffen','Händelser'],
-    ['datorn','Utseende och ljud'],['datorn','Stream Deck'],['datorn','Banan (LocoNet)'],['datorn','Uppdatering'],
+    ['datorn','Kom igång'],['datorn','Utseende och ljud'],['datorn','Stream Deck'],['datorn','Banan (LocoNet)'],['datorn','AI-tjänst'],['datorn','Användare'],['datorn','Uppdatering'],
     ['anlaggningen','Anläggning']]);
   // A group's entries stand together, so the rail shows each heading once.
   const order=NAVIGATION_SECTIONS.map(s=>s.group);assert.deepEqual([...new Set(order)],NAVIGATION_GROUPS.map(g=>g.key));

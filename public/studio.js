@@ -35,7 +35,7 @@ let busy=false,notice='';
 async function draftApi(command,payload={}){
   if(busy||!model.drafts)return false;busy=true;notice='';
   try{const r=await fetch('/api/studio/drafts/'+command,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:model.drafts.sessionId,revision:model.drafts.revision,...payload})});
-    if([401,428].includes(r.status)){location.assign('/login');return false;}
+    if([401,428].includes(r.status)){location.assign('/login?next='+encodeURIComponent(location.pathname+location.hash));return false;}
     const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);model.drafts=answer;
     if(command==='activate'){notice='Regelversion '+answer.activeVersion+' är aktiverad. Kärnan har läst om profilen; AIS kvarstår tills nya stoppbesked kommit.';await reloadStudio();}
     return true;}
@@ -231,7 +231,7 @@ function renderGenomgang(main){
       ${last.summary?card('Sammanfattning',`<p class="st-note">${esc(last.summary)}</p>`):''}
       <div class="st-chips">${types.map(([k,l,n])=>`<button type="button" class="st-chip-set" data-card-type="${k}" aria-pressed="${f===k}">${l}<b>${n}</b></button>`).join('')}<span class="st-grow"></span><span class="st-eyebrow">${ai.configured?'AI · '+esc(ai.model.toUpperCase()):'AI EJ ANSLUTEN'}</span></div>
       <div class="st-review">${cards.map(reviewCard).join('')||'<p class="st-empty">Inga kort av den typen.</p>'}</div>`
-    :card('Ingen genomgång är körd',`<p class="st-note">Korten räknas deterministiskt ur källorna: avvikelserna, spårgrafen och reglerna. ${ai.configured?'AI-tjänsten är ansluten ('+esc(ai.model)+'): den ordnar och bedömer korten och kan lägga till egna. ':'AI-tjänsten är inte ansluten; genomgången ger korten utan bedömning. '}Ingenting aktiveras av genomgången.</p>`,{foot:'Körningen tar upp till någon minut med AI. Resultatet sparas på servern tills nästa körning.'})}
+    :card('Ingen genomgång är körd',`<p class="st-note">Korten räknas deterministiskt ur källorna: avvikelserna, spårgrafen och reglerna. ${ai.configured?'AI-tjänsten är ansluten ('+esc(ai.model)+'): den ordnar och bedömer korten och kan lägga till egna. ':'AI-tjänsten är inte ansluten (<a href="/#advanced/ai">Inställningar → AI-tjänst</a>); genomgången ger korten utan bedömning. '}Ingenting aktiveras av genomgången.</p>`,{foot:'Körningen tar upp till någon minut med AI. Resultatet sparas på servern tills nästa körning.'})}
     ${card(`Avvikelser <span class="mono" style="color:var(--kr-red)">${model.deviations.length}</span>`,`<div class="st-grid-wrap"><table class="st-grid"><thead><tr><th>Avvikelse</th><th class="num">Antal</th><th>Löses av</th><th>Objekt</th><th></th></tr></thead><tbody>
       ${model.deviations.map(d=>`<tr><td style="font-family:var(--font)">${esc(d.title)}${d.blocking?' '+pill('Blockerar','red'):''}</td><td class="num">${d.count}</td><td>${esc(d.resolvedBy)}${d.note?' <span style="color:var(--kr-mute)">· '+esc(d.note)+'</span>':''}</td><td style="font-family:var(--mono);font-size:12px">${esc((d.items||[]).slice(0,8).join(', '))}${(d.items||[]).length>8?' …':''}</td>
       <td style="white-space:nowrap">${d.objects.length?`<a href="#data?objekt=${encodeURIComponent(d.objects[0])}">Visa i data</a> · <a href="#konfigurera?objekt=${encodeURIComponent(d.objects[0])}">Visa i planen</a>`:''}</td></tr>`).join('')}</tbody></table></div>`,
@@ -264,7 +264,7 @@ let reviewBusy=false;
 async function runReview(){
   if(reviewBusy)return;reviewBusy=true;notice='';render();
   try{const r=await fetch('/api/studio/review/run',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
-    if([401,428].includes(r.status)){location.assign('/login');return;}
+    if([401,428].includes(r.status)){location.assign('/login?next='+encodeURIComponent(location.pathname+location.hash));return;}
     const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);model.review=answer;}
   catch(e){notice=e.message;}
   finally{reviewBusy=false;render();}
@@ -284,7 +284,7 @@ function renderBeskriv(){
     ${chat.error?`<p class="st-error" style="margin:0 16px 12px">${esc(chat.error)}</p>`:''}
     <form class="st-chat-form" id="st-chat-form"><textarea id="st-chat-text" rows="2" aria-label="Beskriv regeln" placeholder="Vad ska gälla?" ${chat.busy?'disabled':''}>${esc(chat.text)}</textarea>
       <div class="st-chat-actions">${mic?`<button type="button" class="st-btn" data-chat-mic aria-pressed="false">🎙 Diktera</button>`:''}<span class="st-grow"></span>${chat.log.length?`<button type="button" class="st-btn" data-chat-clear>Rensa</button>`:''}<button type="submit" class="st-btn st-btn-primary" ${chat.busy||!ai.configured?'disabled':''}>${chat.busy?'Tolkar…':'Tolka'}</button></div></form>
-    <div class="st-card-foot">${ai.configured?'Texten och objektnamnen går från TKL-servern till AI-tjänsten; nyckeln ligger på servern. Ingenting ändras förrän ett utkast aktiveras.':'Lägg till ANTHROPIC_API_KEY i serverns miljöfil och starta om tjänsten. Datorns egen diktering fungerar i textfältet redan nu.'}</div></section>`;
+    <div class="st-card-foot">${ai.configured?'Texten och objektnamnen går från TKL-servern till AI-tjänsten; nyckeln ligger på servern. Ingenting ändras förrän ett utkast aktiveras.':'Anslut AI-tjänsten under <a href="/#advanced/ai">Inställningar → Den här datorn → AI-tjänst</a>; nyckeln sparas på servern. Datorns egen diktering fungerar i textfältet redan nu.'}</div></section>`;
 }
 function answerHtml(a){
   const canDraft=a.rules.length&&a.rules.every(r=>!r.problems.length);
@@ -311,7 +311,7 @@ async function sendChat(){
   const text=chat.text.trim();if(!text||chat.busy)return;
   chat.busy=true;chat.error='';chat.log.push({role:'user',text});render();
   try{const r=await fetch('/api/studio/assistant/propose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,objects:chatObjects()})});
-    if([401,428].includes(r.status)){location.assign('/login');return;}
+    if([401,428].includes(r.status)){location.assign('/login?next='+encodeURIComponent(location.pathname+location.hash));return;}
     const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);
     chat.log.push({role:'ai',answer});chat.text='';}
   catch(e){chat.error=e.message;chat.log.pop();}

@@ -1277,6 +1277,32 @@ Kolumnen är nu minmax(0,1fr) och filtren radbryts. Uppdateringskontrollen fråg
 timme i stället för var sjätte, och Uppdatering har Sök efter ny version. Webbdriften
 såg inte 0.59.2 av samma skäl. Mergat som cda-tkl#14.
 
+## 5 oktober 2026, 0.61.0: AI-tjänst i Inställningar, användare och Kom igång
+
+Tre önskemål efter 0.60.0: AI-motor och nyckel i appens inställningar, nyckeln som en del av
+onboardingen vid nyinstallation, och samma användarhantering som i TrainMeet Server med inloggning
+bara för administration när TKL körs lokalt. Planen i `docs/anvandare-och-onboarding-plan.md`.
+
+- **AI-tjänst** (`src/ai-settings.mjs`, `public/ai-page.js`): Inställningar → Den här datorn →
+  AI-tjänst med modellerna som fungerar med lösningen (Opus 5.5 standard, Sonnet 5.5, Fable 5.1),
+  nyckel i `ai.json` (0600) som sidan bara ser fyra tecken av, och "Prova anslutningen" som ett litet
+  riktigt anrop. Studio-assistenten läser inställningen vid varje anrop; miljövariablerna är
+  reservvärden.
+- **Användare** (`src/users.mjs`, `src/auth.mjs`, `docs/anvandare.md`): `users.json` med ägare och
+  administratörer, engångskoder `XXXX-XXXX` i sju dagar, lokal cookie utan Secure, administrationens
+  vägar i `isAdminRoute`. Lokalt är operatören utan inloggning; innan ägaren finns är allt öppet så
+  att Kom igång kan skapa den. Webbdriften oförändrad i kraven; `auth.json` migreras till ägaren
+  `admin`. `scripts/create-owner.mjs`, `scripts/recover-user.mjs`; `initialize-password.mjs` skapar
+  nu ägaren admin.
+- **Kom igång** (`src/onboarding.mjs`, `public/start-page.js`): dialog vid första start, chip
+  "Kom igång · N steg kvar" i panelen och "· N kvar" i sidomenyn, stegen räknas ur det som finns och
+  frivilliga steg hoppas över uttryckligen.
+
+Provat: 396 enhetstester (`npm test`, nya `ai-settings`, `users`, `auth-policy`, `onboarding`),
+`test/password-integration.mjs` mot båda processerna i webbdriftens läge, och tre Chromium-flöden
+mot en nyinstallerad TKL med simulatorn: AI-sidan med låtsas-API, användarflödet (ägare, inbjudan,
+inlösen, roller, borttagning, operatör utan inloggning) och Kom igång från dialog till klart.
+
 ## 5 oktober 2026, 0.60.0: Studio, objekt och regler, steg 1–6
 
 Admin v2 "Objekt och regler" som fristående modul i `src/studio/` med egen sida på

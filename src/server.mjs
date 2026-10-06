@@ -27,13 +27,15 @@ import { loadSources } from './studio/sources.mjs';
 import { rulesFromProfile } from './studio/rules.mjs';
 import { StudioDrafts } from './studio/drafts.mjs';
 import { StudioAssistant } from './studio/assistant.mjs';
+import { AiSettings } from './ai-settings.mjs';
+import { Onboarding } from './onboarding.mjs';
 import { StudioReview } from './studio/review.mjs';
 import { spawn } from 'node:child_process';
 
 const baseProfile=loadProfile();
 const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
-const auth = createAuth(root, true);
 const storage = new Storage(process.env.CHARLOTTENDAL_STATE_DIR || fileURLToPath(new URL('../var', import.meta.url)));
+const auth = createAuth(root, true, process.env, { stateDir: storage.directory });
 let profile,client,engine,configuration,trainInformation,panelIndications,recorder;
 const bindingReports=new Map();
 function activationStatus(proposed){
@@ -71,13 +73,18 @@ const studioDrafts=new StudioDrafts({base:baseProfile,field:loadProfile('field',
   prepare:(p,f)=>{storage.save('studio-field-profile.json',f);const next=createRuntime(p);return ()=>installRuntime(next);},
   proposal:()=>{const r=studioRules(studioSources,studioDrafts.activeRules());return {proposals:r.proposals,replaces:r.replaces};}});
 // Chatten och AI-genomgången: Claude API med nyckeln på servern. Webbläsaren talar bara med TKL.
-const studioAssistant=new StudioAssistant();
+// AI-tjänsten: modell och nyckel ur Inställningar → Den här datorn → AI-tjänst (ai.json), med miljön som reservvärde.
+const aiSettings=new AiSettings({storage});
+const studioAssistant=new StudioAssistant({settings:aiSettings});
 const studioReview=new StudioReview({sources:studioSources,assistant:studioAssistant,storage,activeRules:()=>studioDrafts.activeRules(),baseProfile:()=>bindings.profile()});
 // Driftsättning: kortinventering över SV2 och mätning objekt för objekt. Båda går genom den aktiva LocoNet-klienten,
 // bara när AIS är aktiv och inga lås finns, och inget av dem aktiverar något.
 const studioCards=new CardInventory({storage,send:b=>!!client?.send(b)});
 const studioMeasure=new Measurements({storage,send:b=>!!client?.send(b),guard:()=>{const s=activationStatus(null);return s.allowed?null:s.reason;},mode:()=>connectionInfo(profile).mode});
 const trainMeet=new TrainMeet({storage,origin:process.env.CHARLOTTENDAL_TRAINMEET_ORIGIN||''});
+// Kom igång (src/onboarding.mjs): stegens status ur det som finns; panelen visar "N steg kvar" tills ägaren markerat klart.
+const onboarding=new Onboarding({storage});
+const onboardingContext=()=>({auth,ai:aiSettings.view(),connection:{mode:connectionInfo(profile).mode,state:engine?.connected?'connected':'disconnected'},trainMeet:trainMeet.view()});
 const destinations=new Destinations(storage);
 const modelClock=new ModelClock(storage);let clockPublished=0;
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = [], protocolTrace=[]; let dirty = true;
@@ -117,18 +124,22 @@ const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
     if (await auth.handle(req, res, url)) return;
-    const expires = await auth.authenticate(req);
+    const expires = await auth.authenticate(req, url);
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
       if(url.pathname==='/api/communication')return json(res,{connection:connectionInfo(profile),connectionState:engine.connected?'connected':'disconnected',expectations:commandExpectations(profile,engine.snapshot()),trace:protocolTrace});
       if(url.pathname==='/api/studio'){const measured=studioMeasure.measured(profile);return json(res,{...studioData(studioSources,studioDrafts.activeRules(),measured),drafts:studioDrafts.view(bindings.profile()),review:studioReview.view(),
         measure:studioMeasure.view(profile),cards:studioCards.view(),mgp:mgpSummary({profile,xml:studioSources.xml},buildRegistry(studioSources,measured),studioCards.view().cards,{sections:detectionInventory(studioSources).sections,measured})});}
+      if(url.pathname==='/api/ai')return json(res,aiSettings.view());
+      if(url.pathname==='/api/onboarding')return json(res,onboarding.view(onboardingContext()));
+      // Inställningar → Användare: alla inloggade ser listan; ägaren ändrar den (src/users.mjs).
+      if(url.pathname==='/api/users'){const me=auth.requireRole(req,'admin');return json(res,{...auth.users.summary(),me:{id:me.id,username:me.username,role:me.role},mode:auth.mode});}
       if(url.pathname==='/api/studio/measure')return json(res,studioMeasure.view(profile));
       if(url.pathname==='/api/studio/cards')return json(res,studioCards.view());
       if(url.pathname==='/api/studio/mgp/export'){const measured=studioMeasure.measured(profile);const doc={format:'charlottendal-mgp-v1',at:Date.now(),sourceHash:studioSources.profile.sourceHash,mode:connectionInfo(profile).mode,cards:studioCards.view().cards,modules:mgpSummary({profile,xml:studioSources.xml},buildRegistry(studioSources,measured),studioCards.view().cards,{sections:detectionInventory(studioSources).sections,measured})};
         res.writeHead(200,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Disposition':'attachment; filename="charlottendal-mgp.json"'});return res.end(req.method==='HEAD'?undefined:JSON.stringify(doc,null,2)+'\n');}
       if(url.pathname==='/api/route-targets')return json(res,{targets:engine.routeTargets(url.searchParams.get('from'),url.searchParams.get('kind')||'main')});
-      if (url.pathname === '/api/config') { const {routeAlternatives,...panelProfile}=profile; return json(res, { ...panelProfile,release,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: process.env.CHARLOTTENDAL_AUTH_MODE === 'password' ? '/account' : null }); }
+      if (url.pathname === '/api/config') { const {routeAlternatives,...panelProfile}=profile; return json(res, { ...panelProfile,release,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: auth.mode === 'external' ? '/account' : null, authMode: auth.mode, onboarding: (v => ({ done: v.done, remaining: v.remaining, steps: v.steps.map(x => ({ id: x.id, label: x.label, done: x.done, skipped: x.skipped })) }))(onboarding.view(onboardingContext())) }); }
       if (url.pathname === '/api/train-information') return json(res, {...trainInformation.snapshot(),...trainInformation.catalog()});
       if(url.pathname==='/api/bindings')return json(res,bindings.view());
       if(url.pathname==='/api/bindings/export'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','Content-Disposition':'attachment; filename=charlottendal-driftprofil.json'});return res.end(req.method==='HEAD'?undefined:JSON.stringify(bindings.export(),null,2));}
@@ -151,6 +162,22 @@ const server = http.createServer(async (req, res) => {
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
     const data = await body(req,65536);
+    if(url.pathname.startsWith('/api/users/')){
+      const command=url.pathname.slice('/api/users/'.length);if(!['invite','reissue','remove'].includes(command))return json(res,{error:'Finns inte'},404);
+      const me=auth.requireRole(req,'owner'),ROLE={owner:'ägare',admin:'administratör'};
+      if(command==='invite'){const r=auth.users.invite({username:data.username,role:data.role});engine.log('users',`${r.user.username} inbjuden som ${ROLE[r.user.role]} av ${me.username}.`);return json(res,{...r,...auth.users.summary()});}
+      if(command==='reissue'){const r=auth.users.reissue(data.id);engine.log('users',`Ny inbjudningskod till ${r.user.username} av ${me.username}; tidigare lösenord och inloggningar gäller inte längre.`);auth.emit('invalidate');return json(res,{...r,...auth.users.summary()});}
+      const gone=auth.users.user(data.id),summary=auth.users.remove(data.id,{by:me.id});engine.log('users',`${gone?.username||'Användare'} borttagen av ${me.username}.`);auth.emit('invalidate');return json(res,summary);
+    }
+    if(url.pathname==='/api/onboarding/finish'){const me=auth.access(req).user;const v=onboarding.finish(data,{by:me?.username||null,context:onboardingContext()});engine.log('onboarding','Kom igång markerad som klar'+(me?' av '+me.username:'')+(v.skipped.length?'; överhoppat: '+v.skipped.join(', '):'')+'.');dirty=true;return json(res,v);}
+    if(url.pathname==='/api/onboarding/reopen')return json(res,onboarding.reopen(onboardingContext()));
+    if(url.pathname==='/api/ai/save')return json(res,aiSettings.save(data));
+    if(url.pathname==='/api/ai/clear')return json(res,aiSettings.clear());
+    if(url.pathname==='/api/ai/test'){
+      // Provet går med de sparade inställningarna; utfallet sparas så att sidan visar när anslutningen senast fungerade.
+      try{const r=await studioAssistant.probe();return json(res,{...aiSettings.recordTest({ok:true,model:r.model,greeting:r.greeting}),probe:r});}
+      catch(e){aiSettings.recordTest({ok:false,error:e.message});throw e;}
+    }
     if(url.pathname==='/api/studio/assistant/propose')return json(res,await studioAssistant.propose(data,{profile:bindings.profile(),xml:studioSources.xml,activeRules:studioDrafts.activeRules(),names:studioDrafts.names}));
     if(url.pathname==='/api/studio/review/run')return json(res,await studioReview.run());
     if(url.pathname==='/api/studio/bindings/propose-signals'){

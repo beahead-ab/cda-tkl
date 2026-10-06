@@ -13,6 +13,7 @@ export const NAVIGATION_SECTIONS=[
   // TrainMeet is the only timetable; the old #import pages lead here.
   {group:'traffen',hash:'#trainmeet',label:'TrainMeet',id:'trainmeet-tab',title:'TrainMeet',status:'menu-trainmeet-status',tabs:[]},
   {group:'traffen',hash:'#tools/journal',label:'Händelser',id:'journal-tab',title:'Händelser',tabs:[]},
+  {group:'datorn',hash:'#advanced/start',label:'Kom igång',id:'start-tab',title:'Kom igång',status:'start-status',tabs:[]},
   {group:'datorn',hash:'#tools/appearance',label:'Utseende och ljud',id:'tools-tab',title:'Utseende och ljud',tabs:[]},
   {group:'datorn',hash:'#tools/streamdeck',label:'Stream Deck',id:'streamdeck-tab',title:'Elgato Stream Deck',tabs:[
     {hash:'#tools/streamdeck',label:'Anslutning'},
@@ -20,6 +21,8 @@ export const NAVIGATION_SECTIONS=[
   {group:'datorn',hash:'#advanced/protocol',label:'Banan (LocoNet)',id:'loconet-tab',title:'Banan (LocoNet)',tabs:[
     {hash:'#advanced/protocol',label:'Protokollinspelning'},
     {external:'field-link',label:'Simulator ↗'}]},
+  {group:'datorn',hash:'#advanced/ai',label:'AI-tjänst',id:'ai-tab',title:'AI-tjänst',tabs:[]},
+  {group:'datorn',hash:'#advanced/users',label:'Användare',id:'users-tab',title:'Användare',tabs:[]},
   {group:'datorn',hash:'#advanced/update',label:'Uppdatering',id:'update-tab',title:'Uppdatera TKL',tabs:[]},
   // #advanced itself, the old overview page, now opens the register.
   {group:'anlaggningen',hash:'#register',label:'Anläggning',id:'admin-tab',title:'Anläggningsregister',members:['#advanced'],tabs:[
