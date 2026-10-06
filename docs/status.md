@@ -7,7 +7,7 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 - Ren ställverkssida med fullskärm, manöverknappar och en nederrad med klockförankrad tidtabell och händelsekolumn under spårplanen, som skalas till bredden (0.43.0). Planen är harmoniserad med nederradens färger och typografi och har en statusrad över det övre bandet (0.44.0). En [meny](panel-och-verktyg.md) samlar TrainMeet, import, utseende, anslutningar och händelser. Signal- och kompisinformation visas vid behov; aktiva stopp och fel är fortsatt synliga.
 
 - Originalpanelen med förladdade originalikoner, större träffytor och tågväg som tänds i färdriktningen. Samma start och mål återtar vägen.
-- 210 huvudtågvägar och 130 växeltågvägar med etablerings- och passageprov. 49 växlar, 197 körbara layoutblock och 66 signaler, sedan 0.67.0 med adresserna ur Cda60.xml (växlarnas LT, signalernas huvudutgång, spårledningarnas LS-ingångar; 11 virtuella signaler och 38 spårledningar utan ingång i källan). Låsta växlar kan inte läggas om manuellt. Kompisväxlar följer med; omläggning kontrollerar även kompisens spår utanför färdvägen.
+- 210 huvudtågvägar och 130 växeltågvägar med etablerings- och passageprov. 49 växlar, 197 körbara layoutblock och 66 signaler, sedan 0.67.0 med adresserna ur Cda60.xml (växlarnas LT, signalernas huvudutgång, spårledningarnas LS-ingångar; 13 panelsignaler utan utgång och 36 spårledningar utan ingång i källan). Låsta växlar kan inte läggas om manuellt. Kompisväxlar följer med; omläggning kontrollerar även kompisens spår utanför färdvägen.
 - Separat simulator över telegramgränsen, inklusive två samtidiga tåg, beläggning, avbrott och uteblivna återrapporter. TKL läser inte simulatorns interna tillstånd.
 - Beständiga lås, spårspärrar, AIS, nödåtertagning, sju linjespärrar, programmeringsspår samt lokal-/fjärrläge. Läget fjärr innebär ännu ingen anslutning till ett fjärrsystem.
 - Tåginformation för 197 block och sju inkommande fält. Valbar nummerföljning kopplas uttryckligen till en klar tågväg och följer ordnade återrapporter; vid osäkerhet pausas den för kontroll.
@@ -62,14 +62,16 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
 - **Signalernas rapportadress** (0.67.0): varje fysisk mast beställs på sin huvudutgång ur XML
   (LT200–LT325) och antas rapportera sitt besked på samma adress. Kommer ingen SE-rapport vid Mät
   objekt kan AIS inte återställas; då avgörs rapportadress eller switch-feedback (SV23) per Signal10.
-- **Elva virtuella signaler** (3/1, 6/5–9/5, 6/6, 6/7, 6/10–9/10) har ingen utgång i JMRI och
-  bekräftas av kärnan själv. Beslut: panelbesked som förr, eller fysiska dvärgar.
-- **4/2 och L1** pekar på LT307 och LT308 som är märkta "M11-Ej använd". Ingen tågväg använder dem,
-  men AIS kräver bekräftat stopp från dem.
-- **Växelblock utan detektering**: S155, S164, S170–172, S96b, S112b (och delar) har sensor men ingen
-  regel i källan och står kvar på bänkadress. Kandidatingångarna står i genomgången.
-- **Vx124** finns i källan men inte i planen; **M11:s kommentarer** säger basadress 165 där adresserna
-  är 170–174; **M08:s ingångar** har användarnamn förskjutna ett steg mot systemnumren.
+- **Tretton panelsignaler**: elva virtuella (3/1, 6/5–9/5, 6/6, 6/7, 6/10–9/10) utan utgång i JMRI
+  samt 4/2 och L1 vars utgångar LT307/LT308 är märkta "Ej använd" på linje D utan drift. Kärnan
+  bekräftar dem själv. Bedömning: panelbesked som förr; prova LT214 (3/1) och LT307/308 vid mätningen.
+- **Växelblock utan detektering**: S155, S164, S171, S172, S112b (och delar) har sensor men ingen
+  regel i källan och står kvar på bänkadress. Kandidatingångarna per modul står i genomgången; en vagn
+  på varje växelblock avgör. S170 fick LS199 i 0.67.1 (regeln SN1B sätter den).
+- **Vx124** finns i källan men inte i planen (lämnas utanför); **M11:s kommentarer** säger basadress
+  165 där adresserna är 170–174 och **M08:s ingångar** har förskjutna användarnamn (skrivfel utan verkan);
+  **LS124** är kommenterad S125a men regeln använder LS121 (mät vilken som slår).
+  Bedömningarna i sin helhet: [genomgången](genomgang-mgp-2026-10-06.md).
 
 **Avsiktligt vilande:** Friställa spår och den extra lilla växellåsindikator som Casper bad oss avvakta med.
 

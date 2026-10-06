@@ -138,9 +138,12 @@ const signals = Object.fromEntries(panel.micons.map(m=>m.mast).sort().map(name=>
   if(mast.virtual) return [name,{virtual:true,sourceType,provenance:'VirtualSignalMast i Cda60.xml: ingen utgång. Beskedet visas bara i panelen, som i JMRI.'}];
   const stop=mast.aspects.find(a=>a.state==='thrown'),out=stop&&output(stop.turnout);
   if(!out||!/^LT\d+$/.test(out.system)) throw Error('Signalens stopputgång saknas i Cda60.xml: '+name);
-  const address=Number(out.system.slice(2)),unused=/ej använd/i.test(out.comment);
+  const address=Number(out.system.slice(2));
+  // 4/2 och L1 pekar på utgångar Benny märkt "Ej använd": linje D är inte i drift och ingen tågväg använder dem. Att vänta på
+  // en rapport från en utgång som inte är inkopplad skulle låsa AIS, så de behandlas som panelbesked tills mätningen visar annat.
+  if(/ej använd/i.test(out.comment)) return [name,{virtual:true,sourceType,sourceOutput:out.system,provenance:`Utgången ${out.system} ur Cda60.xml är märkt "${out.comment}": signalen räknas som panelbesked tills Mät objekt visar att utgången svarar.`}];
   return [name,{address,reportAddress:address,stopCodes:[0],goCodes:[8,18],sourceType,sourceOutput:out.system,sourceOutputName:out.user||null,
-    provenance:`Utgången ${out.system}${out.user?' ('+out.user+')':''} ur Cda60.xml: ${stop.name} = THROWN, kör = CLOSED. Rapportadressen antas lika med orderadressen och beskedskoderna är provisoriska Signal10-CZ-koder. Ej uppmätt.`+(unused?` Utgången är märkt "${out.comment}" i källan.`:'')}];
+    provenance:`Utgången ${out.system}${out.user?' ('+out.user+')':''} ur Cda60.xml: ${stop.name} = THROWN, kör = CLOSED. Rapportadressen antas lika med orderadressen och beskedskoderna är provisoriska Signal10-CZ-koder. Ej uppmätt.`}];
 }));
 const coupled = Object.fromEntries(names.map(name=>[name,Object.keys(topology.expand({[name]:'C'})).sort()]));
 const protection=Object.fromEntries(Object.keys(signals).map(name=>[name,{alternatives:[]}]));

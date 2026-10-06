@@ -1417,3 +1417,14 @@ får en rad per fysisk detektor. Växlarna var redan bundna ur XML. Rapportadres
 antaganden tills Mät objekt gjort dem uppmätta; de öppna frågorna (4/2 och L1 på "Ej använd"-utgångar,
 Vx124, M11:s kommentarbas, M08:s namnförskjutning, växelblock utan regel) står i status.md.
 Provat: 415 enhetsprov, 10 processhelhetsprov, verify:operations.
+
+## 6 oktober 2026, 0.67.1: konstigheterna och bedömningen
+
+Casper: "ta med konstigheterna och gör din bedömning om vad som är rätt." Genomgången har nu ett
+avsnitt per konstighet med bedömning och vad som görs. Två fynd ändrade profilen: JMRI-regeln SN1B
+sätter även slS170, så S170 har detektering via LS199 (inventeringen läste bara den första
+spårledningen i varje regel; nu alla), och 4/2 och L1 pekar på utgångar märkta "Ej använd" på en linje
+utan drift, så de räknas som panelbesked i stället för att låsa AIS i väntan på en rapport som inte
+kommer. Resten är bedömningar för driftsättningen: Vx124 lämnas utanför planen, M11:s och M08:s
+kommentarer är skrivfel utan verkan, LS124 är en kandidat för S125a, och växelblocken utan regel har
+sina kandidatingångar modul för modul.
