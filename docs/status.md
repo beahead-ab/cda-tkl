@@ -43,12 +43,22 @@ Version 0.25.0 klarade serverns XML-/operations- och syntaxkontroller, 171 enhet
 |---|---|---|
 | Verklig MGP/LocoBuffer | Seriell gateway och virtuellt portprov är byggda. Anslutning vid banan, rätt adresser och fysisk verifiering i båda riktningarna återstår. | Buffertmodell, inställningar, moduler/firmware och inspelad fysisk trafik. |
 | Svenska signalbesked | Fulla huvud-/försignalbesked, signalberoenden och fysisk beskedsmappning. Nuvarande kör/stopp använder en uttryckligt preliminär CZ-profil. | Verifierade svenska beskedskoder och de saknade exakta ikondefinitionerna där originalunderlaget inte räcker. |
-| Återstående driftfunktioner | Ranger-/godsområdets överlämning, vändskiva, återstående automatik och frigivning i delar av en tågväg. | Källbundna regler och specificerade ersättningar för saknade skript. |
+| Återstående driftfunktioner | Vändskiva, återstående automatik och frigivning i delar av en tågväg. | Källbundna regler och specificerade ersättningar för saknade skript. |
 | Oklara tågvägar | Tre motsägande huvudtågvägsregler, 15 undantagna växelpar och 20 NX-definitioner utan körbar koppling behöver avgöras. Dessa antal överlappar och ska inte summeras. | Rättelse eller beslutat undantag för de konkreta källoklarheterna. |
 | TrainMeet | TKL-terminalkontraktet är byggt för klarering och tågrörelser utan trafikpass (kräver TrainMeet Server 2.5.0) och provat mot fejkad server med träffens verkliga data. Riktig parkoppling mot server.trainmeet.app 1.16.5 är verifierad från den lokala installationen. Prov i skarp träff med klarering samt webbdriftens egen parkoppling återstår; linjen klar är inte infört. | Serverns anslutningskod via administratörsinloggning; stations-id är `station-charlottendal`. |
 | Admin och panel | Driftbindningar, adresser och administrativa begränsningar har en färdig versionseditor. Godtycklig regeländring återstår; första visuella avstämningen och trafikprovkörningen är genomförda, därefter återstår Caspers eget acceptansprov. | Den befintliga designen och provfallens förväntade beteenden. |
 
 Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumenterade och provade ersättningar, men full överensstämmelse med den gamla installationen är inte fastställd. Nummerföljningen använder manuellt tilldelad tågidentitet; den identifierar inte lok och ändrar ingen TrainMeet-klarering.
+
+**Kontrollera vid driftsättningen** (beslut 6 oktober 2026, se [rangerarläget](rangerlage.md)):
+
+- **Vx171** (M11-165-2, märkt "Ej använd" i JMRI) ingår rakt i alla 203 tågvägar mot och från Bn
+  och i växeltågvägarna mot N1, men grenen mot L1/D används aldrig. Under Mät objekt: svarar
+  adress 171 med växelläge? Om inte, och växeln sitter fast i rakt läge på banan, märks den som
+  fast i profilen så att tågvägarna mot Bn inte väntar på den. Annars stannar de i "Lägger växlar".
+- **Vx172** (M11-165-3, "Ej använd") och 173–174 ingår inte i någon tågväg. 3d slutar vid
+  slutsignalen IIIdo (stoppbock i JMRI); 172 är inte kopplad till 3d i ritningen. Bekräfta på
+  banan innan någon begäran eller växelgata byggs genom 172.
 
 **Avsiktligt vilande:** Friställa spår och den extra lilla växellåsindikator som Casper bad oss avvakta med.
 
