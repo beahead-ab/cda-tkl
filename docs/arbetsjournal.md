@@ -1333,3 +1333,14 @@ startade inte med `CHARLOTTENDAL_PROFILE=legacy`) och `applyRules` förutsatte e
 skyddstabell som den anläggningen saknar. 3d ut åt höger väntar på provkörningen: 172:s
 koppling mot 3d finns inte i panelen. TKL:s vy (gul grupp och Godkänn/Neka i statusraden)
 och rangerarens vy är steg 2 och 3.
+
+## 6 oktober 2026, 0.63.0: rangerarläget, steg 2 – TKL:s vy
+
+Direkt på ställverksskärmen, inte i en flik: statusraden får ett eget chip,
+"Rangeraren begär Höger 11 · Godkänn · Neka", och efter godkännande "Höger 11 ligger ute
+för rangeraren · Dra tillbaka". Gruppens växlar blinkar gult i spårplanen medan begäran
+väntar och lyser gult medan den ligger ute (`public/ranger-notice.js` räknar ut text,
+knappar och växlar ur `state.yard`; `panel-head.js` ritar och skickar inget själv).
+Provkört i webbläsaren mot simulatorn: begäran → gul grupp och chip → Godkänn → 132 T,
+131 T, 126 C, 123 C → Dra tillbaka → 132 C, 131 C, chipet borta, tre rader i
+händelsekolumnen. Rangerarens egen vy är steg 3.
