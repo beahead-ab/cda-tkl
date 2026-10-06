@@ -14,7 +14,7 @@ test('lasten till Studio-sidan bär objekten, sektionerna och relationerna utan 
 });
 
 test('modellen i webbläsaren räknar relationerna ur samma last', () => {
-  assert.equal(model.objects.size, 49 + 66 + 197 + 340 + 12 + 18 + 69 + 4);
+  assert.equal(model.objects.size, 49 + 66 + 197 + 340 + 12 + 18 + 70 + 4);
   assert.equal(relationsFor(model, 'Vx100').rules.sort().join(','), 'condition:manual:vxv100/101,follow:Vx100+Vx101');
   assert.ok(rowsFor(model, 'regler', 'Vx140').some(r => r.id === 'follow:Vx140+Vx143'));
   const vx100 = relationsFor(model, 'Vx100');
