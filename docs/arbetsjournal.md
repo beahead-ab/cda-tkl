@@ -1358,3 +1358,13 @@ begäran som krävs), och bara egna tågvägar återtas. Rollen **rangerare** i 
 i webbdriften bara rangerarens vy och `/api/ranger/`; lokalt är `#ranger` öppet som
 panelen. Provkört i webbläsaren mot simulatorn hela vägen: begäran → godkänd via API →
 6/6 → 3/10 som rangerare → Lägg tillbaka vägrad medan vägen ligger → återtagen → tillbaka.
+
+## 6 oktober 2026, 0.64.1: rangeraren ser bara sin del
+
+Caspers granskning av 0.64.0: rangeraren ska bara se sin del, med stumpar mot det TKL
+bestämmer över, och gärna 11–13. `public/ranger-scope.js` räknar ut vad som ritas ur
+panelen och profilen: det egna områdets segment, spår 11–13 och begärans egna
+växeltågvägar, växlarna i dem, och en 28 px streckad stump på varje dolt segment som
+börjar i en synlig ände (102 mot 2c, 131 mot 5b, 154, 161). Signaler, pluppar, etiketter
+och spärrmarkeringar utanför ritas inte, och vyn beskärs till den delen. Nedtoningen från
+0.64.0 finns kvar som regel men träffar inget längre.
