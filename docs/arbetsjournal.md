@@ -1438,3 +1438,14 @@ form, diagnostiken väntar rätt telegram, Mät objekt kräver B1 THROWN för st
 B1-rapport och driftbindningarna har typen Signalrapport (standard för alla) plus fältet per signal.
 Grundprofilen står kvar på SE tills bänkprovet visar vad Signal10 sänder. Nytt prov
 test/signal-switch-report.test.mjs.
+
+## 6 oktober 2026, publicerat: 0.68.0
+
+Publicerad: 0.68.0 (cda-tkl main `1036315`, `beahead-ab/cda-tkl-install` main `09b4ce4`). Webbdriften tar
+den med Uppdatera nu under Inställningar → Uppdatering, eller `sudo charlottendal-update` på servern.
+Sedan den tidigare webbdriftsnoteringen 0.59.1 (installerad 5 oktober): rangerarläget med begäran,
+växelgator, rangerarens station och Stream Deck (0.62.0–0.66.2); signalerna beställs på sin huvudutgång och
+spårledningarna läser LS-ingångarna ur Cda60.xml, tretton panelsignaler bekräftas av kärnan själv och
+genomgången bedömer varje konstighet i källan (0.67.0–0.67.1); signalernas rapportform, SE-telegram E4
+eller växelrapport B1, väljs per profil och per signal under Driftbindningar → Signalrapport (0.68.0).
+Samma uppgifter står i status.md (lägesbild 6 oktober).
