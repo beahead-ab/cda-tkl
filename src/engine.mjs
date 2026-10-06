@@ -5,7 +5,9 @@ import { RoutePolicy } from './route-policy.mjs';
 import { OperatingControls } from './operating-controls.mjs';
 import { splitRouteAt } from './route-sections.mjs';
 import { boundaryCommandReason } from './yard-boundaries.mjs';
+import { forbidReason } from './studio/rules.mjs';
 import { YardControl } from './yard-control.mjs';
+import { signalReportKind, aspectFromSwitch } from './signal-report.mjs';
 
 const FIELD_ROWS = new Set(['report', 'transport']), FIELD_ORDERS = new Set(['order', 'permission']);
 export class Engine extends EventEmitter {
@@ -16,7 +18,8 @@ export class Engine extends EventEmitter {
     this.connected = false; this.connectionAt = 0; this.storageFault = null; this.revision = 0; this.events = []; this.journal = []; this.operatingEvents = []; this.reportSequence=0;
     this.turnouts = Object.fromEntries(Object.keys(profile.turnouts).map(n => [n, { position: 'unknown', desired: null, updatedAt: 0 }]));
     this.blocks = Object.fromEntries(Object.keys(profile.blocks).map(n => [n, { occupied: null, updatedAt: 0 }]));
-    this.signals = Object.fromEntries(Object.keys(profile.signals).map(n => [n, { aspect: 'unknown', code: null, desired: 'STOP', updatedAt: 0, commandAt: 0 }]));
+    // En virtuell signal (VirtualSignalMast i källan) har ingen utgång: kärnan bekräftar själv det begärda beskedet, som JMRI gjorde.
+    this.signals = Object.fromEntries(Object.entries(profile.signals).map(([n, b]) => [n, { aspect: 'unknown', code: null, desired: 'STOP', updatedAt: 0, commandAt: 0, ...(b.virtual ? { virtual: true } : {}) }]));
     const saved = storage?.load('routes.json', { fingerprint: this.fingerprint, routes: [] });
     if (saved?.routes.length && saved.fingerprint !== this.fingerprint) throw Error('Profilen har ändrats medan lås finns kvar. Återställ profilen före start.');
     this.routes = (saved?.routes || []).map(r => ({ ...r, state: 'held', cancelRequested: false, reason: 'Återställd efter omstart. Kontrollera återrapporter och återta vägen.', nextSignal: -1 }));
@@ -72,7 +75,7 @@ export class Engine extends EventEmitter {
     for (const s of Object.values(this.blocks)) { s.occupied = null; s.updatedAt = 0; }
     for (const s of Object.values(this.signals)) { s.aspect = 'unknown'; s.desired = 'STOP'; s.code = null; s.updatedAt = 0; }
   }
-  fresh(s) { return this.connected && s.updatedAt >= this.connectionAt && this.now() - s.updatedAt <= this.profile.staleMs && s.updatedAt > 0; }
+  fresh(s) { return this.connected && s.updatedAt >= this.connectionAt && (s.virtual || this.now() - s.updatedAt <= this.profile.staleMs) && s.updatedAt > 0; }
   guardSignals(route) {
     if (route.guardSignals) return route.guardSignals;
     return [...new Set(this.profile.routes.filter(r => r.blocks.some(b => route.blocks.includes(b))).flatMap(r => r.signals))].filter(n => !route.signals.includes(n));
@@ -112,17 +115,26 @@ export class Engine extends EventEmitter {
       state.position = pos; state.updatedAt = now; state.reportSequence=sequence;
     }
     if (d.kind === 'sensor') for (const [name, binding] of Object.entries(this.profile.blocks)) {
-      if (binding.address !== d.address) continue;
-      const occupied = binding.activeMeansOccupied ? d.active : !d.active;
-      const state = this.blocks[name]; changed ||= state.occupied !== occupied;
+      // En spårledning med flera ingångar (detection-regel): belagd när någon av, eller alla, ingångarna säger belagd.
+      const inputs = binding.inputs || [binding]; if (!inputs.some(i => i.address === d.address)) continue;
+      const state = this.blocks[name]; let occupied;
+      if (binding.inputs) {
+        state.inputs ||= {}; state.inputs[d.address] = d.active;
+        const known = inputs.map(i => state.inputs[i.address] === undefined ? null : (i.activeMeansOccupied ? state.inputs[i.address] : !state.inputs[i.address]));
+        occupied = binding.logic === 'all' ? (known.some(v => v === false) ? false : known.every(v => v === true) ? true : null) : (known.some(v => v === true) ? true : known.every(v => v === false) ? false : null);
+        if (occupied === null) continue;
+      } else occupied = binding.activeMeansOccupied ? d.active : !d.active;
+      changed ||= state.occupied !== occupied;
       state.occupied = occupied; state.updatedAt = now; state.reportSequence=sequence;
     }
-    if (d.kind === 'signal') for (const [name, binding] of Object.entries(this.profile.signals)) {
-      if (binding.reportAddress !== d.address) continue;
-      const aspect = binding.stopCodes.includes(d.code) ? 'stop' : binding.goCodes.includes(d.code) ? 'go' : 'unknown';
-      const state = this.signals[name]; changed ||= state.aspect !== aspect || state.code !== d.code;
+    // Signalens besked kommer antingen som SE-telegram med beskedskod eller, per profil, som växelrapport (B1) på rapportadressen.
+    const reports = d.kind === 'signal' || d.kind === 'turnout' ? Object.entries(this.profile.signals).filter(([, b]) => !b.virtual && b.reportAddress === d.address && signalReportKind(this.profile, b) === (d.kind === 'signal' ? 'se' : 'switch')) : [];
+    for (const [name, binding] of reports) {
+      const code = d.kind === 'signal' ? d.code : d.position;
+      const aspect = d.kind === 'signal' ? (binding.stopCodes.includes(d.code) ? 'stop' : binding.goCodes.includes(d.code) ? 'go' : 'unknown') : aspectFromSwitch(d.position);
+      const state = this.signals[name]; changed ||= state.aspect !== aspect || state.code !== code;
       const unexpected = aspect === 'go' && state.desired === 'STOP';
-      state.aspect = aspect; state.updatedAt = now; state.code = d.code; state.reportSequence=sequence;
+      state.aspect = aspect; state.updatedAt = now; state.code = code; state.reportSequence=sequence;
       if (unexpected) for (const route of this.routes) {
         // A GO received before this route's permission must never be consumed
         // as its acknowledgement, even when both occur in one clock tick.
@@ -140,6 +152,11 @@ export class Engine extends EventEmitter {
   permission(name, desired) {
     if (desired === 'GO' && (!this.connected || this.storageFault || this.controls.stopAll || this.controls.mode!=='local')) throw Error('Körmedgivande spärrat.');
     const s = this.signals[name]; s.desired = desired; s.commandAt = this.now(); s.commandSequence=this.reportSequence;
+    if (s.virtual) {
+      // Ingen utgång att vänta på: beskedet gäller i panelen i samma ögonblick och räknas som en egen rapport.
+      s.aspect = desired === 'GO' ? 'go' : 'stop'; s.code = null; s.updatedAt = this.now(); s.reportSequence = ++this.reportSequence;
+      this.log('permission', `Signal ${name} (virtuell, bara i panelen): ${desired === 'GO' ? 'kör' : 'stopp'}.`); return;
+    }
     if (this.connected) this.send(switchOrder(this.profile.signals[name].address, desired === 'GO' ? 'C' : 'T'));
     this.log('permission', `Signal ${name}: begär ${desired === 'GO' ? 'körmedgivande' : 'stopp'}.`);
   }
@@ -176,35 +193,37 @@ export class Engine extends EventEmitter {
   // doubled press, a second window driving the same Stream Deck, a slow connection) is
   // then harmless. Without an intent the same endpoints toggle as before; the route list
   // and older clients rely on that.
-  request(from, to, intent) {
+  // operator: 'tkl' or 'ranger'. The ranger lays shunt routes inside the yard area and over a
+  // laid request group, and takes back only the routes the ranger laid.
+  request(from, to, intent, {operator='tkl'}={}) {
     if(intent!=null&&intent!=='build'&&intent!=='cancel')throw Error('Okänd avsikt för tågvägen.');
     let plan;
-    try{plan=this.planRequest(from,to);}
+    try{plan=this.planRequest(from,to,operator);}
     catch(error){if(intent!=='cancel')throw error;this.log('route-repeat',`${from} → ${to}: återtagning begärd, men det finns ingen sådan tågväg längre.`);return null;}
     if(intent==='build'&&plan.action!=='build'){const route=plan.chain?.[0]||null;this.log('route-repeat',`${route?.label||from+' → '+to}: begärd igen men ligger redan. Ingen återtagning.`);return route;}
     if(intent==='cancel'&&plan.action==='build'){this.log('route-repeat',`${plan.definition.label||from+' → '+to}: återtagning begärd, men tågvägen ligger inte. Ingenting lades.`);return null;}
-    if(plan.action==='build')return this.establishRoute(plan.definition);
+    if(plan.action==='build')return this.establishRoute(plan.definition,operator);
     if(plan.action==='section')return this.applySectionCancellation(plan);
     this.cancelRoutes(plan.chain);return plan.chain[0];
   }
-  routeTargets(from,kind='main') {
+  routeTargets(from,kind='main',operator='tkl') {
     if(!['main','shunt'].includes(kind))return [];
     const ids=new Set(this.profile.routes.filter(r=>r.kind===kind).flatMap(r=>[r.from,r.to]));
     if(!ids.has(from))return [];
     const targets=[];
     for(const to of ids)if(to!==from){
-      try{const plan=this.planRequest(from,to);targets.push({id:to,action:plan.action==='build'?'build':'cancel'});}
+      try{const plan=this.planRequest(from,to,operator);targets.push({id:to,action:plan.action==='build'?'build':'cancel'});}
       catch{/* A preview never changes field state or bypasses an interlock. */}
     }
     return targets;
   }
-  planRequest(from, to) {
+  planRequest(from, to, operator='tkl') {
     const existing = this.routes.find(r => r.from === from && r.to === to);
-    if (existing) return {action:'cancel',chain:[existing]};
+    if (existing) {this.cancelRight(existing,operator);return {action:'cancel',chain:[existing]};}
     const chain=this.findRouteChain(from,to);
-    if(chain.length>1)return {action:'cancel',chain};
+    if(chain.length>1){for(const r of chain)this.cancelRight(r,operator);return {action:'cancel',chain};}
     const section=this.planSectionCancellation(from,to);
-    if(section)return section;
+    if(section){for(const r of section.chain)this.cancelRight(r,operator);return section;}
     if (!this.connected || this.storageFault) throw Error(this.storageFault ? 'Lagringsfel; manövrering spärrad.' : 'Ingen LocoNet-anslutning.');
     if(this.controls.mode!=='local') throw Error('Fjärrläge: lokal tågvägsläggning är spärrad. Inget fjärrsystem är anslutet ännu.');
     if (this.controls.stopAll) throw Error('Alla signaler i stopp är aktiverat. Återställ AIS före ny tågväg.');
@@ -215,7 +234,7 @@ export class Engine extends EventEmitter {
     const candidates=[def,...(this.profile.routeAlternatives||[]).filter(r=>r.id===def.id)];
     let selected,firstError;
     for(const candidate of candidates) {
-      try { this.checkRoute(candidate); selected=candidate; break; }
+      try { this.checkRoute(candidate,operator); selected=candidate; break; }
       catch(error) { firstError ||= error; }
     }
     if(!selected) throw firstError;
@@ -223,8 +242,12 @@ export class Engine extends EventEmitter {
   }
   // Candidate checks are read-only. Reserve and issue commands exactly once,
   // after a complete source-approved path has passed every live interlock.
-  checkRoute(def) {
-    const operatingReason=this.operating.routeReason(def);if(operatingReason)throw Error(operatingReason);
+  // Rapporterade lägen för alla växlar med färsk rapport. Används för förbjudna kombinationer.
+  knownPositions(){const out={};for(const [n,s] of Object.entries(this.turnouts))if(this.fresh(s)&&['C','T'].includes(s.position))out[n]=s.position;return out;}
+  cancelRight(route,operator){if(operator==='ranger'&&route.operator!=='ranger')throw Error('Tågvägen är TKL:s. Bara TKL återtar den.');}
+  checkRoute(def,operator='tkl') {
+    const forbidden=forbidReason(this.profile.rules,{...Object.assign({},...this.routes.map(r=>r.turnouts)),...def.turnouts});if(forbidden)throw Error(forbidden);
+    const operatingReason=this.operating.routeReason(def,operator);if(operatingReason)throw Error(operatingReason);
     const blocked = def.blocks.find(b => this.trackBlocked(b));
     if (blocked) throw Error(`${blocked} är administrativt spärrat.`);
     for (const b of def.blocks) if (!this.fresh(this.blocks[b]) || this.blocks[b].occupied !== false) throw Error(`${b} är belagt eller saknar aktuell återrapport.`);
@@ -240,8 +263,8 @@ export class Engine extends EventEmitter {
     }
     const movementReason=this.turnoutMovementReason(def);if(movementReason)throw Error(movementReason);
   }
-  establishRoute(def) {
-    const r = { ...structuredClone(def), definitionId: def.id, id: randomUUID(), state: 'setting', createdAt: this.now(), cancelRequested: false, nextSignal: def.signals.length - 1, reason: 'Inväntar växlarnas återrapporter.' };
+  establishRoute(def,operator='tkl') {
+    const r = { ...structuredClone(def), definitionId: def.id, id: randomUUID(), ...(operator==='ranger'?{operator}:{}), state: 'setting', createdAt: this.now(), cancelRequested: false, nextSignal: def.signals.length - 1, reason: 'Inväntar växlarnas återrapporter.' };
     if(r.autoRelease) r.passage=[...new Set(r.blocks.map(b=>this.profile.blocks[b].address))].map(address=>({address,state:'pending'}));
     this.routes.push(r); this.persist(); // Locks are durable BEFORE any field commands.
     this.log('route-request', `${r.label}: resurser reserverade.`);
@@ -309,8 +332,9 @@ export class Engine extends EventEmitter {
     }
     return chain[0];
   }
-  cancel(id) {
+  cancel(id,{operator='tkl'}={}) {
     const r=this.routes.find(r=>r.id===id);if(!r)throw Error('Tågvägen finns inte.');
+    this.cancelRight(r,operator);
     this.cancelRoutes([r]);return r;
   }
   cancelRoutes(routes) {
@@ -333,14 +357,17 @@ export class Engine extends EventEmitter {
     const names=this.profile.coupled?.[name]||[name];
     const boundaryReason=boundaryCommandReason(this.profile.yardBoundaries,names,position,operator,this.profile.yardArea?.turnouts);
     if(boundaryReason)throw Error(boundaryReason);
+    const forbidden=forbidReason(this.profile.rules,{...this.knownPositions(),...Object.fromEntries(names.map(n=>[n,position]))});if(forbidden)throw Error(forbidden);
     const condition=this.manualStatus(name,operator); if(!condition.allowed) throw Error(condition.reason);
     for (const n of condition.names) this.turnoutOrder(n, position);
   }
-  manualStatus(name,operator='tkl') {
+  // kernel: the yard's own group moves, which lay a request's turnouts under the
+  // same field conditions as a manual move but outside the operators' rights.
+  manualStatus(name,operator='tkl',{kernel=false}={}) {
     const refuse=reason=>({allowed:false,reason});
     if(!this.profile.turnouts[name]) return refuse('Okänd växel.');
     const names=this.profile.coupled?.[name]||[name];
-    const yardReason=this.yard.manualReason(names,operator);if(yardReason)return refuse(yardReason);
+    const yardReason=kernel?null:this.yard.manualReason(names,operator);if(yardReason)return refuse(yardReason);
     if(names.some(n=>this.profile.manualDisabled?.includes(n)))return refuse('Direktmanövern är avstängd i driftinställningarna.');
     const programReason=this.operating.manualReason(names,this.profile.manualPolicies?.byTurnout[name]?.blocks);if(programReason)return refuse(programReason);
     if(!this.connected||this.storageFault||this.controls.stopAll) return refuse('Manövrering spärrad: anslutning, lagring eller AIS.');
@@ -490,10 +517,14 @@ export class Engine extends EventEmitter {
   observePassage(report) {
     for(const r of this.routes) {
       if(!r.autoRelease || r.cancelRequested || ['held','occupied','cancelling'].includes(r.state)) continue;
+      // Passagen följer spårledningens första ingång (profilens address). En spårledning med flera ingångar
+      // räknas som belagd för tågvägen så snart någon ingång säger det, men passagens ordning läses bara på den första,
+      // så att en detektor som delas mellan flera spårledningar ger ett entydigt avsnitt.
       const index=r.passage.findIndex(p=>p.address===report.address);
       if(index<0) continue;
       const part=r.passage[index], name=r.blocks.find(b=>this.profile.blocks[b].address===report.address);
-      const occupied=this.profile.blocks[name].activeMeansOccupied?report.active:!report.active;
+      const primary=(this.profile.blocks[name].inputs||[this.profile.blocks[name]]).find(i=>i.address===report.address)||this.profile.blocks[name];
+      const occupied=primary.activeMeansOccupied?report.active:!report.active;
       if(occupied && part.state==='pending') {
         const canEnter=r.state==='active' || r.state==='traversing' || (r.state==='clearing' && r.nextSignal<=0 && this.signals[r.signals[0]].aspect==='go');
         if(!canEnter || r.passage.slice(0,index).some(p=>p.state==='pending')) {this.hold(r,'Beläggning kom utanför den förväntade tågpassagen.');continue;}
@@ -518,6 +549,7 @@ export class Engine extends EventEmitter {
     for (const s of Object.values(this.blocks)) if (!this.fresh(s)) s.occupied = null;
     for (const s of Object.values(this.signals)) if (!this.fresh(s)) s.aspect = 'unknown';
     if(this.controls.panelReset?.completedAt===null){this.finishPanelReset();this.emit('change');return;}
+    this.yard.tick();
     for (const r of [...this.routes]) {
       const free = r.blocks.every(b => this.fresh(this.blocks[b]) && this.blocks[b].occupied === false);
       const known = Object.keys(r.turnouts).every(n => this.fresh(this.turnouts[n]) && this.turnouts[n].position !== 'unknown' && this.turnouts[n].updatedAt >= (this.turnouts[n].commandAt || 0));
@@ -585,6 +617,7 @@ export class Engine extends EventEmitter {
       turnouts: this.turnouts, blocks: this.blocks, signals: this.signals, routes: this.routes, controls:this.controls, events: this.journal, operatingEvents: this.operatingEvents,
       operating:this.operating.snapshot(),yard:this.yard.snapshot(),
       manual:Object.fromEntries(Object.keys(this.turnouts).map(n=>[n,this.manualStatus(n)])),
+      manualRanger:Object.fromEntries([...(this.profile.yardArea?.turnouts||[]),...(this.profile.yardArea?.boundaries||[])].map(n=>[n,this.manualStatus(n,'ranger')])),
       modeChange:this.modeStatus(),allStopReset:this.allStopResetStatus(),panelReset:this.panelResetStatus(),emergencyRemaining:this.emergencyRemaining().map(r=>r.id),
       catalog: this.profile.routes.map(r => ({ id: r.id, from: r.from, to: r.to, label: r.label })) };
   }

@@ -8,7 +8,7 @@ import {signalRouteControls,signalImage} from './signal-route-controls.js';
 import {createAdminNavigation} from './admin-navigation.js';
 import {createAdminAppearance} from './admin-appearance.js';
 import {createPanelFit} from './panel-fit.js';
-import {syncAdminWorkspaces,registerAdminWorkspace,settingsRows} from './admin-ui.js';
+import {syncAdminWorkspaces,registerAdminWorkspace,settingsRows,createAdminDialog} from './admin-ui.js';
 import {attribute,style,text as setText,flowProgress,createPanelFrames,preparingEndpoints} from './panel-rendering.js';
 import { createManualFeedback } from './manual-feedback.js';
 import { createSourceRegister } from './source-register.js';
@@ -27,9 +27,15 @@ import { createContextDialog } from './context-dialog.js';
 import { createPanelConsole } from './panel-console.js';
 import {createPanelEvents} from './panel-events.js';
 import {createPanelHead} from './panel-head.js';
+import {rangerView} from './ranger-notice.js';
+import {rangerOwnView,createRangerBar} from './ranger-page.js';
+import {rangerScope} from './ranger-scope.js';
 import {createPanelSplit} from './panel-split.js';
 import {openUpdateNotice} from './update-notice.js';
 import {createUpdatePage} from './update-page.js';
+import {createAiPage} from './ai-page.js';
+import {createUsersPage} from './users-page.js';
+import {createStartPage} from './start-page.js';
 import {labelClass,objectFromMessage} from './plan-objects.js';
 const $ = id => document.getElementById(id);
 const adminNavigation=createAdminNavigation();
@@ -53,27 +59,34 @@ let state, config, panel, registry, chosen = null, inspected = null, online = fa
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, operatingControls, modelClock, trainMeet, feedback, layout;
 let routeConfirmation,signalEndpoints;
 const routeTargets=createRouteTargets({load:async(from,kind)=>{
-  const response=await fetch('/api/route-targets?'+new URLSearchParams({from,kind}),{cache:'no-store'});
+  const response=await fetch('/api/route-targets?'+new URLSearchParams({from,kind,...(rangerMode?{operator:'ranger'}:{})}),{cache:'no-store'});
   if(!response.ok)throw Error('Mål kunde inte kontrolleras.');
   return response.json();
 },onChange:()=>paint()});
 let currentPage='panel',appMenu,contextDialog,panelConsole,panelEvents,panelHead,signalControls,chosenKind=null,clearanceView,streamDeck,streamDeckAdmin,updatePage;
+let authSession=null;
+// Rangerarens vy (docs/rangerlage.md): #ranger, or always for a user logged in as rangerare. The same
+// plan, dimmed outside the ranger's area; every move goes through /api/ranger/.
+let rangerMode=false,rangerBar=null,scope=null;
 const pageFromHash=()=>{
   if(location.hash==='#tools/zoom')history.replaceState(null,'','#tools/appearance');
   if(location.hash==='#tools')history.replaceState(null,'','#tools/appearance');
   if(location.hash==='#tools/connections')history.replaceState(null,'','#register');
   // The local timetable is gone; TrainMeet is the only timetable (docs/installningar-plan.md).
   if(location.hash==='#import'||location.hash.startsWith('#import/'))history.replaceState(null,'','#trainmeet');
+  if(location.hash==='#ranger')rangerMode=true;
   return ({'#register':'admin','#tools':'tools','#trainmeet':'trainmeet','#advanced':'advanced'})[location.hash.split('/')[0]]||'panel';
 };
 function setPage(page,{historyMode='push'}={}) {
-  let hash={panel:'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet',advanced:'#advanced'}[page];
+  let hash={panel:rangerMode?'#ranger':'#panel',tools:'#tools',admin:'#register',trainmeet:'#trainmeet',advanced:'#advanced'}[page];
   if(!hash)return;
+  // Lokalt kräver Inställningar en inloggad ägare eller administratör så snart en ägare finns; operatören stannar i panelen.
+  if(page!=='panel'&&authSession?.mode==='local'&&!authSession.user&&!authSession.setup?.needed){const target=location.hash.startsWith(hash)?location.hash:hash;location.assign('/login?next='+encodeURIComponent('/'+target));return;}
   if(historyMode==='replace'&&location.hash.startsWith(hash+'/'))hash=location.hash;
   if(historyMode!=='none'&&location.hash!==hash)history[historyMode==='replace'?'replaceState':'pushState'](null,'',hash);
   closeInspector(false);manualFeedback?.clear();
   if(currentPage!==page)clearChoice(false);
-  currentPage=page;document.body.dataset.page=page;
+  currentPage=page;document.body.dataset.page=page;document.body.dataset.role=rangerMode?'ranger':'';
   appMenu?.close();
   for(const p of ['panel','tools','admin','trainmeet','advanced']) {
     $(p+'-view').hidden=p!=='panel'&&p!==page;
@@ -127,6 +140,17 @@ function resumeMessage(){
   pauseMessage();const toast=$('message');
   if(toast.hidden||(messageCanPause&&(toast.matches(':hover')||toast.contains(document.activeElement))))return;
   messageTimer=setTimeout(()=>{toast.classList.add('toast-leaving');messageHideTimer=setTimeout(()=>{toast.hidden=true;toast.classList.remove('toast-leaving');},180);},messageDuration);
+}
+// Kom igång at first start: which steps remain, and a way there. Shown once per browser session.
+function openStartNotice(view){
+  const body=document.createElement('div');
+  body.innerHTML='<p>Det här ställverket är nyinstallerat och inte färdigt att användas. Kom igång visar stegen och leder till rätt sida för varje.</p><ul class="start-list"></ul><p class="settings-consequence">Ägaren gör stegen; operatören kan köra panelen redan nu.</p>';
+  const list=body.querySelector('ul');for(const s of view.steps||[]){const li=document.createElement('li');li.textContent=(s.done?'✓ ':s.skipped?'– ':'○ ')+s.label;list.append(li);}
+  const go=document.createElement('button');go.type='button';go.textContent='Öppna Kom igång';
+  const modal=createAdminDialog({title:'Kom igång · '+view.remaining+' steg kvar',body,saveButton:go});
+  const cancel=modal.footer.querySelector('[data-cancel]');if(cancel)cancel.textContent='Senare';
+  // Only the hash changes; the hashchange handler opens the page with the whole address kept.
+  go.onclick=()=>{modal.close();location.hash='#advanced/start';};modal.open();
 }
 function message(text,{error=true,duration=4000}={}) {
   messageDuration=duration;messageCanPause=error;
@@ -240,8 +264,13 @@ document.addEventListener('pointerdown',()=>{if(hiliteNode)style(hiliteNode,'dis
 const HEAD_WAIT=new Set(['setting','establishing','clearing','held','cancelling']);
 // The standing notice beside CHARLOTTENDAL: lost contact first, then a route that waits or is
 // held, then remote mode. A message from the core is shown over it for a while.
+// The status bar is the panel's only standing message (no toasts over the plan): contact,
+// then all signals at stop and an emergency cancel, then a route waiting, then remote mode.
 function headNotice(){
   if(!online||state?.connection!=='connected')return {text:'Ingen kontakt med anläggningen',tone:'alarm'};
+  const emergency=state?.controls?.emergency,remaining=state?.emergencyRemaining?.length||0;
+  if(emergency&&remaining)return {text:`Nödåtertagning pågår · ${remaining} av ${emergency.routeIds.length} tågvägslås kvar`,tone:'alarm'};
+  if(state?.controls?.stopAll)return {text:'AIS aktiv · alla körmedgivanden återkallade'+(emergency?' · nödåtertagning klar, återställ stopp när anläggningen är kontrollerad':''),tone:'alarm'};
   const waiting=(state?.routes||[]).find(r=>HEAD_WAIT.has(r.state));
   if(waiting)return {text:displayName('routes',waiting.definitionId,waiting.label)+' · '+(statuses[waiting.state]||waiting.state)+(waiting.reason?' · '+waiting.reason:''),tone:waiting.state==='held'?'alarm':'warn'};
   if(state?.controls?.mode==='remote')return {text:'Fjärrläge · lokal manövrering spärrad',tone:'warn'};
@@ -250,12 +279,15 @@ function headNotice(){
 function buildPlan() {
   layout = panelLayout(panel);
   lineExtents=lineRestrictionExtents(panel,config);
-  const {x,y,width,height}=layout.crop;
+  // The ranger sees the ranger's part: own area, spår 11–13, stubs where TKL's track goes on.
+  scope=rangerMode?rangerScope(panel,config):null;
+  const {x,y,width,height}=scope?scope.crop:layout.crop;
   $('track-plan').setAttribute('viewBox',`${x} ${y} ${width} ${height}`);
   manualFeedback=createManualFeedback({config,plan:$('track-plan'),scroll:document.querySelector('.panel-scroll'),panelView:$('manual-feedback-host'),stateOf:()=>state,online:()=>online,isBlocked,esc,revealPlan:()=>{if(currentPage!=='panel')setPage('panel');}});
   const root = $('track-plan'), track = svg('g', {}, root), turnouts = svg('g', {}, root);
   const flow = svg('g', { id: 'flow-layer', 'pointer-events': 'none' }, root), labels = svg('g', {}, root), icons = svg('g', {}, root), controls = svg('g', {}, root);
   for (const s of panel.segs.filter(s => s.b !== 'frame' && s.b !== 'turntable' && !s.hide && Math.min(s.y1, s.y2) < 850)) {
+    if(scope&&!scope.segments.has(s.id)){const stub=scope.stubs.get(s.id);if(stub)svg('line',{...stub,class:'rail stub','aria-hidden':'true'},track);continue;}
     const node = svg('line', { x1: s.x1, y1: s.y1, x2: s.x2, y2: s.y2, class: 'rail unconfigured' }, track);
     svg('title', {}, node, 'Spårsegment '+s.id+' · '+s.b);
     rails.push({ node, block: s.b, id:s.id, main:!!s.m });
@@ -267,6 +299,7 @@ function buildPlan() {
   }
   for (const t of Object.values(panel.turnouts)) {
     if (t.cy > 850) continue;
+    if(scope&&!scope.turnouts.has(t.name))continue;
     const legs = {},litLegs={},group=svg('g',{'data-turnout':t.name,class:'turnout-geometry'},turnouts);
     for (const [leg, x, y] of [['A', t.ax, t.ay], ['B', t.bx, t.by], ['C', t.ccx, t.ccy]]) {
       legs[leg] = svg('line', { x1: t.cx, y1: t.cy, x2: x, y2: y, class: 'rail unknown turnout-base' }, group);
@@ -281,6 +314,7 @@ function buildPlan() {
   }
   const restrictions=svg('g',{id:'track-restrictions'},root);
   for(const marker of restrictionMarkers(panel,config)){
+    if(scope&&!scope.blocks.has(marker.block))continue;
     const g=svg('g',{class:'track-restriction',transform:`translate(${marker.x} ${marker.y}) rotate(${marker.angle})`,visibility:'hidden',role:'img',tabindex:'-1','aria-label':'Spärrat spår '+marker.block,'data-block':marker.block},restrictions);
     svg('rect',{x:-12,y:-12,width:24,height:24,class:'restriction-hit'},g);
     svg('path',{d:'M-4 -6V6M4 -6V6',class:'restriction-bars','aria-hidden':'true'},g);
@@ -288,11 +322,13 @@ function buildPlan() {
   }
   for (const l of panel.labels.filter(l => !l.hidden && l.y < 840)) {
     if(/Lekby|Vagnsta|Kungsfors/i.test(l.text))continue;
+    if(scope&&!scope.near(l.x+8,l.y+8,40))continue;
     const size=l.size||12;
     if(l.br!=null)svg('rect',{x:l.x-3,y:l.y-3,width:l.text.length*size*.58+12,height:size*1.5+3,fill:`rgb(${l.br},${l.bg},${l.bb})`},labels);
     svg('text',{x:l.x,y:l.y+size,class:'track-label '+labelClass(l.text),...(size===12?{}:{style:`font-size:${size}px`})},labels,l.text);
   }
   for(const fallback of destinationDefaults){
+    if(scope)break;
     const b=layout.controls.find(b=>b.sensor==='htv'+fallback.id);if(!b)continue;
     const right=['Bu','Bn','D'].includes(fallback.id),lower=fallback.id.endsWith('n')||fallback.id==='D',y=b.centerY+(lower?38:-36),arrowX=right?2078:50;
     const group=svg('g',{class:'destination',role:'img','data-destination':fallback.id,display:isOutgoingDestination(fallback.id)?'inline':'none'},labels);
@@ -318,6 +354,7 @@ function buildPlan() {
   accessible(table,'Vändskiva · läge okänt',e=>showInspector('turntable',tt.id,e));
   objectDetails(table,'turntable',tt.id);
   for (const m of panel.micons.filter(m => m.y < 850)) {
+    if(scope&&!scope.showSignal(m))continue;
     const type = iconTypes[m.type] || iconTypes.hsi_2;
     const w = type[3] * (m.scale || 1), h = type[4] * (m.scale || 1);
     const rad = m.deg * Math.PI / 180, rw = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad)), rh = Math.abs(h * Math.cos(rad)) + Math.abs(w * Math.sin(rad));
@@ -337,6 +374,7 @@ function buildPlan() {
   }
   const used = new Set(config.routes.flatMap(r => [r.from, r.to]));
   for (const b of layout.controls) {
+    if(scope&&!scope.showButton(b))continue;
     const isShunt=b.sensor.startsWith('tvv');
     const isButton=(b.act||'').includes('S-on') || isShunt;
     if(!isButton && !/lamp-[gr]|blink-r|free|hw-/.test(b.act||'')) continue;
@@ -383,10 +421,11 @@ function buildPlan() {
 async function manualTurnout(name,position) {
   if(!usable())return message('Panelen saknar aktuell kontakt med anläggningen.');
   if(chosen)return;
-  if(state.manual?.[name]?.allowed!==true)return message(state.manual?.[name]?.reason||'Ingen verifierad manöverregel är ansluten.');
+  const rights=rangerMode?state.manualRanger:state.manual;
+  if(rights?.[name]?.allowed!==true)return message(rights?.[name]?.reason||(rangerMode?'Växeln tillhör TKL:s område.':'Ingen verifierad manöverregel är ansluten.'));
   if(pending)return;
   manualFeedback.order(name,position);
-  if(!await api('turnout',{name,position}))manualFeedback.failed($('message-text').textContent);
+  if(!await api(rangerMode?'ranger/turnout':'turnout',{name,position}))manualFeedback.failed($('message-text').textContent);
 }
 function showInspector(kind,name,event) {
   appMenu?.close();
@@ -413,14 +452,18 @@ function paintPlan() {
     setText(n.nameNode,d.name.toUpperCase());const x=n.right?n.x-width:n.x+n.nameNode.getComputedTextLength()+8;attribute(n.nameNode,'x',n.right?n.x-(d.phone?width+8:0):n.x);setText(n.number,d.phone?'('+d.phone+')':'');attribute(n.box,'x',x);attribute(n.box,'width',width);attribute(n.number,'x',x+width/2);attribute(n.number,'text-anchor','middle');attribute(n.badge,'visibility',d.phone?'visible':'hidden');
     const nameLen=n.nameNode.getComputedTextLength(),nameX=Number(n.nameNode.getAttribute('x')),numLen=d.phone?n.number.getComputedTextLength():0,plateStart=(n.right?Math.min(nameX-nameLen,d.phone?x+width/2-numLen/2:Infinity):n.x-22)-9,plateEnd=(n.right?n.x+22:Math.max(nameX+nameLen,d.phone?x+width/2+numLen/2:0))+9;attribute(n.plate,'x',plateStart);attribute(n.plate,'width',Math.max(0,plateEnd-plateStart));attribute(n.group,'aria-label',d.name+(d.phone?' · telefon '+d.phone:'')+' · '+d.sourceLabel);
   }
-  const yardParts=new Set(state.yard?.owner==='ranger'?config.yardArea?.segments:[]),yardPoints=new Set(state.yard?.owner==='ranger'?config.yardArea?.turnouts:[]);
+  // The ranger's requests: a group waiting for TKL blinks yellow, a group lying out is steady yellow.
+  const rangerPoints=rangerView(state.yard).points;
+  // In the ranger's view everything outside the area is dimmed; a laid group's own route endpoints stay live.
+  const area=rangerMode?new Set(config.yardArea?.segments||[]):null,areaPoints=rangerMode?new Set([...(config.yardArea?.turnouts||[]),...(config.yardArea?.boundaries||[])]):null;
+  const liveButtons=rangerMode?new Set((state.yard?.requests||[]).filter(r=>r.state==='laid').flatMap(r=>{const g=(config.rangerRequests||[]).find(g=>g.id===r.group),route=config.routes.find(x=>x.id===g?.route);return route?[route.from,route.to]:[];})):null;
   blockedTracks=trackRestrictions(config,state);
   blockedLineParts=new Set((state.operating?.lines||[]).filter(l=>l.blocked).flatMap(l=>[...(lineExtents.get(l.id)||[])]));
   for(const marker of blockMarkers){const blocked=blockedTracks.has(marker.address);attribute(marker.g,'visibility',blocked?'visible':'hidden');attribute(marker.g,'tabindex',blocked?'0':'-1');}
   const fresh = online && state?.connection === 'connected';
   for (const r of rails) {
     const value = fresh ? state.blocks[r.block]?.occupied : null;
-    attribute(r.node,'class', 'rail ' + (r.main?'main ':'') + (yardParts.has(r.id)?'yard-delegated ':'') + (hasTrackRestriction(r.block)||blockedLineParts.has(r.id)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
+    attribute(r.node,'class', 'rail ' + (r.main?'main ':'') + (area&&!area.has(r.id)?'outside ':'') + (hasTrackRestriction(r.block)||blockedLineParts.has(r.id)?'blocked ':'') + (!(r.block in config.blocks) ? 'unconfigured' : value === true ? 'occupied' : value === false ? '' : 'unknown'));
   }
   for (const t of switches) {
     const display=turnoutDisplay(t,state.turnouts[t.name],{fresh:fresh&&!state.storageFault,now:state.serverTime,timeout:config.commandTimeoutMs});
@@ -430,7 +473,7 @@ function paintPlan() {
     if(display.active)t.seenConfirmed=true;
     turnoutNumbers.get(t.name)?.classList.toggle('locked',!!state?.routes.some(r=>r.turnouts[t.name]));
     for(const [leg,node] of Object.entries(t.legs)){
-      const restricted=hasTrackRestriction(t.block)||blockedLineParts.has('VX:'+t.name+':'+leg),flags=(yardPoints.has(t.name)?'yard-delegated ':'')+(restricted?'blocked ':'')+(occupied?'occupied ':'');
+      const restricted=hasTrackRestriction(t.block)||blockedLineParts.has('VX:'+t.name+':'+leg),flags=(rangerPoints.has(t.name)?rangerPoints.get(t.name)+' ':'')+(areaPoints&&!areaPoints.has(t.name)?'outside ':'')+(restricted?'blocked ':'')+(occupied?'occupied ':'');
       attribute(node,'class','rail turnout-base '+flags+(display.phase==='unknown'?'unknown':leg==='A'&&display.active?'turnout-stem':'branch-off'));
       attribute(t.litLegs[leg],'class','rail turnout-lit '+flags);
       style(t.litLegs[leg],'opacity',display.active&&(leg==='A'||leg===display.active)?'1':'0');
@@ -446,6 +489,7 @@ function paintPlan() {
     s.images.forEach((image,i)=>attribute(image,'visibility',i===selected?'visible':'hidden'));
     style(s.unknown,'display',selected !== 2 ? 'none' : '');
     s.g.classList.toggle('unconfigured', !config.signals[s.mast]);
+    if(area)s.g.classList.toggle('outside',!(s.routeButton&&(area.has(config.buttons[s.routeButton]?.segment)||liveButtons.has(s.routeButton))));
     s.g.classList.toggle('signal-chosen',chosenKind==='shunt'&&s.routeButton===chosen);
     s.g.classList.toggle('route-choice-start',chosenKind==='shunt'&&s.routeButton===chosen);
     s.g.classList.toggle('route-choice-end',routeConfirmation.selection?.kind==='shunt'&&s.routeButton===routeConfirmation.selection.to);
@@ -541,7 +585,7 @@ function animateFlow(now=performance.now()) {
 }
 const statuses = { setting: 'Lägger växlar', establishing: 'Etablerar', clearing: 'Klarsätter', active: 'Klar', traversing:'Tåg passerar', held: 'Stopp · lås kvar', occupied: 'Lås kvar', cancelling: 'Återtar' };
 const frames=createPanelFrames({render:renderPanel,animate:animateFlow});
-routeConfirmation=createRouteConfirmation({submit:({from,to,intent})=>api('route',{from,to,...(intent?{intent}:{})}),valid:()=>!!routeConfirmation.selection&&routeTargets.has(routeConfirmation.selection.to)&&usable()&&!pending&&state.controls?.mode!=='remote'&&!['waiting','interrupted'].includes(state.panelReset?.phase),onChange:finished=>{if(finished)clearChoice(false);paint();}});
+routeConfirmation=createRouteConfirmation({submit:({from,to,intent})=>api(rangerMode?'ranger/route':'route',{from,to,...(intent?{intent}:{})}),valid:()=>!!routeConfirmation.selection&&routeTargets.has(routeConfirmation.selection.to)&&usable()&&!pending&&state.controls?.mode!=='remote'&&!['waiting','interrupted'].includes(state.panelReset?.phase),onChange:finished=>{if(finished)clearChoice(false);paint();}});
 function paint(){frames.paint();}
 function renderPanel() {
   if (!state) return;
@@ -588,7 +632,7 @@ function renderPanel() {
   $('route-summary').textContent=`${state.routes.length} ${state.routes.length===1?'tågväg':'tågvägar'} · ${state.routes.map(r=>statuses[r.state]).filter((v,i,a)=>a.indexOf(v)===i).join(' / ')}`;
   paintJournal();
   $('wire').textContent = (state.trace || []).slice(0, 40).map(e => `${time(e.at)}  ${e.direction === 'out' ? 'SKICKAT ' : 'MOTTAGET'}  ${e.hex}`).join('\n');
-  panelConsole?.update(state,online);panelEvents?.update(state,online);panelHead?.notice(headNotice());
+  panelConsole?.update(state,online);panelEvents?.update(state,online);panelHead?.notice(headNotice());panelHead?.rangerNotice(rangerMode?rangerOwnView(state.yard):rangerView(state.yard));rangerBar?.update(state,online);
 }
 function paintInspector() {
   if (!inspected || !state) return;
@@ -639,6 +683,8 @@ async function start() {
   operatingControls=createOperatingControls({api,openSource});
   modelClock=createModelClock({api});trainMeet=createTrainMeet({api,onTimetable:()=>openTools('trainmeet-timetable'),stationHint:()=>config?.profile?.title||'Charlottendal'});feedback=createFeedback();clearanceView=createClearance({api,message,onRequest:()=>panelEvents?.showDrift({auto:true})});
   panelEvents=createPanelEvents();panelConsole=createPanelConsole({onOpen:()=>{appMenu?.close();},onResetComplete:text=>message(text,{error:false,duration:4000}),showDrift:()=>panelEvents?.showDrift()});
+  authSession=await fetch('/api/auth/session').then(r=>r.ok?r.json():null).catch(()=>null);
+  if(authSession?.user?.role==='ranger'||location.hash==='#ranger')rangerMode=true;
   [config, panel, registry, signalEndpoints] = await Promise.all(['/api/config', '/data/panel.json', '/data/source/signals.json', '/data/signal-endpoints.json'].map(async url => { const r = await fetch(url); if (r.status === 401 || r.status === 428) { location.assign('/login'); throw Error('Inloggning krävs'); } if (!r.ok) throw Error('Kunde inte läsa underlaget'); return r.json(); }));
   const files = [...new Set([...Object.values(iconTypes).flatMap(a => a.slice(0, 3)), 'Hsi0+Sh1', 'Hdvsi0+Sh1'])];
   // Loading a missing or slow icon must not prevent the track plan from starting.
@@ -652,7 +698,7 @@ async function start() {
   signalControls=signalRouteControls(config,registry,signalEndpoints);
   buildPlan();
   const deckPluppar=()=>buttons.filter(b=>b.isRoute).map(b=>({id:b.id,kind:b.kind,node:b.g,label:label(b.id)}));
-  streamDeck=createStreamDeck({pluppar:deckPluppar,choose,clearChoice,api,message,state:()=>state,online:()=>online&&state?.connection==='connected',chosen:()=>chosen,trainMeet:()=>state?.trainMeet,layout:()=>state?.streamDeck,onChange:()=>streamDeckAdmin?.devices()});
+  streamDeck=createStreamDeck({pluppar:deckPluppar,choose,clearChoice,api,message,state:()=>state,online:()=>online&&state?.connection==='connected',chosen:()=>chosen,trainMeet:()=>state?.trainMeet,layout:()=>state?.streamDeck,onChange:()=>streamDeckAdmin?.devices(),ranger:()=>rangerMode});
   streamDeckAdmin=createStreamDeckAdmin({pluppar:deckPluppar,lines:()=>state?.trainMeet?.context?.lines||[],context:()=>state?.trainMeet?.context||null,deck:streamDeck});
   trainInformation=createTrainInformation({catalog:config.trainFields,controls:layout.controls,plan:$('track-plan'),displayName,openSource,onOpen:()=>openTools('train-information')});
   $('close-inspector').onclick=()=>closeInspector();
@@ -669,6 +715,7 @@ async function start() {
   $('reset-ais').onclick=()=>api('all-stop',{enabled:false});
   $('account-link').hidden = !config.accountUrl;
   adminNavigation.setAccount(!!config.accountUrl);
+  adminNavigation.setSession?.(authSession);
   $('field-link').href = config.fieldUrl || 'http://127.0.0.1:8911/'; $('field-link').hidden = false;
   $('route-catalog').innerHTML=`<label>Från<select id="catalog-from"></select></label><label>Till<select id="catalog-to"></select></label><button id="catalog-request" class="primary" disabled>Lägg / återta tågväg</button><p id="catalog-hint" class="muted" hidden></p>`;
   function catalogHint(){const ids=[$('catalog-from').value,$('catalog-to').value].filter(id=>config.buttons[id]?.presentation==='catalog');$('catalog-hint').hidden=!ids.length;$('catalog-hint').textContent=ids.map(label).join(', ')+' väljs i listan. Använd Lägg / återta tågväg även för återtagning.';}
@@ -685,25 +732,33 @@ async function start() {
     // viewport, appearance and any unfinished administrative edits intact.
     if($('track-plan').contains(document.activeElement))document.activeElement.blur();
   }
-  $('yard-authority').onclick=()=>api('yard-authority',{owner:state.yard.owner==='ranger'?'tkl':'ranger',sessionId:state.operating.sessionId,revision:state.operating.revision});
   $('panel-reset').onclick=()=>{message('');resetPanelChoices();return api('panel-reset',{});};
   $('catalog-request').onclick=()=>api('route',{from:$('catalog-from').value,to:$('catalog-to').value});
-  $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api('cancel', { id }); };
+  $('active-routes').onclick = e => { const id = e.target.closest('button')?.dataset.cancel; if (id) api(rangerMode?'ranger/cancel':'cancel', { id }); };
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };
   $('clear-selection').onclick = ()=>clearChoice();
   document.addEventListener('keydown', e => { if(e.key==='Escape'){if(document.querySelector('.admin-dialog[open]'))return;if($('inspector-host').open){e.preventDefault();closeInspector();return;}if(fullscreen.active()){fullscreen.exit();return;}manualFeedback.clear();clearChoice();} });
   // Original is the only active panel. Retired skin preferences must not restore it differently.
   try{localStorage.removeItem('charlottendal-skin');}catch{}
   createPanelFit({plan:$('track-plan'),viewport:document.querySelector('.panel-scroll'),stage:$('plan-stage'),controls:$('panel-console')});
-  panelHead=createPanelHead({shell:document.querySelector('#panel-view .panel-shell'),onUpdate:view=>openUpdateNotice(view,{api,message})});
+  panelHead=createPanelHead({shell:document.querySelector('#panel-view .panel-shell'),onUpdate:view=>openUpdateNotice(view,{api,message}),onRanger:a=>api('ranger/'+a.command,a.command==='answer'?{id:a.id,approved:a.approved}:{id:a.id})});
+  if(rangerMode){document.querySelector('.plan-head-title').textContent='Charlottendal · Rangeraren';rangerBar=createRangerBar({root:$('panel-events'),api});}
   createPanelSplit({bottom:$('panel-bottom'),viewport:document.querySelector('.panel-scroll')});
   // Nothing administrative in the signal box's frame: the update chips join the Drift tab's buttons.
   const headRight=document.getElementById('plan-head-right');if(headRight){document.querySelector('#panel-drift .drift-actions')?.append(...headRight.children);headRight.remove();}
   createAdminAppearance();
   for(const id of ['appearance','journal','streamdeck'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   $('journal-filter').oninput=paintJournal;
-  for(const id of ['xml','migration','protocol','update'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
+  for(const id of ['xml','migration','protocol','update','ai','users','start'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
   updatePage=createUpdatePage({root:$('advanced-update-content'),api,message});
+  const aiPage=createAiPage({root:$('advanced-ai-content'),api,message});
+  const usersPage=createUsersPage({root:$('advanced-users-content'),api,message,session:()=>authSession});
+  const startPage=createStartPage({root:$('advanced-start-content'),api,message,session:()=>authSession,onChange:v=>{config.onboarding={done:v.done,remaining:v.remaining};panelHead?.startNotice(config.onboarding);startStatus();}});
+  const startStatus=()=>{const o=config.onboarding,el=$('start-status');if(el)el.textContent=o&&!o.done?'· '+o.remaining+' kvar':'';};
+  panelHead?.startNotice(config.onboarding);startStatus();
+  // First start: tell the owner once per browser session that Kom igång is waiting; the chip stays until it is done.
+  if(config.onboarding&&!config.onboarding.done&&!(()=>{try{return sessionStorage.getItem('start-seen');}catch{return false;}})()){try{sessionStorage.setItem('start-seen','1');}catch{}openStartNotice(config.onboarding);}
+  const loadSettingsPages=()=>{if(location.hash.startsWith('#advanced/ai'))aiPage?.load();if(location.hash.startsWith('#advanced/users'))usersPage?.load();if(location.hash.startsWith('#advanced/start'))startPage?.load();};window.addEventListener('hashchange',loadSettingsPages);loadSettingsPages();
   document.addEventListener('click',e=>{
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}

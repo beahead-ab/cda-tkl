@@ -85,3 +85,10 @@ test('the Mac keeps its data in state although the path has a space, and re-regi
   assert.match(mac,/launchctl print "gui\/\$\(id -u\)\/\$LABEL" >\/dev\/null 2>&1 \|\| break/,'waits until the old agent is gone');
 });
 
+test('a rangerare\'s station: kiosk URL from app.env, Stream Deck allowed for that origin, no TKL of its own',()=>{
+  const browser=read('packaging/raspberry-pi/cda-tkl-browser'),install=read('scripts/install-raspberry-pi.sh'),env=read('packaging/raspberry-pi/app.env');
+  assert.match(browser,/CHARLOTTENDAL_KIOSK_URL=/);assert.match(browser,/--unsafely-treat-insecure-origin-as-secure=\$ORIGIN/);assert.match(browser,/\/api\/auth\/session/);
+  assert.match(install,/KIOSK_URL=\$\{CDA_TKL_KIOSK_URL:-\}/);assert.match(install,/systemctl disable --now cda-tkl-simulator\.service cda-tkl\.service/);
+  assert.match(install,/\$KIOSK_ORIGIN/);
+  assert.match(env,/^# CHARLOTTENDAL_LISTEN=0\.0\.0\.0$/m);assert.match(env,/^# CHARLOTTENDAL_LAN_HOSTS=/m);
+});

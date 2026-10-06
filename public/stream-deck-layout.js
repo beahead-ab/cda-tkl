@@ -8,8 +8,8 @@ export const SYSTEM_KEYS=[
   {id:'reset-ais',title:'Återställ stopp'},
   {id:'panel-reset',title:'Återställ panel',caption:'håll 1 s'},
   {id:'cancel',title:'Avbryt val'},
-  // Not on the automatic layout: placed by hand where the rangerbangård is run from.
-  {id:'yard-authority',title:'Styra RBG',optional:true}
+  // Not on the automatic layout: placed by hand where the ranger's requests are answered.
+  {id:'yard-authority',title:'Rangerbegäran',optional:true}
 ];
 export const COLORS={background:'#141413',free:'#d8d6cc',route:'#67df8d',held:'#ecc074',occupied:'#ff6067',choice:'#fff5bd',destination:'#9ad0ff',preparing:'#cbb876',text:'#efefed',muted:'#7d8791'};
 const collator=new Intl.Collator('sv',{numeric:true});
@@ -42,8 +42,35 @@ export function systemSpec(key,{stopAll=false,chosen=false,page=0,pages=1,remote
   if(key.id==='reset-ais')return {...base,dim:!stopAll};
   if(key.id==='cancel')return {...base,dim:!chosen};
   if(key.id==='panel-reset')return {...base,dim:remote};
-  // Styra RBG: plain while TKL controls the yard, struck through while the ranger does.
-  if(key.id==='yard-authority')return {...base,lines:['Styra','RBG'],strike:!!yard?.delegated,caption:yard?.delegated?'RBG styr':'',dim:!yard||!yard.allowed};
+  // Rangerbegäran: blinks with the request waiting for TKL, shows the group lying out, dim when idle.
+  if(key.id==='yard-authority')return {...base,lines:['Ranger-','begäran'],caption:yard?.open||yard?.laid||'',blink:!!yard?.open,fill:yard?.open?COLORS.held:'',dim:!yard||(!yard.open&&!yard.laid)};
+  return base;
+}
+// Rangeraren's own deck (docs/rangerlage.md): the point chains and the requests first,
+// then the own turnouts one by one; every page starts with the page key.
+export function buildRangerPages(keyCount,{paths=[],groups=[],turnouts=[]}={}){
+  const keys=[...paths.map(p=>({type:'ranger-path',id:p.id,title:p.label,text:p.short||p.label})),
+    ...groups.map(g=>({type:'ranger-request',id:g.id,title:g.label,text:g.short||g.label})),
+    ...turnouts.map(n=>({type:'ranger-turnout',id:n,title:'Växel '+n.replace('Vx',''),text:'Vx '+n.replace('Vx','')}))];
+  const pages=[];let i=0;
+  do{const page=[{type:'system',...SYSTEM_KEYS[0]}];while(page.length<keyCount&&i<keys.length)page.push(keys[i++]);pages.push(page);}while(i<keys.length);
+  return pages;
+}
+// yard is the kernel's view (paths, groups); manual the ranger's rights; turnouts the reported positions.
+export function rangerSpec(key,{yard=null,manual={},turnouts={}}={}){
+  const base={kind:'system',id:key.type+'-'+key.id,title:key.title,lines:splitLabel(key.text||key.title),caption:'',fill:'',ring:'',dim:false,blink:false,blocked:false};
+  if(key.type==='ranger-path'){
+    const p=yard?.paths?.find(p=>p.id===key.id);if(!p)return {...base,dim:true,caption:'saknas'};
+    return {...base,fill:p.laid?COLORS.route:'',caption:p.laid?'ligger':p.can?.allowed?'':'går inte',dim:!p.laid&&!p.can?.allowed};
+  }
+  if(key.type==='ranger-request'){
+    const g=yard?.groups?.find(g=>g.id===key.id);if(!g)return {...base,dim:true,caption:'saknas'};
+    return {...base,fill:g.state==='laid'?COLORS.route:g.state==='open'?COLORS.held:'',blink:g.state==='open',caption:g.state==='open'?'väntar · håll: ångra':g.state==='laid'?'ute · håll: tillbaka':g.can?.allowed?'':'går inte',dim:g.state==='idle'&&!g.can?.allowed};
+  }
+  if(key.type==='ranger-turnout'){
+    const s=turnouts[key.id],m=manual[key.id],position=s?.position==='C'?'rakt':s?.position==='T'?'avvikande':'okänt';
+    return {...base,lines:[key.text||key.id],caption:position,dim:!m?.allowed};
+  }
   return base;
 }
 export function splitLabel(text){

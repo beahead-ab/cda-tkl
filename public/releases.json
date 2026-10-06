@@ -1,5 +1,131 @@
 [
   {
+    "version": "0.68.0",
+    "date": "2026-10-06",
+    "notes": [
+      "Signalrapport per profil: SE-telegram (E4) med beskedskoder eller växelrapport (B1, CLOSED kör / THROWN stopp, som JMRI läste), för alla signaler under Driftbindningar → Signalrapport och per signal",
+      "Kärna, simulator, diagnostik, mätning och aktivering följer rapportformen; en B1-signal får inte dela adress med en växel"
+    ]
+  },
+  {
+    "version": "0.67.1",
+    "date": "2026-10-06",
+    "notes": [
+      "Konstigheterna i källan med bedömning av vad som är rätt, i genomgången och status",
+      "S170 har detektering: JMRI-regeln SN1B sätter även S170 (LS199); inventeringen läser nu regler som sätter flera spårledningar",
+      "4/2 och L1 räknas som panelbesked: deras utgångar LT307/LT308 är märkta Ej använd och linje D är inte i drift"
+    ]
+  },
+  {
+    "version": "0.67.0",
+    "date": "2026-10-06",
+    "notes": [
+      "Genomgång mot MGP-modulerna: signalerna beställs på sin huvudutgång ur Cda60.xml (LT200–LT325) och spårledningarna läser LS-ingångarna ur källan, flera ingångar där JMRI har det",
+      "Elva virtuella signaler (3/1, 6/5–9/5, 6/6, 6/7, 6/10–9/10) bekräftas av kärnan själv som i JMRI; infarten till Spår VI blir klar mot riktig utrustning",
+      "Driftbindningarna har en rad per fysisk detektor; Studio visar 0 signaler och 38 spårledningar med bänkadress och en ny rad för virtuella signaler",
+      "Allt är fortfarande ej uppmätt: rapportadress, polaritet och koder bekräftas under Mät objekt"
+    ]
+  },
+  {
+    "version": "0.66.2",
+    "date": "2026-10-06",
+    "notes": [
+      "3d slutar vid slutsignalen IIIdo: 172 är TKL:s igen och växelgatan 3d stick är borttagen"
+    ]
+  },
+  {
+    "version": "0.66.1",
+    "date": "2026-10-06",
+    "notes": [
+      "Växelgatan 3d stick via 172 (tillbakadragen i 0.66.2)"
+    ]
+  },
+  {
+    "version": "0.66.0",
+    "date": "2026-10-06",
+    "notes": [
+      "Rangerarens station: en andra Pi eller dator i kioskläge mot ställverkets TKL, med skärm, Stream Deck eller båda",
+      "TKL kan lyssna på anläggningens nät; allt från en annan dator loggar in, även i lokalt läge"
+    ]
+  },
+  {
+    "version": "0.65.0",
+    "date": "2026-10-06",
+    "notes": [
+      "Växelgator: tretton knappar i rangerarens vy som lägger hela kedjan av egna växlar rakt ut till ett spår – Godsspår 51–54 från vänster och höger, Lastspår 1–3, Kolgård, Lokstall och vändskivan",
+      "Stream Deck i rangerarens vy: växelgatorna, begäran (håll in för att ångra eller lägga tillbaka) och de egna växlarna en och en"
+    ]
+  },
+  {
+    "version": "0.64.1",
+    "date": "2026-10-06",
+    "notes": [
+      "Rangeraren ser bara sin del av spårplanen: det egna området, spår 11–13 och streckade stumpar där TKL:s spår fortsätter"
+    ]
+  },
+  {
+    "version": "0.64.0",
+    "date": "2026-10-06",
+    "notes": [
+      "Rangerarläget, steg 3: rangerarens egen vy på /#ranger – samma spårplan med TKL:s område nedtonat, knappraden Begär av TKL, Ångra och Lägg tillbaka i statusraden",
+      "Rangeraren lägger egna växlar, gränsväxlar tillbaka och växeltågvägar inom området samt från spår 11–13 när gruppen ligger ute; återtar bara sina egna",
+      "Användarrollen rangerare: når bara rangerarens vy och dess API"
+    ]
+  },
+  {
+    "version": "0.63.0",
+    "date": "2026-10-06",
+    "notes": [
+      "Rangerarläget, steg 2: TKL svarar i statusraden – \"Rangeraren begär Höger 11\" med Godkänn och Neka, och \"ligger ute för rangeraren\" med Dra tillbaka",
+      "Gruppens växlar blinkar gult i spårplanen medan begäran väntar och lyser gult medan den ligger ute"
+    ]
+  },
+  {
+    "version": "0.62.0",
+    "date": "2026-10-06",
+    "notes": [
+      "Rangerarläget, steg 1: rangerarens eget område och åtta begäran (Vänster/Höger 11–13, Spår 6 ut via 154, 3d ut åt vänster) som växelgrupper i profilen",
+      "Begäran i kärnan: svar direkt till rangeraren när en tågväg ligger över gruppen, Godkänn/Neka för TKL, lagd grupp låst för TKL, rangeraren lägger tillbaka",
+      "Gränsväxlarna 102, 103, 112, 131, 132, 144, 154 och 164 med ett tillbaka-läge var; spår 11–13 är TKL:s",
+      "Lämna över rangerbangården är borta; Stream Deck-knappen Rangerbegäran godkänner med kort tryck och nekar med långt"
+    ]
+  },
+  {
+    "version": "0.61.0",
+    "date": "2026-10-05",
+    "notes": [
+      "Kom igång vid nyinstallation: ägare, AI-tjänst, banan och TrainMeet som steg; panelen visar \"N steg kvar\" tills ägaren markerat klart",
+      "Användare som i TrainMeet Server: ägare och administratörer, inbjudan med engångskod, Inställningar → Användare",
+      "Lokalt behöver operatören ingen inloggning; Inställningar och Objekt och regler kräver ägaren eller en administratör. Webbdriften kräver inloggning överallt som förut",
+      "AI-tjänst i Inställningar: modell och nyckel sparas på TKL-servern med provanrop; miljövariablerna är reservvärden"
+    ]
+  },
+  {
+    "version": "0.60.0",
+    "date": "2026-10-05",
+    "notes": [
+      "Studio: Objekt och regler på /studio.html med stationsplan, Data-vyn och genomgången av avvikelser",
+      "Regelspråk med utkast, simulatorprov och aktivering; förslag ur spårgrafen för dubbelkorsväxlarna X1 och X2",
+      "Chatten och AI-genomgången via Claude API, med nyckeln på servern",
+      "Mät objekt, Kort och MGP med SV2-inventering och Lyssna; i fysisk drift aktiveras ingen profil förrän allt är uppmätt"
+    ]
+  },
+  {
+    "version": "0.59.3",
+    "date": "2026-10-05",
+    "notes": [
+      "Händelselistan klipps inte i ett smalare fönster, och Kvittera syns alltid",
+      "Sök efter ny version under Uppdatering; annars söks det varje timme"
+    ]
+  },
+  {
+    "version": "0.59.2",
+    "date": "2026-10-05",
+    "notes": [
+      "Inga rutor över ställverket: AIS och nödåtertagning visas i statusfältet"
+    ]
+  },
+  {
     "version": "0.59.1",
     "date": "2026-10-05",
     "notes": [

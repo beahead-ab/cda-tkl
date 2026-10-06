@@ -1252,3 +1252,200 @@ värd, den tjänar bara sin publika adress), och kontrollen godtog bara 2xx, 3xx
 403. Nu räknas varje svar som att TKL är uppe, utom inget svar eller 5xx. Provet i
 sandlådan använder nu 400 och fallerade mot den gamla kontrollen. Servern visade också
 att webbdriften körde 0.53.0 (`4f0ebcc`), inte 0.57.1 som status.md angav; rättat.
+
+## 5 oktober 2026, 19:50: webbdriften kör 0.59.1
+
+Casper installerade uppdateringstjänsten och körde `charlottendal-update` på webbservern:
+0.59.1 (`v0.59.1-406e5f8` ur cda-tkl-install) installerad, föregående 0.53.0; TKL och
+simulatorn aktiva. polkit och git fanns redan. Knappen Uppdatera nu, som startar
+tjänsten via polkit, provas skarpt vid nästa release.
+
+## 5 oktober 2026, 0.59.2: inga rutor över ställverket
+
+AIS-rutan, nödåtertagningen, fjärrlägesrutan och meddelanden (`#global-status`) låg över
+spårplanens övre högra hörn i webbdriften. På ställverket är statusfältet bredvid
+CHARLOTTENDAL nu enda platsen: ingen kontakt, nödåtertagning pågår, AIS aktiv (med
+"nödåtertagning klar" efteråt), väntande tågväg, fjärrläge. Rutorna finns kvar i
+Inställningar. Mergat som cda-tkl#13. Första releasen att installera med Uppdatera nu i
+webbdriften.
+
+## 5 oktober 2026, 0.59.3: händelsekolumnen och Sök efter ny version
+
+Händelsekolumnen växte förbi sin ruta i ett smalare fönster (rubrikraden fick inte
+radbrytas och den implicita gridkolumnen tog dess bredd), så rader och Kvittera klipptes.
+Kolumnen är nu minmax(0,1fr) och filtren radbryts. Uppdateringskontrollen frågar varje
+timme i stället för var sjätte, och Uppdatering har Sök efter ny version. Webbdriften
+såg inte 0.59.2 av samma skäl. Mergat som cda-tkl#14.
+
+## 5 oktober 2026, 0.61.0: AI-tjänst i Inställningar, användare och Kom igång
+
+Tre önskemål efter 0.60.0: AI-motor och nyckel i appens inställningar, nyckeln som en del av
+onboardingen vid nyinstallation, och samma användarhantering som i TrainMeet Server med inloggning
+bara för administration när TKL körs lokalt. Planen i `docs/anvandare-och-onboarding-plan.md`.
+
+- **AI-tjänst** (`src/ai-settings.mjs`, `public/ai-page.js`): Inställningar → Den här datorn →
+  AI-tjänst med modellerna som fungerar med lösningen (Opus 5.5 standard, Sonnet 5.5, Fable 5.1),
+  nyckel i `ai.json` (0600) som sidan bara ser fyra tecken av, och "Prova anslutningen" som ett litet
+  riktigt anrop. Studio-assistenten läser inställningen vid varje anrop; miljövariablerna är
+  reservvärden.
+- **Användare** (`src/users.mjs`, `src/auth.mjs`, `docs/anvandare.md`): `users.json` med ägare och
+  administratörer, engångskoder `XXXX-XXXX` i sju dagar, lokal cookie utan Secure, administrationens
+  vägar i `isAdminRoute`. Lokalt är operatören utan inloggning; innan ägaren finns är allt öppet så
+  att Kom igång kan skapa den. Webbdriften oförändrad i kraven; `auth.json` migreras till ägaren
+  `admin`. `scripts/create-owner.mjs`, `scripts/recover-user.mjs`; `initialize-password.mjs` skapar
+  nu ägaren admin.
+- **Kom igång** (`src/onboarding.mjs`, `public/start-page.js`): dialog vid första start, chip
+  "Kom igång · N steg kvar" i panelen och "· N kvar" i sidomenyn, stegen räknas ur det som finns och
+  frivilliga steg hoppas över uttryckligen.
+
+Provat: 396 enhetstester (`npm test`, nya `ai-settings`, `users`, `auth-policy`, `onboarding`),
+`test/password-integration.mjs` mot båda processerna i webbdriftens läge, och tre Chromium-flöden
+mot en nyinstallerad TKL med simulatorn: AI-sidan med låtsas-API, användarflödet (ägare, inbjudan,
+inlösen, roller, borttagning, operatör utan inloggning) och Kom igång från dialog till klart.
+
+## 5 oktober 2026, 0.60.0: Studio, objekt och regler, steg 1–6
+
+Admin v2 "Objekt och regler" som fristående modul i `src/studio/` med egen sida på
+`/studio.html`, byggd i sex körbara steg enligt planens §9: objektregister och
+avvikelselista, stationsplanen och Data-vyn, regelspråket för det som redan finns,
+tågvägar ur modellen med utkast, simulatorprov och aktivering, chatten och
+AI-genomgången via Claude API, samt mätning, SV2-kortinventering, Lyssna och
+regeltyperna detection, aspect och crossing. Allt är läsning tills ett utkast
+aktiveras med driftbindningarnas villkor. Riktiga Claude-anrop och riktiga MGP-kort är
+inte provade; simulatorn svarar som tolv kort med påhittade identiteter. Mergat som
+cda-tkl#12. Simulatorn i webbdriften kan inte läsa TKL:s katalog och följer därför inte
+en aktiverad fältprofil; grundprofilen gäller där tills tjänstefilerna ger den en kopia.
+
+## 6 oktober 2026, 0.62.0: rangerarläget, steg 1
+
+Beslutat med Casper på en bild ritad på panelen (`docs/rangerlage-omraden.png`,
+`docs/rangerlage.md`): rangeraren äger 3e, godsbangården, Spår 6, Lastspår 3, lokstallet
+och 3d; spår 11–13 är TKL:s; in till 11–13 och ut från Spår 6 och 3d sker på begäran som
+TKL godkänner, och rangeraren lägger själv tillbaka men aldrig ut. Steg 1 är
+konfigurationen och kärnan: `rangerRequests` ur profilens växeltågvägar
+(`src/ranger-requests.mjs`), åtta gränsväxlar i `yardBoundaries` med tillbaka-läget som
+rangerarens enda, `yardArea` med elva egna växlar, och begäranobjektet i
+`src/yard-control.mjs` med journal, API och Stream Deck-knapp. Ligger en tågväg över
+gruppen får rangeraren svaret direkt och ingen begäran når TKL; en öppen begäran som en
+tågväg hinner före besvaras av kärnan. Överlämningen från 0.40.0 är borta. Två fel ur
+0.60.0 på vägen: Studio-reglerna lästes in även för den gamla provprofilen (servern
+startade inte med `CHARLOTTENDAL_PROFILE=legacy`) och `applyRules` förutsatte en
+skyddstabell som den anläggningen saknar. 3d ut åt höger väntar på provkörningen: 172:s
+koppling mot 3d finns inte i panelen. TKL:s vy (gul grupp och Godkänn/Neka i statusraden)
+och rangerarens vy är steg 2 och 3.
+
+## 6 oktober 2026, 0.63.0: rangerarläget, steg 2 – TKL:s vy
+
+Direkt på ställverksskärmen, inte i en flik: statusraden får ett eget chip,
+"Rangeraren begär Höger 11 · Godkänn · Neka", och efter godkännande "Höger 11 ligger ute
+för rangeraren · Dra tillbaka". Gruppens växlar blinkar gult i spårplanen medan begäran
+väntar och lyser gult medan den ligger ute (`public/ranger-notice.js` räknar ut text,
+knappar och växlar ur `state.yard`; `panel-head.js` ritar och skickar inget själv).
+Provkört i webbläsaren mot simulatorn: begäran → gul grupp och chip → Godkänn → 132 T,
+131 T, 126 C, 123 C → Dra tillbaka → 132 C, 131 C, chipet borta, tre rader i
+händelsekolumnen. Rangerarens egen vy är steg 3.
+
+## 6 oktober 2026, 0.64.0: rangerarläget, steg 3 – rangerarens vy
+
+`/#ranger` är samma app och samma spårplan: allt utanför rangerarens område är nedtonat,
+tidtabellen och Drift är borta, nederraden har knappraden **Begär av TKL** (en knapp per
+grupp, släckt med kärnans orsak som verktygstips när den inte går att begära) och
+händelserna. Statusraden säger "Höger 11 begärd · väntar på TKL · Ångra" och sedan
+"Höger 11 ligger ute · Lägg tillbaka". Rangerarens egna manövrer går genom
+`/api/ranger/turnout|route|cancel`: egna växlar och gränsväxlar tillbaka, växeltågvägar
+inom området och från 11–13 när gruppen ligger (`rangerRouteReason` namnger annars
+begäran som krävs), och bara egna tågvägar återtas. Rollen **rangerare** i `users.mjs`:
+i webbdriften bara rangerarens vy och `/api/ranger/`; lokalt är `#ranger` öppet som
+panelen. Provkört i webbläsaren mot simulatorn hela vägen: begäran → godkänd via API →
+6/6 → 3/10 som rangerare → Lägg tillbaka vägrad medan vägen ligger → återtagen → tillbaka.
+
+## 6 oktober 2026, 0.64.1: rangeraren ser bara sin del
+
+Caspers granskning av 0.64.0: rangeraren ska bara se sin del, med stumpar mot det TKL
+bestämmer över, och gärna 11–13. `public/ranger-scope.js` räknar ut vad som ritas ur
+panelen och profilen: det egna områdets segment, spår 11–13 och begärans egna
+växeltågvägar, växlarna i dem, och en 28 px streckad stump på varje dolt segment som
+börjar i en synlig ände (102 mot 2c, 131 mot 5b, 154, 161). Signaler, pluppar, etiketter
+och spärrmarkeringar utanför ritas inte, och vyn beskärs till den delen. Nedtoningen från
+0.64.0 finns kvar som regel men träffar inget längre.
+
+## 6 oktober 2026, 0.65.0: växelgator och Stream Deck för rangeraren
+
+Caspers beslut: inte tågvägar utan växelgator – en knapp lägger hela kedjan rakt ut till
+spåret (51: 115 och 114, och så vidare). `src/ranger-paths.mjs` söker varje gata i
+spårgrafen vid profilbygget från 3e, Spår 6, S119 (Lastspår 1–2 är bara 119) och S133a
+(Lastspår 3 är bara 133); bara egna växlar och gränsväxlar i tillbaka-läge får ingå.
+Kärnan (`layPath`) prövar alla växlar med manuella villkor innan någon order går, lägger
+varje kopplad växel en gång, och journalför `ranger-path`. Vyn har raden Växelgator ovanför
+Begär av TKL; decket får i rangerarens vy `buildRangerPages`: gator, begäran, egna växlar,
+med färg efter kärnans läge och håll-in för ångra/tillbaka. Alternativen vägdes: hela
+anläggningen nedtonad (nej, det var 0.64.0) och bara Stream Deck (ja, som komplement:
+en Pi i kioskläge på `/#ranger`).
+
+## 6 oktober 2026, 0.66.0: rangerarens station
+
+Rangerarens skärm och Stream Deck måste tala med samma TKL som ställverket, så stationen kör
+ingen egen kärna. TKL kan nu lyssna på anläggningens nät (`CHARLOTTENDAL_LISTEN`) under namn
+som räknas upp i `CHARLOTTENDAL_LAN_HOSTS`; värdkontrollen släpper bara in dem, och allt som
+inte kommer från datorn själv måste logga in, även i lokalt läge (ägaren kan bara skapas
+från Pi:n själv). `CDA_TKL_KIOSK_URL` vid installationen gör en Pi till station: inga
+tjänster, Chromium i kioskläge på adressen, WebHID-policyn och
+`--unsafely-treat-insecure-origin-as-secure` för den, så att Stream Deck fungerar över
+vanlig http. Provat i enhetstester och syntaxkontroll; inte på två riktiga Pi.
+
+## 6 oktober 2026, 0.66.1 och 0.66.2: 3d och 172
+
+0.66.1 kopplade 3d till 172:s gren C i rangerarens graf (spåren möts i panelen men är inte
+kopplade) och gjorde 172 till gränsväxel med växelgatan "3d stick" mot det som såg ut som ett
+stickspår med stoppbock. Casper vet inte hur 172 sitter på banan, och det jag tagit för
+stoppbocken är slutsignalen IIIdo, som står bredvid 3d där spåret leder in i växeln. 0.66.2
+drar tillbaka 0.66.1 helt: 3d slutar vid IIIdo, 172 är TKL:s och ingen växelgata eller
+begäran går genom den förrän 172 är kontrollerad på banan.
+
+## 6 oktober 2026, 0.67.0: genomgång mot MGP-modulerna
+
+Casper bad om en genomgång av alla moduler, spårledningar, växlar och signaler mot de riktiga
+LocoNet-modulerna, med de mappningar som måste göras och Bennys XML kvar som fallback. Resultatet
+står i [genomgången](genomgang-mgp-2026-10-06.md). Två saker hade stoppat driftsättningen helt:
+signalerna och spårledningarna hade bara bänkadresser (1501+, 3001+) utan koppling till någon utgång
+eller ingång, och elva master är virtuella i JMRI utan utgång – infarten till Spår VI klareras av en
+av dem, och AIS kräver bekräftat stopp från alla signaler. 0.67.0 binder de 55 fysiska masterna till sin
+huvudutgång ur XML (stopp = THROWN, kör = CLOSED, samma kontrakt kärnan redan skickar), spårledningarna
+till LS-ingångarna ur logixreglerna (20 med flera ingångar, 38 utan ingång står kvar på bänkadress),
+och låter kärnan bekräfta de virtuella signalerna själv. Simulatorn följer samma adresser; driftbindningarna
+får en rad per fysisk detektor. Växlarna var redan bundna ur XML. Rapportadress, polaritet och koder är
+antaganden tills Mät objekt gjort dem uppmätta; de öppna frågorna (4/2 och L1 på "Ej använd"-utgångar,
+Vx124, M11:s kommentarbas, M08:s namnförskjutning, växelblock utan regel) står i status.md.
+Provat: 415 enhetsprov, 10 processhelhetsprov, verify:operations.
+
+## 6 oktober 2026, 0.67.1: konstigheterna och bedömningen
+
+Casper: "ta med konstigheterna och gör din bedömning om vad som är rätt." Genomgången har nu ett
+avsnitt per konstighet med bedömning och vad som görs. Två fynd ändrade profilen: JMRI-regeln SN1B
+sätter även slS170, så S170 har detektering via LS199 (inventeringen läste bara den första
+spårledningen i varje regel; nu alla), och 4/2 och L1 pekar på utgångar märkta "Ej använd" på en linje
+utan drift, så de räknas som panelbesked i stället för att låsa AIS i väntan på en rapport som inte
+kommer. Resten är bedömningar för driftsättningen: Vx124 lämnas utanför planen, M11:s och M08:s
+kommentarer är skrivfel utan verkan, LS124 är en kandidat för S125a, och växelblocken utan regel har
+sina kandidatingångar modul för modul.
+
+## 6 oktober 2026, 0.68.0: B1 som signalrapport per profil
+
+Casper: "Bygg in B1 som signalrapport per profil." Profilen bär `signalReport.kind` (se eller switch) och
+en signal kan avvika med `reportKind`. Med switch läser kärnan växelrapporten B1 på signalens rapportadress
+som besked (CLOSED kör, THROWN stopp) och ignorerar E4; med se tvärtom. Simulatorn svarar i sin profils
+form, diagnostiken väntar rätt telegram, Mät objekt kräver B1 THROWN för stopp, aktiveringen kräver färsk
+B1-rapport och driftbindningarna har typen Signalrapport (standard för alla) plus fältet per signal.
+Grundprofilen står kvar på SE tills bänkprovet visar vad Signal10 sänder. Nytt prov
+test/signal-switch-report.test.mjs.
+
+## 6 oktober 2026, publicerat: 0.68.0
+
+Publicerad: 0.68.0 (cda-tkl main `1036315`, `beahead-ab/cda-tkl-install` main `09b4ce4`). Webbdriften tar
+den med Uppdatera nu under Inställningar → Uppdatering, eller `sudo charlottendal-update` på servern.
+Sedan den tidigare webbdriftsnoteringen 0.59.1 (installerad 5 oktober): rangerarläget med begäran,
+växelgator, rangerarens station och Stream Deck (0.62.0–0.66.2); signalerna beställs på sin huvudutgång och
+spårledningarna läser LS-ingångarna ur Cda60.xml, tretton panelsignaler bekräftas av kärnan själv och
+genomgången bedömer varje konstighet i källan (0.67.0–0.67.1); signalernas rapportform, SE-telegram E4
+eller växelrapport B1, väljs per profil och per signal under Driftbindningar → Signalrapport (0.68.0).
+Samma uppgifter står i status.md (lägesbild 6 oktober).

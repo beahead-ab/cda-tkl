@@ -1,5 +1,9 @@
 # Rangerbangårdens manöverrätt
 
+**Ersatt i 0.62.0 av [rangerarläget](rangerlage.md).** Överlämningen av området finns
+inte längre; rangeraren har ett eget område och begär växelgrupper av TKL. Texten nedan
+beskriver modellen 0.40.0–0.60.0 och behålls som historik.
+
 Driftsatt 26 september 2026 i version 0.40.0 (`7c1e422`). Fysisk rangerpanel är ännu inte ansluten.
 
 ## Egen manöverkärna – inget JMRI-program behövs

@@ -69,14 +69,15 @@ test('a departure walks ej uppställt, uppställt, redo · begär, klart · avg�
 });
 
 test('a key spec carries the key\'s own text, icon and hold but keeps the colours of its state',()=>{
-  const env={plupp:k=>({kind:'plupp',title:k.label,lines:[k.label],caption:'',fill:'#d8d6cc',ring:'',dim:false,blink:false,blocked:false}),train:()=>({kind:'train',number:'1'}),turn:k=>turnSpec(k,context()),system:{stopAll:true,page:1,pages:3,yard:{delegated:true,allowed:true}},online:true};
+  const env={plupp:k=>({kind:'plupp',title:k.label,lines:[k.label],caption:'',fill:'#d8d6cc',ring:'',dim:false,blink:false,blocked:false}),train:()=>({kind:'train',number:'1'}),turn:k=>turnSpec(k,context()),system:{stopAll:true,page:1,pages:3,yard:{open:'Höger 11',laid:''}},online:true};
   assert.deepEqual(keySpec({type:'system',id:'all-stop',text:'Alla stopp',icon:'stop'},env).lines,['Alla','stopp']);
   assert.equal(keySpec({type:'system',id:'all-stop',icon:'stop'},env).fill,'#ff6067','an active stop stays red');
   assert.equal(keySpec({type:'system',id:'all-stop',icon:'stop'},env).icon,'stop');
   assert.equal(keySpec({type:'system',id:'panel-reset',title:'Återställ panel',caption:'håll 1 s',hold:2000},env).caption,'håll 2 s');
   assert.equal(holdOf({type:'system',id:'panel-reset'}),1000);assert.equal(holdOf({type:'system',id:'panel-reset',hold:2000}),2000);assert.equal(holdOf({type:'plupp',id:'x'}),0);
   assert.equal(keySpec({type:'plupp',id:'x',label:'1c',text:'Spår 1c',hold:1000},env).caption,'håll 1 s');
-  const yard=keySpec({type:'system',id:'yard-authority',title:'Styra RBG'},env);assert.equal(yard.strike,true);assert.equal(yard.caption,'RBG styr');
+  const yard=keySpec({type:'system',id:'yard-authority',title:'Rangerbegäran'},env);assert.equal(yard.blink,true);assert.equal(yard.caption,'Höger 11');
+  assert.equal(keySpec({type:'system',id:'yard-authority',title:'Rangerbegäran'},{...env,system:{...env.system,yard:{open:'',laid:''}}}).dim,true);
   const nav=keySpec({type:'nav',to:'next'},env);assert.equal(nav.icon,'next');assert.equal(nav.caption,'2 / 3');
   const turn=keySpec({type:'turn',slot:1,filter:'all',text:'RBG',details:true},env);assert.equal(turn.number,'4158');assert.equal(turn.label,'RBG');assert.equal(turn.slot,1);
   assert.equal(keySpec({type:'system',id:'cancel',title:'Avbryt val'},{...env,online:false}).dim,true);
