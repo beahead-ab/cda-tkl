@@ -99,13 +99,6 @@ profilbygget (`src/ranger-paths.mjs`, `profile.rangerPaths`):
 | Last 1 | 119 T | Kolgård | 133 C · 144 C · 150 T |
 | Last 2 | 119 C | Lokstall | 133 C · 144 C · 150 C |
 | | | Skiva | 133 C · 144 C · 150 T · 155 C |
-| | | 3d stick | 172 T |
-
-3d går via 172 in på stickspåret med stoppbocken och stannar där (beslut 2026-10-06).
-JMRI-panelen ritade 3d och 172:s gren C i samma punkt men kopplade dem inte; kopplingen
-läggs till i `public/panel-corrections.js`, som kontrollerar geometrin, och gäller bara
-rangerarens område – tågvägssökningen använder den importerade grafen oförändrad. 172 är
-gränsväxel: rangeraren lägger T (3d–stickspåret), bara TKL lägger C mot 170.
 
 Lastspår 1–2 nås bara via 119 från bangårdssidan och Lastspår 3 bara via 133 från
 144-sidan, så de gatorna börjar där. Vändskivan har en knapp "fram till skivan";
@@ -178,8 +171,9 @@ till i profilen i steg 1.
    nät (`CHARLOTTENDAL_LISTEN`, `CHARLOTTENDAL_LAN_HOSTS`), allt från en annan
    dator loggar in, och installationen med `CDA_TKL_KIOSK_URL` gör en Pi till
    station i kioskläge med Stream Deck (docs/raspberry-pi.md §10).
-6. **3d till stickspåret** – klart i 0.66.1. Vidare från stickspåret mot 170 och 2a
-   (en sågtand) byggs när den används.
+6. **3d slutar vid slutsignalen IIIdo.** IIIdo står bredvid 3d där spåret leder in i 172.
+   Rangeraren kör fram till signalen; 172 och det som ligger bortom är TKL:s. Hur 172 sitter
+   på banan är inte kontrollerat, så ingen begäran eller växelgata går genom den.
 
 ## Öppna frågor
 

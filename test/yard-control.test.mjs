@@ -21,7 +21,7 @@ const kinds=engine=>engine.journal.map(e=>e.kind);
 
 test('the profile carries the ranger\'s own area and the request groups decided with the layout owner',()=>{
   assert.deepEqual(profile.yardArea.turnouts,['Vx111','Vx114','Vx115','Vx118','Vx119','Vx127','Vx128','Vx130','Vx133','Vx150','Vx155']);
-  assert.deepEqual(profile.yardArea.boundaries,['Vx102','Vx103','Vx112','Vx131','Vx132','Vx144','Vx154','Vx164','Vx172']);
+  assert.deepEqual(profile.yardArea.boundaries,['Vx102','Vx103','Vx112','Vx131','Vx132','Vx144','Vx154','Vx164']);
   for(const block of ['S103b','SG51','SG52','SG53','SG54','SLI','SLII','SLIII','SVI','SIIID','S164b',...Array.from({length:9},(_,i)=>'Slokstall'+(i+1))])assert.ok(profile.yardArea.blocks.includes(block),block);
   for(const block of ['SIIIA','SIVA','SVA','S112b','S103a','S113a','S164'])assert.ok(!profile.yardArea.blocks.includes(block)||block==='S164','spår 11–13 and the legs towards TKL are not the ranger\'s: '+block);
   assert.deepEqual(profile.rangerRequests.map(g=>[g.id,g.out,g.back]),[
