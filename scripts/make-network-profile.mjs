@@ -8,6 +8,7 @@ import { compileOperatingControls } from '../src/operating-policy.mjs';
 import { compileYardBoundaries } from '../src/yard-boundaries.mjs';
 import { compileYardArea,yardTurnoutNames } from '../src/yard-area.mjs';
 import { compileRangerRequests } from '../src/ranger-requests.mjs';
+import { compileRangerPaths } from '../src/ranger-paths.mjs';
 import { parseLayoutXml, moduleOf } from '../src/studio/sources.mjs';
 const read = file => JSON.parse(fs.readFileSync(new URL('../' + file, import.meta.url)));
 const write = (file, data) => {
@@ -146,6 +147,7 @@ const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:
   sourcePolicy:[...source.mainRoutePolicies,...source.shuntRoutePolicies],excluded,releasePolicy:'whole-route-after-ordered-passage-and-stop-feedback'};
 profile.yardArea=compileYardArea(panel,profile);
 profile.rangerRequests=compileRangerRequests(profile);
+profile.rangerPaths=compileRangerPaths(panel,profile);
 // Simulerade kort för SV2 i simulatorn: ett per modulkommentar M00–M11 i Cda60.xml. Identiteterna är påhittade
 // (tillverkare 13 = DIY) tills riktiga kort svarat på Discover; adresserna 16–27 ligger i LocoNet PE:s intervall för andra enheter.
 const xml=parseLayoutXml(fs.readFileSync(new URL('../public/data/source/Cda60.xml',import.meta.url),'utf8'));
