@@ -1,0 +1,14 @@
+FROM node:22-bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends gosu python3 python3-venv ca-certificates && rm -rf /var/lib/apt/lists/* \
+ && python3 -m venv /opt/migration-tools && /opt/migration-tools/bin/pip install --no-cache-dir magic-wormhole
+ENV NODE_ENV=production PATH=/opt/migration-tools/bin:$PATH
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts
+COPY src ./src
+COPY public ./public
+COPY profiles ./profiles
+COPY scripts ./scripts
+COPY deploy/render ./deploy/render
+EXPOSE 10000
+ENTRYPOINT ["/bin/sh", "/app/deploy/render/entrypoint.sh"]
