@@ -259,7 +259,7 @@ test('local/remote authority persists, blocks local commands and cannot change w
 });
 test('legacy controls migrate without dropping AIS or blocks; invalid authority fails closed',()=>{
   const values={'controls.json':{version:1,stopAll:true,blocked:['SIA']}},storage={load:(n,f)=>structuredClone(values[n]||f),event(){}};
-  const e=new Engine(profile,{storage});assert.deepEqual(e.controls,{version:3,stopAll:true,blocked:['SIA'],mode:'local',emergency:null,lines:[],programming:{reserved:false,desired:false}});
+  const e=new Engine(profile,{storage});assert.deepEqual(e.controls,{version:3,stopAll:true,blocked:['SIA'],mode:'local',emergency:null,lines:[],programming:{reserved:false,desired:false},yard:{requests:[]}});
   assert.equal(values['controls.json'].version,1,'read-only migration does not overwrite stored controls during startup');
   values['controls.json']={...e.controls,mode:'anything'};assert.throws(()=>new Engine(profile,{storage}),/ogiltig/);
 });

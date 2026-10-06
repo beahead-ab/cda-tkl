@@ -15,48 +15,101 @@ function rig(storage=memory()){
   const advance=ms=>{for(let i=0;i<ms;i+=50){now+=50;field.tick();if(now%1000===0)field.allReports();drain();engine.tick();drain();}};
   engine.connection(true);field.allReports();drain();return {engine,field,commands,storage,drain,advance};
 }
-test('handover changes durable software authority without any fictional field report or order',()=>{
-  const r=rig(),before=structuredClone({blocks:r.engine.blocks,points:r.engine.turnouts,signals:r.engine.signals}),commands=r.commands.length,revision=r.engine.operating.snapshot();
-  r.field.setBlock('SG51',true);r.drain();before.blocks=structuredClone(r.engine.blocks);
-  r.engine.yard.setOwner('ranger');assert.equal(r.storage.files.get('controls.json').yard.owner,'ranger');
-  assert.equal(r.commands.length,commands);assert.deepEqual({blocks:r.engine.blocks,points:r.engine.turnouts,signals:r.engine.signals},before);
-  assert.throws(()=>r.engine.operating.checkCommand(revision),/ändrats/);
-  assert.throws(()=>r.engine.manual('Vx114','T'),/rangerställverket/);
-  r.engine.manual('Vx114','T',{operator:'ranger'});r.drain();r.advance(200);
-  assert.equal(r.engine.turnouts.Vx114.position,'T');
-  r.engine.yard.setOwner('tkl');r.engine.manual('Vx114','C');r.drain();r.advance(200);
-  assert.equal(r.engine.turnouts.Vx114.position,'C');assert.equal(r.engine.blocks.SG51.occupied,true);
-  assert.throws(()=>r.engine.manual('Vx114','T',{operator:'ranger'}),/inte överlämnad/);
+const positions=(engine,names)=>Object.fromEntries(Object.keys(names).map(n=>[n,engine.turnouts[n].position]));
+const group=id=>profile.rangerRequests.find(g=>g.id===id);
+const kinds=engine=>engine.journal.map(e=>e.kind);
+
+test('the profile carries the ranger\'s own area and the request groups decided with the layout owner',()=>{
+  assert.deepEqual(profile.yardArea.turnouts,['Vx111','Vx114','Vx115','Vx118','Vx119','Vx127','Vx128','Vx130','Vx133','Vx150','Vx155']);
+  assert.deepEqual(profile.yardArea.boundaries,['Vx102','Vx103','Vx112','Vx131','Vx132','Vx144','Vx154','Vx164']);
+  for(const block of ['S103b','SG51','SG52','SG53','SG54','SLI','SLII','SLIII','SVI','SIIID','S164b',...Array.from({length:9},(_,i)=>'Slokstall'+(i+1))])assert.ok(profile.yardArea.blocks.includes(block),block);
+  for(const block of ['SIIIA','SIVA','SVA','S112b','S103a','S113a','S164'])assert.ok(!profile.yardArea.blocks.includes(block)||block==='S164','spår 11–13 and the legs towards TKL are not the ranger\'s: '+block);
+  assert.deepEqual(profile.rangerRequests.map(g=>[g.id,g.out,g.back]),[
+    ['left-11',{Vx103:'C',Vx112:'T',Vx113:'T',Vx102:'C'},{Vx103:'T',Vx112:'C'}],
+    ['left-12',{Vx103:'C',Vx112:'T',Vx113:'C',Vx116:'T',Vx102:'C'},{Vx103:'T',Vx112:'C'}],
+    ['left-13',{Vx103:'C',Vx112:'T',Vx113:'C',Vx116:'C',Vx102:'C'},{Vx103:'T',Vx112:'C'}],
+    ['right-11',{Vx132:'T',Vx131:'T',Vx126:'C',Vx123:'C'},{Vx132:'C',Vx131:'C'}],
+    ['right-12',{Vx132:'T',Vx131:'T',Vx126:'C',Vx123:'T'},{Vx132:'C',Vx131:'C'}],
+    ['right-13',{Vx132:'T',Vx131:'T',Vx126:'T'},{Vx132:'C',Vx131:'C'}],
+    ['six-154',{Vx133:'C',Vx144:'T',Vx154:'T'},{Vx144:'C',Vx154:'C'}],
+    ['3d-left',{Vx164:'C',Vx153:'C',Vx161:'C'},{Vx164:'T',Vx153:'T'}]]);
+  // Every group's out positions are its own shunt route's, so the move is one the source allows.
+  for(const g of profile.rangerRequests){const route=profile.routes.find(r=>r.id===g.route);assert.equal(route.kind,'shunt');for(const [n,p] of Object.entries(route.turnouts))assert.equal(g.out[n],p,g.id+' '+n);}
 });
-test('TKL retains access to each of 11–13 from both sides; ranger cannot break these route locks',()=>{
-  for(const target of ['htvSpIIIA','htvSpIVA','htvSpVA'])for(const from of ['htvCu','htvBu'])for(const outbound of [false,true]){
-    const r=rig();r.engine.yard.setOwner('ranger');
-    const route=r.engine.request(...(outbound?[target,from]:[from,target]));r.advance(6500);assert.equal(route.state,'active',route.reason);
-    const locked=Object.keys(route.turnouts).find(n=>profile.yardArea.turnouts.includes(n));assert.ok(locked);
-    const before=r.commands.length;assert.throws(()=>r.engine.manual(locked,'T',{operator:'ranger'}),/låst|spåravsnitt/);assert.equal(r.commands.length,before);
-    assert.throws(()=>r.engine.yard.setOwner('tkl'),/tågvägar/);assert.equal(r.engine.yard.delegated,true);
-    r.engine.cancel(route.id);r.drain();r.advance(200);assert.equal(r.engine.routes.length,0);
-    r.engine.yard.setOwner('tkl');assert.equal(r.engine.yard.delegated,false);
+test('a route over the group answers the ranger at once; no request reaches TKL',()=>{
+  const r=rig();
+  const route=r.engine.request('htvCu','htvSpIIIA');r.advance(6500);assert.equal(route.state,'active',route.reason);
+  const status=r.engine.yard.requestStatus('left-11');
+  assert.equal(status.allowed,false);assert.match(status.reason,/Går inte att lägga: tågväg Cu → Spår 11 ligger över Vx1/);
+  assert.throws(()=>r.engine.yard.request('left-11'),/tågväg Cu → Spår 11/);
+  assert.equal(r.engine.yard.requests.length,0);assert.ok(!kinds(r.engine).includes('ranger-request'));
+  assert.equal(r.engine.yard.requestStatus('right-11').allowed,true,'the other side is free');
+  assert.equal(r.engine.yard.snapshot().groups.find(g=>g.id==='left-11').can.allowed,false);
+});
+test('TKL approves: the group is laid and locked, routes over it wait, and the ranger lays it back',()=>{
+  const r=rig(),g=group('right-11');
+  const request=r.engine.yard.request('right-11');
+  assert.equal(request.state,'open');assert.equal(r.storage.files.get('controls.json').yard.requests[0].id,request.id);
+  assert.equal(r.engine.yard.snapshot().groups.find(x=>x.id==='right-11').state,'open');
+  assert.equal(kinds(r.engine)[0],'ranger-request');
+  const laid=r.engine.yard.answer(request.id,true);assert.equal(laid.state,'laid');
+  r.drain();r.advance(500);
+  assert.deepEqual(positions(r.engine,g.out),g.out);
+  assert.equal(r.storage.files.get('controls.json').yard.fingerprint,r.engine.fingerprint);
+  assert.throws(()=>r.engine.manual('Vx131','C'),/Höger 11 ligger ute för rangeraren/);
+  assert.throws(()=>r.engine.manual('Vx132','C',{operator:'ranger'}),/Lägg tillbaka/);
+  assert.throws(()=>r.engine.request('htvBu','htvSpIIIA'),/Höger 11 ligger ute/);
+  assert.throws(()=>r.engine.yard.request('right-12'),/Höger 11 ligger ute/);
+  assert.throws(()=>r.engine.yard.request('right-11'),/ligger redan ute/);
+  assert.equal(r.engine.yard.request('left-11').state,'open','the other side can still be requested');
+  const before=r.commands.length;
+  r.engine.yard.return(laid.id,'ranger');
+  assert.equal(r.commands.length,before+2,'132 and 131 are ordered back; 126 and 123 stay');
+  r.drain();r.advance(500);
+  assert.deepEqual(positions(r.engine,g.back),g.back);
+  assert.equal(r.engine.yard.requests.length,1);assert.equal(kinds(r.engine)[0],'ranger-returned');
+  r.engine.yard.answer(r.engine.yard.requests[0].id,false);assert.equal(r.engine.yard.requests.length,0);
+  const route=r.engine.request('htvBu','htvSpIIIA');r.advance(6500);assert.equal(route.state,'active',route.reason);
+});
+test('TKL denies or withdraws; a route laid while a request waits answers it for TKL',()=>{
+  const r=rig();
+  const first=r.engine.yard.request('left-11');r.engine.yard.answer(first.id,false);
+  assert.equal(r.engine.yard.requests.length,0);assert.equal(kinds(r.engine)[0],'ranger-denied');
+  assert.throws(()=>r.engine.yard.answer(first.id,true),/finns inte längre/);
+  const second=r.engine.yard.request('left-11');
+  const route=r.engine.request('htvCu','htvSpIIIA');r.advance(200);
+  assert.equal(r.engine.yard.requests.length,0,'the open request is answered when the route takes its turnouts');
+  assert.match(r.engine.journal.find(e=>e.kind==='ranger-denied').message,/kan inte läggas: tågväg Cu → Spår 11 ligger/);
+  assert.equal(route.state==='held',false);
+  r.engine.cancel(route.id);r.drain();r.advance(500);assert.equal(r.engine.routes.length,0);
+  const third=r.engine.yard.request('six-154');r.engine.yard.answer(third.id,true);r.drain();r.advance(500);
+  assert.deepEqual(positions(r.engine,group('six-154').out),group('six-154').out);
+  r.engine.yard.return(third.id,'tkl');r.drain();r.advance(500);
+  assert.equal(kinds(r.engine)[0],'ranger-withdrawn');assert.deepEqual(positions(r.engine,group('six-154').back),group('six-154').back);
+  assert.notEqual(second.id,third.id);
+});
+test('a laid group survives restart and connection loss; a changed profile or old handover state does not start',()=>{
+  const r=rig();const request=r.engine.yard.request('3d-left');r.engine.yard.answer(request.id,true);r.drain();r.advance(500);
+  r.engine.connection(false);assert.equal(r.engine.yard.requests[0].state,'laid');
+  const restarted=new Engine(profile,{storage:r.storage});assert.equal(restarted.yard.requests[0].id,request.id);assert.equal(restarted.yard.requests[0].state,'laid');
+  const changed=structuredClone(profile);changed.yardArea.turnouts.pop();assert.throws(()=>new Engine(changed,{storage:r.storage}),/ändrats medan en rangerbegäran/);
+  const old=memory();old.save('controls.json',{version:3,stopAll:false,blocked:[],mode:'local',emergency:null,lines:[],programming:{reserved:false,desired:false},yard:{owner:'tkl',fingerprint:'x'}});
+  assert.deepEqual(new Engine(profile,{storage:old}).yard.requests,[]);
+  old.save('controls.json',{...old.load('controls.json'),yard:{owner:'ranger',fingerprint:'x'}});
+  assert.throws(()=>new Engine(profile,{storage:old}),/äldre version/);
+});
+test('the ranger lays own turnouts freely, boundaries only back, and never TKL\'s; failed storage keeps no request',()=>{
+  const r=rig();
+  r.engine.manual('Vx114','T',{operator:'ranger'});r.drain();r.advance(300);assert.equal(r.engine.turnouts.Vx114.position,'T');
+  assert.throws(()=>r.engine.manual('Vx112','T',{operator:'ranger'}),/endast TKL får öppna/);
+  r.engine.manual('Vx112','C',{operator:'ranger'});r.drain();r.advance(300);
+  assert.throws(()=>r.engine.manual('Vx113','T',{operator:'ranger'}),/inte ansluten/);
+  assert.throws(()=>r.engine.manual('Vx120','T',{operator:'ranger'}),/inte ansluten/);
+  r.engine.manual('Vx112','T');r.drain();r.advance(300);assert.equal(r.engine.turnouts.Vx112.position,'T','TKL may open');
+  const x=rig();x.storage.save=()=>{throw Error('disk full');};
+  assert.throws(()=>x.engine.yard.request('right-11'),/spara/);assert.equal(x.engine.yard.requests.length,0);assert.ok(x.engine.storageFault);
+  for(const change of [e=>{e.connected=false;},e=>{e.controls.stopAll=true;},e=>{e.controls.mode='remote';},e=>{e.field.setBlock('S131',true);e.drain();}]){
+    const y=rig();change(Object.assign(y.engine,{field:y.field,drain:y.drain}));
+    assert.equal(y.engine.yard.requestStatus('right-11').allowed,false);
   }
-});
-test('delegation blocks internal shunting but leaves external traffic eligible',()=>{
-  const r=rig();r.engine.yard.setOwner('ranger');
-  assert.throws(()=>r.engine.request('tvv3/5','tvv6/9'),/överlämnad/);
-  const route=r.engine.request('htvCu','htvSpIA');r.advance(6500);assert.equal(route.state,'active',route.reason);
-  for(const boundary of ['Vx112','Vx131','Vx154'])assert.ok(!profile.yardArea.turnouts.includes(boundary));
-  for(const block of ['SG51','SG52','SG53','SG54','SLI','SLII','SLIII','SVI',...Array.from({length:9},(_,i)=>'Slokstall'+(i+1))])assert.ok(profile.yardArea.blocks.includes(block),block);
-  assert.ok(!profile.yardArea.blocks.includes('SIA'));
-});
-test('restart, connection changes and panel reset retain delegation; changed profiles cannot inherit it',()=>{
-  const r=rig();r.engine.yard.setOwner('ranger');r.engine.connection(false);assert.equal(r.engine.yard.delegated,true);
-  const restarted=new Engine(profile,{storage:r.storage});assert.equal(restarted.yard.delegated,true);assert.equal(restarted.yard.changeStatus().allowed,false);
-  const changed=structuredClone(profile);changed.yardArea.turnouts.pop();assert.throws(()=>new Engine(changed,{storage:r.storage}),/Profilen har ändrats/);
-  r.engine.connection(true);r.field.allReports();r.drain();r.engine.resetPanel();r.drain();r.advance(1000);assert.equal(r.engine.yard.delegated,true);
-});
-test('failed persistence cannot announce transfer; missing reports and reservations prohibit transfer',()=>{
-  const r=rig();r.storage.save=()=>{throw Error('disk full');};assert.throws(()=>r.engine.yard.setOwner('ranger'),/spara/);assert.equal(r.engine.yard.delegated,false);assert.ok(r.engine.storageFault);
-  for(const change of [x=>{x.engine.connected=false;},x=>{x.engine.turnouts.Vx112.position='unknown';},x=>{x.engine.blocks.SG51.updatedAt=0;},x=>{x.engine.signals[profile.yardArea.signals[0]].aspect='go';},x=>{x.engine.controls.programming.reserved=true;},x=>{x.engine.permission(profile.yardArea.signals[0],'STOP');},x=>{x.engine.turnouts.Vx112.desired='T';},x=>{x.engine.manual('Vx114','T');}]){
-    const x=rig();change(x);assert.throws(()=>x.engine.yard.setOwner('ranger'));assert.equal(x.engine.yard.delegated,false);
-  }
-  const x=rig();x.engine.yard.setOwner('ranger');assert.throws(()=>x.engine.operating.setProgramming(true),/rangerbangården/);
 });
