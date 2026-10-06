@@ -119,8 +119,10 @@ till i profilen i steg 1.
    ute för rangeraren" med Dra tillbaka – inga flikar, ett klick, som fri-
    knapparna på originalpanelen. Händelsekolumnen visar begäran, svar och
    tillbakaläggning.
-3. **Rangerarens vy** – klart i 0.64.0. `#ranger` i samma app: samma spårplan
-   med allt utanför rangerarens område nedtonat, knappraden **Begär av TKL**
+3. **Rangerarens vy** – klart i 0.64.0, beskuren i 0.64.1. `#ranger` i samma
+   app: bara rangerarens del av spårplanen – det egna området, spår 11–13 med
+   begärans vägar, och streckade stumpar där TKL:s spår fortsätter
+   (`public/ranger-scope.js`); inget av TKL:s övriga ritas, knappraden **Begär av TKL**
    överst i nederraden (åtta knappar; en knapp som inte går att begära är
    släckt med kärnans orsak som verktygstips), chipet i statusraden
    ("Höger 11 begärd · väntar på TKL · Ångra", "Höger 11 ligger ute · Lägg
