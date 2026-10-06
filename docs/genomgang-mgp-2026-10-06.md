@@ -1,6 +1,6 @@
 # Genomgång av moduler, spårledningar, växlar och signaler mot MGP-modulerna
 
-6 oktober 2026, version 0.67.0. Underlag: Bennys `Cda60.xml` (källversion `c69a865ae9a8`), panelgeometrin,
+6 oktober 2026, version 0.67.0, kompletterad med bedömningarna i 0.67.1. Underlag: Bennys `Cda60.xml` (källversion `c69a865ae9a8`), panelgeometrin,
 driftprofilen och Studios register. XML:en är kvar som fallback och källa; ingenting i den har ändrats.
 
 Frågan var: hänger allt ihop mot de riktiga LocoNet-modulerna? Svaret före genomgången var nej på två
@@ -11,9 +11,9 @@ punkter som hade stoppat driftsättningen helt, och ja med anmärkningar på res
 | Objekt | Före | Nu |
 |---|---|---|
 | 49 växlar | LT-adressen ur XML (95–172), Vx131 omvänd | Oförändrat |
-| 66 signaler | Bänkadresser 1501–1566, ingen koppling till någon utgång | 55 master bundna till sin huvudutgång LT200–LT325 ur XML; 11 virtuella master utan utgång |
-| 197 spårledningar | Bänkadresser 3001–3132, ingen koppling till någon ingång | 159 bundna till LS-ingångarna ur XML (20 med flera ingångar); 38 utan ingång i källan behåller bänkadress |
-| Kärnan | Väntade på rapport från alla 66 signaler | Bekräftar de 11 virtuella själv; väger flera ingångar per spårledning |
+| 66 signaler | Bänkadresser 1501–1566, ingen koppling till någon utgång | 53 master bundna till sin huvudutgång LT200–LT325 ur XML; 11 virtuella master utan utgång och 2 (4/2, L1) på utgångar märkta "Ej använd" räknas som panelbesked |
+| 197 spårledningar | Bänkadresser 3001–3132, ingen koppling till någon ingång | 161 bundna till LS-ingångarna ur XML (20 med flera ingångar); 36 utan ingång i källan behåller bänkadress |
+| Kärnan | Väntade på rapport från alla 66 signaler | Bekräftar de 13 panelsignalerna själv; väger flera ingångar per spårledning |
 | Simulatorn | Rapporterade bänkadresserna | Samma adresser som TKL, varje ingång en gång, inget från virtuella signaler |
 | Driftbindningar | En rad per JMRI-sensor | En rad per fysisk detektor; fleringångsblock ägs av detekteringsregeln, virtuella signaler saknar rad |
 
@@ -60,7 +60,8 @@ utgången `LT214` (D3/1, M02) i källan men masten är virtuell, så där finns 
 Varje layoutblock i JMRI har en intern sensor (slS…) som sätts av en logixregel ur de fysiska ingångarna
 (LS…). Studios detekteringsinventering läser dessa regler, och profilen bär nu LS-numret som adress:
 
-- 130 spårledningar med en ingång, t.ex. S100 → LS60 (M02-21-1).
+- 132 spårledningar med en ingång, t.ex. S100 → LS60 (M02-21-1). En JMRI-regel kan sätta flera
+  spårledningar: SN1B sätter även S170 (LS199) och "S95/96 kors" sätter S95b och S96b (LS13).
 - 20 med flera ingångar och JMRI:s "någon av"-logik, t.ex. SIA → LS90 **eller** LS100 (M04 och M05),
   SG53 → LS73/LS97/LS107/LS117 (fyra moduler längs godsspår 53).
 - 9 växelberoende delar (S100b, S101a, S110a/b, S117a, S120a/b, S125a/b) där JMRI väljer ingång efter
@@ -74,17 +75,17 @@ En fysisk detektor matar ofta flera JMRI-block (LS72 → S112, S113, S116 med de
 med delar). Det är avsiktligt i Bennys anläggning – en detektor per växelgata – och profilen speglar det.
 Driftbindningarnas katalog har därför en rad per adress: alla block på samma detektor ändras tillsammans.
 
-**38 spårledningar står kvar på bänkadress** (3001+) för att källan inte har någon ingång:
+**36 spårledningar står kvar på bänkadress** (3001+) för att källan inte har någon ingång:
 
 - 16 är inte spår (vägövergångarnas lampor v1–v4, perronger, ram, vändskiva).
 - 11 har ingen sensor: Slokstall1–9, SL1a, SL1b (lokstallet och linje D).
-- 10 har en sensor men ingen regel: S96b, S112b, S155, S155b, S155c, S164, S164b, S170, S171, S172.
+- 8 har en sensor men ingen regel: S112b, S155, S155b, S155c, S164, S164b, S171, S172.
 - S100a enligt ovan.
 
-De tio växelblocken utan regel är intressanta: Vx155 (vändskivans tillfart), Vx164 (3d:s gränsväxel) och
-M11:s växlar 170–172. Ingen tågväg kräver fri spårledning där i dag, men tågvägar över Vx164 och Vx170/171
-har ingen beläggningskontroll av själva växelblocket. Kandidater bland de obundna ingångarna finns (se nedan)
-men inget binds utan mätning.
+Växelblocken utan regel är intressanta: Vx155 (vändskivans tillfart), Vx164 (3d:s gränsväxel) och
+M11:s växlar 171–172. Ingen tågväg kräver fri spårledning där i dag, men tågvägar över Vx164 och Vx171
+har ingen beläggningskontroll av själva växelblocket. Kandidater bland de obundna ingångarna finns (se
+bedömningen nedan) men inget binds utan mätning.
 
 ## Modul för modul
 
@@ -100,16 +101,37 @@ kanal 1). Inget kort har ännu svarat på Discover; identiteterna är antagna.
 | M04 | – | LT230–239: 1/10, 2/10; LT414–417 | LS90–98 | Första halvan av Spår I–V och G51–54 (41-x, 42-x). Alla bundna. |
 | M05 | – | LT240–249: 1/7, 2/7; LT418–421 | LS100–108 | Andra halvan av samma spår (51-x, 52-x). Alla bundna. |
 | M06 | Vx120–128 (120-1…5, 125-1…4) | LT250–259: 3/5, 4/5, 5/5; LT422–427 | LS110–124 | **Vx124** (120-5) finns i XML men inte i planen. LS113 saknar block. LS124 är kommenterad "S125a" men S125a:s regel använder LS121; LS124 är obunden. |
-| M07 | Vx130–133 (130-1…4), ProgSpår LT134 (130-5) | LT260–269: 1/8, 2/8, 3/8, 4/8, 5/8, 6/8; LT428–439 | LS140–149 | LS147, LS148 saknar block. LS149 "Godsspå vx133" utan modulkommentar och utan block. |
+| M07 | Vx130–133 (130-1…4), ProgSpår LT134 (130-5) | LT260–269: 1/8, 2/8, 3/8, 4/8, 5/8, 6/8; LT428–439 | LS140–149 | Alla modulens ingångar bundna. LS149 "Godsspå vx133" utan modulkommentar och utan block. |
 | M08 | Vx140–144 (140-1…5) | LT270–279: 1/6, 2/6, 1/9, 2/9, 5/9; LT310–311: 6/9, SXv; LT440–451 | LS150–164 | Användarnamnen är förskjutna ett steg (LS158 heter Sp08-159 … LS164 heter Sp08-165) och LS163 har skrivfelet "M08-03-4". Systemnumret är det som går på bussen. LS150, 151, 161, 164 saknar block. LT312–319 "Ej använd". |
 | M09 | Vx150–155 (150-1…5, 155-1) | LT280–289: 1/11, 2/11, 3/9, 4/9, 10/11; LT320–325: 3/11, 3/6, 6/11; LT452–461 | LS170–178 | LS172, 173 saknar block. LT156–159 "Ej använd". |
 | M10 | Vx160–166 (160-1…5, 165-1, 165-2) | LT290–299: 1/4, 2/4; LT462–467 | LS190–199 | LS195 saknar block. LT167–169, LT292–299 "Ej använd". |
 | M11 | Vx170, (Vx171, Vx172 "Ej använd") | LT300–309: 1/2, 2/2, U1, N1, SIIIdö, 3/2 (LT305 utan namn, LT306 D3/2) | – | Kommentarerna säger "M11-165-x" men adresserna är 170–174: basadressen 165 är M10:s, M11:s dekoder sitter rimligen på 170. LS200–204 (Sp11-200…204) saknar modulkommentar; 202–204 är bundna (SIIId, SU1a, SN1a), 200–201 inte. **LT307 (4/2) och LT308 (L1) är märkta "Ej använd" men bär signalmaster.** |
 
-Obundna fysiska ingångar totalt: 87. Av dem är 36 panelens egna knappar och lampor (LS901–940: frigivning,
-tågvägsväljare, Broker/Nattpanel/Rangerpanel, ProgOn), 26 helt namnlösa (LS205–229, LS4095, LS4, LS179, LS930,
-LS932) och 25 har en modul men ingen spårledning – se tabellen. Dessa 25 är kandidaterna när de tio
-växelblocken utan regel ska få detektering, men bara mätning kan säga vilken ingång som hör till vilket block.
+Obundna fysiska ingångar totalt: 87. Av dem är 40 panelens egna knappar och lampor (LS901–940: frigivning,
+tågvägsväljare, Broker/Nattpanel/Rangerpanel, ProgOn), 24 helt namnlösa (LS4, LS179, LS205–215, LS220–229,
+LS4095), 3 namngivna utan modul (LS149, LS200, LS201) och 20 har en modul men ingen spårledning – se tabellen.
+Dessa är kandidaterna när växelblocken utan regel ska få detektering, men bara mätning kan säga vilken
+ingång som hör till vilket block.
+
+## Konstigheterna och min bedömning
+
+Vad som är rätt, objekt för objekt. "Gjort" betyder att profilen redan följer bedömningen; "mät" betyder att
+beslutet tas med Mät objekt på banan.
+
+| Konstighet | Vad källan säger | Bedömning | Gjort / mät |
+|---|---|---|---|
+| **4/2 och L1 på LT307/LT308 "M11-Ej använd"** | Masterna finns i panelen vid linje D:s ände och pekar på två kanaler Benny märkt oanvända. Linje D har inga tågvägar, SL1a/SL1b har ingen sensor. | Signalerna är inte inkopplade; linje D är inte i drift. Att vänta på rapport från dem hade låst AIS för hela stationen utan att ge något. Rätt är att räkna dem som panelbesked, som de elva virtuella. | Gjort i 0.67.1. Svarar LT307/308 ändå vid mätningen är bindningen en rad i generatorn. |
+| **Elva virtuella master** (3/1, 6/5–9/5, 6/6, 6/7, 6/10–9/10) | VirtualSignalMast utan utgång. Dvärgar på godsspår 51–54, lastspåren och mot lokstall/kolgård, alltså rangerbangården. | Där lägger rangeraren växelgator för hand och det finns inga fysiska dvärgar; Benny lät panelen visa beskedet. Behåll som panelbesked. 3/1 är undantaget: utgången D3/1 (LT214, M02) finns, så en fysisk dvärg finns troligen vid 3/1 men var aldrig kopplad till masten. | Gjort. Mät: beställ LT214 CLOSED och se om dvärgen vid 3/1 tänder kör; då binds 3/1. |
+| **S170 "utan regel"** | Regeln SN1B sätter både slSN1b och slS170 från LS199. Inventeringen läste bara första spårledningen i varje regel. | Benny menade att Vx170 ligger i SN1b:s detektoravsnitt. Rätt är LS199, delad med SN1B och S166a. | Gjort i 0.67.1 (S170 → LS199, S95b/S96b → LS13 på samma sätt). |
+| **S171, S172** | Sensorer utan regel; LT171/LT172 "Ej använd". | Vx171 ligger rakt i alla 203 tågvägar mot Bn men dess kanal är oanvänd: växeln är troligen fast eller handlagd. Rätt är att vänta på mätningen (Caspers beslut 6 oktober), inte gissa. | Mät adress 171: svarar den inte, märks den fast i profilen. 172 rörs inte. |
+| **Vx124 (M06-120-5)** | Finns i växeltabellen och i Vxi-indikeringen och panelåterställningen, men i ingen tågväg och inte i planen. | En reserverad eller borttagen växel på M06:s dekoder. Ingenting i driften behöver den. Rätt är att lämna den utanför planen. | Inget görs. Står kvar i Studio som "utan plats i planen" tills Casper säger var den sitter. |
+| **M11:s kommentarer "M11-165-x"** | Adresserna är 170–174; basadress 165 är M10:s andra Servo5. | Skrivfel i kommentaren. Adressen på bussen är det som gäller, och den är 170. | Inget görs. Studio visar både kommentar och adress. |
+| **M08:s ingångar Sp08-159…165 på LS158–164, "M08-03-4"** | Användarnamnen är förskjutna ett steg mot systemnumren från LS158 och framåt; LS163 har en felskriven modulkommentar. | Skrivfel i etiketterna. Logixreglerna pekar på systemnumret (t.ex. S140 → Sp08-161 = LS160), så bindningen är rätt. | Inget görs. Namnen är bara etiketter. |
+| **LS124 "M06-63-5, S125a"** | Kommentaren säger S125a, men S125a:s regel använder LS121 (S125:s detektor) med växelvillkor. LS124 används ingenstans. | Benny drog troligen en egen detektor för S125a (ingången finns och heter så) men regeln blev aldrig ändrad. Rätt är sannolikt LS124, men XML:en säger LS121. | Mät: belägg S125a och se om LS124 slår; då byts S125a till LS124 som egen spårledning. Tills dess LS121. |
+| **Växelblock utan regel** (S112b, S155 med delar, S164 med delar, S171, S172) | Sensorer finns, regel saknas. Obundna ingångar med modul: M03 76, 79, 81–84; M09 172, 173; M10 195; M11 200, 201. | Per modul passar det nästan ett till ett: M10 har en obunden ingång (LS195) och ett odetekterat växelblock (Vx164); M09 har LS172/173 för Vx155; M11 LS200/201 för Vx171/172. Bedömningen är att Benny drog detektorer till växelblocken men aldrig skrev reglerna. | Mät: en vagn på varje växelblock, se vilken ingång som slår. Binds när mätningen visar det, inte förr. |
+| **Signalernas rapportadress** | JMRI använde feedback MONITORING på LT-utgången, alltså växelmeddelandet (B1), inte SE-telegrammet (E4). Profilen väntar på E4 med koder 0/8/18. | Det mest sannolika i drift är att Signal10 rapporterar med B1 på samma adress (SV23 avgör om det är grundläge eller stopp/kör). Rätt är att låta mätningen visa vilket telegram som kommer och då välja: E4 om det finns (det säger vad signalen visar), annars B1 som stopp/kör. | Mät. Kommer bara B1 bygger vi in B1 som signalrapport per profil; det är en liten ändring i kärnan. |
+| **Kompisparen i X1 och X2** | Vx140+Vx142 och Vx162+Vx165 bildar ingen förbindelse i ritningen. | Studios förslag (140+143, 141+142; 162+166, 163+165) stämmer med ritningen och är troligen rätt, men paren i profilen kommer ur Bennys knappgrupper. | Mät: lägg paren och se vilka tungor som rör sig. |
+| **M00 med tre ingångar** | LS1–3 (SU2a, SN2a, SIIIe) utan dekoder i kommentarerna. | En fristående detektormodul vid utfarten mot Au/An. Inget fel. | Inget görs. |
 
 ## Växlar
 
@@ -128,11 +150,10 @@ växelblocken utan regel ska få detektering, men bara mätning kan säga vilken
 2. **Mät objekt**, i den här ordningen: en växel per dekoder, sedan en signal per Signal10 (stopp-order,
    vänta på SE-rapport – kommer ingen rapport är det rapportadressen eller SV23 som ska avgöras), sedan
    spårledningarna genom att belägga dem en i taget.
-3. **Avgör virtuella signaler** (panelbesked eller fysiska dvärgar) och **LT307/LT308** (4/2 och L1 pekar på
-   utgångar som är "Ej använd").
-4. **Växelblocken utan detektering**: S155, S164, S170–172, S96b, S112b och delarna; kandidatingångarna finns i
-   tabellen ovan.
+3. **Prova LT214 (3/1) och LT307/LT308 (4/2, L1)**: tänder något blir de fysiska signaler igen.
+4. **Växelblocken utan detektering**: S155, S164, S171, S172, S112b och delarna; kandidatingångarna står i
+   bedömningen ovan.
 5. Svenska beskedskoder för Signal10 (sju masttyper) när SE-rapporterna är inspelade.
 
-Studio visar läget i avvikelselistan: *Signaler med bänkadress* är 0, *Spårledningar utan verklig ingång* 38,
-*Virtuella signaler i JMRI utan utgång* 11, *Växeladresser ej uppmätta i fält* 49.
+Studio visar läget i avvikelselistan: *Signaler med bänkadress* är 0, *Spårledningar utan verklig ingång* 36,
+*Virtuella signaler i JMRI utan utgång* 13, *Växeladresser ej uppmätta i fält* 49.

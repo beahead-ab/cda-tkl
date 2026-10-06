@@ -13,13 +13,13 @@ import { detectionInventory } from '../src/studio/detection.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL('../' + p, import.meta.url)));
 const profile = read('profiles/charlottendal-network.json'), plant = read('profiles/simulator-network.json');
 const xml = parseLayoutXml(fs.readFileSync(new URL('../public/data/source/Cda60.xml', import.meta.url), 'utf8'));
-const VIRTUAL = ['3/1', '6/10', '6/5', '6/6', '6/7', '7/10', '7/5', '8/10', '8/5', '9/10', '9/5'];
+const VIRTUAL = ['3/1', '4/2', '6/10', '6/5', '6/6', '6/7', '7/10', '7/5', '8/10', '8/5', '9/10', '9/5', 'L1'];
 
 test('every TurnoutSignalMast binds to its stop output in Cda60.xml and every VirtualSignalMast carries no address', () => {
   const output = name => xml.turnouts.find(t => t.user === name || t.system === name);
   for (const mast of xml.signalMasts) {
     const s = profile.signals[mast.user]; assert.ok(s, mast.user);
-    if (mast.virtual) { assert.equal(s.virtual, true); assert.equal(s.address, undefined); continue; }
+    if (mast.virtual || s.virtual) { assert.equal(s.virtual, true); assert.equal(s.address, undefined); if (!mast.virtual) assert.match(s.provenance, /Ej använd/); continue; }
     const stop = mast.aspects.find(a => a.state === 'thrown'), out = output(stop.turnout);
     assert.equal(s.address, Number(out.system.slice(2)), mast.user); assert.equal(s.reportAddress, s.address); assert.equal(s.sourceOutput, out.system);
     // Körbeskeden lägger samma utgång CLOSED (3/6 skriver den som LT322 i stället för S3/6); 6/8 och 6/9 har bara stoppbeskedet bundet.
@@ -27,7 +27,7 @@ test('every TurnoutSignalMast binds to its stop output in Cda60.xml and every Vi
   }
   assert.deepEqual(Object.entries(profile.signals).filter(([, s]) => s.virtual).map(([n]) => n), VIRTUAL);
   assert.equal(profile.signals['1/1'].address, 200); assert.equal(profile.signals['3/2'].address, 306); assert.equal(profile.signals.Xv.address, 311);
-  assert.match(profile.signals.L1.provenance, /M11-Ej använd/); assert.match(profile.signals['4/2'].provenance, /M11-Ej använd/);
+  assert.match(profile.signals.L1.provenance, /LT308 .*Ej använd/); assert.match(profile.signals['4/2'].provenance, /LT307 .*Ej använd/);
   const orders = Object.values(profile.signals).filter(s => !s.virtual).map(s => s.address), turnouts = Object.values(profile.turnouts).map(t => t.address);
   assert.equal(new Set(orders).size, orders.length); assert.ok(orders.every(a => !turnouts.includes(a) && a !== profile.operatingControls.programming.relayAddress));
   assert.deepEqual(plant.signals, profile.signals, 'simulatorn delar signalbindningarna');
@@ -43,7 +43,7 @@ test('every detected block carries the LS inputs of its JMRI rule; undetected bl
     if (s.inputs.length > 1) assert.equal(b.logic, s.shape === 'all' ? 'all' : 'any'); else assert.equal(b.inputs, undefined);
   }
   assert.deepEqual(profile.blocks.SIA.inputs.map(i => i.address), [90, 100]); assert.equal(profile.blocks.SIA.logic, 'any'); assert.equal(profile.blocks.S100.address, 60);
-  assert.equal(sections.filter(s => !s.inputs.length).length, 38);
+  assert.equal(sections.filter(s => !s.inputs.length).length, 36); assert.equal(profile.blocks.S170.address, 199, 'SN1B-regeln sätter även S170');
   assert.deepEqual(plant.blocks, profile.blocks, 'simulatorn delar detektorbindningarna');
 });
 
