@@ -37,3 +37,20 @@ test('a user invited as rangerare logs in and reaches only the ranger\'s view an
   assert.equal(auth.users.summary().users.map(u=>u.role).join(','),'owner,ranger');
   fs.rmSync(dir,{recursive:true,force:true});
 });
+test('in local mode the computer itself needs no login, another computer on the network always does',async()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'cda-lan-'));
+  const auth=new UserAuth({env:{},root:dir,primary:true,stateDir:dir,mode:'local'});
+  await auth.users.createOwner({username:'casper',password:'hemligt1'});
+  const at=(address,method,p,cookie='')=>({method,url:p,headers:{cookie},socket:{remoteAddress:address},on(){}});
+  const url=p=>new URL('http://cda-tkl.local:8910'+p);
+  assert.equal(await auth.handle(at('127.0.0.1','POST','/api/turnout'),response(),url('/api/turnout')),false,'the Pi\'s own screen');
+  await assert.rejects(auth.handle(at('192.168.1.40','POST','/api/ranger/request'),response(),url('/api/ranger/request')),/Logga in/);
+  const page=response();assert.equal(await auth.handle(at('192.168.1.40','GET','/'),page,url('/')),true);assert.equal(page.status,303);
+  assert.equal(auth.view(at('192.168.1.40','GET','/')).setup.allowed,false);
+  const invited=auth.users.invite({username:'rangeraren',role:'ranger'});
+  const user=await auth.users.redeem({username:'rangeraren',code:invited.code,password:'hemligt2'});
+  const cookie='cda_session='+auth.users.issueSession(user.id).token;
+  assert.equal(await auth.handle(at('192.168.1.40','POST','/api/ranger/path',cookie),response(),url('/api/ranger/path')),false);
+  await assert.rejects(auth.handle(at('192.168.1.40','POST','/api/turnout',cookie),response(),url('/api/turnout')),/bara rangerarens vy/);
+  fs.rmSync(dir,{recursive:true,force:true});
+});
