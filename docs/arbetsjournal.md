@@ -1368,3 +1368,16 @@ växeltågvägar, växlarna i dem, och en 28 px streckad stump på varje dolt se
 börjar i en synlig ände (102 mot 2c, 131 mot 5b, 154, 161). Signaler, pluppar, etiketter
 och spärrmarkeringar utanför ritas inte, och vyn beskärs till den delen. Nedtoningen från
 0.64.0 finns kvar som regel men träffar inget längre.
+
+## 6 oktober 2026, 0.65.0: växelgator och Stream Deck för rangeraren
+
+Caspers beslut: inte tågvägar utan växelgator – en knapp lägger hela kedjan rakt ut till
+spåret (51: 115 och 114, och så vidare). `src/ranger-paths.mjs` söker varje gata i
+spårgrafen vid profilbygget från 3e, Spår 6, S119 (Lastspår 1–2 är bara 119) och S133a
+(Lastspår 3 är bara 133); bara egna växlar och gränsväxlar i tillbaka-läge får ingå.
+Kärnan (`layPath`) prövar alla växlar med manuella villkor innan någon order går, lägger
+varje kopplad växel en gång, och journalför `ranger-path`. Vyn har raden Växelgator ovanför
+Begär av TKL; decket får i rangerarens vy `buildRangerPages`: gator, begäran, egna växlar,
+med färg efter kärnans läge och håll-in för ångra/tillbaka. Alternativen vägdes: hela
+anläggningen nedtonad (nej, det var 0.64.0) och bara Stream Deck (ja, som komplement:
+en Pi i kioskläge på `/#ranger`).

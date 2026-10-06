@@ -81,6 +81,39 @@ konfigurationsändring, inte en kodändring.
    tillbaka en godkänd grupp (med samma spår- och signalvillkor) om rangeraren
    inte svarar.
 
+### Växelgator
+
+Rangerarens vardag är inte tågvägar utan att lägga växlarna "rakt ut" till ett
+spår. Varje växelgata är en knapp som lägger hela kedjan av egna växlar från en
+startpunkt till spåret, utan tågväg, lås eller signal; kärnan lägger dem med
+samma villkor som en manuell omläggning och vägrar hela gatan om en växel inte
+går (spår belagt, tågväg över, begäran ute). Lägena räknas ut ur spårgrafen vid
+profilbygget (`src/ranger-paths.mjs`, `profile.rangerPaths`):
+
+| Knapp | Växlar | Knapp | Växlar |
+|---|---|---|---|
+| V 51 | 103 T · 114 C · 115 T | H 52 | 132 C · 130 C · 127 C |
+| V 52 | 103 T · 114 C · 115 C | H 53 | 132 C · 130 T · 128 T |
+| V 53 | 103 T · 114 T · 111 C · 118 C | H 54 | 132 C · 130 T · 128 C |
+| V 54 | 103 T · 114 T · 111 T · 118 T | Last 3 | 133 T |
+| Last 1 | 119 T | Kolgård | 133 C · 144 C · 150 T |
+| Last 2 | 119 C | Lokstall | 133 C · 144 C · 150 C |
+| | | Skiva | 133 C · 144 C · 150 T · 155 C |
+
+Lastspår 1–2 nås bara via 119 från bangårdssidan och Lastspår 3 bara via 133 från
+144-sidan, så de gatorna börjar där. Vändskivan har en knapp "fram till skivan";
+lokstallsmodulen får manuella växlar.
+
+### Stream Deck
+
+I rangerarens vy visar ett anslutet Stream Deck rangerarens egna knappar i
+stället för panelens: först växelgatorna och de åtta begäran, sedan de egna
+växlarna en och en. En gata lyser grönt när den ligger, en begäran blinkar gult
+medan TKL svarar och lyser grönt när den ligger ute (håll in för att ångra eller
+lägga tillbaka), och en knapp som inte går är släckt. Med det kan rangeraren
+köra hela bangården från decket; skärmen behövs bara för att se varför något
+vägras. "Bara Stream Deck" är en Pi med webbläsaren på `/#ranger` i kioskläge.
+
 ### Växeltågvägar
 
 Alla dvärgar och huvuddvärgar inom rangerarens område – hela vägen ut till
@@ -132,8 +165,10 @@ till i profilen i steg 1.
    rangeraren återtar bara sina egna). Användarrollen **rangerare** (bjuds in
    under Inställningar → Användare): i webbdriften når den bara rangerarens
    vy och `/api/ranger/`; lokalt är `#ranger` öppet som panelen.
-4. **Driftsättning.** Rangerarens vy via Pi:ns nätverk (adressen `/#ranger`),
-   Stream Deck-knappar för begäran, och 3d ut åt höger efter provkörning.
+4. **Växelgator och Stream Deck** – klart i 0.65.0: tretton växelgator som
+   knappar i vyn och på decket, begäran och egna växlar på decket.
+5. **Driftsättning.** Rangerarens vy via Pi:ns nätverk (adressen `/#ranger`),
+   kioskläge, och 3d ut åt höger efter provkörning.
 
 ## Öppna frågor
 
