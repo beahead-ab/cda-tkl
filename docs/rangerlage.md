@@ -167,8 +167,11 @@ till i profilen i steg 1.
    vy och `/api/ranger/`; lokalt är `#ranger` öppet som panelen.
 4. **Växelgator och Stream Deck** – klart i 0.65.0: tretton växelgator som
    knappar i vyn och på decket, begäran och egna växlar på decket.
-5. **Driftsättning.** Rangerarens vy via Pi:ns nätverk (adressen `/#ranger`),
-   kioskläge, och 3d ut åt höger efter provkörning.
+5. **Rangerarens station** – klart i 0.66.0: TKL kan lyssna på anläggningens
+   nät (`CHARLOTTENDAL_LISTEN`, `CHARLOTTENDAL_LAN_HOSTS`), allt från en annan
+   dator loggar in, och installationen med `CDA_TKL_KIOSK_URL` gör en Pi till
+   station i kioskläge med Stream Deck (docs/raspberry-pi.md §10).
+6. **Kvar:** 3d ut åt höger (172) efter provkörning.
 
 ## Öppna frågor
 

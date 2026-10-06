@@ -49,3 +49,12 @@ test('public POST origin and Host are restricted to the configured HTTPS address
     assert.throws(() => guard({ ...req, headers: { ...req.headers, ...headers } }, 8910, env.CHARLOTTENDAL_PUBLIC_ORIGIN));
   }
 });
+test('other computers on the layout network reach TKL only by a configured name',async()=>{
+  const {guard}=await import('../src/http.mjs');
+  const req=host=>({method:'GET',headers:{host}});
+  assert.throws(()=>guard(req('cda-tkl.local:8910'),8910,'',''),/Otillåten värd/);
+  assert.doesNotThrow(()=>guard(req('cda-tkl.local:8910'),8910,'','cda-tkl.local:8910, 192.168.1.20:8910'));
+  assert.doesNotThrow(()=>guard(req('192.168.1.20:8910'),8910,'','cda-tkl.local:8910, 192.168.1.20:8910'));
+  assert.throws(()=>guard({method:'POST',headers:{host:'cda-tkl.local:8910',origin:'http://evil.example','content-type':'application/json'}},8910,'','cda-tkl.local:8910'),/ursprung/);
+  assert.throws(()=>guard(req('cda-tkl.local:8910'),8910,'https://tkl.example','cda-tkl.local:8910'),/Otillåten värd/,'the web deployment ignores LAN names');
+});

@@ -1381,3 +1381,14 @@ Begär av TKL; decket får i rangerarens vy `buildRangerPages`: gator, begäran,
 med färg efter kärnans läge och håll-in för ångra/tillbaka. Alternativen vägdes: hela
 anläggningen nedtonad (nej, det var 0.64.0) och bara Stream Deck (ja, som komplement:
 en Pi i kioskläge på `/#ranger`).
+
+## 6 oktober 2026, 0.66.0: rangerarens station
+
+Rangerarens skärm och Stream Deck måste tala med samma TKL som ställverket, så stationen kör
+ingen egen kärna. TKL kan nu lyssna på anläggningens nät (`CHARLOTTENDAL_LISTEN`) under namn
+som räknas upp i `CHARLOTTENDAL_LAN_HOSTS`; värdkontrollen släpper bara in dem, och allt som
+inte kommer från datorn själv måste logga in, även i lokalt läge (ägaren kan bara skapas
+från Pi:n själv). `CDA_TKL_KIOSK_URL` vid installationen gör en Pi till station: inga
+tjänster, Chromium i kioskläge på adressen, WebHID-policyn och
+`--unsafely-treat-insecure-origin-as-secure` för den, så att Stream Deck fungerar över
+vanlig http. Provat i enhetstester och syntaxkontroll; inte på två riktiga Pi.
