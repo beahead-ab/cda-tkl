@@ -119,13 +119,19 @@ till i profilen i steg 1.
    ute för rangeraren" med Dra tillbaka – inga flikar, ett klick, som fri-
    knapparna på originalpanelen. Händelsekolumnen visar begäran, svar och
    tillbakaläggning.
-3. **Rangerarens vy.** `#ranger` i samma app med egen spårplan över det egna
-   området, de nio knapparna, svar i statusraden, Lägg tillbaka, egna växlar
-   och växeltågvägar mellan egna signaler samt från 11–13 när gruppen ligger.
-   Serverbestämd rangerroll (ingen HTTP-order från rangerarens vy kan nå TKL:s
-   växlar).
-4. **Driftsättning.** Rangerarens vy via webbdriften och via Pi:ns nätverk,
-   inloggning för rangeraren, och Stream Deck-knappar för de nio begäran.
+3. **Rangerarens vy** – klart i 0.64.0. `#ranger` i samma app: samma spårplan
+   med allt utanför rangerarens område nedtonat, knappraden **Begär av TKL**
+   överst i nederraden (åtta knappar; en knapp som inte går att begära är
+   släckt med kärnans orsak som verktygstips), chipet i statusraden
+   ("Höger 11 begärd · väntar på TKL · Ångra", "Höger 11 ligger ute · Lägg
+   tillbaka"), egna växlar och gränsväxlar tillbaka med klick, och
+   växeltågvägar mellan egna signaler samt från 11–13 när gruppen ligger
+   (`/api/ranger/turnout`, `/api/ranger/route`, `/api/ranger/cancel`;
+   rangeraren återtar bara sina egna). Användarrollen **rangerare** (bjuds in
+   under Inställningar → Användare): i webbdriften når den bara rangerarens
+   vy och `/api/ranger/`; lokalt är `#ranger` öppet som panelen.
+4. **Driftsättning.** Rangerarens vy via Pi:ns nätverk (adressen `/#ranger`),
+   Stream Deck-knappar för begäran, och 3d ut åt höger efter provkörning.
 
 ## Öppna frågor
 

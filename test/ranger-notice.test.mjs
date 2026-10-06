@@ -21,8 +21,20 @@ test('a request waiting for TKL comes first with Godkänn and Neka; groups lying
 test('the status bar carries the answer buttons but sends nothing itself; the plan blinks the group yellow',()=>{
   const head=read('public/panel-head.js'),app=read('public/app.js'),css=read('public/panel-fixed.css');
   assert.match(head,/rangerNotice\(view\)/);assert.match(head,/onRanger\?\.\(action\)/);assert.doesNotMatch(head,/fetch\(/);
-  assert.match(app,/onRanger:a=>api\('ranger\/'\+a\.command/);assert.match(app,/panelHead\?\.rangerNotice\(rangerView\(state\.yard\)\)/);
+  assert.match(app,/onRanger:a=>api\('ranger\/'\+a\.command/);assert.match(app,/rangerNotice\(rangerMode\?rangerOwnView\(state\.yard\):rangerView\(state\.yard\)\)/);
   assert.match(app,/rangerPoints\.get\(t\.name\)/);
   assert.match(css,/@keyframes ranger-request/);assert.match(css,/\.rail\.ranger-laid/);assert.match(css,/prefers-reduced-motion:reduce\)\{#track-plan \.rail\.ranger-request\{animation:none\}/);
   assert.doesNotMatch(css,/yard-delegated|yard-authority/);
+});
+test('the ranger\'s own chip and bar: waiting with Ångra, lying out with Lägg tillbaka, buttons from the kernel\'s verdict',async()=>{
+  const {rangerOwnView,GROUP_SHORT}=await import('../public/ranger-page.js');
+  const open={id:'a',group:'right-11',state:'open',label:'Höger 11'},laid={id:'b',group:'left-11',state:'laid',label:'Vänster 11'};
+  assert.deepEqual(rangerOwnView({requests:[laid,open]}),{text:'Höger 11 begärd · väntar på TKL',tone:'warn',actions:[{label:'Ångra',command:'return',id:'a'}]});
+  assert.deepEqual(rangerOwnView({requests:[laid]}),{text:'Vänster 11 ligger ute',tone:'on',actions:[{label:'Lägg tillbaka',command:'return',id:'b'}]});
+  assert.equal(rangerOwnView(null).text,'');
+  assert.deepEqual(Object.keys(GROUP_SHORT),['left-11','left-12','left-13','right-11','right-12','right-13','six-154','3d-left']);
+  const app=read('public/app.js'),css=read('public/panel-fixed.css');
+  assert.match(app,/rangerMode\?'ranger\/turnout':'turnout'/);assert.match(app,/rangerMode\?'ranger\/route':'route'/);assert.match(app,/rangerMode\?'ranger\/cancel':'cancel'/);
+  assert.match(app,/operator:'ranger'/);assert.match(app,/authSession\?\.user\?\.role==='ranger'\|\|location\.hash==='#ranger'\)rangerMode=true/);
+  assert.match(css,/body\[data-role=ranger\] #track-plan \.rail\.outside/);assert.match(css,/body\[data-role=ranger\] #panel-bottom #trainmeet-timetable/);
 });

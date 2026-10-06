@@ -25,7 +25,7 @@ test('the kernel owns the ranger\'s requests over HTTP: request, approve, lock, 
     await post('ranger/request',{group:'nowhere'},400);
     const requested=(await post('ranger/request',{group:'right-11'})).state;
     const open=requested.yard.requests[0];assert.equal(open.state,'open');assert.equal(open.label,'Höger 11');
-    await post('ranger/return',{id:open.id},400);
+    await post('ranger/return',{id:'nowhere'},400);
     await post('ranger/answer',{id:open.id,approved:true});
     const laid=await until(async()=>{const s=await get();return s.turnouts.Vx131.position==='T'&&s.turnouts.Vx132.position==='T'&&s.yard.requests[0]?.state==='laid'&&s;});
     assert.match((await post('turnout',{name:'Vx131',position:'C'},400)).error,/Höger 11 ligger ute/);

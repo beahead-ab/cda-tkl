@@ -26,7 +26,7 @@ test('ägare, inbjudan med engångskod, inlösen, lösenordsbyte, sista ägaren 
   assert.match(invited.code, /^[A-Z2-9]{4}-[A-Z2-9]{4}$/); assert.ok([...invited.code.replace('-', '')].every(c => CODE_ALPHABET.includes(c)));
   assert.equal(invited.expires, clock + 7 * 86400000); assert.equal(invited.user.status, 'invited');
   assert.ok(!fs.readFileSync(store.file, 'utf8').includes(invited.code.replace('-', '')), 'koden lagras inte i klartext');
-  assert.throws(() => store.invite({ username: 'Benny' }), /finns redan/); assert.throws(() => store.invite({ username: 'eva', role: 'root' }), /ägare eller administratör/);
+  assert.throws(() => store.invite({ username: 'Benny' }), /finns redan/); assert.throws(() => store.invite({ username: 'eva', role: 'root' }), /ägare, administratör eller rangerare/);
   await assert.rejects(store.login({ username: 'benny', password: 'x' }), /Fel användarnamn eller lösenord/, 'inbjuden utan lösenord kan inte logga in');
   await assert.rejects(store.redeem({ username: 'benny', code: 'AAAA-AAAA', password: 'hemligt2' }), /Fel användarnamn eller kod/);
   const benny = await store.redeem({ username: 'BENNY', code: invited.code.toLowerCase().replace('-', ' '), password: 'hemligt2' });
