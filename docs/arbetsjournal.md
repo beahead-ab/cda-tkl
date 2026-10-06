@@ -1428,3 +1428,13 @@ utan drift, så de räknas som panelbesked i stället för att låsa AIS i vänt
 kommer. Resten är bedömningar för driftsättningen: Vx124 lämnas utanför planen, M11:s och M08:s
 kommentarer är skrivfel utan verkan, LS124 är en kandidat för S125a, och växelblocken utan regel har
 sina kandidatingångar modul för modul.
+
+## 6 oktober 2026, 0.68.0: B1 som signalrapport per profil
+
+Casper: "Bygg in B1 som signalrapport per profil." Profilen bär `signalReport.kind` (se eller switch) och
+en signal kan avvika med `reportKind`. Med switch läser kärnan växelrapporten B1 på signalens rapportadress
+som besked (CLOSED kör, THROWN stopp) och ignorerar E4; med se tvärtom. Simulatorn svarar i sin profils
+form, diagnostiken väntar rätt telegram, Mät objekt kräver B1 THROWN för stopp, aktiveringen kräver färsk
+B1-rapport och driftbindningarna har typen Signalrapport (standard för alla) plus fältet per signal.
+Grundprofilen står kvar på SE tills bänkprovet visar vad Signal10 sänder. Nytt prov
+test/signal-switch-report.test.mjs.

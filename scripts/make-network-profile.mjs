@@ -166,7 +166,9 @@ for(const line of Object.values(operatingControls.lines)) {
   if(!block||!blocks[block])throw Error('Linjeknappen saknar spåranknytning: '+line.id);
   line.blocks=[block];
 }
-const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:false,sourceHash:source.sourceHash,
+// signalReport.kind: hur signalerna rapporterar sitt besked. 'se' = SE-telegram (E4 09) med beskedskoder; 'switch' = växelrapporten
+// B1 på rapportadressen, som JMRI:s feedback MONITORING läste. Byts per profil eller per signal i driftbindningarna när mätningen visat vad som kommer.
+const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:false,sourceHash:source.sourceHash,signalReport:{kind:'se',provenance:'SE-telegram antaget ur det publicerade Signal10-CZ-exemplet; JMRI läste B1 (feedback MONITORING). Avgörs vid Mät objekt.'},
   description:'Utökad anläggningsmodell med källstyrda tågvägsval och signalriktningar. Fysiska MGP-bindningar återstår att verifiera.',
   transport:{host:'127.0.0.1',port:8912},staleMs:7000,commandTimeoutMs:6000,signalStepMs:300,
   turnouts,blocks,signals,routes,routeAlternatives,coupled,manualPolicies,yardBoundaries,operatingControls,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),

@@ -61,7 +61,8 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
   banan innan någon begäran eller växelgata byggs genom 172.
 - **Signalernas rapportadress** (0.67.0): varje fysisk mast beställs på sin huvudutgång ur XML
   (LT200–LT325) och antas rapportera sitt besked på samma adress. Kommer ingen SE-rapport vid Mät
-  objekt kan AIS inte återställas; då avgörs rapportadress eller switch-feedback (SV23) per Signal10.
+  objekt byts rapportformen till växelrapport (B1, som JMRI läste) under Driftbindningar → Signalrapport,
+  för alla signaler eller per signal (0.68.0).
 - **Tretton panelsignaler**: elva virtuella (3/1, 6/5–9/5, 6/6, 6/7, 6/10–9/10) utan utgång i JMRI
   samt 4/2 och L1 vars utgångar LT307/LT308 är märkta "Ej använd" på linje D utan drift. Kärnan
   bekräftar dem själv. Bedömning: panelbesked som förr; prova LT214 (3/1) och LT307/308 vid mätningen.
