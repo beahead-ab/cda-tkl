@@ -1,6 +1,8 @@
 # Genomgång av moduler, spårledningar, växlar och signaler mot MGP-modulerna
 
-6 oktober 2026, version 0.67.0, kompletterad med bedömningarna i 0.67.1. Underlag: Bennys `Cda60.xml` (källversion `c69a865ae9a8`), panelgeometrin,
+6 oktober 2026, version 0.67.0, kompletterad med bedömningarna i 0.67.1 och signalrapporten per profil i 0.68.0.
+**Publicerad: 0.68.0** (cda-tkl main `1036315`, `beahead-ab/cda-tkl-install` main `09b4ce4`); webbdriften tar den
+med Uppdatera nu under Inställningar → Uppdatering, eller `sudo charlottendal-update` på servern. Underlag: Bennys `Cda60.xml` (källversion `c69a865ae9a8`), panelgeometrin,
 driftprofilen och Studios register. XML:en är kvar som fallback och källa; ingenting i den har ändrats.
 
 Frågan var: hänger allt ihop mot de riktiga LocoNet-modulerna? Svaret före genomgången var nej på två
