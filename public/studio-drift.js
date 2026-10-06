@@ -3,7 +3,7 @@
 import {esc,$,mono,pill,kv,card,fmt,stamp,measuredPill} from './studio-ui.js';
 let ctx=null;export function init(c){ctx=c;}
 const model=()=>ctx.model(),state=()=>ctx.state;
-const post=async(url,payload={})=>{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if([401,428].includes(r.status)){location.assign('/login');throw Error('Inloggning krävs.');}const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);return answer;};
+const post=async(url,payload={})=>{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if([401,428].includes(r.status)){location.assign('/login?next='+encodeURIComponent(location.pathname+location.hash));throw Error('Inloggning krävs.');}const answer=await r.json();if(!r.ok)throw Error(answer.error||r.statusText);return answer;};
 const get=async url=>{const r=await fetch(url);if(!r.ok)throw Error(`${url}: ${r.status}`);return r.json();};
 let poll=null;export function stopPoll(){clearInterval(poll);poll=null;}
 const startPoll=(fn,ms)=>{stopPoll();poll=setInterval(()=>{if(document.hidden)return;fn().catch(()=>{});},ms);};

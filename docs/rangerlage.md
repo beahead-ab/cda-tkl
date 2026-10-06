@@ -99,7 +99,7 @@ till i profilen i steg 1.
 
 ## Byggsteg
 
-1. **Konfiguration och kärna** – klart i 0.61.0. `rangerRequests` i profilen
+1. **Konfiguration och kärna** – klart i 0.62.0. `rangerRequests` i profilen
    (`src/ranger-requests.mjs`: åtta grupper med ut- och tillbaka-lägen ur
    växeltågvägarna), `yardBoundaries` utökat till alla åtta gränsväxlar med
    tillbaka-läget som rangerarens enda läge, och `yardArea` med de elva egna

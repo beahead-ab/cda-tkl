@@ -1,6 +1,6 @@
 # Rangerbangårdens manöverrätt
 
-**Ersatt i 0.61.0 av [rangerarläget](rangerlage.md).** Överlämningen av området finns
+**Ersatt i 0.62.0 av [rangerarläget](rangerlage.md).** Överlämningen av området finns
 inte längre; rangeraren har ett eget område och begär växelgrupper av TKL. Texten nedan
 beskriver modellen 0.40.0–0.60.0 och behålls som historik.
 

@@ -7,7 +7,7 @@ import http from 'node:http';
 import net from 'node:net';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { initializePassword } from '../src/password-auth.mjs';
+import { UserStore } from '../src/users.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 async function freePort() {
@@ -19,9 +19,10 @@ const stop = child => child.exitCode === null && child.signalCode === null ? new
 
 test('password login protects both processes, requires change, revokes sessions and throttles guesses', { timeout: 40000 }, async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cda-password-'));
-  const file = path.join(dir, 'auth.json'), initial = 'temporary-test-only', changed = 'test42';
+  // CHARLOTTENDAL_AUTH_FILE points at the old shared-password file; users.json lives beside it (src/users.mjs).
+  const file = path.join(dir, 'users.json'), initial = 'temporary-test-only', changed = 'test42';
   const ports = await Promise.all([freePort(), freePort(), freePort()]);
-  const env = { ...process.env, CHARLOTTENDAL_AUTH_MODE: 'password', CHARLOTTENDAL_AUTH_FILE: file,
+  const env = { ...process.env, CHARLOTTENDAL_AUTH_MODE: 'password', CHARLOTTENDAL_AUTH_FILE: path.join(dir, 'auth.json'),
     CHARLOTTENDAL_PUBLIC_ORIGIN: 'https://cda-tkl.trainmeet.app', CHARLOTTENDAL_STATE_DIR: path.join(dir, 'state'),
     CHARLOTTENDAL_PORT: String(ports[0]), CHARLOTTENDAL_SIM_PORT: String(ports[1]), CHARLOTTENDAL_WIRE_PORT: String(ports[2]) };
   let children = [], output = '';
@@ -45,8 +46,8 @@ test('password login protects both processes, requires change, revokes sessions 
     } throw Error('Startup failed');
   };
   try {
-    await initializePassword(file, initial);
-    await assert.rejects(initializePassword(file, 'cannot overwrite this password'));
+    const store = new UserStore(file); await store.createOwner({ username: 'admin', password: initial, mustChange: true });
+    await assert.rejects(store.createOwner({ username: 'admin', password: 'cannot add a second owner this way' }));
     assert.equal(fs.statSync(file).mode & 0o777, 0o640);
     assert.ok(!fs.readFileSync(file, 'utf8').includes(initial));
     launch('src/simulator.mjs'); let backend = launch('src/server.mjs');
@@ -62,9 +63,9 @@ test('password login protects both processes, requires change, revokes sessions 
     for(const resource of ['/api/recordings','/api/recordings/00000000-0000-0000-0000-000000000000/download'])assert.equal((await request(ports[0],resource)).status,401);
     for(const command of ['start','stop'])assert.equal((await request(ports[0],'/api/recordings/'+command,{})).status,401);
     for(const command of ['destinations','yard-authority','panel-reset','programming','line-block','clock','trainmeet/configure','trainmeet/pair','trainmeet/refresh','trainmeet/disconnect','bindings/save','bindings/activate','train-information/follow','train-information/unfollow'])assert.equal((await request(ports[0],'/api/'+command,{})).status,401);
-    const login = () => request(ports[0], '/api/auth/login', { password: initial });
-    assert.equal((await request(ports[0], '/api/auth/login', { password: 'wrong' })).status, 401);
-    assert.equal((await request(ports[0], '/api/auth/login', { password: initial }, null, null)).status, 403);
+    const login = () => request(ports[0], '/api/auth/login', { username: 'admin', password: initial });
+    assert.equal((await request(ports[0], '/api/auth/login', { username: 'admin', password: 'wrong' })).status, 401);
+    assert.equal((await request(ports[0], '/api/auth/login', { username: 'admin', password: initial }, null, null)).status, 403);
     const pending = await login(); assert.equal(pending.status, 200);
     assert.equal(JSON.parse(pending.body).mustChange, true);
     const setCookie = pending.headers['set-cookie'][0], oldCookie = setCookie.split(';')[0];
@@ -113,7 +114,7 @@ test('password login protects both processes, requires change, revokes sessions 
     assert.equal((await login()).status, 429);
     const stored = JSON.parse(fs.readFileSync(file)); stored.attempts = [];
     fs.writeFileSync(file, JSON.stringify(stored));
-    const later = await request(ports[0], '/api/auth/login', { password: changed }); assert.equal(later.status, 200);
+    const later = await request(ports[0], '/api/auth/login', { username: 'admin', password: changed }); assert.equal(later.status, 200);
     const laterCookie = later.headers['set-cookie'][0].split(';')[0];
     const expired = JSON.parse(fs.readFileSync(file)); expired.sessions.forEach(s => s.expires = 0); fs.writeFileSync(file, JSON.stringify(expired));
     for (const port of ports.slice(0, 2)) assert.equal((await request(port, '/api/state', undefined, laterCookie)).status, 401);
