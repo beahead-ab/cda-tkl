@@ -113,3 +113,26 @@ test('the ranger lays own turnouts freely, boundaries only back, and never TKL\'
     assert.equal(y.engine.yard.requestStatus('right-11').allowed,false);
   }
 });
+test('the ranger lays shunt routes inside the area and over a laid group, takes back only its own, never a main route',()=>{
+  const r=rig();
+  assert.throws(()=>r.engine.request('htvCu','htvSpIIIA',null,{operator:'ranger'}),/bara växeltågvägar/);
+  assert.throws(()=>r.engine.request('tvv6/6','tvv3/10',null,{operator:'ranger'}),/kräver begäran Höger 11/);
+  assert.throws(()=>r.engine.request('tvv2/5','tvv3/5',null,{operator:'ranger'}),/utanför rangerarens område/);
+  const inside=r.engine.request('tvv6/6','tvv7/10',null,{operator:'ranger'});r.advance(6500);assert.equal(inside.state,'active',inside.reason);assert.equal(inside.operator,'ranger');
+  assert.deepEqual(r.engine.routeTargets('tvv6/6','shunt','ranger').map(t=>t.id).sort(),['tvv7/10'],'only the laid route to take back while it lies');
+  r.engine.cancel(inside.id,{operator:'ranger'});
+  r.drain();r.advance(500);assert.equal(r.engine.routes.length,0);
+  const tkl=r.engine.request('tvv6/6','tvv8/10');r.advance(6500);assert.equal(tkl.state,'active',tkl.reason);
+  assert.throws(()=>r.engine.cancel(tkl.id,{operator:'ranger'}),/TKL:s/);
+  assert.throws(()=>r.engine.request('tvv6/6','tvv8/10',null,{operator:'ranger'}),/TKL:s/);
+  r.engine.cancel(tkl.id);r.drain();r.advance(500);
+  const request=r.engine.yard.request('right-11');r.engine.yard.answer(request.id,true);r.drain();r.advance(500);
+  assert.ok(r.engine.routeTargets('tvv6/6','shunt','ranger').some(t=>t.id==='tvv3/10'),'the group lying out opens the route to 11');
+  const over=r.engine.request('tvv6/6','tvv3/10',null,{operator:'ranger'});r.advance(6500);assert.equal(over.state,'active',over.reason);
+  assert.throws(()=>r.engine.yard.return(request.id,'ranger'),/Återta tågväg/);
+  r.engine.cancel(over.id,{operator:'ranger'});r.drain();r.advance(500);
+  r.engine.yard.return(request.id,'ranger');r.drain();r.advance(500);assert.equal(r.engine.yard.requests.length,0);
+  const open=r.engine.yard.request('left-11');r.engine.yard.return(open.id,'ranger');
+  assert.equal(r.engine.yard.requests.length,0);assert.match(r.engine.journal[0].message,/återkallad av rangeraren/);
+  assert.equal(r.engine.snapshot().manualRanger.Vx114.allowed,true);assert.equal('Vx120' in r.engine.snapshot().manualRanger,false);
+});

@@ -1344,3 +1344,17 @@ knappar och växlar ur `state.yard`; `panel-head.js` ritar och skickar inget sj�
 Provkört i webbläsaren mot simulatorn: begäran → gul grupp och chip → Godkänn → 132 T,
 131 T, 126 C, 123 C → Dra tillbaka → 132 C, 131 C, chipet borta, tre rader i
 händelsekolumnen. Rangerarens egen vy är steg 3.
+
+## 6 oktober 2026, 0.64.0: rangerarläget, steg 3 – rangerarens vy
+
+`/#ranger` är samma app och samma spårplan: allt utanför rangerarens område är nedtonat,
+tidtabellen och Drift är borta, nederraden har knappraden **Begär av TKL** (en knapp per
+grupp, släckt med kärnans orsak som verktygstips när den inte går att begära) och
+händelserna. Statusraden säger "Höger 11 begärd · väntar på TKL · Ångra" och sedan
+"Höger 11 ligger ute · Lägg tillbaka". Rangerarens egna manövrer går genom
+`/api/ranger/turnout|route|cancel`: egna växlar och gränsväxlar tillbaka, växeltågvägar
+inom området och från 11–13 när gruppen ligger (`rangerRouteReason` namnger annars
+begäran som krävs), och bara egna tågvägar återtas. Rollen **rangerare** i `users.mjs`:
+i webbdriften bara rangerarens vy och `/api/ranger/`; lokalt är `#ranger` öppet som
+panelen. Provkört i webbläsaren mot simulatorn hela vägen: begäran → godkänd via API →
+6/6 → 3/10 som rangerare → Lägg tillbaka vägrad medan vägen ligger → återtagen → tillbaka.
