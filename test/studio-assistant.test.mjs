@@ -66,14 +66,14 @@ test('utan nyckel är chatten inte ansluten; vägran och API-fel blir svenska me
 test('genomgången utan nyckel ger de deterministiska korten ur källorna', async () => {
   const items = reviewItems(sources, rules);
   const count = t => items.filter(i => i.type === t).length;
-  assert.deepEqual([count('förslag'), count('saknas'), count('beslut'), count('underlag')], [7, 3, 5, 5]);
+  assert.deepEqual([count('förslag'), count('saknas'), count('beslut'), count('underlag')], [6, 3, 6, 5]);
   const x1 = items.find(i => i.id === 'x-X1'); assert.equal(x1.action, 'draft'); assert.deepEqual(x1.rules.map(r => r.id), ['follow:Vx140+Vx143', 'follow:Vx141+Vx142']); assert.deepEqual(x1.rules.flatMap(r => r.problems), []); assert.deepEqual(x1.replaces, ['follow:Vx140+Vx142']);
   assert.match(x1.text, /137 tågvägar/); assert.equal(items.find(i => i.id === 'manual-groups').related.length, 5); assert.equal(items.find(i => i.id === 'crossings').count, 4);
   assert.ok(items.every(i => CARD_TYPES.includes(i.type) && i.title && i.text));
   const storage = tempStorage(), review = new StudioReview({ sources, assistant: new StudioAssistant({ key: '' }), storage, activeRules: () => rules, baseProfile: () => profile, now: () => 777 });
   assert.equal(review.view().last, null); assert.equal(review.view().assistant.configured, false);
   const v = await review.run();
-  assert.equal(v.last.mode, 'deterministisk'); assert.equal(v.running, false); assert.equal(v.last.at, 777); assert.equal(v.last.cards.length, 20); assert.deepEqual(v.last.counts, { förslag: 7, saknas: 3, beslut: 5, underlag: 5 });
+  assert.equal(v.last.mode, 'deterministisk'); assert.equal(v.running, false); assert.equal(v.last.at, 777); assert.equal(v.last.cards.length, 20); assert.deepEqual(v.last.counts, { förslag: 6, saknas: 3, beslut: 6, underlag: 5 });
   assert.equal(storage.load('studio-review.json', null).cards.length, 20);
   assert.equal(new StudioReview({ sources, assistant: new StudioAssistant({ key: '' }), storage, activeRules: () => rules, baseProfile: () => profile }).view().last.at, 777, 'senaste genomgången läses in vid start');
 });
@@ -89,7 +89,7 @@ test('genomgången med AI ordnar korten, bedömer dem och validerar extra försl
   assert.deepEqual(last.cards.slice(0, 3).map(c => c.id), ['x-X1', 'manual-groups', 'turntable']); assert.equal(last.cards[0].assessment, 'Ritningen är entydig.'); assert.equal(last.cards[2].type, 'beslut'); assert.equal(last.cards[2].typeFromSources, 'underlag');
   const extra = last.cards.filter(c => c.origin === 'ai'); assert.equal(extra.length, 2); assert.equal(extra[0].id, 'ai:1'); assert.deepEqual(extra[0].objects, ['Vx100']); assert.equal(extra[0].action, 'draft');
   assert.deepEqual(extra[0].rules[0].problems, ['Växeln Vx999 finns inte']); assert.equal(extra[1].type, 'underlag'); assert.equal(extra[1].action, 'none');
-  assert.equal(last.cards.length, 22); assert.deepEqual(last.counts, { förslag: 7 + 1, saknas: 3, beslut: 5 + 1, underlag: 5 - 1 + 1 });
+  assert.equal(last.cards.length, 22); assert.deepEqual(last.counts, { förslag: 6 + 1, saknas: 3, beslut: 6 + 1, underlag: 5 - 1 + 1 });
   assert.ok(last.cards.filter(c => c.priority === null).every((c, i, a) => i === 0 || a[i - 1].id !== c.id), 'oprioriterade kort behåller källornas ordning');
 });
 

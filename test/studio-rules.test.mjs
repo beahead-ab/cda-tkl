@@ -71,7 +71,7 @@ test('förslaget för X1 och X2 byter paren och visar effekten utan att röra ta
   const au1a = routeDiff(profile, p.coupled).find(d => d.label === 'Au → Spår 1a');
   assert.deepEqual(Object.fromEntries(Object.entries(au1a.after).filter(([k]) => /Vx14/.test(k))), { Vx140: 'C', Vx141: 'C', Vx142: 'C', Vx143: 'C' });
   assert.deepEqual(profile.coupled.Vx140, ['Vx140', 'Vx142'], 'profilen är orörd');
-  const s = studioRules(sources); assert.equal(s.compiledIdentical, true); assert.equal(s.rules.length, 69); assert.equal(s.proposals.length, 4); assert.ok(s.detectionProposals.length > 150); assert.equal(s.source, 'profiles/charlottendal-rules.json');
+  const s = studioRules(sources); assert.equal(s.compiledIdentical, true); assert.equal(s.rules.length, 69); assert.equal(s.proposals.length, 4); assert.equal(s.detectionProposals.length, 0, 'profilen bär redan källans ingångar'); assert.equal(s.source, 'profiles/charlottendal-rules.json');
 });
 
 test('detekteringsregler ur XML: förslag per spårledning, flera ingångar i kärnan och i simulatorn', async () => {
@@ -82,20 +82,23 @@ test('detekteringsregler ur XML: förslag per spårledning, flera ingångar i k�
   const { sensorReport, decode } = await import('../src/protocol.mjs');
   const { toRules } = await import('../src/studio/assistant.mjs');
   const field = JSON.parse(fs.readFileSync(new URL('../profiles/simulator-network.json', import.meta.url), 'utf8'));
-  const proposals = proposeDetectionRules(detectionInventory(sources).sections, rules);
-  assert.equal(proposals.length, 159, 'en per spårledning med ingångar i källan');
+  assert.equal(proposeDetectionRules(detectionInventory(sources).sections, rules).length, 0, 'profilen bär redan källans LS-ingångar, så inget föreslås');
+  // En spårledning som fortfarande har bänkadress får sitt förslag ur källan.
+  const unbound = structuredClone(profile); unbound.blocks.SIA = { address: 3093, activeMeansOccupied: true, sourceSensor: 'slS1a', provenance: 'Bench detector binding.' };
+  const proposals = proposeDetectionRules(detectionInventory({ ...sources, profile: unbound }).sections, rules);
+  assert.equal(proposals.length, 1, 'en per spårledning utan källans ingångar');
   const sia = proposals.find(p => p.object === 'SIA');
   assert.deepEqual(sia.inputs.map(i => [i.system, i.address]), [['LS90', 90], ['LS100', 100]]); assert.equal(sia.logic, 'any'); assert.equal(sia.owner, 'rule'); assert.equal(sia.status, 'proposal');
   assert.deepEqual(validateRules([...rules, ...proposals.map(p => ({ ...p, status: 'active' }))], names), []);
   assert.match(explainRule(sia), /SIA är belagd när någon av LS90 \(adress 90\) och LS100 \(adress 100\) är aktiv/);
-  const all = { ...sia, status: 'active', logic: 'all' }, applied = applyRules(profile, [...rules, { ...sia, status: 'active' }], field);
+  const all = { ...sia, status: 'active', logic: 'all' }, applied = applyRules(unbound, [...rules, { ...sia, status: 'active' }], field);
   assert.deepEqual(applied.profile.blocks.SIA.inputs, [{ address: 90, activeMeansOccupied: true }, { address: 100, activeMeansOccupied: true }]); assert.equal(applied.profile.blocks.SIA.address, 90); assert.equal(applied.profile.blocks.SIA.logic, 'any');
   assert.equal(applied.field.blocks.SIA.address, 90); assert.deepEqual(applied.changes.fragments.filter(f => f.kind === 'detection'), [{ kind: 'detection', object: 'SIA', before: '3093', after: '90|100' }]);
-  assert.equal(profile.blocks.SIA.address, 3093, 'profilen i minnet är orörd');
+  assert.equal(unbound.blocks.SIA.address, 3093, 'profilen i minnet är orörd');
   const e = new Engine(applied.profile); e.connection(true);
   e.receive(sensorReport(90, true)); assert.equal(e.blocks.SIA.occupied, true, 'någon av: en aktiv ingång räcker');
   e.receive(sensorReport(100, false)); assert.equal(e.blocks.SIA.occupied, true); e.receive(sensorReport(90, false)); assert.equal(e.blocks.SIA.occupied, false);
-  const e2 = new Engine(applyRules(profile, [...rules, all], field).profile); e2.connection(true);
+  const e2 = new Engine(applyRules(unbound, [...rules, all], field).profile); e2.connection(true);
   e2.receive(sensorReport(90, true)); assert.equal(e2.blocks.SIA.occupied, null, 'alla av: okänd tills båda rapporterat'); e2.receive(sensorReport(100, true)); assert.equal(e2.blocks.SIA.occupied, true); e2.receive(sensorReport(100, false)); assert.equal(e2.blocks.SIA.occupied, false);
   const f = new Field(applied.field), frames = []; f.on('frame', b => frames.push(b)); f.setBlock('SIA', true);
   assert.deepEqual(frames.map(b => JSON.stringify(decode(b))), [JSON.stringify({ kind: 'sensor', address: 90, active: true }), JSON.stringify({ kind: 'sensor', address: 100, active: true })]);

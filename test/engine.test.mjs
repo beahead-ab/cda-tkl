@@ -10,6 +10,7 @@ import { decode, switchOrder, switchReport, sensorReport, signalReport } from '.
 import { Topology } from '../src/topology.mjs';
 const profile = JSON.parse(fs.readFileSync(new URL('../profiles/charlottendal.json', import.meta.url)));
 const fieldProfile = JSON.parse(fs.readFileSync(new URL('../profiles/simulator.json', import.meta.url)));
+const signalAddresses = new Set(Object.values(profile.signals).map(s => s.address));
 function rig(storage) {
   let now = 100000; const commands = [], wire = [], field = new Field(fieldProfile, { now: () => now });
   const engine = new Engine(profile, { now: () => now, storage, send: bytes => { commands.push(decode(bytes)); wire.push(['order', bytes]); } });
@@ -26,7 +27,7 @@ test('startup is unknown; command echo cannot establish turnout position', () =>
 test('complete route waits for reports, clears downstream first, and same endpoints cancel', () => {
   const r = rig(); const route = r.request('cu-2b'); assert.equal(route.state, 'setting'); r.drain(); r.advance(4000);
   assert.equal(route.state, 'active');
-  const go = r.commands.filter(d => d.position === 'C' && d.address >= 1501 && d.address < 1600).map(d => d.address);
+  const go = r.commands.filter(d => d.position === 'C' && signalAddresses.has(d.address)).map(d => d.address);
   assert.deepEqual(go, [profile.signals['2/7'].address, profile.signals['1/5'].address]);
   assert.throws(() => r.engine.manual('Vx121', 'T'), /låst/);
   r.request('cu-2b'); r.drain(); r.advance(200); assert.equal(r.engine.routes.length, 0);
@@ -125,7 +126,7 @@ test('failed durable reservation issues no turnout or GO command', () => {
   const storage = { load: (n, fallback) => fallback, event() {}, save() { throw Error('disk full'); } };
   const r = rig(); r.engine.storage = storage;
   const before = r.commands.length; assert.throws(() => r.request('2b-2c'), /spara/);
-  assert.ok(r.commands.slice(before).every(c => c.address >= 1501 && c.position === 'T')); assert.equal(r.engine.routes.length, 1); assert.ok(r.engine.storageFault);
+  assert.ok(r.commands.slice(before).every(c => signalAddresses.has(c.address) && c.position === 'T')); assert.equal(r.engine.routes.length, 1); assert.ok(r.engine.storageFault);
 });
 test('topology reserves turnout blocks, expands couplings and respects block exclusion', () => {
   const p = JSON.parse(fs.readFileSync(new URL('../public/data/panel.json', import.meta.url))), t = new Topology(p);

@@ -7,7 +7,7 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 - Ren ställverkssida med fullskärm, manöverknappar och en nederrad med klockförankrad tidtabell och händelsekolumn under spårplanen, som skalas till bredden (0.43.0). Planen är harmoniserad med nederradens färger och typografi och har en statusrad över det övre bandet (0.44.0). En [meny](panel-och-verktyg.md) samlar TrainMeet, import, utseende, anslutningar och händelser. Signal- och kompisinformation visas vid behov; aktiva stopp och fel är fortsatt synliga.
 
 - Originalpanelen med förladdade originalikoner, större träffytor och tågväg som tänds i färdriktningen. Samma start och mål återtar vägen.
-- 210 huvudtågvägar och 130 växeltågvägar med etablerings- och passageprov. 49 växlar, 197 körbara layoutblock och 66 signaler. Låsta växlar kan inte läggas om manuellt. Kompisväxlar följer med; omläggning kontrollerar även kompisens spår utanför färdvägen.
+- 210 huvudtågvägar och 130 växeltågvägar med etablerings- och passageprov. 49 växlar, 197 körbara layoutblock och 66 signaler, sedan 0.67.0 med adresserna ur Cda60.xml (växlarnas LT, signalernas huvudutgång, spårledningarnas LS-ingångar; 11 virtuella signaler och 38 spårledningar utan ingång i källan). Låsta växlar kan inte läggas om manuellt. Kompisväxlar följer med; omläggning kontrollerar även kompisens spår utanför färdvägen.
 - Separat simulator över telegramgränsen, inklusive två samtidiga tåg, beläggning, avbrott och uteblivna återrapporter. TKL läser inte simulatorns interna tillstånd.
 - Beständiga lås, spårspärrar, AIS, nödåtertagning, sju linjespärrar, programmeringsspår samt lokal-/fjärrläge. Läget fjärr innebär ännu ingen anslutning till ett fjärrsystem.
 - Tåginformation för 197 block och sju inkommande fält. Valbar nummerföljning kopplas uttryckligen till en klar tågväg och följer ordnade återrapporter; vid osäkerhet pausas den för kontroll.
@@ -41,7 +41,7 @@ Version 0.25.0 klarade serverns XML-/operations- och syntaxkontroller, 171 enhet
 
 | Del | Vad som återstår | Underlag som behövs |
 |---|---|---|
-| Verklig MGP/LocoBuffer | Seriell gateway och virtuellt portprov är byggda. Anslutning vid banan, rätt adresser och fysisk verifiering i båda riktningarna återstår. | Buffertmodell, inställningar, moduler/firmware och inspelad fysisk trafik. |
+| Verklig MGP/LocoBuffer | Seriell gateway och virtuellt portprov är byggda. Sedan 0.67.0 bär profilen signalernas utgångar och spårledningarnas ingångar ur Cda60.xml ([genomgången](genomgang-mgp-2026-10-06.md)); anslutning vid banan, mätning av varje adress och Signal10:s rapportadress återstår. | Buffertmodell, inställningar, moduler/firmware och inspelad fysisk trafik. |
 | Svenska signalbesked | Fulla huvud-/försignalbesked, signalberoenden och fysisk beskedsmappning. Nuvarande kör/stopp använder en uttryckligt preliminär CZ-profil. | Verifierade svenska beskedskoder och de saknade exakta ikondefinitionerna där originalunderlaget inte räcker. |
 | Återstående driftfunktioner | Vändskiva, återstående automatik och frigivning i delar av en tågväg. | Källbundna regler och specificerade ersättningar för saknade skript. |
 | Oklara tågvägar | Tre motsägande huvudtågvägsregler, 15 undantagna växelpar och 20 NX-definitioner utan körbar koppling behöver avgöras. Dessa antal överlappar och ska inte summeras. | Rättelse eller beslutat undantag för de konkreta källoklarheterna. |
@@ -59,6 +59,17 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
 - **Vx172** (M11-165-3, "Ej använd") och 173–174 ingår inte i någon tågväg. 3d slutar vid
   slutsignalen IIIdo (stoppbock i JMRI); 172 är inte kopplad till 3d i ritningen. Bekräfta på
   banan innan någon begäran eller växelgata byggs genom 172.
+- **Signalernas rapportadress** (0.67.0): varje fysisk mast beställs på sin huvudutgång ur XML
+  (LT200–LT325) och antas rapportera sitt besked på samma adress. Kommer ingen SE-rapport vid Mät
+  objekt kan AIS inte återställas; då avgörs rapportadress eller switch-feedback (SV23) per Signal10.
+- **Elva virtuella signaler** (3/1, 6/5–9/5, 6/6, 6/7, 6/10–9/10) har ingen utgång i JMRI och
+  bekräftas av kärnan själv. Beslut: panelbesked som förr, eller fysiska dvärgar.
+- **4/2 och L1** pekar på LT307 och LT308 som är märkta "M11-Ej använd". Ingen tågväg använder dem,
+  men AIS kräver bekräftat stopp från dem.
+- **Växelblock utan detektering**: S155, S164, S170–172, S96b, S112b (och delar) har sensor men ingen
+  regel i källan och står kvar på bänkadress. Kandidatingångarna står i genomgången.
+- **Vx124** finns i källan men inte i planen; **M11:s kommentarer** säger basadress 165 där adresserna
+  är 170–174; **M08:s ingångar** har användarnamn förskjutna ett steg mot systemnumren.
 
 **Avsiktligt vilande:** Friställa spår och den extra lilla växellåsindikator som Casper bad oss avvakta med.
 
