@@ -50,11 +50,11 @@ test('avvikelselistan reproducerar planens kända luckor och de nya fynden', () 
   const rows = deviations(sources);
   const counts = Object.fromEntries(rows.map(r => [r.id, r.count]));
   assert.deepEqual(counts, { 'signal-bench': 66, 'block-bench': 197, 'turnout-unmeasured': 49, 'signal-relations': 44, 'nx-without-route': 20, 'shunt-excluded': 15,
-    'manual-groups': 5, 'contradicting-rules': 4, 'yard-boundaries': 3, 'crossing-v4': 4, 'swedish-aspects': 7, 'vx95-vx96': 1, 'xml-only-turnouts': 1, 'turntable': 1,
+    'manual-groups': 5, 'contradicting-rules': 4, 'yard-boundaries': 6, 'crossing-v4': 4, 'swedish-aspects': 7, 'vx95-vx96': 1, 'xml-only-turnouts': 1, 'turntable': 1,
     'programming-relay': 1, 'companion-pairs': 2, 'undetected-blocks': 21, 'unbound-inputs': 87 });
   assert.equal(row(rows, 'block-bench').note, '132 bänkadresser');
   assert.equal(row(rows, 'contradicting-rules').note, '3 huvud + 1 växling');
-  assert.deepEqual(row(rows, 'yard-boundaries').items, ['Vx112', 'Vx131', 'Vx154']);
+  assert.deepEqual(row(rows, 'yard-boundaries').items, ['Vx102', 'Vx112', 'Vx131', 'Vx132', 'Vx144', 'Vx154'], 'the pairs whose button guards replace the group rule; 103 and 164 keep their own');
   assert.deepEqual(row(rows, 'companion-pairs').items, ['Vx140 + Vx142', 'Vx162 + Vx165']);
   assert.equal(signalRelationCoverage(sources).total, 117);
   assert.equal(rows.filter(r => r.blocking).length, 6);

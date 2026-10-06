@@ -1289,3 +1289,21 @@ aktiveras med driftbindningarnas villkor. Riktiga Claude-anrop och riktiga MGP-k
 inte provade; simulatorn svarar som tolv kort med påhittade identiteter. Mergat som
 cda-tkl#12. Simulatorn i webbdriften kan inte läsa TKL:s katalog och följer därför inte
 en aktiverad fältprofil; grundprofilen gäller där tills tjänstefilerna ger den en kopia.
+
+## 6 oktober 2026, 0.61.0: rangerarläget, steg 1
+
+Beslutat med Casper på en bild ritad på panelen (`docs/rangerlage-omraden.png`,
+`docs/rangerlage.md`): rangeraren äger 3e, godsbangården, Spår 6, Lastspår 3, lokstallet
+och 3d; spår 11–13 är TKL:s; in till 11–13 och ut från Spår 6 och 3d sker på begäran som
+TKL godkänner, och rangeraren lägger själv tillbaka men aldrig ut. Steg 1 är
+konfigurationen och kärnan: `rangerRequests` ur profilens växeltågvägar
+(`src/ranger-requests.mjs`), åtta gränsväxlar i `yardBoundaries` med tillbaka-läget som
+rangerarens enda, `yardArea` med elva egna växlar, och begäranobjektet i
+`src/yard-control.mjs` med journal, API och Stream Deck-knapp. Ligger en tågväg över
+gruppen får rangeraren svaret direkt och ingen begäran når TKL; en öppen begäran som en
+tågväg hinner före besvaras av kärnan. Överlämningen från 0.40.0 är borta. Två fel ur
+0.60.0 på vägen: Studio-reglerna lästes in även för den gamla provprofilen (servern
+startade inte med `CHARLOTTENDAL_PROFILE=legacy`) och `applyRules` förutsatte en
+skyddstabell som den anläggningen saknar. 3d ut åt höger väntar på provkörningen: 172:s
+koppling mot 3d finns inte i panelen. TKL:s vy (gul grupp och Godkänn/Neka i statusraden)
+och rangerarens vy är steg 2 och 3.

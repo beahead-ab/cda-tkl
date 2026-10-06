@@ -7,6 +7,7 @@ import { compileManualPolicies } from '../src/manual-policy.mjs';
 import { compileOperatingControls } from '../src/operating-policy.mjs';
 import { compileYardBoundaries } from '../src/yard-boundaries.mjs';
 import { compileYardArea,yardTurnoutNames } from '../src/yard-area.mjs';
+import { compileRangerRequests } from '../src/ranger-requests.mjs';
 import { parseLayoutXml, moduleOf } from '../src/studio/sources.mjs';
 const read = file => JSON.parse(fs.readFileSync(new URL('../' + file, import.meta.url)));
 const write = (file, data) => {
@@ -130,7 +131,9 @@ for (const route of allRoutes) for (let i=0;i<route.boundaries.length;i++) {
   if(!list.some(o=>JSON.stringify(o)===JSON.stringify(option))) list.push(option);
 }
 const yardBoundaries=compileYardBoundaries(panel,source);
-const manualPolicies=compileManualPolicies(source,{turnouts,blocks,coupled,protection,yardBoundaries,yardTurnouts:yardTurnoutNames});
+// The kernel's request model replaces the old handover sensor for the ranger's own
+// turnouts and for the boundaries a request lays.
+const manualPolicies=compileManualPolicies(source,{turnouts,blocks,coupled,protection,yardBoundaries,yardTurnouts:[...yardTurnoutNames,...Object.keys(yardBoundaries)]});
 for(const line of Object.values(operatingControls.lines)) {
   const block=topology.segments[topology.buttons[line.button]?.segment]?.b;
   if(!block||!blocks[block])throw Error('Linjeknappen saknar spåranknytning: '+line.id);
@@ -142,6 +145,7 @@ const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:
   turnouts,blocks,signals,routes,routeAlternatives,coupled,manualPolicies,yardBoundaries,operatingControls,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),
   sourcePolicy:[...source.mainRoutePolicies,...source.shuntRoutePolicies],excluded,releasePolicy:'whole-route-after-ordered-passage-and-stop-feedback'};
 profile.yardArea=compileYardArea(panel,profile);
+profile.rangerRequests=compileRangerRequests(profile);
 // Simulerade kort för SV2 i simulatorn: ett per modulkommentar M00–M11 i Cda60.xml. Identiteterna är påhittade
 // (tillverkare 13 = DIY) tills riktiga kort svarat på Discover; adresserna 16–27 ligger i LocoNet PE:s intervall för andra enheter.
 const xml=parseLayoutXml(fs.readFileSync(new URL('../public/data/source/Cda60.xml',import.meta.url),'utf8'));

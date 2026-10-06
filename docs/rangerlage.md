@@ -99,13 +99,19 @@ till i profilen i steg 1.
 
 ## Byggsteg
 
-1. **Konfiguration och kärna.** `rangerRequests` i profilen (grupper med ut- och
-   tillbaka-lägen, knappnamn, tillhörande växeltågvägar) och nytt `yardArea`
-   med de tolv egna växlarna. Begäranobjekt i `src/yard-control.mjs`
-   (öppen → godkänd/nekad → lagd → tillbaka), kontrollerna i steg 1 i flödet,
-   envägsregeln i `boundaryCommandReason`, låsning mot TKL:s manövrer och
-   tågvägar, journal och händelser. Saknade växeltågvägar. Enhetstester.
-   Den gamla knappen **Lämna över rangerbangården** tas bort.
+1. **Konfiguration och kärna** – klart i 0.61.0. `rangerRequests` i profilen
+   (`src/ranger-requests.mjs`: åtta grupper med ut- och tillbaka-lägen ur
+   växeltågvägarna), `yardBoundaries` utökat till alla åtta gränsväxlar med
+   tillbaka-läget som rangerarens enda läge, och `yardArea` med de elva egna
+   växlarna (103 är gränsväxel: tillbaka-läget T mot bangården lägger
+   rangeraren fritt). Begäranobjektet i `src/yard-control.mjs`
+   (öppen → lagd → tillbaka, eller nekad), kontrollerna i steg 1 i flödet,
+   låsning mot TKL:s manövrer och tågvägar, journalraderna `ranger-request`,
+   `ranger-approved`, `ranger-denied`, `ranger-returned` och
+   `ranger-withdrawn`, API:t `/api/ranger/request|answer|return|withdraw`
+   och Stream Deck-knappen Rangerbegäran (kort tryck godkänner, långt nekar).
+   Den gamla knappen **Lämna över rangerbangården** är borta. 3d ut åt höger
+   väntar på provkörningen (172:s koppling i panelen).
 2. **TKL:s vy.** Gul markering av gruppen i spårplanen vid öppen begäran,
    Godkänn/Neka i Drift-fliken, statusraden, Dra tillbaka på lagd grupp.
 3. **Rangerarens vy.** `#ranger` i samma app med egen spårplan över det egna
