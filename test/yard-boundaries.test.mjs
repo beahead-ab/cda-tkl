@@ -2,12 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {compileYardBoundaries,boundaryCommandReason} from '../src/yard-boundaries.mjs';
-import {correctPanel} from '../public/panel-corrections.js';
 import {Engine} from '../src/engine.mjs';
 import {Field} from '../src/field.mjs';
 import {decode} from '../src/protocol.mjs';
 const read=f=>JSON.parse(fs.readFileSync(new URL('../'+f,import.meta.url)));
-const imported=read('public/data/panel.json'),panel=correctPanel(imported),source=read('public/data/operations-source.json');
+const panel=read('public/data/panel.json'),source=read('public/data/operations-source.json');
 const profile=read('profiles/charlottendal-network.json'),plant=read('profiles/simulator-network.json');
 function rig(){
   let now=100000;const queue=[],commands=[];
@@ -19,7 +18,7 @@ function rig(){
   engine.connection(true);field.allReports();drain();
   return {engine,field,commands,drain,advance};
 }
-const closed={Vx102:'C',Vx103:'T',Vx112:'C',Vx131:'C',Vx132:'C',Vx144:'C',Vx154:'C',Vx164:'T',Vx172:'T'};
+const closed={Vx102:'C',Vx103:'T',Vx112:'C',Vx131:'C',Vx132:'C',Vx144:'C',Vx154:'C',Vx164:'T'};
 test('every reviewed boundary has one position that keeps the yard and TKL apart in the source topology',()=>{
   const rules=compileYardBoundaries(panel,source);
   assert.deepEqual(Object.fromEntries(Object.entries(rules).map(([n,r])=>[n,r.rangerPositions[0]])),closed);
@@ -29,13 +28,6 @@ test('every reviewed boundary has one position that keeps the yard and TKL apart
     assert.equal(boundaryCommandReason(rules,[name],position,'tkl'),null,'TKL may both open and close');
   }
   assert.deepEqual(profile.yardBoundaries,rules);
-});
-test('the reviewed 3d–172 connection is joined only where the geometry meets, and only once',()=>{
-  assert.equal(imported.turnouts.TO47.cc,null);assert.equal(panel.turnouts.TO47.cc,'T26');
-  assert.deepEqual([panel.segs.find(s=>s.id==='T26').c1,panel.segs.find(s=>s.id==='T26').t1],['TO47','TURNOUT_C']);
-  assert.throws(()=>correctPanel(panel),/stämmer inte/,'a panel that already has it must be looked at again');
-  const moved=structuredClone(imported);moved.turnouts.TO47.ccx+=10;assert.throws(()=>correctPanel(moved),/stämmer inte/);
-  assert.throws(()=>compileYardBoundaries(imported,source),/anslutning/,'without the correction 172 is not a boundary');
 });
 test('changed XML source or turnout ports require a new boundary review',()=>{
   assert.throws(()=>compileYardBoundaries(panel,{...source,sourceHash:'different'}),/underlag/);

@@ -1393,11 +1393,11 @@ tjänster, Chromium i kioskläge på adressen, WebHID-policyn och
 `--unsafely-treat-insecure-origin-as-secure` för den, så att Stream Deck fungerar över
 vanlig http. Provat i enhetstester och syntaxkontroll; inte på två riktiga Pi.
 
-## 6 oktober 2026, 0.66.1: 3d till stickspåret
+## 6 oktober 2026, 0.66.1 och 0.66.2: 3d och 172
 
-Casper bekräftade förbindelsen 3d–172. I panelfilen möts 3d och 172:s gren C i samma punkt
-utan koppling, och 172:s stam går till ett stickspår med stoppbock, så "3d ut åt höger" är en
-sågtand. Beslut: stanna vid stoppbocken tills vidare. `public/panel-corrections.js` kopplar
-3d till 172 efter kontroll av geometrin, bara för rangerarens område (med kopplingen i
-tågvägssökningen ändrades 50 tågvägar, så den används inte där). 172 är gränsväxel
-(rangeraren T, TKL även C mot 170) och växelgatan "3d stick" lägger 172 T.
+0.66.1 kopplade 3d till 172:s gren C i rangerarens graf (spåren möts i panelen men är inte
+kopplade) och gjorde 172 till gränsväxel med växelgatan "3d stick" mot det som såg ut som ett
+stickspår med stoppbock. Casper vet inte hur 172 sitter på banan, och det jag tagit för
+stoppbocken är slutsignalen IIIdo, som står bredvid 3d där spåret leder in i växeln. 0.66.2
+drar tillbaka 0.66.1 helt: 3d slutar vid IIIdo, 172 är TKL:s och ingen växelgata eller
+begäran går genom den förrän 172 är kontrollerad på banan.

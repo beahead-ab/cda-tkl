@@ -7,9 +7,9 @@ const sources = loadSources(), { profile } = sources, rules = rulesFromProfile(p
 const names = { turnouts: new Set(Object.keys(profile.turnouts)), blocks: new Set(Object.keys(profile.blocks)), signals: new Set(Object.keys(profile.signals)), lines: new Set(Object.keys(profile.operatingControls.lines)) };
 const count = (t, trig) => rules.filter(r => r.type === t && (!trig || r.trigger === trig)).length;
 
-test('dagens profil blir 70 regler: de tre typer kärnan verkställer plus härledda signalbesked och vägövergångar', () => {
-  assert.equal(rules.length, 70);
-  assert.deepEqual([count('follow'), count('authority'), count('condition', 'manual'), count('condition', 'line'), count('condition', 'programming'), count('aspect'), count('crossing'), count('detection')], [7, 9, 35, 7, 1, 7, 4, 0]);
+test('dagens profil blir 69 regler: de tre typer kärnan verkställer plus härledda signalbesked och vägövergångar', () => {
+  assert.equal(rules.length, 69);
+  assert.deepEqual([count('follow'), count('authority'), count('condition', 'manual'), count('condition', 'line'), count('condition', 'programming'), count('aspect'), count('crossing'), count('detection')], [7, 8, 35, 7, 1, 7, 4, 0]);
   assert.ok(rules.filter(r => r.type === 'aspect').every(r => r.owner === 'bindings' && r.status === 'unresolved' && r.signals.length));
   assert.deepEqual(rules.find(r => r.id === 'crossing:V4').blocks, ['SLI', 'SLII']); assert.equal(rules.find(r => r.id === 'crossing:V1').conditions.length, sources.indications.indicators[0].conditions.length);
   assert.deepEqual(RULE_TYPES, ['follow', 'forbid', 'authority', 'condition', 'detection', 'aspect', 'crossing']);
@@ -71,7 +71,7 @@ test('förslaget för X1 och X2 byter paren och visar effekten utan att röra ta
   const au1a = routeDiff(profile, p.coupled).find(d => d.label === 'Au → Spår 1a');
   assert.deepEqual(Object.fromEntries(Object.entries(au1a.after).filter(([k]) => /Vx14/.test(k))), { Vx140: 'C', Vx141: 'C', Vx142: 'C', Vx143: 'C' });
   assert.deepEqual(profile.coupled.Vx140, ['Vx140', 'Vx142'], 'profilen är orörd');
-  const s = studioRules(sources); assert.equal(s.compiledIdentical, true); assert.equal(s.rules.length, 70); assert.equal(s.proposals.length, 4); assert.ok(s.detectionProposals.length > 150); assert.equal(s.source, 'profiles/charlottendal-rules.json');
+  const s = studioRules(sources); assert.equal(s.compiledIdentical, true); assert.equal(s.rules.length, 69); assert.equal(s.proposals.length, 4); assert.ok(s.detectionProposals.length > 150); assert.equal(s.source, 'profiles/charlottendal-rules.json');
 });
 
 test('detekteringsregler ur XML: förslag per spårledning, flera ingångar i kärnan och i simulatorn', async () => {

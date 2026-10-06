@@ -16,7 +16,6 @@ const write = (file, data) => {
   if (process.argv.includes('--check')) { if (fs.readFileSync(target, 'utf8') !== content) throw Error('Generated profile is stale: ' + file); }
   else fs.writeFileSync(target, content);
 };
-import { correctPanel } from '../public/panel-corrections.js';
 const panel = read('public/data/panel.json'), admin = read('public/data/admin.json'), source = read('public/data/operations-source.json');
 const topology = new Topology(panel), policy = new RoutePolicy(source), routes = [], routeAlternatives = [], excluded = [];
 attachSourceEndpoints(topology, source);
@@ -132,10 +131,7 @@ for (const route of allRoutes) for (let i=0;i<route.boundaries.length;i++) {
   const list=protection[boundary.mast].alternatives;
   if(!list.some(o=>JSON.stringify(o)===JSON.stringify(option))) list.push(option);
 }
-// The ranger's area sees the reviewed connections JMRI drew but did not join (3d–172); the
-// route search keeps the imported graph, so no route changes with them.
-const rangerPanel=correctPanel(panel);
-const yardBoundaries=compileYardBoundaries(rangerPanel,source);
+const yardBoundaries=compileYardBoundaries(panel,source);
 // The kernel's request model replaces the old handover sensor for the ranger's own
 // turnouts and for the boundaries a request lays.
 const manualPolicies=compileManualPolicies(source,{turnouts,blocks,coupled,protection,yardBoundaries,yardTurnouts:[...yardTurnoutNames,...Object.keys(yardBoundaries)]});
@@ -149,9 +145,9 @@ const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:
   transport:{host:'127.0.0.1',port:8912},staleMs:7000,commandTimeoutMs:6000,signalStepMs:300,
   turnouts,blocks,signals,routes,routeAlternatives,coupled,manualPolicies,yardBoundaries,operatingControls,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),
   sourcePolicy:[...source.mainRoutePolicies,...source.shuntRoutePolicies],excluded,releasePolicy:'whole-route-after-ordered-passage-and-stop-feedback'};
-profile.yardArea=compileYardArea(rangerPanel,profile);
+profile.yardArea=compileYardArea(panel,profile);
 profile.rangerRequests=compileRangerRequests(profile);
-profile.rangerPaths=compileRangerPaths(rangerPanel,profile);
+profile.rangerPaths=compileRangerPaths(panel,profile);
 // Simulerade kort för SV2 i simulatorn: ett per modulkommentar M00–M11 i Cda60.xml. Identiteterna är påhittade
 // (tillverkare 13 = DIY) tills riktiga kort svarat på Discover; adresserna 16–27 ligger i LocoNet PE:s intervall för andra enheter.
 const xml=parseLayoutXml(fs.readFileSync(new URL('../public/data/source/Cda60.xml',import.meta.url),'utf8'));
