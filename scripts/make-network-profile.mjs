@@ -10,6 +10,7 @@ import { compileYardArea,yardTurnoutNames } from '../src/yard-area.mjs';
 import { compileRangerRequests } from '../src/ranger-requests.mjs';
 import { compileRangerPaths } from '../src/ranger-paths.mjs';
 import { parseLayoutXml, moduleOf } from '../src/studio/sources.mjs';
+import { detectionInventory } from '../src/studio/detection.mjs';
 const read = file => JSON.parse(fs.readFileSync(new URL('../' + file, import.meta.url)));
 const write = (file, data) => {
   const target = new URL('../' + file, import.meta.url), content = JSON.stringify(data, null, 2) + '\n';
@@ -99,11 +100,23 @@ const turnouts = Object.fromEntries(names.map(name => {
   return [name, { address: Number(item.sys.slice(2)), inverted: item.inverted==='true', source:item.sys,
     block: topology.turnouts[name].block, provenance:'JMRI source address; hardware feedback not measured' }];
 }));
+const xml=parseLayoutXml(fs.readFileSync(new URL('../public/data/source/Cda60.xml',import.meta.url),'utf8'));
+// Spårledningar: LS-ingångarna ur Cda60.xml, alltså logixreglerna som sätter varje slS-sensor. En spårledning med flera
+// ingångar bär dem som inputs med JMRI:s logik (någon av/alla). Utan ingång i källan står bänkadressen 3001+ kvar.
 const sensors = [...new Set(panel.lblocks.filter(b=>b.user!=='frame').map(b=>b.sensor || '@'+b.user))].sort();
-const blocks = Object.fromEntries(panel.lblocks.filter(b=>b.user!=='frame').map(b=>[b.user,{
+const benchBlocks = Object.fromEntries(panel.lblocks.filter(b=>b.user!=='frame').map(b=>[b.user,{
   address: 3001+sensors.indexOf(b.sensor || '@'+b.user), activeMeansOccupied:true, sourceSensor:b.sensor || null,
   provenance:'Bench detector binding. Shared source sensors share one address; not a commissioned physical mapping.'
 }]));
+const SHAPE_NOTE={noSensor:'ingen sensor',noRule:'sensor utan logixregel',turnoutPart:'växelberoende del utan egen ingång'};
+const blocks={};
+for(const s of detectionInventory({profile:{blocks:benchBlocks},xml}).sections){
+  const bench=benchBlocks[s.name];
+  if(!s.inputs.length){blocks[s.name]={...bench,provenance:`Bänkadress: ingen ingång i Cda60.xml (${SHAPE_NOTE[s.shape]||s.shape}). Ej uppmätt.`};continue;}
+  const inputs=s.inputs.map(ls=>({address:Number(ls.slice(2)),activeMeansOccupied:true}));
+  blocks[s.name]={address:inputs[0].address,activeMeansOccupied:true,...(inputs.length>1?{inputs,logic:s.shape==='all'?'all':'any'}:{}),sourceSensor:s.sourceSensor,sourceInputs:s.inputs,
+    provenance:'LS-nummer ur Cda60.xml som adress, polaritet antagen (aktiv = belagd). Ej uppmätt.'+(s.shape==='turnoutPart'?' Växelberoende del i JMRI, förenklad till ingången.':'')};
+}
 for (const r of allRoutes) for (const b of r.blocks) if (!blocks[b]) throw Error('Unbound block '+b);
 for (const route of allRoutes) {
   const addresses = [...new Set(route.blocks.map(b => blocks[b].address))];
@@ -115,10 +128,20 @@ for (const route of allRoutes) {
     return { signal:boundary.mast, index };
   });
 }
-const signals = Object.fromEntries(panel.micons.map(m=>m.mast).sort().map((name,i)=>[name,{
-  address:1501+i,reportAddress:1501+i,stopCodes:[0],goCodes:[8,18],sourceType:panel.micons.find(m=>m.mast===name).type,
-  provenance:'Explicit bench binding with provisional Signal10-CZ codes. Swedish aspect mapping not commissioned.'
-}]));
+// Signaler: masten i Cda60.xml. En TurnoutSignalMast lägger sin huvudutgång THROWN för stopp (Stop/Sh0/Unlit) och CLOSED för
+// alla körbesked; det är samma binära kontrakt som kärnan skickar. Utgången blir order- och rapportadress. En VirtualSignalMast
+// har ingen utgång: beskedet finns bara i panelen, som i JMRI, och kärnan bekräftar det själv.
+const output=name=>xml.turnouts.find(t=>t.user===name||t.system===name);
+const signals = Object.fromEntries(panel.micons.map(m=>m.mast).sort().map(name=>{
+  const mast=xml.signalMasts.find(m=>m.user===name),sourceType=panel.micons.find(m=>m.mast===name).type;
+  if(!mast) throw Error('Signalmast saknas i Cda60.xml: '+name);
+  if(mast.virtual) return [name,{virtual:true,sourceType,provenance:'VirtualSignalMast i Cda60.xml: ingen utgång. Beskedet visas bara i panelen, som i JMRI.'}];
+  const stop=mast.aspects.find(a=>a.state==='thrown'),out=stop&&output(stop.turnout);
+  if(!out||!/^LT\d+$/.test(out.system)) throw Error('Signalens stopputgång saknas i Cda60.xml: '+name);
+  const address=Number(out.system.slice(2)),unused=/ej använd/i.test(out.comment);
+  return [name,{address,reportAddress:address,stopCodes:[0],goCodes:[8,18],sourceType,sourceOutput:out.system,sourceOutputName:out.user||null,
+    provenance:`Utgången ${out.system}${out.user?' ('+out.user+')':''} ur Cda60.xml: ${stop.name} = THROWN, kör = CLOSED. Rapportadressen antas lika med orderadressen och beskedskoderna är provisoriska Signal10-CZ-koder. Ej uppmätt.`+(unused?` Utgången är märkt "${out.comment}" i källan.`:'')}];
+}));
 const coupled = Object.fromEntries(names.map(name=>[name,Object.keys(topology.expand({[name]:'C'})).sort()]));
 const protection=Object.fromEntries(Object.keys(signals).map(name=>[name,{alternatives:[]}]));
 for (const route of allRoutes) for (let i=0;i<route.boundaries.length;i++) {
@@ -150,7 +173,6 @@ profile.rangerRequests=compileRangerRequests(profile);
 profile.rangerPaths=compileRangerPaths(panel,profile);
 // Simulerade kort för SV2 i simulatorn: ett per modulkommentar M00–M11 i Cda60.xml. Identiteterna är påhittade
 // (tillverkare 13 = DIY) tills riktiga kort svarat på Discover; adresserna 16–27 ligger i LocoNet PE:s intervall för andra enheter.
-const xml=parseLayoutXml(fs.readFileSync(new URL('../public/data/source/Cda60.xml',import.meta.url),'utf8'));
 const moduleNames=[...new Set([...xml.turnouts,...xml.sensors].map(t=>moduleOf(t.comment)?.name).filter(Boolean))].sort();
 const modules=moduleNames.map((name,i)=>{const outputs=xml.turnouts.filter(t=>moduleOf(t.comment)?.name===name),signalOutputs=outputs.filter(t=>/signal/i.test(t.comment)).length,serial=1000+i;
   return {name,address:16+i,manufacturer:13,developer:1,product:signalOutputs?10:5,serial,sv:{1:2,2:1,3:serial&0xff,4:serial>>8},outputs:outputs.length,inputs:xml.sensors.filter(s=>moduleOf(s.comment)?.name===name).length,simulated:true};});

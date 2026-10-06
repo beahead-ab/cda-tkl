@@ -1401,3 +1401,19 @@ stickspår med stoppbock. Casper vet inte hur 172 sitter på banan, och det jag 
 stoppbocken är slutsignalen IIIdo, som står bredvid 3d där spåret leder in i växeln. 0.66.2
 drar tillbaka 0.66.1 helt: 3d slutar vid IIIdo, 172 är TKL:s och ingen växelgata eller
 begäran går genom den förrän 172 är kontrollerad på banan.
+
+## 6 oktober 2026, 0.67.0: genomgång mot MGP-modulerna
+
+Casper bad om en genomgång av alla moduler, spårledningar, växlar och signaler mot de riktiga
+LocoNet-modulerna, med de mappningar som måste göras och Bennys XML kvar som fallback. Resultatet
+står i [genomgången](genomgang-mgp-2026-10-06.md). Två saker hade stoppat driftsättningen helt:
+signalerna och spårledningarna hade bara bänkadresser (1501+, 3001+) utan koppling till någon utgång
+eller ingång, och elva master är virtuella i JMRI utan utgång – infarten till Spår VI klareras av en
+av dem, och AIS kräver bekräftat stopp från alla signaler. 0.67.0 binder de 55 fysiska masterna till sin
+huvudutgång ur XML (stopp = THROWN, kör = CLOSED, samma kontrakt kärnan redan skickar), spårledningarna
+till LS-ingångarna ur logixreglerna (20 med flera ingångar, 38 utan ingång står kvar på bänkadress),
+och låter kärnan bekräfta de virtuella signalerna själv. Simulatorn följer samma adresser; driftbindningarna
+får en rad per fysisk detektor. Växlarna var redan bundna ur XML. Rapportadress, polaritet och koder är
+antaganden tills Mät objekt gjort dem uppmätta; de öppna frågorna (4/2 och L1 på "Ej använd"-utgångar,
+Vx124, M11:s kommentarbas, M08:s namnförskjutning, växelblock utan regel) står i status.md.
+Provat: 415 enhetsprov, 10 processhelhetsprov, verify:operations.

@@ -63,7 +63,7 @@ test('kortinventeringen samlar Discover-svaren, läser SV1–4 och kopplar kort 
   const summary = mgpSummary(sources, buildRegistry(sources), dup.cards, { sections: detectionInventory(sources).sections });
   const m01 = summary.find(m => m.id === 'M01'); assert.equal(m01.card.serial, 1001); assert.equal(m01.decoder, 'Signal10 (antaget)'); assert.equal(m01.counts.outputs, 21); assert.equal(m01.counts.inputs, 15);
   assert.ok(m01.outputs.some(o => o.object === 'Vx95' && o.kind === 'turnout' && o.address === profile.turnouts.Vx95.address));
-  assert.ok(m01.outputs.some(o => o.object === '1/1' && o.kind === 'signal' && o.xmlAddress === 200 && o.address === 1501));
+  assert.ok(m01.outputs.some(o => o.object === '1/1' && o.kind === 'signal' && o.xmlAddress === 200 && o.address === 200));
   assert.ok(m01.inputs.some(i => i.blocks.length));
 });
 
@@ -85,11 +85,11 @@ test('mätningen kräver AIS, en verklig rapport efter ordern och en bekräftels
   v = m.probe({ kind: 'block', name: 'S121' }, profile); assert.equal(v.pending.order, null);
   field.reportBlock('S121'); assert.equal(m.view(profile).pending.report, null, 'den periodiska rapporten räknas inte');
   field.setBlock('S121', true); assert.equal(m.view(profile).pending.report.decoded.active, true); m.confirm({ kind: 'block', name: 'S121', by: 'Casper' }, profile);
-  assert.equal(Object.keys(m.measured(profile)).length, 3); assert.equal(m.missing(profile).length, 49 + 66 + 197, 'bänkmätningar räknas inte i fält');
+  assert.equal(Object.keys(m.measured(profile)).length, 3); assert.equal(m.missing(profile).length, 49 + 55 + 197, 'bänkmätningar räknas inte i fält');
   // Adressen byts: mätningen gäller inte längre. Fältmätning räknas för drift.
   const moved = structuredClone(profile); moved.turnouts.Vx100.address = 900; assert.equal(m.item(moved, 'turnout', 'Vx100').current, false); assert.equal(Object.keys(m.measured(moved)).length, 2);
   const hw = new Measurements({ storage, send: () => true, now: () => now, mode: () => 'hardware' }); hw.data.items['turnout:Vx100'].mode = 'hardware';
-  assert.equal(hw.item(profile, 'turnout', 'Vx100').field, true); assert.equal(hw.missing(profile).length, 49 + 66 + 197 - 1);
+  assert.equal(hw.item(profile, 'turnout', 'Vx100').field, true); assert.equal(hw.missing(profile).length, 49 + 55 + 197 - 1);
   const measured = hw.measured(profile), reg = buildRegistry(sources, measured); assert.equal(reg.turnouts[0].measured.by, 'Casper'); assert.deepEqual(reg.counts.measured, { field: 1, bench: 2 });
   assert.equal(deviations(sources, measured).find(d => d.id === 'turnout-unmeasured').count, 48);
   m.remove({ kind: 'block', name: 'S121' }, profile); assert.equal(Object.keys(m.view(profile).items).length, 2); assert.throws(() => m.remove({ kind: 'block', name: 'S121' }, profile), /Ingen mätning/);

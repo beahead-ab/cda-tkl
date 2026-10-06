@@ -18,7 +18,7 @@ Det gör att admin kan rensas när modulen är klar. Funktioner som inte behövs
 
 **Objekt.** Driftprofilen har 49 växlar, 66 signaler, 197 spårledningsblock, 340 tågvägar och 3 spårkorsningar (X1–X3). Vägindikeringarna V1–V4 finns som visning.
 
-**Fysiska adresser.** Bara växlarnas 49 adresser är verkliga; de är LT-numren ur JMRI-filen, ej uppmätta. Signalernas adresser (1501–1566) och spårledningarnas (3001–3132) är påhittade bänkadresser för simulatorn (`scripts/make-network-profile.mjs:101,116`). Ingen detektor är knuten till en verklig LocoNet-ingång.
+**Fysiska adresser.** Vid planens tillkomst var bara växlarnas 49 adresser verkliga (LT-numren ur JMRI-filen, ej uppmätta); signalernas (1501–1566) och spårledningarnas (3001–3132) var bänkadresser för simulatorn. Sedan 0.67.0 bär profilen även signalernas huvudutgång (LT200–LT325) och spårledningarnas LS-ingångar ur XML:en, se [genomgången](genomgang-mgp-2026-10-06.md); 11 virtuella signaler och 38 spårledningar utan ingång i källan återstår. Allt är fortfarande ej uppmätt.
 
 **Det som redan finns i XML:en men inte används.** Cda60.xml innehåller 184 LocoNet-ingångar (LS), varav 156 med modulkommentar, till exempel `LS176 "M09-92-2, SX"`, och 149 signalutgångar (LT200–LT467) med kommentar, till exempel `LT200 "M01-signal 1/1, Hsi5"`. Modulreferenserna täcker M00–M11. Det är det bästa befintliga underlaget för den fysiska kopplingen, men det är JMRI:s bild och ersätter inte MGP:s egen konfiguration.
 
@@ -205,7 +205,7 @@ I dag ger TKL varje signal kör eller stopp som en växelorder till en adress oc
 
 Planen för signaler:
 
-- **Adresser.** De 66 signalernas bänkadresser ersätts med utgångarna ur XML:en som förslag, med status "ej uppmätt", och verifieras i driftsättningsläget.
+- **Adresser.** De 66 signalernas bänkadresser ersätts med utgångarna ur XML:en som förslag, med status "ej uppmätt", och verifieras i driftsättningsläget. (Genomfört i grundprofilen i 0.67.0; förslaget återstår bara för signaler som en driftbindning flyttat.)
 - **Besked.** De svenska beskedskoderna saknas. Regeltypen `aspect` håller dem per masttyp och syns i objektkortet.
 - **Tågvägar.** Skyddssignaler och ordningen signalerna klareras i ändras inte; de syns i objektkortet för varje signal och tågväg, så att en ny regel kan prövas mot dem.
 - **Ingen skyddssträcka.** Beslutat 2 oktober: en tågväg ska kunna ligga direkt bakom en annan, så slutsignalen för den ena kan vara startsignal för nästa. Se [objektmodell.md](objektmodell.md).
@@ -218,7 +218,7 @@ Det här är redan känt och blir listans första innehåll:
 
 | Avvikelse | Antal | Löses av |
 |---|---|---|
-| Signaler med bänkadress | 66 | bindning ur XML + mätning |
+| Signaler med bänkadress | 66 (0 sedan 0.67.0; 11 virtuella utan utgång) | bindning ur XML + mätning |
 | Spårledningar utan verklig ingång | 197 block, 132 adresser | `detection` + mätning |
 | Växeladresser ej uppmätta | 49 | driftsättningsläget |
 | Manuella växelgrupper olösta | 5 | `follow`/`condition` |
