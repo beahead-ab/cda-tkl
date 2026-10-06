@@ -112,8 +112,13 @@ till i profilen i steg 1.
    och Stream Deck-knappen Rangerbegäran (kort tryck godkänner, långt nekar).
    Den gamla knappen **Lämna över rangerbangården** är borta. 3d ut åt höger
    väntar på provkörningen (172:s koppling i panelen).
-2. **TKL:s vy.** Gul markering av gruppen i spårplanen vid öppen begäran,
-   Godkänn/Neka i Drift-fliken, statusraden, Dra tillbaka på lagd grupp.
+2. **TKL:s vy** – klart i 0.63.0. Gruppens växlar blinkar gult i spårplanen
+   medan begäran väntar och lyser gult medan den ligger ute
+   (`public/ranger-notice.js`). Statusraden bredvid CHARLOTTENDAL visar
+   "Rangeraren begär Höger 11" med Godkänn och Neka, sedan "Höger 11 ligger
+   ute för rangeraren" med Dra tillbaka – inga flikar, ett klick, som fri-
+   knapparna på originalpanelen. Händelsekolumnen visar begäran, svar och
+   tillbakaläggning.
 3. **Rangerarens vy.** `#ranger` i samma app med egen spårplan över det egna
    området, de nio knapparna, svar i statusraden, Lägg tillbaka, egna växlar
    och växeltågvägar mellan egna signaler samt från 11–13 när gruppen ligger.
