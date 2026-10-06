@@ -1392,3 +1392,12 @@ från Pi:n själv). `CDA_TKL_KIOSK_URL` vid installationen gör en Pi till stati
 tjänster, Chromium i kioskläge på adressen, WebHID-policyn och
 `--unsafely-treat-insecure-origin-as-secure` för den, så att Stream Deck fungerar över
 vanlig http. Provat i enhetstester och syntaxkontroll; inte på två riktiga Pi.
+
+## 6 oktober 2026, 0.66.1: 3d till stickspåret
+
+Casper bekräftade förbindelsen 3d–172. I panelfilen möts 3d och 172:s gren C i samma punkt
+utan koppling, och 172:s stam går till ett stickspår med stoppbock, så "3d ut åt höger" är en
+sågtand. Beslut: stanna vid stoppbocken tills vidare. `public/panel-corrections.js` kopplar
+3d till 172 efter kontroll av geometrin, bara för rangerarens område (med kopplingen i
+tågvägssökningen ändrades 50 tågvägar, så den används inte där). 172 är gränsväxel
+(rangeraren T, TKL även C mot 170) och växelgatan "3d stick" lägger 172 T.

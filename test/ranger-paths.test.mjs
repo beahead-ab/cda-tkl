@@ -26,7 +26,7 @@ test('the point chains come out of the track graph exactly as the layout owner d
     ['load-1',{Vx119:'T'}],['load-2',{Vx119:'C'}],
     ['right-g52',{Vx132:'C',Vx130:'C',Vx127:'C'}],['right-g53',{Vx132:'C',Vx130:'T',Vx128:'T'}],['right-g54',{Vx132:'C',Vx130:'T',Vx128:'C'}],
     ['load-3',{Vx133:'T'}],
-    ['depot-kolgard',{Vx133:'C',Vx144:'C',Vx150:'T'}],['depot-lokstall',{Vx133:'C',Vx144:'C',Vx150:'C'}],['depot-skiva',{Vx133:'C',Vx144:'C',Vx150:'T',Vx155:'C'}]]);
+    ['depot-kolgard',{Vx133:'C',Vx144:'C',Vx150:'T'}],['depot-lokstall',{Vx133:'C',Vx144:'C',Vx150:'C'}],['depot-skiva',{Vx133:'C',Vx144:'C',Vx150:'T',Vx155:'C'}],['3d-stub',{Vx172:'T'}]]);
   // Only the ranger's own turnouts and boundaries in their back position: never a request.
   for(const p of profile.rangerPaths)for(const [n,pos] of Object.entries(p.turnouts))assert.ok(profile.yardArea.turnouts.includes(n)||profile.yardBoundaries[n]?.rangerPositions[0]===pos,p.id+' '+n);
 });
@@ -55,7 +55,7 @@ test('the ranger\'s deck: chains and requests first, then the turnouts, every pa
   assert.equal(pages.length,3);assert.ok(pages.every(p=>p[0].id==='page'&&p.length<=15));
   const all=pages.flat().filter(k=>k.type!=='system');
   assert.deepEqual(all.slice(0,3).map(k=>k.text),['V 51','V 52','V 53']);
-  assert.equal(all.filter(k=>k.type==='ranger-request').length,8);assert.equal(all.filter(k=>k.type==='ranger-turnout').length,19);
+  assert.equal(all.filter(k=>k.type==='ranger-request').length,8);assert.equal(all.filter(k=>k.type==='ranger-turnout').length,20);
   const one=buildRangerPages(32,{paths:yard.paths,groups:yard.groups,turnouts:[]});assert.equal(one.length,1);
   const env={ranger:k=>rangerSpec(k,{yard,manual:snapshot.manualRanger,turnouts:snapshot.turnouts}),system:{page:0,pages:3},online:true};
   const chain=keySpec(all[0],env);assert.equal(chain.kind,'system');assert.deepEqual(chain.lines,['V','51']);assert.equal(chain.dim,false);
@@ -66,4 +66,12 @@ test('the ranger\'s deck: chains and requests first, then the turnouts, every pa
   const turnout=rangerSpec({type:'ranger-turnout',id:'Vx114',title:'Växel 114',text:'Vx 114'},{yard,manual:snapshot.manualRanger,turnouts:snapshot.turnouts});
   assert.equal(turnout.caption,'rakt');assert.equal(turnout.dim,false);
   assert.equal(keySpec({type:'ranger-path',id:'left-g51',title:'x'},{system:{},online:true}).dim,true,'without the ranger environment the key is dim');
+});
+test('3d till stickspåret: the ranger lays 172 towards 3d and the buffer stop, never towards 170',()=>{
+  const r=rig();
+  r.engine.manual('Vx172','C');r.drain();r.advance(300);assert.equal(r.engine.turnouts.Vx172.position,'C');
+  r.engine.yard.layPath('3d-stub');r.drain();r.advance(500);assert.equal(r.engine.turnouts.Vx172.position,'T');
+  assert.throws(()=>r.engine.manual('Vx172','C',{operator:'ranger'}),/endast TKL får öppna/);
+  assert.ok(profile.yardArea.segments.includes('T274')&&profile.yardArea.segments.includes('T26'),'3d and the stub are the ranger\'s');
+  assert.ok(!profile.yardArea.segments.includes('T273'),'the leg towards 170 is TKL\'s');
 });

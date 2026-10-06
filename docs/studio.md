@@ -40,7 +40,7 @@ Logiken utan DOM ligger i `public/studio-model.js` och provas i `test/studio-vie
 
 `src/studio/rules.mjs` är regelspråket med sju typer: `follow`, `forbid`, `authority`, `condition`, `detection`, `aspect` och `crossing`. Steg 3 fyller de tre som täcker dagens beteende och låter kompilatorn bevisa att ingenting ändras.
 
-**Dagens profil som regler.** `rulesFromProfile` ger 69 regler: 7 `follow` ur `coupled`, 8 `authority` ur `yardBoundaries`, 35 `condition` med utlösaren manuell manöver ur `manualPolicies.rules`, 7 `condition` för linjespärrarna och 1 för programmeringsspåret ur `operatingControls`. Fem manuella villkor bär statusen olöst, precis som i dag.
+**Dagens profil som regler.** `rulesFromProfile` ger 70 regler: 7 `follow` ur `coupled`, 9 `authority` ur `yardBoundaries`, 35 `condition` med utlösaren manuell manöver ur `manualPolicies.rules`, 7 `condition` för linjespärrarna och 1 för programmeringsspåret ur `operatingControls`. Fem manuella villkor bär statusen olöst, precis som i dag.
 
 **Kompilatorn.** `compileRules` ger tillbaka `coupled`, `manualPolicies` (med `byTurnout` och `boundaryOverrides`), `yardBoundaries` och `operatingControls`. `node scripts/make-rules.mjs` skriver `profiles/charlottendal-rules.json` och faller om kompileringen skiljer sig från profilen på någon punkt. `--check` ingår i `verify:operations`, så filen kan inte bli inaktuell obemärkt. Kärnan läser fortfarande fragmenten, och de är bevisat identiska, så beteendet är exakt detsamma: alla tester är gröna utan att en rad i `src/engine.mjs` ändrats.
 
