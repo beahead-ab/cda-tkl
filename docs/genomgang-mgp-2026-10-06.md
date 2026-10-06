@@ -37,8 +37,9 @@ huvudutgången blev orderadress.
 (E4 09); det publicerade CZ-exemplet använder samma adress som växelordern, men det är inte verifierat på
 Charlottendals svenska dekodrar. Koderna 0 (stopp) och 8/18 (kör) är fortfarande provisoriska. Detta är den
 största återstående risken: **om en Signal10 inte sänder SE-rapporter alls kan AIS aldrig återställas**,
-eftersom kärnan kräver bekräftat stopp från varje signal. Alternativet, att läsa Signal10:s switch-feedback
-(B1 på samma adress, SV23) som stopp/kör, är inte infört; det beslutas efter bänkprovet.
+eftersom kärnan kräver bekräftat stopp från varje signal. Sedan 0.68.0 kan profilen i stället läsa Signal10:s
+switch-feedback (B1 på rapportadressen, SV23) som stopp/kör – rapportformen *Signalrapport* i driftbindningarna,
+för alla signaler eller per signal. Vilken form som gäller avgörs av bänkprovet.
 
 ### Virtuella signaler
 
@@ -129,7 +130,7 @@ beslutet tas med Mät objekt på banan.
 | **M08:s ingångar Sp08-159…165 på LS158–164, "M08-03-4"** | Användarnamnen är förskjutna ett steg mot systemnumren från LS158 och framåt; LS163 har en felskriven modulkommentar. | Skrivfel i etiketterna. Logixreglerna pekar på systemnumret (t.ex. S140 → Sp08-161 = LS160), så bindningen är rätt. | Inget görs. Namnen är bara etiketter. |
 | **LS124 "M06-63-5, S125a"** | Kommentaren säger S125a, men S125a:s regel använder LS121 (S125:s detektor) med växelvillkor. LS124 används ingenstans. | Benny drog troligen en egen detektor för S125a (ingången finns och heter så) men regeln blev aldrig ändrad. Rätt är sannolikt LS124, men XML:en säger LS121. | Mät: belägg S125a och se om LS124 slår; då byts S125a till LS124 som egen spårledning. Tills dess LS121. |
 | **Växelblock utan regel** (S112b, S155 med delar, S164 med delar, S171, S172) | Sensorer finns, regel saknas. Obundna ingångar med modul: M03 76, 79, 81–84; M09 172, 173; M10 195; M11 200, 201. | Per modul passar det nästan ett till ett: M10 har en obunden ingång (LS195) och ett odetekterat växelblock (Vx164); M09 har LS172/173 för Vx155; M11 LS200/201 för Vx171/172. Bedömningen är att Benny drog detektorer till växelblocken men aldrig skrev reglerna. | Mät: en vagn på varje växelblock, se vilken ingång som slår. Binds när mätningen visar det, inte förr. |
-| **Signalernas rapportadress** | JMRI använde feedback MONITORING på LT-utgången, alltså växelmeddelandet (B1), inte SE-telegrammet (E4). Profilen väntar på E4 med koder 0/8/18. | Det mest sannolika i drift är att Signal10 rapporterar med B1 på samma adress (SV23 avgör om det är grundläge eller stopp/kör). Rätt är att låta mätningen visa vilket telegram som kommer och då välja: E4 om det finns (det säger vad signalen visar), annars B1 som stopp/kör. | Mät. Kommer bara B1 bygger vi in B1 som signalrapport per profil; det är en liten ändring i kärnan. |
+| **Signalernas rapportadress** | JMRI använde feedback MONITORING på LT-utgången, alltså växelmeddelandet (B1), inte SE-telegrammet (E4). Profilen väntar på E4 med koder 0/8/18. | Det mest sannolika i drift är att Signal10 rapporterar med B1 på samma adress (SV23 avgör om det är grundläge eller stopp/kör). Rätt är att låta mätningen visa vilket telegram som kommer och då välja: E4 om det finns (det säger vad signalen visar), annars B1 som stopp/kör. | **Gjort i 0.68.0:** driftbindningarna har rapportformen *Signalrapport* (SE eller B1) för alla signaler och per signal. Mät: visar Signal10 B1, byt profilen till B1 och aktivera. |
 | **Kompisparen i X1 och X2** | Vx140+Vx142 och Vx162+Vx165 bildar ingen förbindelse i ritningen. | Studios förslag (140+143, 141+142; 162+166, 163+165) stämmer med ritningen och är troligen rätt, men paren i profilen kommer ur Bennys knappgrupper. | Mät: lägg paren och se vilka tungor som rör sig. |
 | **M00 med tre ingångar** | LS1–3 (SU2a, SN2a, SIIIe) utan dekoder i kommentarerna. | En fristående detektormodul vid utfarten mot Au/An. Inget fel. | Inget görs. |
 
