@@ -46,8 +46,8 @@ test('password login protects both processes, requires change, revokes sessions 
     } throw Error('Startup failed');
   };
   try {
-    const store = new UserStore(file); await store.createOwner({ username: 'admin', password: initial, mustChange: true });
-    await assert.rejects(store.createOwner({ username: 'admin', password: 'cannot add a second owner this way' }));
+    const store = new UserStore(file); await store.createOwner({ username: 'admin@example.se', password: initial, mustChange: true });
+    await assert.rejects(store.createOwner({ username: 'admin@example.se', password: 'cannot add a second owner this way' }));
     assert.equal(fs.statSync(file).mode & 0o777, 0o640);
     assert.ok(!fs.readFileSync(file, 'utf8').includes(initial));
     launch('src/simulator.mjs'); let backend = launch('src/server.mjs');
@@ -63,9 +63,9 @@ test('password login protects both processes, requires change, revokes sessions 
     for(const resource of ['/api/recordings','/api/recordings/00000000-0000-0000-0000-000000000000/download'])assert.equal((await request(ports[0],resource)).status,401);
     for(const command of ['start','stop'])assert.equal((await request(ports[0],'/api/recordings/'+command,{})).status,401);
     for(const command of ['destinations','yard-authority','panel-reset','programming','line-block','clock','trainmeet/configure','trainmeet/pair','trainmeet/refresh','trainmeet/disconnect','bindings/save','bindings/activate','train-information/follow','train-information/unfollow'])assert.equal((await request(ports[0],'/api/'+command,{})).status,401);
-    const login = () => request(ports[0], '/api/auth/login', { username: 'admin', password: initial });
-    assert.equal((await request(ports[0], '/api/auth/login', { username: 'admin', password: 'wrong' })).status, 401);
-    assert.equal((await request(ports[0], '/api/auth/login', { username: 'admin', password: initial }, null, null)).status, 403);
+    const login = () => request(ports[0], '/api/auth/login', { username: 'admin@example.se', password: initial });
+    assert.equal((await request(ports[0], '/api/auth/login', { username: 'admin@example.se', password: 'wrong' })).status, 401);
+    assert.equal((await request(ports[0], '/api/auth/login', { username: 'admin@example.se', password: initial }, null, null)).status, 403);
     const pending = await login(); assert.equal(pending.status, 200);
     assert.equal(JSON.parse(pending.body).mustChange, true);
     const setCookie = pending.headers['set-cookie'][0], oldCookie = setCookie.split(';')[0];
@@ -114,7 +114,7 @@ test('password login protects both processes, requires change, revokes sessions 
     assert.equal((await login()).status, 429);
     const stored = JSON.parse(fs.readFileSync(file)); stored.attempts = [];
     fs.writeFileSync(file, JSON.stringify(stored));
-    const later = await request(ports[0], '/api/auth/login', { username: 'admin', password: changed }); assert.equal(later.status, 200);
+    const later = await request(ports[0], '/api/auth/login', { username: 'admin@example.se', password: changed }); assert.equal(later.status, 200);
     const laterCookie = later.headers['set-cookie'][0].split(';')[0];
     const expired = JSON.parse(fs.readFileSync(file)); expired.sessions.forEach(s => s.expires = 0); fs.writeFileSync(file, JSON.stringify(expired));
     for (const port of ports.slice(0, 2)) assert.equal((await request(port, '/api/state', undefined, laterCookie)).status, 401);
