@@ -15,11 +15,11 @@ test('a user invited as rangerare logs in and reaches only the ranger\'s view an
   const env={CHARLOTTENDAL_AUTH_MODE:'password',CHARLOTTENDAL_PUBLIC_ORIGIN:'https://tkl.example',CHARLOTTENDAL_USERS_FILE:path.join(dir,'users.json')};
   const auth=new UserAuth({env,root:dir,primary:true,stateDir:dir,mode:'external'});
   assert.deepEqual(ROLES,['owner','admin','ranger']);
-  await auth.users.createOwner({username:'casper',password:'hemligt1'});
-  const invited=auth.users.invite({username:'rangeraren',role:'ranger'});
+  await auth.users.createOwner({username: 'casper@example.se',password:'hemligt1'});
+  const invited=auth.users.invite({username:'rangeraren@example.se',role:'ranger'});
   assert.equal(invited.user.role,'ranger');
-  assert.throws(()=>auth.users.invite({username:'xyz',role:'chef'}),/ägare, administratör eller rangerare/);
-  const user=await auth.users.redeem({username:'rangeraren',code:invited.code,password:'hemligt2'});
+  assert.throws(()=>auth.users.invite({username:'xyz@example.se',role:'chef'}),/ägare, administratör eller rangerare/);
+  const user=await auth.users.redeem({username:'rangeraren@example.se',code:invited.code,password:'hemligt2'});
   const cookie='__Host-cda_session='+auth.users.issueSession(user.id).token;
   const url=p=>new URL('https://tkl.example'+p);
   // The ranger's own calls pass; TKL's and the administration do not.
@@ -30,7 +30,7 @@ test('a user invited as rangerare logs in and reaches only the ranger\'s view an
   assert.equal(auth.operator(request('POST','/api/ranger/request',cookie)),'ranger');
   assert.throws(()=>auth.requireRole(request('GET','/api/users',cookie),'admin'),/bara rangerarens vy/);
   // The owner is TKL and reaches everything as before.
-  const owner=await auth.users.login({username:'casper',password:'hemligt1'});
+  const owner=await auth.users.login({username: 'casper@example.se',password:'hemligt1'});
   const ownerCookie='__Host-cda_session='+auth.users.issueSession(owner.id).token;
   for(const [method,p] of [['POST','/api/turnout'],['GET','/api/users'],['POST','/api/ranger/answer']])assert.equal(await auth.handle(request(method,p,ownerCookie),response(),url(p)),false,method+' '+p);
   assert.equal(auth.operator(request('POST','/api/turnout',ownerCookie)),'tkl');
@@ -40,15 +40,15 @@ test('a user invited as rangerare logs in and reaches only the ranger\'s view an
 test('in local mode the computer itself needs no login, another computer on the network always does',async()=>{
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'cda-lan-'));
   const auth=new UserAuth({env:{},root:dir,primary:true,stateDir:dir,mode:'local'});
-  await auth.users.createOwner({username:'casper',password:'hemligt1'});
+  await auth.users.createOwner({username: 'casper@example.se',password:'hemligt1'});
   const at=(address,method,p,cookie='')=>({method,url:p,headers:{cookie},socket:{remoteAddress:address},on(){}});
   const url=p=>new URL('http://cda-tkl.local:8910'+p);
   assert.equal(await auth.handle(at('127.0.0.1','POST','/api/turnout'),response(),url('/api/turnout')),false,'the Pi\'s own screen');
   await assert.rejects(auth.handle(at('192.168.1.40','POST','/api/ranger/request'),response(),url('/api/ranger/request')),/Logga in/);
   const page=response();assert.equal(await auth.handle(at('192.168.1.40','GET','/'),page,url('/')),true);assert.equal(page.status,303);
   assert.equal(auth.view(at('192.168.1.40','GET','/')).setup.allowed,false);
-  const invited=auth.users.invite({username:'rangeraren',role:'ranger'});
-  const user=await auth.users.redeem({username:'rangeraren',code:invited.code,password:'hemligt2'});
+  const invited=auth.users.invite({username:'rangeraren@example.se',role:'ranger'});
+  const user=await auth.users.redeem({username:'rangeraren@example.se',code:invited.code,password:'hemligt2'});
   const cookie='cda_session='+auth.users.issueSession(user.id).token;
   assert.equal(await auth.handle(at('192.168.1.40','POST','/api/ranger/path',cookie),response(),url('/api/ranger/path')),false);
   await assert.rejects(auth.handle(at('192.168.1.40','POST','/api/turnout',cookie),response(),url('/api/turnout')),/bara rangerarens vy/);

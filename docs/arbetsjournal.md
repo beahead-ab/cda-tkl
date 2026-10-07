@@ -1478,3 +1478,12 @@ inbäddat läge i admin-ui.js (arbetsytan visas på plats, ingen adress ändras)
 Studios formspråk i studio-legacy.css. Gamla adresser och panelens objektlänkar leder till rätt sida i Studio
 (studioTarget). Provat i Chromium: varje sida, en driftbindning sparad och kastad, en källpost öppnad på kategori
 och namn, en regelgrupp under Införandestatus som öppnar posten under Källa, och omdirigeringarna.
+
+## 7 oktober 2026, 0.71.1: e-post som användarnamn
+
+Casper försökte skapa ägaren med sin e-postadress och fick "Användarnamnet har 3–64 tecken: bokstäver,
+siffror, punkt, bindestreck eller understreck". Användarnamnet ska vara e-post. checkUsername kräver nu en
+e-postadress och sparar den med små bokstäver; regeln gäller bara när ett konto skapas, så konton med ett
+vanligt namn från tidigare versioner (och admin ur den gamla lösenordsfilen) loggar in som förut. Skapa
+ägaren och inbjudan har fält av typen e-post; inloggning och inlösen frågar efter e-post men godtar ett äldre
+namn. Lösenordskravet är oförändrat 6–128 tecken.

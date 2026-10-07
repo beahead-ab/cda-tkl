@@ -24,11 +24,11 @@ test('lokalt: allt öppet tills ägaren finns, därefter kräver administratione
   assert.equal(auth.mode, 'local'); assert.ok(fs.existsSync(path.join(dir, 'users.json')));
   let r = await call(auth, 'GET', '/api/auth/session'); assert.deepEqual([r.json.mode, r.json.authenticated, r.json.setup], ['local', false, { needed: true, allowed: true }]);
   for (const url of ['/studio.html', '/api/studio', '/api/route']) { r = await call(auth, 'GET', url); assert.equal(r.handled, false, url + ' är öppen innan ägaren finns'); }
-  r = await call(auth, 'POST', '/api/auth/login', { body: { username: 'casper', password: 'x' } }); assert.equal(r.error.status, 401);
-  r = await call(auth, 'POST', '/api/auth/setup', { body: { username: 'casper', password: 'hemligt1', next: '/#advanced/ai' } });
+  r = await call(auth, 'POST', '/api/auth/login', { body: { username: 'casper@example.se', password: 'x' } }); assert.equal(r.error.status, 401);
+  r = await call(auth, 'POST', '/api/auth/setup', { body: { username: 'casper@example.se', password: 'hemligt1', next: '/#advanced/ai' } });
   assert.equal(r.json.ok, true); assert.equal(r.json.next, '/#advanced/ai'); assert.match(r.res.headers['set-cookie'], /^cda_session=[a-f0-9]{64}; Path=\/; HttpOnly; SameSite=Strict; Max-Age=43200$/, 'lokal cookie utan Secure, så att http://127.0.0.1 fungerar');
   const cookie = r.res.headers['set-cookie'].split(';')[0];
-  r = await call(auth, 'POST', '/api/auth/setup', { body: { username: 'x', password: 'hemligt1' } }); assert.equal(r.error.status, 409);
+  r = await call(auth, 'POST', '/api/auth/setup', { body: { username: 'x@example.se', password: 'hemligt1' } }); assert.equal(r.error.status, 409);
   // Nu krävs inloggning för administrationen; operatörens vägar är fortfarande öppna.
   r = await call(auth, 'GET', '/studio.html'); assert.equal(r.res.status, 303); assert.equal(r.res.headers.location, '/login?next=%2Fstudio.html');
   r = await call(auth, 'GET', '/api/studio'); assert.equal(r.error.status, 401);
@@ -38,13 +38,13 @@ test('lokalt: allt öppet tills ägaren finns, därefter kräver administratione
   r = await call(auth, 'GET', '/api/studio', { cookie }); assert.equal(r.handled, false); r = await call(auth, 'GET', '/studio.html', { cookie }); assert.equal(r.handled, false);
   assert.equal(await auth.authenticate(req('GET', '/api/state')), null); await assert.rejects(auth.authenticate(req('GET', '/api/studio'), new URL('http://127.0.0.1:8910/api/studio')), /Logga in/);
   assert.equal(typeof await auth.authenticate(req('GET', '/api/studio', { cookie }), new URL('http://127.0.0.1:8910/api/studio')), 'number');
-  r = await call(auth, 'GET', '/api/auth/session', { cookie }); assert.deepEqual([r.json.authenticated, r.json.user.username, r.json.user.role, r.json.setup.needed], [true, 'casper', 'owner', false]);
+  r = await call(auth, 'GET', '/api/auth/session', { cookie }); assert.deepEqual([r.json.authenticated, r.json.user.username, r.json.user.role, r.json.setup.needed], [true, 'casper@example.se', 'owner', false]);
   // Ägaren bjuder in; administratören får se listan men inte ändra den.
-  assert.equal(auth.requireRole(req('GET', '/api/users', { cookie }), 'owner').username, 'casper');
-  const invited = auth.users.invite({ username: 'benny', role: 'admin' });
-  r = await call(auth, 'POST', '/api/auth/redeem', { body: { username: 'benny', code: invited.code, password: 'hemligt2', next: '//evil' } }); assert.equal(r.json.user.role, 'admin'); assert.equal(r.json.next, '/');
+  assert.equal(auth.requireRole(req('GET', '/api/users', { cookie }), 'owner').username, 'casper@example.se');
+  const invited = auth.users.invite({ username: 'benny@example.se', role: 'admin' });
+  r = await call(auth, 'POST', '/api/auth/redeem', { body: { username: 'benny@example.se', code: invited.code, password: 'hemligt2', next: '//evil' } }); assert.equal(r.json.user.role, 'admin'); assert.equal(r.json.next, '/');
   const bennyCookie = r.res.headers['set-cookie'].split(';')[0];
-  assert.equal(auth.requireRole(req('GET', '/api/users', { cookie: bennyCookie }), 'admin').username, 'benny');
+  assert.equal(auth.requireRole(req('GET', '/api/users', { cookie: bennyCookie }), 'admin').username, 'benny@example.se');
   assert.throws(() => auth.requireRole(req('POST', '/api/users/invite', { cookie: bennyCookie }), 'owner'), /Bara ägaren/);
   assert.throws(() => auth.requireRole(req('GET', '/api/users'), 'admin'), /Logga in/);
   r = await call(auth, 'POST', '/api/auth/logout', { cookie: bennyCookie }); assert.equal(r.json.ok, true); assert.match(r.res.headers['set-cookie'], /Max-Age=0/);
@@ -61,11 +61,11 @@ test('webbdriften kräver HTTPS, en separat användarfil och inloggning överall
   assert.ok(auth instanceof UserAuth); assert.equal(auth.mode, 'external'); assert.ok(fs.existsSync(path.join(dir, 'users.json')));
   let r = await call(auth, 'GET', '/'); assert.equal(r.res.status, 303); assert.equal(r.res.headers.location, '/login');
   r = await call(auth, 'GET', '/api/state'); assert.equal(r.error.status, 401);
-  r = await call(auth, 'POST', '/api/auth/setup', { origin: 'https://cda-tkl.trainmeet.app', body: { username: 'casper', password: 'hemligt1' } }); assert.equal(r.error.status, 409, 'ägaren skapas på servern i webbdriften');
+  r = await call(auth, 'POST', '/api/auth/setup', { origin: 'https://cda-tkl.trainmeet.app', body: { username: 'casper@example.se', password: 'hemligt1' } }); assert.equal(r.error.status, 409, 'ägaren skapas på servern i webbdriften');
   r = await call(auth, 'GET', '/api/auth/session'); assert.deepEqual(r.json.setup, { needed: true, allowed: false });
-  await auth.users.createOwner({ username: 'casper', password: 'hemligt1' });
-  r = await call(auth, 'POST', '/api/auth/login', { body: { username: 'casper', password: 'hemligt1' } }); assert.equal(r.error.status, 403, 'POST utan rätt Origin');
-  r = await call(auth, 'POST', '/api/auth/login', { origin: 'https://cda-tkl.trainmeet.app', body: { username: 'casper', password: 'hemligt1' } });
+  await auth.users.createOwner({ username: 'casper@example.se', password: 'hemligt1' });
+  r = await call(auth, 'POST', '/api/auth/login', { body: { username: 'casper@example.se', password: 'hemligt1' } }); assert.equal(r.error.status, 403, 'POST utan rätt Origin');
+  r = await call(auth, 'POST', '/api/auth/login', { origin: 'https://cda-tkl.trainmeet.app', body: { username: 'casper@example.se', password: 'hemligt1' } });
   assert.match(r.res.headers['set-cookie'], /^__Host-cda_session=[a-f0-9]{64}; Path=\/; HttpOnly; Secure; SameSite=Strict/);
   const cookie = r.res.headers['set-cookie'].split(';')[0];
   r = await call(auth, 'GET', '/api/state', { cookie }); assert.equal(r.handled, false); r = await call(auth, 'GET', '/', { cookie }); assert.equal(r.handled, false);
