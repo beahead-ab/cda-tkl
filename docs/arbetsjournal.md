@@ -1487,3 +1487,11 @@ e-postadress och sparar den med små bokstäver; regeln gäller bara när ett ko
 vanligt namn från tidigare versioner (och admin ur den gamla lösenordsfilen) loggar in som förut. Skapa
 ägaren och inbjudan har fält av typen e-post; inloggning och inlösen frågar efter e-post men godtar ett äldre
 namn. Lösenordskravet är oförändrat 6–128 tecken.
+
+## 7 oktober 2026, publicerat: 0.71.1
+
+Publicerad: 0.71.1 (cda-tkl main `96461c9`, `beahead-ab/cda-tkl-install` main `018de42`). Dagens versioner i
+ordning: 0.69.0 Studio på bärbar dator (#32), 0.70.0 hjälpen i Studio (#33), 0.71.0 anläggningen i Studio (#34)
+och 0.71.1 e-post som användarnamn (#35). Webbdriften körde 0.68.0 på morgonen och tar 0.71.1 med Uppdatera nu,
+eller `sudo charlottendal-update` på servern. Datorer som installerats med installationsraden kör den igen eller
+väljer Uppdatering. Samma uppgifter står i status.md (lägesbild 7 oktober).
