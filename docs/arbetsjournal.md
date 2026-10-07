@@ -1459,3 +1459,11 @@ sidhuvudet 44 px, menyn 176 px, nyckeltalen en remsa på 30 px (kort igen från 
 med gå igenom, lager, zoom, Bredd/Höjd och Panel, och planen fyller höjden (body.st-fill) med valt objekt
 och avvikelser i en panel till höger som fälls in. Startläget är Höjd: hela stationen i fönstret. Minikartan
 ligger över planens nedre vänstra hörn. Provat i Chromium på 1440×900, 1280×720 och 1920×1080.
+
+## 7 oktober 2026, 0.70.0: hjälpen i Studio
+
+Tavla 2 i duken: ?-knappen i sidhuvudet, eller tangenten ?, öppnar en panel över högra delen av fönstret
+med en text per flik i arbetsordningen 1–6 (stationsplanen, Data, regler och chatten, genomgången,
+driftsättningen, anslutningen): vad man gör där, vilka knappar som finns och vad de leder till. Den
+aktiva fliken är utfälld, planen syns bakom så man kan läsa och prova samtidigt. Escape stänger,
+/ går till sök. Texterna är data i public/studio-help.js och provas i test/studio-help.test.mjs.
