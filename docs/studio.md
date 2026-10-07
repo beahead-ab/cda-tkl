@@ -26,7 +26,7 @@ Steg 1 ritar ingenting och har ingen redigering. Nästa steg enligt planen är v
 
 ## Steg 2: vyn och Data-vyn
 
-Sidan `/studio.html` är Studios eget skal, bredvid dagens admin och länkad därifrån under Anläggning → Objekt och regler. Den ligger bakom samma inloggning som resten av TKL, läser allt i tre anrop (`/api/config`, `/api/studio` och `/data/panel.json`) och gör resten som projektioner i webbläsaren. Fem flikar: Konfigurera, Data, Genomgång, Driftsättning och Anslutning. Sedan 0.70.0 öppnar ?-knappen i sidhuvudet (eller tangenten ?) hjälpen: en panel med en text per flik i arbetsordningen, den aktiva fliken utfälld; texterna ligger i `public/studio-help.js`. De två sista pekar tills vidare på dagens adminsidor.
+Sidan `/studio.html` är Studios eget skal, länkad från Inställningar → Anläggningen → Studio. Den ligger bakom samma inloggning som resten av TKL, läser allt i tre anrop (`/api/config`, `/api/studio` och `/data/panel.json`) och gör resten som projektioner i webbläsaren. Fem flikar: Konfigurera, Data, Genomgång, Driftsättning och Anslutning. Sedan 0.70.0 öppnar ?-knappen i sidhuvudet (eller tangenten ?) hjälpen: en panel med en text per flik i arbetsordningen, den aktiva fliken utfälld; texterna ligger i `public/studio-help.js`. De två sista pekar tills vidare på dagens adminsidor.
 
 **Konfigurera · Stationsplan.** Planen ritas ur `panel.json` av Studios egen kod (`public/studio-plan.js`), utan ställverkets ram och dekorationer, rullbar i sidled med minikarta i planens nedre vänstra hörn. Sedan 0.69.0 fyller planen höjden som blir över i fönstret (startläget *Höjd* visar hela stationen; *Bredd* och zoom finns kvar), nyckeltalen är en remsa (kort igen från 1700×1000), verktygen ligger på en rad, och valt objekt och avvikelser ligger i en panel till höger som fälls in med *Panel*. Lager: växelnummer, signalnamn, spårledningar, adresser, MGP-modul och avvikelser. Spår utan detektering i källan är streckade, avvikelser är röda punkter. *Gå igenom* stegar genom de 115 växlarna och signalerna från vänster till höger. Objektkortet visar bindning, modulhypotes, kompis med grafkontrollens svar, tågvägar och status, och leder vidare till Data.
 
@@ -95,3 +95,27 @@ Kvar till steg 5 och 6: chatten och AI-genomgången som ger regelkort ur fritext
 **I Studio** finns allt under Driftsättning: Mät objekt med stegindikator, objektlista, provorder, rapport, bekräftelse och exporten; Kort och MGP med inventeringen och sammanställningen; Lyssna. Konfigurera → Övriga delar visar linjer, programmeringsspår, rangerbangård, vägövergångar och signalbesked som regler. API: `/api/studio/measure/{probe,confirm,cancel,remove}`, `/api/studio/cards/{discover,identify,read,assign}`, `/api/studio/bindings/propose-signals`, `GET /api/studio/{measure,cards,mgp/export}`.
 
 Kvar: bänkprovet på ett riktigt kort, Signal10:s svenska beskedskoder och vägövergångarnas bomstyrning (MGP-underlag), små verifierade SV-skrivningar efter verifierad läsning, och Anslutning (TrainMeet, Stream Deck) sist.
+
+## Allt om anläggningen i Studio (0.71.0)
+
+Inställningar → Anläggning hade sju flikar som alla handlade om objekten. De ligger nu i Studio, och Inställningar behåller
+Träffen och Den här datorn; Anläggningen är en länk till Studio.
+
+| Tidigare i Inställningar | I Studio |
+|---|---|
+| Anläggningsregister, XML-granskning | Data → Källa (XML) |
+| Anläggningsöversikt | Konfigurera → Stationsplan, objektkortet till höger |
+| Orter och telefon | Konfigurera → Orter och telefon |
+| Visningsinställningar | Konfigurera → Visning |
+| Driftinställningar | Driftsättning → Driftbindningar |
+| Införandestatus | Genomgång → Införandestatus |
+
+Sidorna är samma moduler som förut (`configuration.js`, `destinations.js`, `binding-configuration.js`, `source-register.js`),
+monterade av `public/studio-legacy.js` i ett inbäddat läge i `admin-ui.js`: arbetsytan visas på plats och ingen adress ändras.
+Varje modul skapas en gång och ligger kvar mellan flikarna, så ett påbörjat utkast eller en öppen källpost finns kvar. Medan
+en sådan sida är öppen läser Studio kärnans läge (`/api/state`) var 2,5 sekund för aktiveringsvillkoren. Stilen kommer ur
+`public/studio-legacy.css`, Studios formspråk på modulernas markup.
+
+De gamla adresserna leder vidare (`studioTarget` i `admin-navigation-model.js`): `#register/bindings` öppnar
+`/studio.html#driftsattning/bindningar`, `#register/object?record=…` öppnar posten under Källa, och panelens länk från
+objektinformationen går till objektet i Studios stationsplan. Bokmärken och dokumentationen fortsätter därmed fungera.

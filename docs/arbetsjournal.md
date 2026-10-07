@@ -1467,3 +1467,14 @@ med en text per flik i arbetsordningen 1–6 (stationsplanen, Data, regler och c
 driftsättningen, anslutningen): vad man gör där, vilka knappar som finns och vad de leder till. Den
 aktiva fliken är utfälld, planen syns bakom så man kan läsa och prova samtidigt. Escape stänger,
 / går till sök. Texterna är data i public/studio-help.js och provas i test/studio-help.test.mjs.
+
+## 7 oktober 2026, 0.71.0: anläggningen i Studio
+
+Tavla 3 i duken: Inställningar → Anläggning hade sju flikar om objekten; de bor nu i Studio. Data → Källa (XML)
+är registret och XML-granskningen, Konfigurera → Visning och Orter och telefon, Driftsättning → Driftbindningar och
+Genomgång → Införandestatus. Anläggningsöversikten ersätts av stationsplanen med objektkortet. Inställningar
+behåller Träffen och Den här datorn; Anläggningen är en länk till Studio. Modulerna är desamma, monterade i ett
+inbäddat läge i admin-ui.js (arbetsytan visas på plats, ingen adress ändras) av public/studio-legacy.js, med
+Studios formspråk i studio-legacy.css. Gamla adresser och panelens objektlänkar leder till rätt sida i Studio
+(studioTarget). Provat i Chromium: varje sida, en driftbindning sparad och kastad, en källpost öppnad på kategori
+och namn, en regelgrupp under Införandestatus som öppnar posten under Källa, och omdirigeringarna.
