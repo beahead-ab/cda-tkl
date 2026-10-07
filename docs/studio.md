@@ -1,5 +1,11 @@
 # Studio · steg 1: objektregister och avvikelselista
 
+**Publicerad: 0.71.1** (cda-tkl main `96461c9`, `beahead-ab/cda-tkl-install` main `018de42`, 7 oktober); webbdriften
+tar den med Uppdatera nu under Inställningar → Uppdatering, eller `sudo charlottendal-update` på servern. Studio nås
+från Inställningar → Anläggningen → Studio eller direkt på `/studio.html`. Sedan 0.69.0 skalar Studio på bärbar dator,
+sedan 0.70.0 har den hjälp (?-knappen) och sedan 0.71.0 ligger allt om anläggningen här (avsnittet längst ner).
+Kontot är sedan 0.71.1 e-postadressen.
+
 Första körbara steget i planen för [Objekt och regler](objektkonfiguration-plan.md), byggordningen i §9. Modulen ligger i `src/studio/` och är fristående: den läser driftprofilen, panelgeometrin, `Cda60.xml` och de genererade filerna i `public/data`, räknar, och ändrar ingenting. Inga driftvillkor, adresser eller dataformat påverkas. Designen och rapporten finns i Claude Design (duken *cda-tkl Studio i TrainMeet-stil* och rapporten *cda-tkl Studio – funktion, LocoNet/MGP och lösningsförslag*).
 
 ## Köra
