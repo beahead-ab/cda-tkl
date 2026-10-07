@@ -1449,3 +1449,13 @@ spårledningarna läser LS-ingångarna ur Cda60.xml, tretton panelsignaler bekr�
 genomgången bedömer varje konstighet i källan (0.67.0–0.67.1); signalernas rapportform, SE-telegram E4
 eller växelrapport B1, väljs per profil och per signal under Driftbindningar → Signalrapport (0.68.0).
 Samma uppgifter står i status.md (lägesbild 6 oktober).
+
+## 7 oktober 2026, 0.69.0: Studio på bärbar dator
+
+Casper såg Studio på sin bärbara dator: 450 px sidhuvud, titel, nyckeltalskort och två verktygsrader innan
+planen började, och planen låst till 70 % av fönstret, så en fjärdedel av stationen syntes. Duken i Claude
+Design (tre tavlor: skalningen, hjälpen, navigationen) är beslutad i den ordningen. 0.69.0 är tavla 1:
+sidhuvudet 44 px, menyn 176 px, nyckeltalen en remsa på 30 px (kort igen från 1700×1000), en verktygsrad
+med gå igenom, lager, zoom, Bredd/Höjd och Panel, och planen fyller höjden (body.st-fill) med valt objekt
+och avvikelser i en panel till höger som fälls in. Startläget är Höjd: hela stationen i fönstret. Minikartan
+ligger över planens nedre vänstra hörn. Provat i Chromium på 1440×900, 1280×720 och 1920×1080.
