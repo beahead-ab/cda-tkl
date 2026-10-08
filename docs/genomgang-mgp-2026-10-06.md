@@ -1,6 +1,7 @@
 # Genomgång av moduler, spårledningar, växlar och signaler mot MGP-modulerna
 
-6 oktober 2026, version 0.67.0, kompletterad med bedömningarna i 0.67.1 och signalrapporten per profil i 0.68.0.
+6 oktober 2026, version 0.67.0, kompletterad med bedömningarna i 0.67.1, signalrapporten per profil i 0.68.0 och
+AI-analysen av XML:en den 8 oktober (0.72.2, [sist i dokumentet](#ai-analys-av-cda60xml-8-oktober-0722)).
 **Publicerad: 0.71.1** (cda-tkl main `96461c9`, `beahead-ab/cda-tkl-install` main `018de42`, 7 oktober); webbdriften
 tar den med Uppdatera nu under Inställningar → Uppdatering, eller `sudo charlottendal-update` på servern. Sedan
 0.71.0 ligger allt som nämns här i Studio: driftbindningarna under Driftsättning → Driftbindningar, Mät objekt och
@@ -70,7 +71,7 @@ Varje layoutblock i JMRI har en intern sensor (slS…) som sätts av en logixreg
 - 20 med flera ingångar och JMRI:s "någon av"-logik, t.ex. SIA → LS90 **eller** LS100 (M04 och M05),
   SG53 → LS73/LS97/LS107/LS117 (fyra moduler längs godsspår 53).
 - 9 växelberoende delar (S100b, S101a, S110a/b, S117a, S120a/b, S125a/b) där JMRI väljer ingång efter
-  växelläge; förenklade till ingången. **S100a** har ingen ingång alls i sin regel och är kvar på bänkadress.
+  växelläge; förenklade till ingången. **S100a** läser den interna sensorn slS100 i stället för en ingång; sedan 0.72.2 följs kedjan till LS60 (se AI-analysen).
 - Polariteten är antagen: aktiv = belagd.
 - Tågvägens passage (ordnad beläggning och frigivning) följer spårledningens första ingång; beläggningen
   för låsning och konflikter väger alla ingångar. Ett tåg som kommer in i SIA från LS100-änden räknas
@@ -80,12 +81,12 @@ En fysisk detektor matar ofta flera JMRI-block (LS72 → S112, S113, S116 med de
 med delar). Det är avsiktligt i Bennys anläggning – en detektor per växelgata – och profilen speglar det.
 Driftbindningarnas katalog har därför en rad per adress: alla block på samma detektor ändras tillsammans.
 
-**36 spårledningar står kvar på bänkadress** (3001+) för att källan inte har någon ingång:
+**36 spårledningar stod kvar på bänkadress** (35 sedan 0.72.2, när S100a fick LS60) (3001+) för att källan inte har någon ingång:
 
 - 16 är inte spår (vägövergångarnas lampor v1–v4, perronger, ram, vändskiva).
 - 11 har ingen sensor: Slokstall1–9, SL1a, SL1b (lokstallet och linje D).
 - 8 har en sensor men ingen regel: S112b, S155, S155b, S155c, S164, S164b, S171, S172.
-- S100a enligt ovan.
+- S100a enligt ovan (bunden till LS60 i 0.72.2).
 
 Växelblocken utan regel är intressanta: Vx155 (vändskivans tillfart), Vx164 (3d:s gränsväxel) och
 M11:s växlar 171–172. Ingen tågväg kräver fri spårledning där i dag, men tågvägar över Vx164 och Vx171
@@ -135,7 +136,7 @@ beslutet tas med Mät objekt på banan.
 | **LS124 "M06-63-5, S125a"** | Kommentaren säger S125a, men S125a:s regel använder LS121 (S125:s detektor) med växelvillkor. LS124 används ingenstans. | Benny drog troligen en egen detektor för S125a (ingången finns och heter så) men regeln blev aldrig ändrad. Rätt är sannolikt LS124, men XML:en säger LS121. | Mät: belägg S125a och se om LS124 slår; då byts S125a till LS124 som egen spårledning. Tills dess LS121. |
 | **Växelblock utan regel** (S112b, S155 med delar, S164 med delar, S171, S172) | Sensorer finns, regel saknas. Obundna ingångar med modul: M03 76, 79, 81–84; M09 172, 173; M10 195; M11 200, 201. | Per modul passar det nästan ett till ett: M10 har en obunden ingång (LS195) och ett odetekterat växelblock (Vx164); M09 har LS172/173 för Vx155; M11 LS200/201 för Vx171/172. Bedömningen är att Benny drog detektorer till växelblocken men aldrig skrev reglerna. | Mät: en vagn på varje växelblock, se vilken ingång som slår. Binds när mätningen visar det, inte förr. |
 | **Signalernas rapportadress** | JMRI använde feedback MONITORING på LT-utgången, alltså växelmeddelandet (B1), inte SE-telegrammet (E4). Profilen väntar på E4 med koder 0/8/18. | Det mest sannolika i drift är att Signal10 rapporterar med B1 på samma adress (SV23 avgör om det är grundläge eller stopp/kör). Rätt är att låta mätningen visa vilket telegram som kommer och då välja: E4 om det finns (det säger vad signalen visar), annars B1 som stopp/kör. | **Gjort i 0.68.0:** driftbindningarna har rapportformen *Signalrapport* (SE eller B1) för alla signaler och per signal. Mät: visar Signal10 B1, byt profilen till B1 och aktivera. |
-| **Kompisparen i X1 och X2** | Vx140+Vx142 och Vx162+Vx165 bildar ingen förbindelse i ritningen. | Studios förslag (140+143, 141+142; 162+166, 163+165) stämmer med ritningen och är troligen rätt, men paren i profilen kommer ur Bennys knappgrupper. | Mät: lägg paren och se vilka tungor som rör sig. |
+| **Kompisparen i X1 och X2** | Vx140+Vx142 och Vx162+Vx165 bildar ingen förbindelse i ritningen. | **Rättat 8 oktober:** paren i profilen kommer ur XML:en, inte ur knappgrupperna: spårplanens växlar anger varandra som andra växel (`TO3 Vx140 secondturnoutname="Vx142"`, `TO7 Vx162 → Vx165`), och JMRI beordrar då båda tillsammans. Studios förslag (140+143, 141+142; 162+166, 163+165) är diagonalerna genom korsningarna, inte en koppling i källan. | Mät: lägg paren och se vilka tungor som rör sig. |
 | **M00 med tre ingångar** | LS1–3 (SU2a, SN2a, SIIIe) utan dekoder i kommentarerna. | En fristående detektormodul vid utfarten mot Au/An. Inget fel. | Inget görs. |
 
 ## Växlar
@@ -160,5 +161,82 @@ beslutet tas med Mät objekt på banan.
    bedömningen ovan.
 5. Svenska beskedskoder för Signal10 (sju masttyper) när SE-rapporterna är inspelade.
 
-Studio visar läget i avvikelselistan: *Signaler med bänkadress* är 0, *Spårledningar utan verklig ingång* 36,
+Studio visar läget i avvikelselistan: *Signaler med bänkadress* är 0, *Spårledningar utan verklig ingång* 35 (36 före 0.72.2),
 *Virtuella signaler i JMRI utan utgång* 13, *Växeladresser ej uppmätta i fält* 49.
+
+## AI-analys av Cda60.xml (8 oktober, 0.72.2)
+
+Casper bad om en genomgång med AI av det som återstod: spårledningarna utan regel, de växelberoende delarna, kryssväxlarna
+X1/X2 och ändarna av spår 11–13. Analysen läste varje regel (conditional), spårplanens geometri och sensorernas namn och
+kommentarer. **(X)** = står i XML:en, **(S)** = slutsats. Inget av (S) binds förrän mätningen visar det.
+
+**Rättat i 0.72.2:** S100a har en regel. `IX:AUTO:0002C77 "S100a"` sätter `slS100c` när `slS100` är aktiv och Vx100 ligger
+CLOSED; `slS100` sätts av regeln S100 (C24) från Sp02-60 = LS60 (X). Inventeringen följde bara LS-sensorer och tappade
+omvägen. Nu följs kedjan: S100a har adress 60 som S100 och S100b, och ligger inte längre på bänkadress. S100a ingår i 44
+tågvägar; mot riktig utrustning hade de väntat på en rapport som aldrig kom.
+
+### Spårledningar utan regel
+
+| Sektion | Förslag | Säkerhet | Belägg |
+|---|---|---|---|
+| S164 | LS195 | medel–hög (S) | M10:s kanalordning 190 S160, 191 S161, 192 SIIId, 193 S162, 194 S163, **195 –**, 196 S165, 197 S166; luckan står där 164 hör hemma, och LS195 är M10:s enda obundna ingång. Logixen "Vx164" kräver att slS164 är inaktiv, men ingen regel sätter den. |
+| S164b | LS195 med Vx164 THROWN | medel (S) | Blockkommentaren "Vx164 thrown"; samma mönster som S100b, S110b, S120b, S125b. |
+| S112b | LS72 med Vx112 THROWN | medel (S) | Blockkommentaren "Vx112 thrown"; syskonet S112a läser slS112 = LS72. Alternativ: LS62 eller en obunden M03-ingång (låg). |
+| S155 | LS172 eller LS173 | medel att det är en av dem, låg för vilken (S) | LT155 är M09-155-1; M09-91-3/91-4 är namngivna men oanvända. |
+| S155b, S155c | samma ingång som S155, med Vx155 THROWN respektive CLOSED | låg (S) | Blockkommentarerna "Vx155 thrown"/"closed". |
+| S171 | LS199 | medel (S) | Banan går S166a (LS199) → S170 (LS199) → S171 → SN1B (LS199); S171 ligger mellan två block på samma detektor. S171/S172 är de sist skapade blocken och regeln skrevs troligen aldrig. |
+| S172 | LS200 eller LS201, osäkert | låg | Vx172 leder till en stoppbock; LT172 "Ej använd"; ingen tågväg. LS200/201 kan lika gärna höra till linje D. |
+| S125a | LS124 eller LS121 med Vx125 CLOSED | medel (S) | Kommentaren "M06-63-5, S125a"; LS124 används ingenstans, regeln C85 läser LS121. |
+
+Biprodukter: LS113 (M06-61-4, mellan SIIIa och SVa) är troligen SIVA:s (spår 12) högra ände, och LS150/151
+(M08-81-1/2) troligen andra detektorn för SIB och SIIB (S). De obundna ingångarna nämns ingenstans utanför sin
+egen definition (X). M08:s förskjutna användarnamn påverkar inte bindningarna; systemnumren gäller (S).
+
+### De växelberoende delarna
+
+Alla regler har logicType 1 (alla villkor) och utlöses av både ingång och växel (X).
+
+| Sektion | JMRI-regel (X) | Profilen | Växelmedveten modell |
+|---|---|---|---|
+| S100a | slS100 (LS60) och Vx100 CLOSED | LS60 sedan 0.72.2 | LS60 vid CLOSED |
+| S100b | LS60 och Vx100 THROWN | LS60 | LS60 vid THROWN |
+| S101a | LS64 och Vx101 CLOSED | LS64 | LS64 vid CLOSED; LS64 bär även S101 och S102 |
+| S110a / S110b | LS70 och Vx110 CLOSED / THROWN | LS70 | efter Vx110 |
+| S117a | LS71 och Vx117 CLOSED | LS71 | LS71 utan villkor: i JMRI försvann beläggningen när växeln låg THROWN |
+| S120a | LS110 och Vx120 CLOSED | LS110 | LS110 utan villkor, av samma skäl |
+| S120b | LS119 och Vx120 THROWN | LS119 | LS119 vid THROWN; S120 är LS119 utan villkor |
+| S125a / S125b | LS121 och Vx125 CLOSED / THROWN | LS121 | efter Vx125 (S125a möjligen LS124) |
+
+Låsning och konfliktkontroll läser fortsatt ingången utan villkor, som profilen gör: det är säkert även när växeln är i
+rörelse eller okänd. Växelvillkoret ska bara avgöra **vilket ben** tåget står på, för tågspårning, passageordning och frigivning.
+
+### Kryssväxlarna X1 och X2
+
+Detekteringen beror inte på växelläge; en ingång per kvadrant (X): X1 Vx140 LS160, Vx141 LS159, Vx142 LS163, Vx143 LS162;
+X2 Vx162 LS193, Vx163 LS194, Vx165 LS196 (S165a LS198), Vx166 LS197 (S166a LS199). Styrkopplingen är 140+142 och 162+165
+(`secondturnoutname`, X); korsningarna förbinder 140–143, 141–142, 162–166 och 163–165 (X). Knapparna C12 och C18 lägger
+bara Vx140 respektive Vx162; 141, 143, 163 och 166 läggs av NX-tågvägarna och återställningen. Ingenting i XML:en kopplar
+140+143. Om någon utgång är kopplad i hårdvaran kan bara mätning visa.
+
+### Ändarna av spår 11–13 (SIIIA, SIVA, SVA)
+
+- **Vänster:** nio block (S112, S112a, S113, S113a, S113b mot spår 11, S113c, S116, S116c mot spår 12, S116a mot spår 13)
+  på **LS72** utan villkor. Var tåget står kan bara räknas fram ur lägena på 112, 113 och 116.
+- **Höger:** S123, S123a, S123b (spår 11), S123c (spår 12), S126, S126c (spår 13) på **LS122**; S126a, S131, S131a, S131c
+  på **LS147**; S121/S121b på LS120; S122 på LS111; S120/S120b och S125 med delar enligt tabellen ovan.
+- Spåren själva: SIIIA = LS92/LS102/LS78/LS112, SIVA = LS93/LS103, SVA = LS94/LS104/LS114 (någon av).
+
+En begränsning går inte att lösa i mjukvaran: ett tåg vid 4/10 håller LS72 belagd och fördröjer därmed frigivningen av en
+tågväg över 3/10.
+
+### Mätningar som avgör förslagen
+
+1. **S164:** vagn på Vx164 → slår LS195? Lägg Vx164 THROWN, flytta till S164b: samma ingång eller LS172/173?
+2. **S155:** vagn på Vx155 → LS172 eller LS173? Flytta till S155b och S155c.
+3. **S112b:** vagn mellan Vx112:s C-ben och A49 → LS72 (mönstret), LS62 (hör till S103a) eller en obunden M03-ingång.
+4. **S100a:** Vx100 CLOSED, vagn på S100a → LS60 ska slå.
+5. **S125a:** vagn på benet Vx125 → A4: slår LS124 men inte LS121, byt S125a till LS124.
+6. **S171:** vagn på Vx171 → LS199 (SN1b:s avsnitt) eller LS200/201 (egen detektor).
+7. **S172:** vagn på stumpen mot stoppbocken → LS200, LS201 eller inget.
+8. **SIVA:** vagn i spår 12:s högra ände → LS113? Vänstra änden → LS79?
+9. **X1/X2:** beordra bara LT140 THROWN och se vilka tungor som rör sig; samma med LT162.
