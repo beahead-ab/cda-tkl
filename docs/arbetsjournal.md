@@ -1495,3 +1495,29 @@ ordning: 0.69.0 Studio på bärbar dator (#32), 0.70.0 hjälpen i Studio (#33), 
 och 0.71.1 e-post som användarnamn (#35). Webbdriften körde 0.68.0 på morgonen och tar 0.71.1 med Uppdatera nu,
 eller `sudo charlottendal-update` på servern. Datorer som installerats med installationsraden kör den igen eller
 väljer Uppdatering. Samma uppgifter står i status.md (lägesbild 7 oktober).
+
+## 8 oktober 2026, 0.72.0: klarering i statusraden, Render och kompakta sidor i Studio
+
+**Klarering.** En förfrågan från en grannstation låg bara som kort under Drift och kunde vara bortrullad (Caspers
+skärmbild: Salsborgs förfrågan var tredje kortet). Nu står den i statusraden bredvid CHARLOTTENDAL, som
+rangerarens begäran: "Salsborg begär klarering · tåg 74" med Godkänn och Neka, "+n" för fler. Texten öppnar
+Drift och rullar fram kortet, som blinkar till. Skylten vid linjens kant blinkar gult när orten är kopplad
+till grannstationen i TrainMeet (Orter och telefon), webbläsarfliken säger "● Klarering", och med Ljud på
+ringer två toner när förfrågan kommer och var 30:e sekund tills den är besvarad. Förfrågningarna står först
+bland korten. Godkänn och Neka skickar samma TrainMeet-kommando som kortets knappar. Provat i Chromium mot en
+påhittad TrainMeet-kontext: två förfrågningar, Godkänn och Neka från statusraden, markeringarna borta efteråt.
+
+**Render.** Webbdriften flyttades till Render den 6 oktober (#31, deploy/render). Där finns varken
+`charlottendal-update` eller systemd, så Uppdatering visade "Uppdateras genom publicering". deploy/render sätter
+nu installationstypen `render`: sidan visar installerad och senaste version ur cda-tkl-install. Med miljövariabeln
+`RENDER_DEPLOY_HOOK_URL` (tjänstens Deploy Hook i Render, Settings → Deploy Hook) startar Uppdatera nu ett nytt
+bygge; adressen stannar på servern. update.json skrivs av TKL själv och avstäms när den nya versionen startar,
+eller som misslyckad efter 30 minuter. Utan hook säger sidan att Render bygger om när main ändras, om automatisk
+driftsättning är på.
+
+**Studio.** Sidorna som flyttade in i 0.71.0 är kompakta: Visning och Driftbindningar har objektlistan till vänster
+i full höjd och det valda objektet med granskning, aktivering och historik till höger; Källa har källfilens kort
+hopfällda överst så att registret syns direkt; Införandestatus en rad per regelgrupp; modulernas egna
+inledningar som upprepade Studios rubrik är borta. Provat i Chromium på 1366×768.
+
+422 enhetsprov, 10 processprov och kontrollerna gröna.
