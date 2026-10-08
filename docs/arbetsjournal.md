@@ -1558,3 +1558,28 @@ samma detektor. Genomgångens påstående att kompisparen 140+142 och 162+165 ko
 ur spårplanens `secondturnoutname` i XML:en. Övriga förslag (S164 → LS195, S171 → LS199, S112b → LS72, S155 →
 LS172/173, S125a möjligen LS124) binds inte förrän mätningen visar det. 422 enhetsprov, 10 processprov,
 verify:operations och kontrollerna gröna.
+
+## 8 oktober 2026, publicerat: 0.72.2
+
+Publicerad: 0.72.2 (cda-tkl main `ecaade7`, #43; `beahead-ab/cda-tkl-install` main `35d13ac`).
+
+## 8 oktober 2026, 0.73.0: tågspårning i simulering
+
+Casper: visualisera alla tågrörelser, vid stationskanterna vilka tåg som är på väg mot eller från stationen och sedan
+hur de rör sig genom stationen, genom att hålla koll på vilka spåravkänningar som triggas; med toleranser och
+antaganden om rörelserna, tågvägarna som starkaste bevis, och särskilt dubbelkorsväxlarna och ändarna av spår 11–13.
+Först tågspårningen, bara i simulering.
+
+`src/train-tracking.mjs` bygger en spårgraf på blocknivå ur panel.json, med växelvillkor per förbindelse och
+korsningarna raka. Ett tåg är ett nummer och dess spårledningar; fronten växer till ett angränsande belagt block
+genom växlarna som de ligger, med tågvägen som avgörande när flera vägar finns. Block utan ingång och block på en
+detektor tåget redan håller är broar, vilket löser LS72 (nio block vid spår 11–13), LS199 och LS14. Glapp under 1,5 s
+räknas inte; ett hål mitt i tåget är en delning; nya tåg vid kanterna får numret ur TrainMeet eller det inkommande
+fältet, annars `?n`. Tåg som lämnar visas på linjen, tåg som försvinner inne på stationen som senast sedda.
+Servern kör spårningen när kärnan ändras och var 300:e ms, bara i simuleringsläge; `state.trainTracking` och
+`/api/tracking/name|remove`. Panelen (`public/train-tracking.js`) ritar skyltar vid fronten med pil, tåg på
+linjen vid kanterna och listan Spårade tåg under Drift → Tågnummer. Allt beskrivet i [tågspårningen](tagsparning.md).
+
+Prov: sju enhetsprov, ett processprov mot simulatorn och ett svep över alla 340 tågvägar (330 följs utan spöktåg;
+de tio andra börjar eller slutar på block utan avkänning). Provat i Chromium: ett tåg från Kungsfors och ett mot
+spår 11 genom växelgatan, numret angivet med ett klick. 429 enhetsprov, 11 processprov och kontrollerna gröna.

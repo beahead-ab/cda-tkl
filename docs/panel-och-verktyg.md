@@ -450,3 +450,9 @@ Gruppen Drift finns inte längre i adminfönstret. Adresserna `#tools/operations
 motsvarande del av fliken, så bokmärken fungerar. En ny klareringsförfrågan räknas på
 fliken, "Drift 2", och tar fram fliken om operatören inte valt en annan flik de senaste
 15 sekunderna. Elementen och deras händelser är desamma som förut; bara platsen är ny.
+
+## Tågspårning (0.73.0)
+
+I simulering visar ställverket varje spårat tåg med nummer och pil vid fronten, osäkra med `?` och streckad gul ram,
+och tåg på linjen vid kanterna. Ett klick på skylten anger eller bekräftar numret. Listan *Spårade tåg* ligger
+överst under Drift → Tågnummer. Se [tågspårningen](tagsparning.md).
