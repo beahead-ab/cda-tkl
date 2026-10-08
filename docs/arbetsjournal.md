@@ -1521,3 +1521,20 @@ hopfällda överst så att registret syns direkt; Införandestatus en rad per re
 inledningar som upprepade Studios rubrik är borta. Provat i Chromium på 1366×768.
 
 422 enhetsprov, 10 processprov och kontrollerna gröna.
+
+## 8 oktober 2026, publicerat: 0.72.0
+
+Publicerad: 0.72.0 (cda-tkl main `7d874e4`, #41; `beahead-ab/cda-tkl-install` main `850904e`).
+
+## 8 oktober 2026, 0.72.1: Klarering som egen flik
+
+Casper: klarering används hela tiden och ska vara en egen flik; Händelser kan komma efter beläggning och
+klarering. Nederradens högra kolumn har nu flikarna Klarering, Spårbeläggning, Drift och Händelser.
+Klarering har sträckorna mot grannstationerna och dagens tågrörelser (tidigare överst i Drift); fliken visar
+antalet väntande förfrågningar i gult och blinkar tills de är besvarade, och en ny förfrågan tar fram fliken om
+operatören inte valt flik de senaste 15 sekunderna. Statusradens "Salsborg begär klarering" öppnar fliken och
+rullar fram kortet. Drift behåller knapparna och de hopfällbara delarna. Händelser ligger sist med larmantalet
+på fliken (antalet skrevs tidigare av misstag på Drift-fliken, där klareringens antal också skrevs). Den som
+inte valt flik i webbläsaren får Klarering; ett sparat val står kvar. Rangeraren ser inte fliken.
+`#tools/operations/clearance` öppnar Klarering. Provat i Chromium mot en påhittad TrainMeet-kontext och mot
+Drift-fliken och de gamla adresserna; 422 enhetsprov, 10 processprov och kontrollerna gröna.
