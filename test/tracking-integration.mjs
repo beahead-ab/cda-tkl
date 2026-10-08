@@ -73,3 +73,33 @@ test('simulerade tåg kommer in från linjen med nummer, stannar på spåret och
   } catch (error) { error.message += '\n' + output.slice(-2000); throw error; }
   finally { await Promise.all(children.map(c => new Promise(r => { if (c.exitCode !== null) return r(); c.once('exit', r); c.kill(); }))); fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); }
 });
+
+// Simulerad trafik + automat: stationen kör av sig själv. Ett tåg anmäls, automaten lägger infarten, tåget står på
+// spåret, automaten lägger utfarten mot nästa linje och tåget lämnar.
+test('med simulerad trafik och automat kör stationen ett tåg in och ut av sig själv', { timeout: 150000 }, async () => {
+  const [httpPort, simPort, wirePort] = await Promise.all([freePort(), freePort(), freePort()]);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'charlottendal-automation-'));
+  const env = { ...process.env, CHARLOTTENDAL_PROFILE: 'network', CHARLOTTENDAL_CONNECTION_MODE: 'simulator', CHARLOTTENDAL_AUTH_MODE: 'cloudflare', CHARLOTTENDAL_PUBLIC_ORIGIN: '',
+    CHARLOTTENDAL_PORT: String(httpPort), CHARLOTTENDAL_SIM_PORT: String(simPort), CHARLOTTENDAL_WIRE_PORT: String(wirePort), CHARLOTTENDAL_STATE_DIR: dir };
+  let output = ''; const children = [];
+  const launch = file => { const child = spawn(process.execPath, [file], { cwd: root, env }); children.push(child); child.stdout.on('data', d => output += d); child.stderr.on('data', d => output += d); };
+  const get = async () => (await fetch(`http://127.0.0.1:${httpPort}/api/state`)).json();
+  const post = async (command, data) => { const r = await fetch(`http://127.0.0.1:${httpPort}/api/${command}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); const result = await r.json(); assert.equal(r.status, 200, JSON.stringify(result)); return result; };
+  const said = async pattern => (await get()).operatingEvents.some(e => pattern.test(e.message));
+  try {
+    launch('src/simulator.mjs'); launch('src/server.mjs');
+    await until(async () => { const s = await get(); return s.connection === 'connected' && s.blocks.S100.occupied === false; });
+    assert.deepEqual((await post('automation', { enabled: true })).enabled, true);
+    await post('simulation/trains', { enabled: true });
+    const number = (await until(async () => (await get()).trainSimulation.waiting[0], 15000)).number;
+    await post('simulation/trains', { enabled: false });
+    await until(() => said(new RegExp(`Automaten lägger .* för tåg ${number}`)), 20000);
+    await until(() => said(/tåget står på målspåret/), 40000);
+    await until(() => said(new RegExp(`Automaten lägger Spår .* för tåg ${number}`)), 60000);
+    await until(() => said(new RegExp(`Tåg ${number} lämnade mot`)), 40000);
+    const s = await get();
+    assert.equal(s.automation.enabled, true, 'automaten lämnade inte över');
+    assert.equal(s.trainTracking.trains.filter(t => t.state === 'station').length, 0);
+  } catch (error) { error.message += '\n' + output.slice(-2000); throw error; }
+  finally { await Promise.all(children.map(c => new Promise(r => { if (c.exitCode !== null) return r(); c.once('exit', r); c.kill(); }))); fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); }
+});

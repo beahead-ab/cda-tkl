@@ -55,9 +55,49 @@ växel bara i det läge som leder dit, genom en korsning rakt över. Ett växell
   börjar eller slutar på spårledningar helt utan avkänning (S164, S164b, S112b, S155b); där syns tåget inte förrän
   ingången är bunden (se [genomgången](genomgang-mgp-2026-10-06.md)).
 
-## Simulerade tåg (0.74.0)
+## Tre roller (0.75.0)
 
-Knappen **Simulera tåg** bland driftknapparna under Drift (bara i simuleringsläge) låter simulerade grannstationer släppa
+Banan, trafiken och tågklareraren är tre roller som var och en kan vara verklig eller simulerad:
+
+| Roll | I verkligheten | I simulering |
+|---|---|---|
+| **Banan**: växlar, signaler, spåravkänning och tågen som rullar | MGP-modulerna och riktiga tåg | Simulatorn |
+| **Trafiken**: vilka tåg som kommer, när och varifrån | TrainMeet och grannstationerna | Knappen *Simulerad trafik* |
+| **Tågklareraren**: lägger tågvägarna | Operatören | Knappen *Automat* |
+
+Simulatorn är banan och syns inte för operatören. Dess egen sida (klicka i block, lägg in fel) nås för felsökning från
+Studio → Driftsättning → *Simulatorn ↗*; Inställningar har ingen länk dit längre, och knappen *Starta* för enskilda
+färder är borta. Simulerad trafik och Automat ligger bland driftknapparna under Drift och finns bara i simuleringsläge.
+Med båda påslagna kör stationen av sig själv; med bara Simulerad trafik klarerar operatören.
+
+## Automaten (0.75.0)
+
+Automaten (`src/train-automation.mjs`) är tågklarerare. Den lägger tågvägarna med samma begäran och samma förregling
+som operatören, aldrig förbi dem. Statusraden visar *Automat · datorn lägger tågvägarna* och senaste åtgärd så länge den
+är på, och varje tågväg den lägger står i Händelser.
+
+- **Genomgående tåg:** ett tåg från Kungsfors eller Lekby går mot Vagnsta, ett från Vagnsta växelvis mot Kungsfors och
+  Lekby.
+- **Infart:** när ett tåg stått två sekunder vid infartssignalen (linjens infartsspår) läggs infarten till ett ledigt spår
+  som har en utfart åt rätt håll. Med vänstertrafik österut spår 1, helst 1b vid stationshuset, västerut spår 2, helst
+  2b; därefter 1c/1a respektive 2a/2c och sist övriga spår. Spår där tågvägen inte kan lösas upp vid ankomst (spår 6
+  och 10) väljs inte.
+- **Utfart:** när tåget stått 30 sekunder på spåret läggs utfarten mot tågets linje, helst på linjens normala
+  utfartsspår, när blocket vid kanten är fritt.
+- **Begäran avböjs** (konflikt, spärr, belagt): nästa alternativ prövas, annars väntar automaten.
+- **Lämnar över** och stänger av sig vid allt oväntat: ingen kontakt med banan, AIS, nödåtertagning, fjärrläge eller en
+  tågväg som hålls. Operatören kan när som helst lägga och återta tågvägar själv; automaten rör inte ett tåg vars
+  tågväg redan ligger.
+- Vilket tåg som står var vet automaten ur tågspårningen.
+
+Prov: `test/train-automation.test.mjs` (kärnan, simulatorn, spårningen och automaten i samma klocka: ett tåg in, uppehåll,
+ut mot Vagnsta; aldrig spår 6 eller 10; överlämning vid AIS) och `test/tracking-integration.mjs` (med simulerad trafik
+och automat som riktiga processer kör stationen ett tåg in och ut). Femton simulerade minuter med trafik från alla tre
+linjerna: omkring fjorton tåg in och ut per körning, utan överlämning, spöktåg eller osäkra nummer.
+
+## Simulerad trafik (0.74.0, namnet sedan 0.75.0)
+
+Knappen **Simulerad trafik** (före 0.75.0 *Simulera tåg*) bland driftknapparna under Drift (bara i simuleringsläge) låter simulerade grannstationer släppa
 in tåg på linjerna, ungefär ett var 45:e–90:e sekund och högst sex på stationen åt gången.
 
 1. TKL väljer en linje vars infartsspår (det som inte är normal utfart enligt Orter och telefon) är fritt och ger tåget

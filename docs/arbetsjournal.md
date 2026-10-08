@@ -1615,3 +1615,31 @@ infartssignalen. Spårningen tar numret ur fältet, även om anmälan kommer eft
 Prov: fyra enhetsprov i `test/simulated-trains.test.mjs`, ett processprov i `test/tracking-integration.mjs` och ett svep
 över 78 infarter (70 hela vägen in, upplösning och ut). Provat i Chromium: knappen, tåg 401 vid Kungsfors, in till spår
 1c med sitt nummer, tågvägen löst vid ankomst. 434 enhetsprov, 12 processprov och kontrollerna gröna.
+
+## 8 oktober 2026, publicerat: 0.74.0
+
+Publicerad: 0.74.0 (cda-tkl main `80392ee`, #45; `beahead-ab/cda-tkl-install` main `fe68a7b`).
+
+## 8 oktober 2026, 0.75.0: automaten och tre roller
+
+Casper: simulatorn känns inte relevant längre och krockar begreppsmässigt med automatiken. Bedömningen: de gör olika
+jobb men namnen blandade ihop dem. Banan (simulatorn eller MGP), trafiken (simulerad eller TrainMeet) och
+tågklareraren (operatören eller automaten) är tre roller. Casper sa ok till att göra simulatorn osynlig, byta namn på
+Simulera tåg till Simulerad trafik och bygga automaten med genomgående tåg.
+
+`src/train-automation.mjs`: när ett tåg stått två sekunder vid infartssignalen läggs infarten till ett ledigt spår med
+utfart åt rätt håll (österut spår 1, helst 1b; västerut spår 2, helst 2b), när det stått 30 sekunder läggs utfarten mot
+nästa linje. Alla begäranden går genom `Engine.request` som operatörens; avböjs en prövas nästa. Spår 6 och 10 väljs
+inte, eftersom tågvägen där inte kan lösas upp vid ankomst. Automaten lämnar över och stänger av sig vid ingen kontakt,
+AIS, nödåtertagning, fjärrläge eller en tågväg som hålls. Den kör per runtime i servern var 250:e ms; `/api/automation`,
+`state.automation`, knappen Automat bland driftknapparna och statusraden *Automat · datorn lägger tågvägarna*.
+
+Simulatorns sida länkas inte längre från Inställningar → Banan; den nås från Studio → Driftsättning → Simulatorn ↗ för
+felsökning, och knappen Starta färd är borttagen (simulatorns `/api/train` finns kvar för proven). Tågets nummerskylt
+står nu på spåret, förskjuten i färdriktningen så att spårknappen går att klicka på; ovanför spåret hamnade den mellan
+spår 1b och 2b.
+
+Prov: tre enhetsprov i `test/train-automation.test.mjs`, ett processprov med trafik och automat som riktiga processer,
+och femton simulerade minuter med trafik från alla tre linjerna i fyra körningar (omkring fjorton tåg in och ut per
+körning, ingen överlämning). Provat i Chromium: knapparna, statusraden, tåg 301 och 303 från Vagnsta in på spår 2b och
+ut mot Kungsfors. 437 enhetsprov, 13 processprov och kontrollerna gröna.
