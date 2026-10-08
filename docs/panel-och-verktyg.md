@@ -432,7 +432,14 @@ fönster decket samtidigt, Macappen och en flik, så att båda skickade varje tr
 
 ## Drift som tredje flik i nederraden (steg 1 i installningar-plan.md)
 
-Nederradens högra kolumn har tre flikar: Händelser, Spårbeläggning och Drift. Drift har
+**Sedan 0.72.1** har kolumnen fyra flikar i ordningen Klarering, Spårbeläggning, Drift och Händelser.
+Klarering är en egen flik eftersom den används hela tiden: sträckorna mot grannstationerna (förfrågningar
+först) och dagens tågrörelser. Fliken visar antalet väntande förfrågningar och blinkar gult så länge någon
+väntar; en ny förfrågan tar fram fliken om operatören inte valt flik de senaste 15 sekunderna. Förfrågan står
+också i statusraden med Godkänn och Neka (0.72.0). Händelser ligger sist; antalet larm står kvar på fliken.
+Drift behåller resten enligt nedan, utan Tågklarering. `#tools/operations/clearance` öppnar Klarering.
+
+Före 0.72.1 hade kolumnen tre flikar: Händelser, Spårbeläggning och Drift. Drift har
 överst knapparna Återställ, Styra RBG, Alla signaler i stopp, Nödåterta alla och Spärra
 lokal manövrering, och när det gäller uppdateringschipet och "Ny version · ladda om".
 Därunder manöverläget i text, Tågklarering och de hopfällbara delarna Tågvägar,

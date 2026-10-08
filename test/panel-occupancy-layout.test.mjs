@@ -15,8 +15,8 @@ test('0.45: the console row is gone and the push buttons are chips in the status
 
 test('0.45: the right column has a Spårbeläggning tab that widens the column on wide screens',()=>{
   assert.match(events,/data-view="occupancy"/);
-  assert.match(css,/#panel-bottom:is\(\[data-right=occupancy\],\[data-right=drift\]\) :is\(#ev-content,\.ev-filters\)\{display:none\}/);
-  assert.match(css,/@media\(min-width:1800px\)[^{]*\{#panel-bottom:is\(\[data-right=occupancy\],\[data-right=drift\]\)\{grid-template-columns:minmax\(0,1fr\) 820px\}\}/);
+  assert.match(css,/#panel-bottom:is\(\[data-right=occupancy\],\[data-right=drift\],\[data-right=clearance\]\) :is\(#ev-content,\.ev-filters\)\{display:none\}/);
+  assert.match(css,/@media\(min-width:1800px\)[^{]*\{#panel-bottom:is\(\[data-right=occupancy\],\[data-right=drift\],\[data-right=clearance\]\)\{grid-template-columns:minmax\(0,1fr\) 820px\}\}/);
   assert.match(css,/\.occ-bar\.occ-now\{color:#f5d76e\}/);
 });
 
@@ -57,14 +57,17 @@ test('Drift tab: operating parts live in the bottom row, nothing in the frame or
   const app=fs.readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
   const clearance=fs.readFileSync(new URL('../public/clearance.js',import.meta.url),'utf8');
   const nav=fs.readFileSync(new URL('../public/admin-navigation-model.js',import.meta.url),'utf8');
-  assert.match(events,/data-view="drift"[^>]*>Drift<span id="drift-tab-count"/);
+  // Tabs in order: Klarering (with the request count), Spårbeläggning, Drift, Händelser (0.72.1).
+  assert.match(events,/data-view="clearance"[^>]*>Klarering<span id="clearance-tab-count"[^]*data-view="occupancy"[^]*data-view="drift"[^>]*>Drift<\/button>[^]*data-view="events"[^>]*>Händelser<span class="ev-alarm-count"/);
+  assert.match(console_,/clearancePane\.id='panel-clearance'/);
   assert.match(console_,/drift\.id='panel-drift'/);
   // Återställ, Styra RBG, stop, emergency and local mode are the tab's buttons.
   assert.match(console_,/actions\.append\(\$\('panel-quick-actions'\),\$\('all-stop'\),\$\('reset-ais'\),\$\('emergency-cancel'\),\$\('toggle-authority'\)\)/);
   // The update chips leave the frame for the same row.
   assert.match(app,/drift-actions'\)\?\.append\(\.\.\.headRight\.children\);headRight\.remove\(\)/);
-  // A clearance request counts on the tab and brings it forward unless a tab was just picked.
-  assert.match(clearance,/getElementById\('drift-tab-count'\)/);
+  // A clearance request counts on the Klarering tab and brings it forward unless a tab was just picked.
+  assert.match(clearance,/getElementById\('clearance-tab-count'\)/);
+  assert.match(app,/onRequest:\(\)=>\{panelEvents\?\.showClearance\(\{auto:true\}\)/);
   assert.match(events,/if\(auto&&Date\.now\(\)-chosenAt<15000\)return/);
   // The old Drift pages are addresses into the tab, not pages of the admin window.
   assert.match(console_,/#tools\\\/operations/);
