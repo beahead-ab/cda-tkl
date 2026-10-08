@@ -41,3 +41,24 @@ test('the web deployment can start its own update and reports the last run',asyn
   text='inte json';assert.equal(check.view().run,null);
   assert.equal(new UpdateCheck({current:'1.0.0',kind:'mac'}).view().canStart,false,'a Mac runs the line in Terminal');
 });
+
+test('on Render the Deploy Hook starts a build, and the next version settles the run',async()=>{
+  const HOOK='https://api.render.com/deploy/srv-d3abc123?key=Xy_9-z';let file=null,now=Date.parse('2026-10-08T10:00:00Z');const calls=[];
+  const io={statusFile:'/data/state/update.json',readFile:()=>{if(file===null)throw Error('ENOENT');return file;},writeFile:(_,text)=>{file=text;},now:()=>now};
+  const fetcher=async(url,options)=>{calls.push([url,options?.method||'GET']);return new Response(url===HOOK?'{"deploy":{"id":"dep-1"}}':'{"version":"0.72.0"}');};
+  assert.equal(new UpdateCheck({current:'0.71.1',kind:'render',hook:'https://example.test/deploy?key=1'}).view().canStart,false,'only a Render Deploy Hook is used');
+  assert.equal(new UpdateCheck({current:'0.71.1',kind:'render'}).view().canStart,false,'no hook: Render builds main by itself');
+  const check=new UpdateCheck({current:'0.71.1',kind:'render',hook:HOOK,fetcher,...io});
+  await check.check();assert.equal(check.view().canStart,true);
+  await check.startRender();
+  assert.deepEqual(calls.at(-1),[HOOK,'POST']);
+  assert.equal(check.view().run.phase,'restarting');assert.equal(check.view().run.to,'0.72.0');
+  assert.equal(JSON.stringify(check.view()).includes('key=Xy'),false,'the hook never leaves the server');
+  // The container restarts on the new version: it reads the file and marks the run done.
+  const after=new UpdateCheck({current:'0.72.0',kind:'render',hook:HOOK,fetcher,...io});after.settle();
+  assert.equal(after.view().run.phase,'done');assert.match(after.view().run.message,/0\.72\.0 är installerad\. Föregående version: 0\.71\.1/);
+  // A build that never replaced the running version is reported after 30 minutes.
+  await check.startRender();now+=31*60000;check.settle();
+  assert.equal(check.view().run.phase,'failed');assert.match(check.view().run.message,/Render har inte bytt version/);
+  await assert.rejects(()=>new UpdateCheck({current:'0.71.1',kind:'render',...io}).startRender(),/Ingen Deploy Hook/);
+});
