@@ -106,3 +106,12 @@ test('operatörens nummer på ett block gäller; avstängd utanför simulering',
   assert.equal(off.observe({blocks:{},turnouts:{},connected:true}),false);
   assert.deepEqual(off.view(),{enabled:false,reason:'Bara i simulering.',trains:[],lines:[]});
 });
+
+test('en anmälan som kommer efter tåget ger det okända tåget numret',()=>{
+  const book={};const t=rig({book});
+  t.f.set('SU2A',true);t.tick();
+  assert.equal(t.tracker.view().trains[0].certain,false);
+  book['incoming:AuppIn']={value:'401',updatedAt:9};t.tick();
+  const train=t.tracker.view().trains[0];
+  assert.deepEqual([train.number,train.certain,train.source],['401',true,'inkommande fält']);
+});

@@ -1583,3 +1583,35 @@ linjen vid kanterna och listan Spårade tåg under Drift → Tågnummer. Allt be
 Prov: sju enhetsprov, ett processprov mot simulatorn och ett svep över alla 340 tågvägar (330 följs utan spöktåg;
 de tio andra börjar eller slutar på block utan avkänning). Provat i Chromium: ett tåg från Kungsfors och ett mot
 spår 11 genom växelgatan, numret angivet med ett klick. 429 enhetsprov, 11 processprov och kontrollerna gröna.
+
+## 8 oktober 2026, publicerat: 0.73.0
+
+Publicerad: 0.73.0 (cda-tkl main `f26c754`, #44; `beahead-ab/cda-tkl-install` main `070f414`).
+
+## 8 oktober 2026, 0.74.0: simulerade tåg och upplösning vid ankomst
+
+Nästa steg efter tågspårningen, som Casper bad om: simulatorn släpper själv in tåg på linjerna, med nummer, och låter dem
+stå kvar på spåret i stället för att försvinna.
+
+Det krävde ett beslut i kärnan. En tågväg löstes bara upp när alla dess block var fria, och målspåret ingår i vägen, så
+ett tåg som stannade på spåret höll hela vägen låst och gick inte heller att återta. Casper valde upplösning vid
+ankomst för både simulering och riktig bana: `Engine.arrived` kräver att alla avsnitt före målspåret är fria, att
+målspårets block inte bär någon av tågvägens växlar och att resten av vägen har färska fria besked; efter tre sekunder
+begärs återtagning, och låsen släpps efter stoppbesked som vid all återtagning. Målspåret förblir belagt. På spår 6
+och 10 täcker målspårets detektor också en växel i vägen, så där ligger tågvägen kvar.
+
+Simulatorn (`src/field.mjs`): `spawnTrain` ställer ett tåg med nummer på linjen utanför infartssignalen; ett stående tåg
+väljer den färd vars växlar ligger rätt och vars signaler visar kör (från sin position eller ett angränsande block),
+stannar på målspåret och väntar på nästa; ut på en linje lämnar det anläggningen. Simulatorn rapporterar nu bara de
+ingångar som ett belagt block själv har: tidigare tände S95b (LS13) också SLI:s andra ingång LS74, vilket gav ett
+spöktåg vid Lastspår 1.
+
+TKL: `src/train-simulation.mjs` (knappen Simulera tåg under Drift, bara i simuleringsläge) väljer en fri infart, anmäler
+tåget i det inkommande fältet (`TrainInformation.announce`, källa simulation) och ber simulatorn ställa det på linjen med
+`SIM`-kommandot över den lokala förbindelsen (`LocoNetClient.simulate`); fältet töms när tåget passerat
+infartssignalen. Spårningen tar numret ur fältet, även om anmälan kommer efter tåget. Beskrivet i
+[tågspårningen](tagsparning.md).
+
+Prov: fyra enhetsprov i `test/simulated-trains.test.mjs`, ett processprov i `test/tracking-integration.mjs` och ett svep
+över 78 infarter (70 hela vägen in, upplösning och ut). Provat i Chromium: knappen, tåg 401 vid Kungsfors, in till spår
+1c med sitt nummer, tågvägen löst vid ankomst. 434 enhetsprov, 12 processprov och kontrollerna gröna.
