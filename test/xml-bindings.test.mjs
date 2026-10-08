@@ -43,7 +43,9 @@ test('every detected block carries the LS inputs of its JMRI rule; undetected bl
     if (s.inputs.length > 1) assert.equal(b.logic, s.shape === 'all' ? 'all' : 'any'); else assert.equal(b.inputs, undefined);
   }
   assert.deepEqual(profile.blocks.SIA.inputs.map(i => i.address), [90, 100]); assert.equal(profile.blocks.SIA.logic, 'any'); assert.equal(profile.blocks.S100.address, 60);
-  assert.equal(sections.filter(s => !s.inputs.length).length, 36); assert.equal(profile.blocks.S170.address, 199, 'SN1B-regeln sätter även S170');
+  assert.equal(sections.filter(s => !s.inputs.length).length, 35); assert.equal(profile.blocks.S170.address, 199, 'SN1B-regeln sätter även S170');
+  // S100a läser den interna sensorn slS100, som regeln S100 sätter från LS60 (C77 via C24), med Vx100 rakt.
+  assert.equal(profile.blocks.S100a.address, 60); assert.deepEqual(sections.find(s => s.name === 'S100a').inputs, ['LS60']);
   assert.deepEqual(plant.blocks, profile.blocks, 'simulatorn delar detektorbindningarna');
 });
 

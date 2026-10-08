@@ -1538,3 +1538,23 @@ på fliken (antalet skrevs tidigare av misstag på Drift-fliken, där klareringe
 inte valt flik i webbläsaren får Klarering; ett sparat val står kvar. Rangeraren ser inte fliken.
 `#tools/operations/clearance` öppnar Klarering. Provat i Chromium mot en påhittad TrainMeet-kontext och mot
 Drift-fliken och de gamla adresserna; 422 enhetsprov, 10 processprov och kontrollerna gröna.
+
+## 8 oktober 2026, publicerat: 0.72.1
+
+Publicerad: 0.72.1 (cda-tkl main `707b700`, #42; `beahead-ab/cda-tkl-install` main `0ce735f`).
+
+## 8 oktober 2026, 0.72.2: AI-analys av XML:en, S100a på LS60
+
+Casper bad att AI skulle klura ut det som återstod i genomgången, med dubbelkorsväxlarna, dubbelväxlarna och
+ändarna av spår 11–13 särskilt. En analys läste varje regel, spårplanens geometri och sensorernas namn och
+kommentarer; resultatet står sist i [genomgången](genomgang-mgp-2026-10-06.md), med vad som står i XML:en och vad
+som är slutsats.
+
+Ett fynd var ett fel i inventeringen: S100a:s regel (C77) läser den interna sensorn slS100, som regeln S100 (C24)
+sätter från LS60. Inventeringen följde bara LS-sensorer, så S100a låg på bänkadress 3030 trots att den ingår i 44
+tågvägar. `detectionInventory` följer nu kedjan av interna sensorer; profilen regenererad, bara S100a ändrades
+(adress 60), och i 36 tågvägar flyttar signalens plats i passageordningen ett steg eftersom S100 och S100a nu är
+samma detektor. Genomgångens påstående att kompisparen 140+142 och 162+165 kom ur knappgrupperna var fel: de kommer
+ur spårplanens `secondturnoutname` i XML:en. Övriga förslag (S164 → LS195, S171 → LS199, S112b → LS72, S155 →
+LS172/173, S125a möjligen LS124) binds inte förrän mätningen visar det. 422 enhetsprov, 10 processprov,
+verify:operations och kontrollerna gröna.

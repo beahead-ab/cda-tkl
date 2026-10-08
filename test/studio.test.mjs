@@ -20,7 +20,7 @@ test('objektregistret har stationens mängder och bara spårbarhet ur XML, inget
   assert.deepEqual(r.signals.filter(s => s.virtual).map(s => s.id), ['3/1', '4/2', '6/10', '6/5', '6/6', '6/7', '7/10', '7/5', '8/10', '8/5', '9/10', '9/5', 'L1']);
   assert.ok(r.signals.every(s => s.virtual ? s.status === 'virtuell i JMRI, ingen utgång' && s.loconet.order === null : s.status === 'ur XML, ej uppmätt' && s.loconet.order === s.loconet.report));
   const sia = r.blocks.find(b => b.id === 'SIA'); assert.deepEqual(sia.loconet, { report: 90, inputs: [90, 100], logic: 'any', activeMeansOccupied: true }); assert.deepEqual(sia.sourceInputs, ['LS90', 'LS100']);
-  assert.equal(r.blocks.filter(b => b.status === 'ur XML, ej uppmätt').length, 161); assert.equal(r.blocks.filter(b => b.status === 'bänkadress i simulatorn').length, 36);
+  assert.equal(r.blocks.filter(b => b.status === 'ur XML, ej uppmätt').length, 162); assert.equal(r.blocks.filter(b => b.status === 'bänkadress i simulatorn').length, 35);
   assert.equal(r.blocks.find(b => b.id === 'S155').status, 'bänkadress i simulatorn');
   assert.deepEqual(r.xmlOnlyTurnouts, ['Vx124']);
   assert.equal(r.modules.map(m => m.id).join(','), 'M00,M01,M02,M03,M04,M05,M06,M07,M08,M09,M10,M11');
@@ -55,11 +55,11 @@ test('spåravkänningen läser JMRI:s regelformer med logiktypen, inte villkorst
 test('avvikelselistan reproducerar planens kända luckor och de nya fynden', () => {
   const rows = deviations(sources);
   const counts = Object.fromEntries(rows.map(r => [r.id, r.count]));
-  assert.deepEqual(counts, { 'signal-bench': 0, 'signal-virtual': 13, 'block-bench': 36, 'turnout-unmeasured': 49, 'signal-relations': 44, 'nx-without-route': 20, 'shunt-excluded': 15,
+  assert.deepEqual(counts, { 'signal-bench': 0, 'signal-virtual': 13, 'block-bench': 35, 'turnout-unmeasured': 49, 'signal-relations': 44, 'nx-without-route': 20, 'shunt-excluded': 15,
     'manual-groups': 5, 'contradicting-rules': 4, 'yard-boundaries': 6, 'crossing-v4': 4, 'swedish-aspects': 7, 'vx95-vx96': 1, 'xml-only-turnouts': 1, 'turntable': 1,
     'programming-relay': 1, 'companion-pairs': 2, 'undetected-blocks': 19, 'unbound-inputs': 87 });
-  assert.equal(row(rows, 'block-bench').note, '36 bänkadresser');
-  assert.deepEqual(row(rows, 'block-bench').items.filter(n => /^S\d/.test(n)).sort(), ['S100a', 'S112b', 'S155', 'S155b', 'S155c', 'S164', 'S164b', 'S171', 'S172'], 'växelblock utan logixregel och S100a utan egen ingång');
+  assert.equal(row(rows, 'block-bench').note, '35 bänkadresser');
+  assert.deepEqual(row(rows, 'block-bench').items.filter(n => /^S\d/.test(n)).sort(), ['S112b', 'S155', 'S155b', 'S155c', 'S164', 'S164b', 'S171', 'S172'], 'växelblock utan logixregel; S100a läser LS60 via slS100 sedan 0.72.2');
   assert.equal(row(rows, 'contradicting-rules').note, '3 huvud + 1 växling');
   assert.deepEqual(row(rows, 'yard-boundaries').items, ['Vx102', 'Vx112', 'Vx131', 'Vx132', 'Vx144', 'Vx154'], 'the pairs whose button guards replace the group rule; 103 and 164 keep their own');
   assert.deepEqual(row(rows, 'companion-pairs').items, ['Vx140 + Vx142', 'Vx162 + Vx165']);
