@@ -10,7 +10,7 @@ const wirePort=Number(process.env.CDA_RENDER_WIRE_PORT || 8912);
 const env = {...process.env, CHARLOTTENDAL_PUBLIC_ORIGIN:origin, CHARLOTTENDAL_STATE_DIR:data+'/state',
  CHARLOTTENDAL_AUTH_MODE:'password', CHARLOTTENDAL_AUTH_FILE:data+'/auth/auth.json',
  CHARLOTTENDAL_CONNECTION_MODE:'simulator', CHARLOTTENDAL_WIRE_HOST:'127.0.0.1', CHARLOTTENDAL_WIRE_PORT:String(wirePort),
- CHARLOTTENDAL_PORT:String(tklPort), CHARLOTTENDAL_SIM_PORT:String(simPort), CHARLOTTENDAL_FIELD_URL:'/anlaggning/', CHARLOTTENDAL_TKL_URL:'/'};
+ CHARLOTTENDAL_PORT:String(tklPort), CHARLOTTENDAL_INSTALL_KIND:'render', CHARLOTTENDAL_SIM_PORT:String(simPort), CHARLOTTENDAL_FIELD_URL:'/anlaggning/', CHARLOTTENDAL_TKL_URL:'/'};
 let children=[], stopping=false, started=false;
 function stop(code=0) {
  if(stopping)return;stopping=true;clearInterval(poll);
