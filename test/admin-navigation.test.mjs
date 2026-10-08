@@ -20,7 +20,7 @@ test('Inställningar has ten entries in three groups; Anläggningen is one link 
   assert.ok(order.every((g,i)=>!i||g===order[i-1]||!order.slice(0,i).includes(g)));
   for(const section of NAVIGATION_SECTIONS){
     for(const tab of section.tabs){
-      if(tab.external){assert.equal(tab.external,'field-link');continue;}
+      assert.ok(!tab.external,"simulatorns sida länkas bara från Studio (0.75.0)");
       assert.ok(tab.hash===section.hash||tab.hash.startsWith(section.hash+'/'),`${tab.hash} belongs to ${section.hash}`);
       assert.ok(registered.includes(tab.hash),`${tab.hash} is a registered workspace`);
     }
