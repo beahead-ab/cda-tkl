@@ -55,10 +55,43 @@ växel bara i det läge som leder dit, genom en korsning rakt över. Ett växell
   börjar eller slutar på spårledningar helt utan avkänning (S164, S164b, S112b, S155b); där syns tåget inte förrän
   ingången är bunden (se [genomgången](genomgang-mgp-2026-10-06.md)).
 
+## Simulerade tåg (0.74.0)
+
+Knappen **Simulera tåg** bland driftknapparna under Drift (bara i simuleringsläge) låter simulerade grannstationer släppa
+in tåg på linjerna, ungefär ett var 45:e–90:e sekund och högst sex på stationen åt gången.
+
+1. TKL väljer en linje vars infartsspår (det som inte är normal utfart enligt Orter och telefon) är fritt och ger tåget
+   ett nummer: Kungsfors 4xx, Vagnsta 3xx, Lekby 2xx.
+2. Tåget **anmäls** i linjens inkommande fält, som en grannstation gör, och syns vid kanten.
+3. TKL ber simulatorn ställa tåget **på linjen utanför infartssignalen** (`SIM`-kommandot över den lokala förbindelsen
+   till simulatorn; en riktig LocoBuffer får aldrig sådana rader). Spårningen ser tåget och tar numret ur fältet.
+4. **Operatören lägger tågvägen.** Tåget kör när signalerna visar kör, stannar på målspåret och står kvar där.
+   Simulatorn vet inget om TKL:s tågvägar: den läser växlarna och signalerna.
+5. **Kärnan löser upp tågvägen vid ankomst** (se nedan). Lägger operatören en tågväg från spåret kör tåget vidare; ut på
+   en linje lämnar det anläggningen och visas på linjen.
+
+Det inkommande fältet töms när tåget passerat infartssignalen. Simulatorns knapp *Starta* för en enskild färd finns kvar
+och fungerar som förut (det tåget försvinner vid målet).
+
+### Upplösning vid ankomst
+
+Tidigare löstes en tågväg bara upp när alla dess block var fria, så ett tåg som stannade på målspåret höll hela vägen
+låst. Sedan 0.74.0 (Caspers beslut 8 oktober) löses tågvägen upp när tåget lämnat alla avsnitt före målspåret och
+står helt på det, utan någon av tågvägens växlar under sig, efter tre sekunder. Låsen släpps först efter stoppbesked som
+vid all återtagning, och målspåret förblir belagt, så ingen ny tågväg kan läggas in på det. En tågväg från spåret kan
+läggas. Det gäller både simulering och riktig bana.
+
+På **spår 6** och **spår 10** delar målspårets detektor med en växel i tågvägen (S144b och Vx144 på LS158, S132b och
+Vx132 på LS145, S160c och Vx160 på LS190). Kärnan kan då inte se att tåget lämnat växeln, och tågvägen ligger kvar
+tills spåret är fritt eller panelen återställs. Det löses först med en egen detektor för spåret.
+
+Prov: `test/simulated-trains.test.mjs` (kärnan och simulatorn tillsammans: in, uppställning, upplösning, vidare ut;
+väntan före upplösningen; spår 6) och `test/tracking-integration.mjs` (knappen via API:t, anmälan, spårningen tar numret,
+upplösning vid ankomst). Ett svep över alla 78 infarter från linjerna till spåren: 70 går hela vägen in, löses upp och
+ut igen; de åtta andra går till spår 6 och spår 10 enligt ovan.
+
 ## Begränsningar
 
-- Simulatorn tar bort ett tåg när det nått målet, så det står kvar som "senast sedd". Ett riktigt tåg står kvar och
-  håller spåret belagt.
 - Spårningen ser bara det detektorerna ser. Två tåg tätt efter varandra på samma detektor, eller ett tåg som rör sig
   på spår utan avkänning, kan inte skiljas åt; då blir det osäkert och operatören bekräftar.
 - Spårningen sparas inte: efter en omstart börjar den om.

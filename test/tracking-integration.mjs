@@ -40,3 +40,36 @@ test('tågspårningen följer ett simulerat tåg från Kungsfors till spår 1c o
   } catch (error) { error.message += '\n' + output.slice(-2000); throw error; }
   finally { await Promise.all(children.map(c => new Promise(r => { if (c.exitCode !== null) return r(); c.once('exit', r); c.kill(); }))); fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); }
 });
+
+// Simulera tåg: TKL anmäler ett tåg i det inkommande fältet och ställer det på linjen i simulatorn (SIM över den lokala
+// förbindelsen); operatören lägger tågvägen, tåget kör in med sitt nummer, stannar på spåret och tågvägen löses upp.
+test('simulerade tåg kommer in från linjen med nummer, stannar på spåret och tågvägen löses upp vid ankomst', { timeout: 90000 }, async () => {
+  const [httpPort, simPort, wirePort] = await Promise.all([freePort(), freePort(), freePort()]);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'charlottendal-simtrains-'));
+  const env = { ...process.env, CHARLOTTENDAL_PROFILE: 'network', CHARLOTTENDAL_CONNECTION_MODE: 'simulator', CHARLOTTENDAL_AUTH_MODE: 'cloudflare', CHARLOTTENDAL_PUBLIC_ORIGIN: '',
+    CHARLOTTENDAL_PORT: String(httpPort), CHARLOTTENDAL_SIM_PORT: String(simPort), CHARLOTTENDAL_WIRE_PORT: String(wirePort), CHARLOTTENDAL_STATE_DIR: dir };
+  let output = ''; const children = [];
+  const launch = file => { const child = spawn(process.execPath, [file], { cwd: root, env }); children.push(child); child.stdout.on('data', d => output += d); child.stderr.on('data', d => output += d); };
+  const get = async () => (await fetch(`http://127.0.0.1:${httpPort}/api/state`)).json();
+  const post = async (command, data) => { const r = await fetch(`http://127.0.0.1:${httpPort}/api/${command}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); const result = await r.json(); assert.equal(r.status, 200, JSON.stringify(result)); return result; };
+  try {
+    launch('src/simulator.mjs'); launch('src/server.mjs');
+    await until(async () => { const s = await get(); return s.connection === 'connected' && s.blocks.S100.occupied === false; });
+    assert.equal((await get()).trainSimulation.available, true);
+    await post('simulation/trains', { enabled: true });
+    const announced = await until(async () => (await get()).trainSimulation.waiting[0], 15000);
+    const s = await get();
+    const field = { Au: 'incoming:AuppIn', Bn: 'incoming:BnedIn', Cu: 'incoming:CuppIn' }[announced.edge];
+    assert.equal(s.trainInformation.entries[field]?.value, announced.number, 'anmält i det inkommande fältet');
+    await post('simulation/trains', { enabled: false });
+    const target = { Au: 'htvSpIA', Bn: 'htvSpIC', Cu: 'htvSpIA' }[announced.edge];
+    await post('route', { from: 'htv' + announced.edge, to: target });
+    const parked = await until(async () => { const v = await get(); const t = v.trainTracking.trains.find(x => x.number === announced.number); return t && v.routes.length === 0 && t.state === 'station' ? t : null; }, 45000);
+    assert.equal(parked.certain, true, 'numret kom från det inkommande fältet');
+    const after = await get();
+    assert.equal(after.blocks[parked.head].occupied, true, 'tåget står kvar på spåret');
+    assert.ok(after.operatingEvents.some(e => /tåget står på målspåret/.test(e.message)), 'tågvägen löstes upp vid ankomst');
+    assert.equal(after.trainInformation.entries[field], undefined, 'det inkommande fältet tömdes när tåget kom in');
+  } catch (error) { error.message += '\n' + output.slice(-2000); throw error; }
+  finally { await Promise.all(children.map(c => new Promise(r => { if (c.exitCode !== null) return r(); c.once('exit', r); c.kill(); }))); fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); }
+});
