@@ -1643,3 +1643,13 @@ Prov: tre enhetsprov i `test/train-automation.test.mjs`, ett processprov med tra
 och femton simulerade minuter med trafik från alla tre linjerna i fyra körningar (omkring fjorton tåg in och ut per
 körning, ingen överlämning). Provat i Chromium: knapparna, statusraden, tåg 301 och 303 från Vagnsta in på spår 2b och
 ut mot Kungsfors. 437 enhetsprov, 13 processprov och kontrollerna gröna.
+
+## 9 oktober 2026, publicerat: 0.75.0
+
+Publicerad: 0.75.0 (cda-tkl main `45ec00a`, #46; `beahead-ab/cda-tkl-install` main `ba895b6`, 8 oktober). Dagens
+versioner i ordning: 0.72.0 klarering i statusraden, Render och kompakta Studio-sidor (#41), 0.72.1 Klarering som egen
+flik (#42), 0.72.2 S100a på LS60 och AI-analysen av XML:en (#43), 0.73.0 tågspårning i simulering (#44), 0.74.0
+simulerade tåg och upplösning vid ankomst (#45) och 0.75.0 automaten och de tre rollerna (#46). Webbdriften på Render
+tar 0.75.0 när Render bygger om main (automatisk driftsättning) eller med Uppdatera nu när Deploy Hook är inlagd;
+datorer som installerats med installationsraden kör den igen eller väljer Uppdatering. Samma uppgifter står i
+status.md (lägesbild 9 oktober).
