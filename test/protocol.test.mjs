@@ -6,8 +6,9 @@ test('published byte fixtures decode and encode independently', () => {
   const cases = [
     ['B0 7A 30 05', switchOrder(123, 'C'), { kind: 'order', address: 123, position: 'C', on: true }],
     ['B0 7A 10 25', switchOrder(123, 'T'), { kind: 'order', address: 123, position: 'T', on: true }],
-    ['B1 7A 20 14', switchReport(123, 'C'), { kind: 'turnout', address: 123, position: 'C' }],
-    ['B1 7A 10 24', switchReport(123, 'T'), { kind: 'turnout', address: 123, position: 'T' }],
+    // Ingångsformatet, som MGP-korten rapporterar (Bennys monitorering 9 oktober 2026); utgångsformatet avkodas också.
+    ['B1 7A 70 44', switchReport(123, 'C'), { kind: 'turnout', address: 123, position: 'C', input: true }],
+    ['B1 7A 60 54', switchReport(123, 'T'), { kind: 'turnout', address: 123, position: 'T', input: true }],
     ['B1 7A 00 34', switchReport(123, 'unknown'), { kind: 'turnout', address: 123, position: 'unknown' }],
     ['B2 3B 75 03', sensorReport(1400, true), { kind: 'sensor', address: 1400, active: true }],
     ['B2 3B 65 13', sensorReport(1400, false), { kind: 'sensor', address: 1400, active: false }],
@@ -15,11 +16,13 @@ test('published byte fixtures decode and encode independently', () => {
     ['E4 09 06 2E 00 01 12 00 29', signalReport(815, 18), { kind: 'signal', address: 815, code: 18 }]
   ];
   for (const [wire, encoded, value] of cases) { assert.equal(hex(encoded), wire); assert.deepEqual(decode(fromHex(wire)), value); }
+  assert.deepEqual(decode(fromHex('B1 7A 20 14')), { kind: 'turnout', address: 123, position: 'C' }, 'utgångsformat CLOSED');
+  assert.deepEqual(decode(fromHex('B1 7A 10 24')), { kind: 'turnout', address: 123, position: 'T' }, 'utgångsformat THROWN');
 });
 test('bad checksum, lengths and addresses fail closed', () => {
   for (const s of ['B0 7A 30 04', 'B0 7A 30', 'B0 7A FF 05', 'E4 09 00', '??']) assert.throws(() => fromHex(s));
   assert.throws(() => switchOrder(2049, 'C')); assert.throws(() => sensorReport(0, true));
-  assert.equal(decode(frame([0xb1, 0, 0x40])).kind, 'unsupported');
+  assert.equal(decode(frame([0xb1, 0, 0x40])).kind, 'unsupported', 'hjälpingången är inget läge');
   assert.equal(decode(frame([0xb1, 0, 0x30])).position, 'unknown');
 });
 test('serial chunks and garbage resynchronize without invented frames', () => {

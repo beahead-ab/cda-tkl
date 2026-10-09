@@ -111,7 +111,9 @@ test('network profile runs parallel trains across separate processes and release
     assert.ok(capture.events.some(e=>e.direction==='out'&&e.kind==='order'));
     assert.ok(capture.events.some(e=>e.direction==='in'&&e.kind==='received-order'));
     assert.ok(capture.events.some(e=>e.kind==='transport-ack'));
-    for(const kind of ['turnout','sensor','signal'])assert.ok(capture.events.some(e=>e.kind==='report'&&e.decoded.kind===kind),kind);
+    for(const kind of ['turnout','sensor'])assert.ok(capture.events.some(e=>e.kind==='report'&&e.decoded.kind===kind),kind);
+    // Signalerna rapporterar som växlar (B1 på rapportadressen) sedan 0.76.0; inspelningen knyter rapporten till signalen.
+    assert.ok(capture.events.some(e=>e.kind==='report'&&e.decoded.kind==='turnout'&&e.objects?.some(o=>o.kind==='signals')),'signal report (B1)');
     assert.ok(capture.events.some(e=>e.decoded?.kind==='sensor'&&e.decoded.active));
     assert.ok(capture.events.some(e=>e.decoded?.kind==='sensor'&&!e.decoded.active));
     assert.deepEqual(capture.events.map(e=>e.seq),capture.events.map((_,i)=>i+1));

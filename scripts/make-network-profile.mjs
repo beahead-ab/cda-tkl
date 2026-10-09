@@ -166,9 +166,10 @@ for(const line of Object.values(operatingControls.lines)) {
   if(!block||!blocks[block])throw Error('Linjeknappen saknar spåranknytning: '+line.id);
   line.blocks=[block];
 }
-// signalReport.kind: hur signalerna rapporterar sitt besked. 'se' = SE-telegram (E4 09) med beskedskoder; 'switch' = växelrapporten
-// B1 på rapportadressen, som JMRI:s feedback MONITORING läste. Byts per profil eller per signal i driftbindningarna när mätningen visat vad som kommer.
-const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:false,sourceHash:source.sourceHash,signalReport:{kind:'se',provenance:'SE-telegram antaget ur det publicerade Signal10-CZ-exemplet; JMRI läste B1 (feedback MONITORING). Avgörs vid Mät objekt.'},
+// signalReport.kind: hur signalerna rapporterar sitt besked. 'switch' = växelrapporten B1 på rapportadressen (standard sedan 0.76.0:
+// Bennys LocoNet-monitorering 9 oktober 2026 visar att MGP-korten rapporterar signalerna som växlar, B1 i ingångsformatet, ingen E4);
+// 'se' = SE-telegram (E4 09) med beskedskoder. Byts per profil eller per signal i driftbindningarna om mätningen visar något annat.
+const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:false,sourceHash:source.sourceHash,signalReport:{kind:'switch',provenance:'Växelrapport B1 enligt Bennys LocoNet-monitorering 9 oktober 2026 (signalerna hanteras som växlar; JMRI läste B1 med feedback MONITORING). CLOSED = kör, THROWN = stopp ur Cda60.xml:s mastdefinitioner. Bekräftas per signal vid Mät objekt.'},
   description:'Utökad anläggningsmodell med källstyrda tågvägsval och signalriktningar. Fysiska MGP-bindningar återstår att verifiera.',
   transport:{host:'127.0.0.1',port:8912},staleMs:7000,commandTimeoutMs:6000,signalStepMs:300,
   turnouts,blocks,signals,routes,routeAlternatives,coupled,manualPolicies,yardBoundaries,operatingControls,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),
@@ -182,7 +183,8 @@ const moduleNames=[...new Set([...xml.turnouts,...xml.sensors].map(t=>moduleOf(t
 const modules=moduleNames.map((name,i)=>{const outputs=xml.turnouts.filter(t=>moduleOf(t.comment)?.name===name),signalOutputs=outputs.filter(t=>/signal/i.test(t.comment)).length,serial=1000+i;
   return {name,address:16+i,manufacturer:13,developer:1,product:signalOutputs?10:5,serial,sv:{1:2,2:1,3:serial&0xff,4:serial>>8},outputs:outputs.length,inputs:xml.sensors.filter(s=>moduleOf(s.comment)?.name===name).length,simulated:true};});
 const scenario=r=>({id:r.id,...(r.variantId?{variantId:r.variantId}:{}),label:r.label,blocks:r.blocks,signal:r.signals[0],signals:r.signals,signalEntries:r.signalEntries,turnouts:r.turnouts});
-const simulator={id:'charlottendal-independent-network-field',turnouts,blocks,signals,coupled,protection,programming:operatingControls.programming,
+// Simulatorn rapporterar signalerna som korten gör (B1): samma rapportform som profilen, så att simuleringen är det som gäller.
+const simulator={id:'charlottendal-independent-network-field',turnouts,blocks,signals,coupled,protection,programming:operatingControls.programming,signalReport:{kind:profile.signalReport.kind},
   scenarios:routes.map(scenario),scenarioAlternatives:routeAlternatives.map(scenario),modules,
   note:'Independent plant model. Only LocoNet bytes are received from TKL. Static scenarios are not TKL runtime state.'};
 write('profiles/charlottendal-network.json',profile); write('profiles/simulator-network.json',simulator);

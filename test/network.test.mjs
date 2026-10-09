@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { Engine } from '../src/engine.mjs';
 import { Field } from '../src/field.mjs';
-import { decode, sensorReport, signalReport, switchOrder } from '../src/protocol.mjs';
+import { decode, sensorReport, signalReport, switchOrder, switchReport } from '../src/protocol.mjs';
 import { RoutePolicy } from '../src/route-policy.mjs';
 import { splitRouteAt } from '../src/route-sections.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url)));
@@ -216,8 +216,8 @@ test('manual turnout conditions are local but still reject occupied, stale, bloc
 test('a protective signal must be stopped before local turnout movement',()=>{
   const r=rig(),policy=profile.manualPolicies.byTurnout.Vx100;assert.ok(policy.signals.length);
   const n=policy.signals[0];
-  // Keep the independent plant's GO report pending STOP confirmation.
-  r.engine.receive(signalReport(profile.signals[n].reportAddress,8));
+  // Keep the independent plant's GO report pending STOP confirmation (B1 CLOSED = kör sedan 0.76.0).
+  r.engine.receive(switchReport(profile.signals[n].reportAddress,'C'));
   assert.throws(()=>r.engine.manual('Vx100','T'),/signal.*stopp/);
 });
 
@@ -403,7 +403,7 @@ for(const pairs of [
 test('continuation does not waive an opposing guard or an unreserved GO report',()=>{
  const r=rig(),first=r.request('htvAu','htvSpIC');r.advance(6500);
  const target=profile.routes.find(x=>x.from==='htvSpIC'&&x.to==='htvBu').signals[0];
- r.engine.receive(signalReport(profile.signals[target].reportAddress,8));
+ r.engine.receive(switchReport(profile.signals[target].reportAddress,'C'));
  assert.equal(first.state,'held');assert.ok(first.signals.every(n=>r.engine.signals[n].desired==='STOP'));
 });
 test('failure in a continuation retains its reservations and removes upstream authority',()=>{

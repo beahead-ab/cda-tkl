@@ -15,8 +15,8 @@ const withKind = (profile, kind, overrides = {}) => { const p = structuredClone(
 const storage = () => ({ load: (n, fallback) => fallback, save() {} });
 
 test('the profile default and the per-signal override decide the report kind; virtual signals have none', () => {
-  assert.equal(base.signalReport.kind, 'se');
-  assert.equal(signalReportKind(base, base.signals['1/1']), 'se'); assert.equal(signalReportKind(base, base.signals['6/6']), null);
+  assert.equal(base.signalReport.kind, 'switch', 'B1 sedan 0.76.0, efter Bennys monitorering');
+  assert.equal(signalReportKind(base, base.signals['1/1']), 'switch'); assert.equal(signalReportKind(base, base.signals['6/6']), null);
   const p = withKind(base, 'switch', { '1/5': 'se' });
   assert.equal(signalReportKind(p, p.signals['1/1']), 'switch'); assert.equal(signalReportKind(p, p.signals['1/5']), 'se');
   assert.equal(signalReportKind({}, { address: 1, reportAddress: 1 }), 'se', 'en profil utan fältet läser SE som förr');
@@ -65,17 +65,17 @@ test('diagnostics, measurement and operator bindings follow the report kind', ()
   assert.deepEqual(commandExpectations(p, state).find(r => r.name === '1/1').expected, [hex(switchReport(a, 'T'))]);
   assert.deepEqual(protocolObjects(p, { kind: 'turnout', address: a, position: 'T' }).map(o => o.name), ['1/1']);
   assert.deepEqual(protocolObjects(p, { kind: 'signal', address: a, code: 0 }), [], 'E4 hör inte till en B1-signal');
-  assert.deepEqual(protocolObjects(base, { kind: 'turnout', address: a, position: 'T' }), [], 'B1 hör inte till en SE-signal');
+  assert.deepEqual(protocolObjects(withKind(base, 'se'), { kind: 'turnout', address: a, position: 'T' }), [], 'B1 hör inte till en SE-signal');
   let now = 5000; const m = new Measurements({ storage: storage(), send: () => true, now: () => now, mode: () => 'simulator' });
   let v = m.probe({ kind: 'signal', name: '1/1', position: 'GO' }, p); assert.deepEqual(v.pending.expect, { kind: 'turnout', address: a, position: 'T' }); assert.deepEqual(v.pending.expectHex, [hex(switchReport(a, 'T'))]);
   now += 10; m.observe(signalReport(a, 0)); assert.equal(m.view(p).pending.report, null); m.observe(switchReport(a, 'T')); assert.ok(m.view(p).pending.report);
   const c = new BindingConfiguration(base, { storage: storage() }); assert.deepEqual(c.validate({}), []);
-  const row = c.catalog.find(r => r.kind === 'signalReport'); assert.deepEqual(row.values, { kind: 'se' });
+  const row = c.catalog.find(r => r.kind === 'signalReport'); assert.deepEqual(row.values, { kind: 'switch' });
   assert.equal(c.catalog.find(r => r.key === 'signals:1/1').values.reportKind, 'inherit');
   assert.deepEqual(c.validate({ 'signalReport:alla': { kind: 'switch' } }), []);
   assert.equal(c.profile({ 'signalReport:alla': { kind: 'switch' } }).signalReport.kind, 'switch');
-  const own = c.profile({ 'signals:1/1': { ...c.catalog.find(r => r.key === 'signals:1/1').values, reportKind: 'switch' } });
-  assert.equal(signalReportKind(own, own.signals['1/1']), 'switch'); assert.equal(signalReportKind(own, own.signals['1/5']), 'se');
+  const own = c.profile({ 'signals:1/1': { ...c.catalog.find(r => r.key === 'signals:1/1').values, reportKind: 'se' } });
+  assert.equal(signalReportKind(own, own.signals['1/1']), 'se', 'en signal kan avvika'); assert.equal(signalReportKind(own, own.signals['1/5']), 'switch', 'de andra ärver B1');
   assert.equal(c.profile({ 'signals:1/1': { ...c.catalog.find(r => r.key === 'signals:1/1').values, reportKind: 'inherit' } }).signals['1/1'].reportKind, undefined);
   assert.ok(c.validate({ 'signalReport:alla': { kind: 'nonsens' } }).length, 'okänd rapportform avvisas');
   assert.ok(c.validate({ 'signals:1/1': { ...c.catalog.find(r => r.key === 'signals:1/1').values, reportAddress: base.turnouts.Vx100.address, reportKind: 'switch' } }).some(e => /tillhör redan en växel/.test(e)));

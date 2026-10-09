@@ -76,10 +76,10 @@ test('mätningen kräver AIS, en verklig rapport efter ordern och en bekräftels
   let v = m.probe({ kind: 'turnout', name: 'Vx100', position: 'T' }, profile);
   assert.equal(v.pending.order, 'B0 63 10 3C'); assert.equal(v.pending.report, null, 'växeln rör sig: rapporten okänd räknas inte');
   assert.throws(() => m.confirm({ kind: 'turnout', name: 'Vx100', by: 'Casper' }, profile), e => e.status === 409);
-  now += 700; field.tick(); v = m.view(profile); assert.equal(v.pending.report.hex, 'B1 63 10 3D'); assert.equal(v.pending.report.decoded.position, 'T');
+  now += 700; field.tick(); v = m.view(profile); assert.equal(v.pending.report.hex, 'B1 63 60 4D'); assert.equal(v.pending.report.decoded.position, 'T');
   assert.throws(() => m.confirm({ kind: 'turnout', name: 'Vx100', by: 'C' }, profile), /2–80/);
   v = m.confirm({ kind: 'turnout', name: 'Vx100', by: 'Casper' }, profile);
-  assert.equal(v.pending, null); assert.equal(v.counts.turnout.bench, 1); assert.equal(v.counts.turnout.field, 0); assert.equal(v.items['turnout:Vx100'].evidence.report, 'B1 63 10 3D'); assert.equal(v.items['turnout:Vx100'].current, true);
+  assert.equal(v.pending, null); assert.equal(v.counts.turnout.bench, 1); assert.equal(v.counts.turnout.field, 0); assert.equal(v.items['turnout:Vx100'].evidence.report, 'B1 63 60 4D'); assert.equal(v.items['turnout:Vx100'].current, true);
   // Signal: bara stopp. Spårledning: rapporten måste ändra läge.
   v = m.probe({ kind: 'signal', name: '1/5', position: 'GO' }, profile); assert.equal(v.pending.requested, 'STOP'); assert.ok(v.pending.report, 'stopp rapporteras direkt'); m.confirm({ kind: 'signal', name: '1/5', by: 'Casper' }, profile);
   v = m.probe({ kind: 'block', name: 'S121' }, profile); assert.equal(v.pending.order, null);
