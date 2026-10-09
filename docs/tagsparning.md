@@ -5,6 +5,13 @@ det på ställverket. Spårningen är **bara presentation**: låsning, signaler 
 provas först i **simulering** (`CHARLOTTENDAL_CONNECTION_MODE=simulator`, som i webbdriften); mot riktig bana är
 den avstängd tills den är provad där.
 
+**Publicerad: 0.75.0** (cda-tkl main `45ec00a`, #46; `beahead-ab/cda-tkl-install` main `ba895b6`, 8 oktober). Webbdriften
+på Render tar den när Render bygger om main, eller med Uppdatera nu när Deploy Hook är inlagd; datorer som installerats
+med installationsraden kör den igen eller väljer Uppdatering. Tågspårningen kom i 0.73.0, simulerade tåg och upplösning
+vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0. På ställverket ligger *Simulerad trafik* och *Automat*
+bland driftknapparna under Drift, listan *Spårade tåg* under Drift → Tågnummer, och simulatorns egen sida nås från
+Studio → Driftsättning → *Simulatorn ↗*.
+
 ## Vad som syns
 
 - **En skylt vid tågets front** med numret och en pil åt det håll tåget kör, till exempel `421 →`. En skylt med
