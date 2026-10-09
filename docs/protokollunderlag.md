@@ -29,10 +29,10 @@ Layout, adresser och dekoderinställningar kan komma från samma importerade und
 | Del | Underlag | Säkerhet i slutsatsen |
 | --- | --- | --- |
 | Växelorder | `OPC_SW_REQ`, `B0` | Standardformat dokumenterat |
-| Växelrapport | `OPC_SW_REP`, `B1` | Standardformat dokumenterat; MGP-beteende stöds av manual och JMRI |
+| Växelrapport | `OPC_SW_REP`, `B1` i ingångsformatet (bit 6) | **Uppmätt** på Bennys MGP-kort 9 oktober 2026: `B1 06 60 28` = THROWN, `B1 06 70 38` = CLOSED, som JMRI läser det |
 | Sensorrapport | `OPC_INPUT_REP`, `B2` | Standardformat dokumenterat; adress/polaritet behöver anläggningsprofil |
 | Signalens grundläge | Switch-order, CLOSED = GO och THROWN = STOP | Dokumenterat för Signal10 |
-| Signalens besked | SE-rapport; ett publicerat MGP CZ-exempel använder `E4 09` | Konkret implementationsreferens, ännu inte verifierat på Charlottendals svenska dekodrar |
+| Signalens besked | Växelrapport `B1` på signalens adress; signalen hanteras som en växel | **Uppmätt** 9 oktober 2026 (Bennys bana): ingen `E4`. SE-formen (`E4 09`, CZ-exemplet) finns kvar som val |
 | LocoBuffer-USB | Virtuell COM-port, 57 600 baud, hårdvaruflödeskontroll | Dokumenterat för denna modell; användarens modell är ännu okänd |
 
 MGP beskriver switch-order, switch-feedback, sensorstatus och säkerhetsmeddelanden som separata meddelandetyper. Växeladresser ligger i intervallet 1–2048 och sensoradresser i 1–4096. [MGP: meddelanden mellan dekodrar](https://mollehem.se/index.php/meddelanden).
@@ -51,9 +51,11 @@ LocoNet-ramens första byte är opcode. Övriga byte har högsta biten noll. Lä
 | --- | --- |
 | Order adress 123 CLOSED, aktiverad utgång | `B0 7A 30 05` |
 | Order adress 123 THROWN, aktiverad utgång | `B0 7A 10 25` |
-| Utgångsrapport adress 123 CLOSED | `B1 7A 20 14` |
+| Växelrapport adress 123 CLOSED, ingångsformatet som MGP-korten sänder (bit 6 satt, bit 4 satt) | `B1 7A 70 44` |
+| Växelrapport adress 123 THROWN, ingångsformatet (bit 4 noll) | `B1 7A 60 54` |
+| Utgångsrapport adress 123 CLOSED (utgångsformatet, avkodas också) | `B1 7A 20 14` |
 | Utgångsrapport adress 123 THROWN | `B1 7A 10 24` |
-| Utgångsrapport adress 123, båda utgångsbitar noll | `B1 7A 00 34` |
+| Utgångsrapport adress 123, båda utgångsbitar noll (bara simulatorn: rörelse pågår) | `B1 7A 00 34` |
 | Sensor 1400 HIGH | `B2 3B 75 03` |
 | Sensor 1400 LOW | `B2 3B 65 13` |
 
@@ -119,9 +121,9 @@ Oklart tills bänkprovet är gjort: om kortet skriver sin adress i DST eller bar
 
 - Exakt LocoBuffer-modell, portinställningar, eko och beteende vid frånkoppling.
 - Dekodertyper, firmwareversioner och SV-inställningar, särskilt signalernas SV23 och servonas SV42.
-- Svenska SE-koder: stopp, körvarianter, försignalering, dvärgbesked, släckt och eventuella fel/okända besked.
+- Svenska SE-koder behövs bara om någon mast sänder `E4`; Bennys monitorering visar `B1` (stopp/kör), inte beskedskoder.
 - Återrapportering vid start och återanslutning: finns aktiv avfrågning, och vilka meddelanden stöds verkligen? Tystnad får inte betyda fritt.
-- Orderns ON/OFF-sekvens, svar på upprepad order och verkliga fördröjningar.
+- Orderns ON/OFF-sekvens är uppmätt (ON, rapport, OFF; TKL sänder OFF 200 ms efter ON sedan 0.76.0); svar på upprepad order och verkliga fördröjningar återstår.
 - Om återrapporten bygger på beräknat servoläge eller oberoende lägesgivare.
 
 I `Cda60.xml` finns exempelvis `Vx123 = LT123`, `Vxi123 = L2T123` och inverterad `Vx131 = LT131`. De olika anslutningsprefixen måste bevaras tills deras avsedda användning är klarlagd. Flera växlar använder JMRI-läget MONITORING; det är inte belägg för att fysisk feedback finns. Underlaget ger adresser och panelkopplingar men ersätter inte en export av dekodrarnas SV-konfiguration.

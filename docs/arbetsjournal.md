@@ -1653,3 +1653,30 @@ simulerade tåg och upplösning vid ankomst (#45) och 0.75.0 automaten och de tr
 tar 0.75.0 när Render bygger om main (automatisk driftsättning) eller med Uppdatera nu när Deploy Hook är inlagd;
 datorer som installerats med installationsraden kör den igen eller väljer Uppdatering. Samma uppgifter står i
 status.md (lägesbild 9 oktober).
+
+## 9 oktober 2026, 0.76.0: Bennys LocoNet-monitorering
+
+Benny monitorerade LocoNet i JMRI på sin bana och skickade telegrammen med JMRI:s tolkning (växlar, spårblock,
+signaler, en lagd tågväg, SV2-läsning och -skrivning). Alla ramar kördes genom TKL:s avkodare och jämfördes rad
+för rad; de ligger nu ordagrant i `test/benny-monitoring.test.mjs`.
+
+**Allvarligt fel hittat.** MGP-korten rapporterar växel- och signalläge med B1 i *ingångsformatet* (bit 6 satt:
+`B1 06 60 28` = Thrown, `B1 06 70 38` = Closed). `decode` räknade den varianten som *unsupported*, så mot riktig
+bana hade TKL aldrig sett en enda växel- eller signalåterrapport: varje tågväg hade stannat i "Inväntar
+växlarnas återrapporter". Rättat: ingångsformatet läses (bit 5 skiljer växelingången från hjälpingången, bit 4
+satt = CLOSED), utgångsformatet avkodas som förut, och simulatorn sänder nu ingångsformatet så att simuleringen
+är det som gäller. Växelorder, sensorrapporter och SV2 var byte för byte som JMRI:s.
+
+**Signalerna hanteras som växlar.** B0-order och B1-rapport på samma adress, ingen E4. Profilens standard är
+därför `signalReport.kind = switch` (CLOSED = kör, THROWN = stopp enligt Cda60.xml:s mastdefinitioner; på
+Bennys bana är det omvända definierat, och profilen följer XML:en); SE finns kvar som val per profil och per
+signal. Simulatorprofilen får samma rapportform. **ON/OFF:** JMRI sänder OFF efter rapporten; transporten
+sänder nu OFF 200 ms efter varje ON, simulatorn bortser från OFF. **SV:** SV21 är kortets adress, SV178
+ingångarnas belagd-nivå (0 = belagd vid låg, 1 = belagd vid hög): när Benny bytte den rapporterade alla fem
+ingångar om med motsatt nivå. Namngivna i `MGP_SV`. **Fyra utgångar svarade inte alls** (LT4, LT124, LT125,
+LT130); Mät objekt får visa vilka Charlottendal-utgångar som rapporterar. Allt i [genomgången](genomgang-mgp-2026-10-06.md),
+protokollunderlaget och driftbindningar.md. Kvar att monitorera: uppstarten och MGP-appen.
+
+Prov: fem prov i `test/benny-monitoring.test.mjs` (ramarna, kodningen, kärnan, simulatorn, pulsen); fixturerna i
+protocol-, measure- och signalrapportproven bytta till ingångsformatet; nätverksprovets inspelning letar B1 på
+signalens adress. 442 enhetsprov, 13 processprov och kontrollerna gröna.
