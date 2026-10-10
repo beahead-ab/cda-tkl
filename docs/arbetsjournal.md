@@ -1703,3 +1703,5 @@ står i [genomgången](genomgang-mgp-2026-10-06.md#bennys-andra-trace-10-oktober
 
 Prov: tre nya prov i `test/benny-monitoring.test.mjs` (avfrågningen och svaren, kärnan, Discover och läsning av fyra SV
 med simulatorns svar); proven för kortinventeringen följer den riktiga identiteten.
+
+Publicerad 10 oktober: cda-tkl main `f9eacbe` (#50), `beahead-ab/cda-tkl-install` main `0ef627b`.
