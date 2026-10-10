@@ -1,0 +1,40 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "charlottendal",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "CHARLOTTENDAL_PORT=8920",
+        "CHARLOTTENDAL_SIM_PORT=8921",
+        "CHARLOTTENDAL_WIRE_PORT=8922",
+        "npm",
+        "start"
+      ],
+      "port": 8920
+    },
+    {
+      "name": "trainmeet-fake",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/private/tmp/claude-501/-Users-casper-Documents-GitHub-cda-tkl/e3145704-9586-477d-bfe9-098ec510d3d6/scratchpad/fake-trainmeet.mjs"
+      ],
+      "port": 8930
+    },
+    {
+      "name": "tkl-fake",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "CHARLOTTENDAL_AUTH_MODE=cloudflare",
+        "CHARLOTTENDAL_PUBLIC_ORIGIN=",
+        "CHARLOTTENDAL_PORT=8960",
+        "CHARLOTTENDAL_WIRE_PORT=8961",
+        "CHARLOTTENDAL_STATE_DIR=/private/tmp/claude-501/-Users-casper-Documents-GitHub-cda-tkl/e3145704-9586-477d-bfe9-098ec510d3d6/scratchpad/tkl-fake-state",
+        "CHARLOTTENDAL_TRAINMEET_ORIGIN=http://127.0.0.1:8930",
+        "node",
+        "src/server.mjs"
+      ],
+      "port": 8960
+    }
+  ]
+}
