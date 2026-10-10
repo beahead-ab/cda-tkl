@@ -1680,3 +1680,26 @@ protokollunderlaget och driftbindningar.md. Kvar att monitorera: uppstarten och 
 Prov: fem prov i `test/benny-monitoring.test.mjs` (ramarna, kodningen, kärnan, simulatorn, pulsen); fixturerna i
 protocol-, measure- och signalrapportproven bytta till ingångsformatet; nätverksprovets inspelning letar B1 på
 signalens adress. 442 enhetsprov, 13 processprov och kontrollerna gröna.
+
+## 10 oktober 2026, 0.76.1: Bennys andra trace
+
+0.76.0 publicerades 9 oktober (cda-tkl main `688f6e5`, #49; `beahead-ab/cda-tkl-install` main `8a39687`).
+
+Benny svarade på frågorna och skickade en ny trace: JMRI:s uppstart (avfrågning och normallägen) och MGP-appen
+(Discover och läsning av Signal10 SE:s konfiguration). Bara sektion 2 var ansluten på bänken, och signalkortet där har
+MGP:s standardvärden. **Rättelser:** de fyra utgångarna utan rapport 9 oktober satt i en sektion som inte var ansluten,
+och stopp = Closed på Bennys bänk är kortets standardvärden; Charlottendal är inställt som Cda60.xml och profilen.
+
+Alla 338 växel-, signal- och sensortelegram avkodas som JMRI läser dem. Nytt: avfrågningen (`B0 78–7B 27/07`, OFF till
+1017–1020) avkodas som `interrogate` i stället för en order, `interrogation()` bygger JMRI:s åtta ramar och kärnan
+bortser från dem; Lyssna och telegramloggen visar *Avfrågning*. Discover-svaren visar MGP:s identitet (tillverkare 126,
+utvecklare 1; Signal10 SE = produkt 6, servokortet med ingångar = produkt 9), att kortet skriver sin adress i DST och
+att SRC är frågarens agentnummer. Studio namnger korten därefter, och simulatorns kort svarar likadant.
+
+**Viktigaste fyndet:** korten upprepar inget. Ingångarna rapporterar vid ändring och svarar på avfrågning, växlar och
+signaler rapporterar när de får en order. TKL:s regel att en rapport blir okänd efter sju sekunder, och tystnadsvakten
+som kopplar ned efter sju sekunder utan trafik, håller inte mot riktig bana. Förslag till ny regel och frågor till Benny
+står i [genomgången](genomgang-mgp-2026-10-06.md#bennys-andra-trace-10-oktober-0761); beslutet ligger hos Casper.
+
+Prov: tre nya prov i `test/benny-monitoring.test.mjs` (avfrågningen och svaren, kärnan, Discover och läsning av fyra SV
+med simulatorns svar); proven för kortinventeringen följer den riktiga identiteten.

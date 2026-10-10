@@ -30,7 +30,8 @@ Layout, adresser och dekoderinställningar kan komma från samma importerade und
 | --- | --- | --- |
 | Växelorder | `OPC_SW_REQ`, `B0` | Standardformat dokumenterat |
 | Växelrapport | `OPC_SW_REP`, `B1` i ingångsformatet (bit 6) | **Uppmätt** på Bennys MGP-kort 9 oktober 2026: `B1 06 60 28` = THROWN, `B1 06 70 38` = CLOSED, som JMRI läser det |
-| Sensorrapport | `OPC_INPUT_REP`, `B2` | Standardformat dokumenterat; adress/polaritet behöver anläggningsprofil |
+| Sensorrapport | `OPC_INPUT_REP`, `B2` | Standardformat dokumenterat; adress/polaritet behöver anläggningsprofil. **Uppmätt** 9–10 oktober: bara vid ändring och som svar på avfrågning |
+| Avfrågning | `OPC_SW_REQ` OFF till 1017–1020: `B0 78 27 10` … `B0 7B 07 33`, åtta grupper | **Uppmätt** 10 oktober: JMRI sänder alla åtta vid uppstart; MGP:s ingångskort svarar med `B2` för varje ingång |
 | Signalens grundläge | Switch-order, CLOSED = GO och THROWN = STOP | Dokumenterat för Signal10 |
 | Signalens besked | Växelrapport `B1` på signalens adress; signalen hanteras som en växel | **Uppmätt** 9 oktober 2026 (Bennys bana): ingen `E4`. SE-formen (`E4 09`, CZ-exemplet) finns kvar som val |
 | LocoBuffer-USB | Virtuell COM-port, 57 600 baud, hårdvaruflödeskontroll | Dokumenterat för denna modell; användarens modell är ännu okänd |
@@ -107,7 +108,7 @@ Testpanelen i simulatorn ska kunna välja utebliven rapport, långsam växel, kv
 
 ## SV2-programmering (steg 6 i Studio)
 
-`src/sv2.mjs` följer SV Programming Message Formats v13, format 2: `E5 10 SRC SV_CMD 02 SVX1 DST_L DST_H SV_ADRL SV_ADRH SVX2 D1 D2 D3 D4 CHK`, där SVX1 och SVX2 bär bit 7 för de fyra följande bytena. Discover (07) och Identify (08) besvaras med MANUFACTURER_ID i SV_ADRL, DEVELOPER_ID i SV_ADRH, PRODUCT_ID i D1–D2 och serienummer i D3–D4, låg byte först. Standard-SV: 1 EEPROM-storlek, 2 programversion, 3–4 serienummer. Studio skickar Discover, Identify och läsning; skrivning, adressbyte och omstart finns som meddelanden men skickas inte förrän läsningen är verifierad på ett riktigt kort. Simulatorns tolv kort svarar med påhittade identiteter.
+`src/sv2.mjs` följer SV Programming Message Formats v13, format 2: `E5 10 SRC SV_CMD 02 SVX1 DST_L DST_H SV_ADRL SV_ADRH SVX2 D1 D2 D3 D4 CHK`, där SVX1 och SVX2 bär bit 7 för de fyra följande bytena. Discover (07) och Identify (08) besvaras med MANUFACTURER_ID i SV_ADRL, DEVELOPER_ID i SV_ADRH, PRODUCT_ID i D1–D2 och serienummer i D3–D4, låg byte först. Standard-SV: 1 EEPROM-storlek, 2 programversion, 3–4 serienummer. Studio skickar Discover, Identify och läsning; skrivning, adressbyte och omstart finns som meddelanden men skickas inte förrän läsningen är verifierad på ett riktigt kort. Simulatorns tolv kort svarar med MGP:s identitet (tillverkare 126, utvecklare 1, produkt 6 eller 9) och påhittade serienummer.
 
 | Betydelse | Hexbyte |
 | --- | --- |
@@ -115,14 +116,27 @@ Testpanelen i simulatorn ska kunna välja utebliven rapport, långsam växel, kv
 | Identify till kort 80 | `E5 10 01 08 02 10 50 00 00 00 10 00 00 00 00 51` |
 | Läs SV1–4 på kort 17 | `E5 10 01 06 02 10 11 00 01 00 10 00 00 00 00 1F` |
 
-Oklart tills bänkprovet är gjort: om kortet skriver sin adress i DST eller bara i SRC när det svarar, vilka id MGP:s kort svarar med, och om Signal10 och Servo5 stöder fyra-byte-operationer och maskad skrivning.
+Uppmätt i Bennys trace 10 oktober 2026: kortet skriver sin adress i DST, och SRC är frågarens agentnummer (JMRI 1, MGP-appen 0).
+MGP-korten svarar på Discover med tillverkare 126, utvecklare 1 och produkt 6 (Signal10 SE), 9 (servokortet med adressen i
+SV21 och ingångar) eller 5 (inte identifierat). Signal10 SE stöder läsning av fyra SV i taget; MGP-appen läser hela
+konfigurationen så (SV 33–81, 294–725 och 800–899). Maskad skrivning är inte provad.
+
+| Betydelse | Hexbyte |
+| --- | --- |
+| Discover från MGP-appen (SRC 0) | `E5 10 00 07 02 10 00 00 00 00 10 00 00 00 00 0F` |
+| Svar från kort 110: tillverkare 126, utvecklare 1, produkt 6, serienummer 663 | `E5 10 00 47 02 10 6E 00 7E 01 14 06 00 17 02 49` |
+| Läs SV 294–297 på kort 110 / svar 14, 0, 176, 14 | `E5 10 00 06 02 10 6E 00 26 01 10 00 00 00 00 47` / `E5 10 00 46 02 10 6E 00 26 01 14 0E 00 30 0E 33` |
 
 ## Vad som återstår att verifiera på Charlottendal
 
 - Exakt LocoBuffer-modell, portinställningar, eko och beteende vid frånkoppling.
 - Dekodertyper, firmwareversioner och SV-inställningar, särskilt signalernas SV23 och servonas SV42.
 - Svenska SE-koder behövs bara om någon mast sänder `E4`; Bennys monitorering visar `B1` (stopp/kör), inte beskedskoder.
-- Återrapportering vid start och återanslutning: finns aktiv avfrågning, och vilka meddelanden stöds verkligen? Tystnad får inte betyda fritt.
+- Återrapportering vid start och återanslutning: **delvis uppmätt** (Bennys trace 10 oktober). Ingångskorten svarar på
+  avfrågningen (`B0 78–7B 27/07`, växelorder OFF till 1017–1020) med `B2` för varje ingång; växel- och signalkorten svarar
+  bara med `B1` när de får en order. Korten upprepar inget av sig själva, så TKL:s regel att en rapport blir okänd efter
+  sju sekunder håller inte mot riktig bana (se [genomgången](genomgang-mgp-2026-10-06.md#bennys-andra-trace-10-oktober-0761)).
+  Tystnad får fortfarande inte betyda fritt.
 - Orderns ON/OFF-sekvens är uppmätt (ON, rapport, OFF; TKL sänder OFF 200 ms efter ON sedan 0.76.0); svar på upprepad order och verkliga fördröjningar återstår.
 - Om återrapporten bygger på beräknat servoläge eller oberoende lägesgivare.
 

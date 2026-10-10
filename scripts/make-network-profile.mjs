@@ -177,11 +177,12 @@ const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:
 profile.yardArea=compileYardArea(panel,profile);
 profile.rangerRequests=compileRangerRequests(profile);
 profile.rangerPaths=compileRangerPaths(panel,profile);
-// Simulerade kort för SV2 i simulatorn: ett per modulkommentar M00–M11 i Cda60.xml. Identiteterna är påhittade
-// (tillverkare 13 = DIY) tills riktiga kort svarat på Discover; adresserna 16–27 ligger i LocoNet PE:s intervall för andra enheter.
+// Simulerade kort för SV2 i simulatorn: ett per modulkommentar M00–M11 i Cda60.xml, med MGP-kortens identitet ur Bennys trace
+// 10 oktober 2026 (tillverkare 126, utvecklare 1; Signal10 SE = produkt 6, servokort med ingångar = produkt 9). Serienumren och
+// adresserna 16–27 är påhittade tills Charlottendals kort svarat på Discover.
 const moduleNames=[...new Set([...xml.turnouts,...xml.sensors].map(t=>moduleOf(t.comment)?.name).filter(Boolean))].sort();
 const modules=moduleNames.map((name,i)=>{const outputs=xml.turnouts.filter(t=>moduleOf(t.comment)?.name===name),signalOutputs=outputs.filter(t=>/signal/i.test(t.comment)).length,serial=1000+i;
-  return {name,address:16+i,manufacturer:13,developer:1,product:signalOutputs?10:5,serial,sv:{1:2,2:1,3:serial&0xff,4:serial>>8},outputs:outputs.length,inputs:xml.sensors.filter(s=>moduleOf(s.comment)?.name===name).length,simulated:true};});
+  return {name,address:16+i,manufacturer:126,developer:1,product:signalOutputs?6:9,serial,sv:{1:2,2:1,3:serial&0xff,4:serial>>8},outputs:outputs.length,inputs:xml.sensors.filter(s=>moduleOf(s.comment)?.name===name).length,simulated:true};});
 const scenario=r=>({id:r.id,...(r.variantId?{variantId:r.variantId}:{}),label:r.label,blocks:r.blocks,signal:r.signals[0],signals:r.signals,signalEntries:r.signalEntries,turnouts:r.turnouts});
 // Simulatorn rapporterar signalerna som korten gör (B1): samma rapportform som profilen, så att simuleringen är det som gäller.
 const simulator={id:'charlottendal-independent-network-field',turnouts,blocks,signals,coupled,protection,programming:operatingControls.programming,signalReport:{kind:profile.signalReport.kind},

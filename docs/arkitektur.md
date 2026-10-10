@@ -24,7 +24,7 @@ TKL-kärnan importerar inte simulatorn, läser inte dess driftdata och anropar i
 6. Vid beläggning eller fel begärs stopp och reservationerna ligger kvar. Provversionen har ingen automatisk sektionsvis upplåsning.
 7. Återtagning inväntar fria avsnitt, aktuella kända växellägen och stopp på relevanta signaler innan låsen släpps. Ny körning kräver ny beställning.
 
-Rapporter äldre än sju sekunder blir okända. Simulatorn upprepar rapporter varannan sekund. En fysisk adapter behöver en verifierad metod för initial synkronisering och aktualitetskontroll; periodiska rapporter kan inte antas från verklig utrustning.
+Rapporter äldre än sju sekunder blir okända. Simulatorn upprepar rapporter varannan sekund. En fysisk adapter behöver en verifierad metod för initial synkronisering och aktualitetskontroll; periodiska rapporter kan inte antas från verklig utrustning. Bennys trace 10 oktober 2026 visar att MGP-korten inte upprepar något: ingångar rapporterar vid ändring och som svar på avfrågning, växlar och signaler när de får en order. Regeln måste därför ändras före drift mot riktig bana ([genomgången](genomgang-mgp-2026-10-06.md#bennys-andra-trace-10-oktober-0761)).
 
 ## Filer
 
