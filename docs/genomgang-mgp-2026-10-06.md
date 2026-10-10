@@ -253,13 +253,66 @@ normalläge) och MGP-appen är inte monitorerade än. Ramarna ligger ordagrant i
 | Växelorder | `B0 06 10 59` ON, sedan `B0 06 00 49` OFF | Som vi sänder, men JMRI sänder också OFF. Sedan 0.76.0 sänder transporten OFF 200 ms efter ON. |
 | Växelrapport | `B1 06 60 28` = Thrown, `B1 06 70 38` = Closed | **B1 i ingångsformatet** (bit 6 satt, bit 5 = växelingång, bit 4 = läge). TKL:s avkodare räknade det som *unsupported*: mot riktig bana hade ingen växel- eller signalrapport någonsin lästs. Rättat i 0.76.0; simulatorn sänder nu samma format. |
 | Sensorrapport | `B2 6D 70 50` = LS220 High | Som vi läser. |
-| Signal | `B0 72 30 0D` + `B1 72 70 4C` för 4/7 | **Signalerna hanteras som växlar**: order B0 och rapport B1 på samma adress, ingen E4. På Bennys bana är stopp = Closed och kör = Thrown; Charlottendals XML definierar det omvända (Stop/Unlit = thrown, Clear/Lit = closed), och profilen följer XML:en. |
-| Utan rapport | LT4 (Vx22c), LT124 (1/4), LT125 (2/4), LT130 (S4s) | Fyra utgångar svarade inte med B1 alls. Kärnan kräver rapport från varje växel i vägen och varje fysisk signal, så sådana objekt stoppar driftsättningen tills de är märkta (virtuella signaler, fast växel). Mät objekt visar vilka Charlottendal-utgångar som svarar. |
+| Signal | `B0 72 30 0D` + `B1 72 70 4C` för 4/7 | **Signalerna hanteras som växlar**: order B0 och rapport B1 på samma adress, ingen E4. På Bennys bänk är stopp = Closed och kör = Thrown, eftersom signalkortet där har MGP:s standardvärden (rättat 10 oktober, se nedan). Charlottendals kort är inställda tvärtom, som XML:en säger (Stop/Unlit = thrown, Clear/Lit = closed), och profilen följer XML:en. |
+| Utan rapport | LT4 (Vx22c), LT124 (1/4), LT125 (2/4), LT130 (S4s) | Fyra utgångar svarade inte med B1. **Rättat 10 oktober:** de satt i en sektion som inte var ansluten (tågvägen gick över två sektioner). Alla anslutna utgångar svarade. |
 | SV2 | `E5 10 01 02 02 10 06 00 15 00 10 00 00 00 00 18` läser SV21 på kort 6 (svar 6); skrivning av SV178 | Byte för byte som Studio sänder. SV21 = adressen (servo 1; servo 2 får +1). **SV178 = ingångarnas belagd-nivå** (0 = belagd vid låg, 1 = belagd vid hög): när Benny bytte värde rapporterade alla fem ingångar LS6–LS10 om med motsatt nivå. Det är polariteten profilen antar ("aktiv = belagd") och kan läsas per kort. |
 
 **Gjort i 0.76.0:** avkodaren läser B1:s ingångsformat (hjälpingången, bit 5 noll, är inget läge); simulatorn rapporterar
 i ingångsformatet; transporten pulsar ON/OFF; profilens signalrapport är B1 (`signalReport.kind = switch`), SE kvar som
 val; `MGP_SV` namnger SV21 och SV178. Provat mot Bennys ramar och mot kärnan.
 
-**Kvar:** monitorera uppstarten (vad korten sänder när de får ström, och om något svarar på en avfrågning), MGP-appens
-avläsning, och på Charlottendal: vilka utgångar som rapporterar, och SV178 per kort.
+**Kvar:** se nästa avsnitt.
+
+## Bennys andra trace (10 oktober, 0.76.1)
+
+Benny svarade på frågorna och skickade en ny trace: JMRI:s uppstart och MGP-appen. På bänken var **bara sektion 2**
+ansluten: växlarna LT6–7, signalerna LT110–119 och ingångarna LS216–228 (alla ingångar är kanske inte anslutna).
+Signalkortet där har MGP:s standardvärden, inga signaler inställda, och startar i kör; Charlottendals signalkort startar i
+stopp. Därför har Bennys JMRI-panel Closed = stopp och Thrown = kör, och på Charlottendal är det tvärtom. Benny har inte
+Charlottendals kort hemma, men det är samma MGP-kort. Uppstarten när korten får ström monitoreras när han fått tag i en
+andra LocoNet-adapter.
+
+**Rättelser till 9 oktober**
+
+- De fyra utgångarna utan rapport (LT4, LT124, LT125, LT130) satt i en sektion som inte var ansluten; tågvägen gick över
+  två sektioner. Alla anslutna utgångar svarade.
+- Signalpolariteten: stopp = Closed på Bennys bänk kommer av kortets standardvärden. Charlottendals kort är inställda som
+  Cda60.xml säger (Stop/Unlit = THROWN, kör = CLOSED), och profilen följer den. Mät objekt bekräftar per signal.
+
+**Vad den nya tracen visar**
+
+| Del | Telegram | Vad det betyder för TKL |
+|---|---|---|
+| Avfrågning | `B0 78 27 10` … `B0 7B 07 33`: växelorder OFF till 1017–1020, åtta grupper med 1,3 s mellanrum | Ingångskortet svarade med `B2` för LS227 ned till LS216, ett telegram var 0,1–0,2 s, med början 0,5 s efter grupp 0/1/0 (adresserna 17–24, där kort 18 ligger). LS228 svarade inte, och inte heller kort 6:s ingångar LS6–LS10. TKL läste avfrågningen som en order till adress 1017–1020; sedan 0.76.1 är den en avfrågning, i Lyssna och i telegramloggen, och TKL kan bygga samma åtta ramar. |
+| Växlar och signaler vid uppstart | JMRI ställer allt i normalläge: ON, sedan OFF | Korten svarar med `B1` på varje ON till en ansluten utgång (LT6–7, LT50, LT110–119), aldrig på avfrågningen. Ett okänt växelläge blir alltså känt först när växeln får en order. Enligt Benny svarar dekodern också på LT133–139, som hans JMRI inte använder; i tracen syns inga B1 för dem. |
+| Discover | `E5 10 00 07 …` från MGP-appen, svar `E5 10 00 47 …` från kort 6, 18 och 110 | Tillverkare 126, utvecklare 1. Kort 110 är Signal10 SE (produkt 6), kort 6 är servokortet med adressen i SV21 och ingångarna LS6–LS10 (produkt 9), kort 18 är produkt 5. Svaret har kortets adress i DST och frågarens agentnummer i SRC. Studio visade *Signal10 (antaget)* för produkt 10; sedan 0.76.1 *MGP Signal10 SE* för produkt 6, och simulatorns kort har samma identitet. |
+| Läsning av fyra SV | MGP-appen läser Signal10 SE:s konfiguration fyra SV i taget, 125 frågor på 6,5 s | Byte för byte som TKL:s avkodare läser dem. |
+
+Alla 338 växel-, signal- och sensortelegram i tracen avkodas som JMRI läser dem. Ramarna ligger i
+`test/benny-monitoring.test.mjs`.
+
+**Det viktiga: korten upprepar inget.** Ingångarna rapporterar vid ändring och som svar på avfrågning, växlar och signaler
+när de får en order. TKL räknar i dag en rapport som okänd efter sju sekunder (simulatorn upprepar allt varannan sekund)
+och kopplar ned förbindelsen efter sju sekunder utan trafik. Mot riktig bana skulle allt bli okänt sju sekunder efter
+anslutningen, och förbindelsen gå ned och upp om bussen är tyst. Det är frågan som [objektmodellen](objektmodell.md)
+kallade den viktigaste till MGP-underlaget. Förslag till ny regel (beslut hos Casper):
+
+1. En rapport gäller tills förbindelsen bryts, som i JMRI.
+2. Vid anslutning avfrågar TKL ingångskorten med samma åtta ramar som JMRI, och begär stopp i alla signaler som i dag;
+   signalkorten svarar med B1. En växel är okänd tills den får en order.
+3. Tystnadsvakten ersätts av en avfrågning med jämna mellanrum: LocoBufferns eko visar att bussen lever, och ett
+   ingångskort som inte svarar gör sina spårledningar okända. Tystnad betyder fortfarande aldrig fritt.
+4. Simulatorn gör som korten: rapporterar vid ändring, order och avfrågning, inget varannan sekund. Då provar
+   simuleringen samma regel som banan.
+
+**Frågor till Benny**
+
+1. Vilket kort är kort 18 (produkt 5), och sitter LS216–228 på det?
+2. Kort 6:s ingångar (LS6–LS10) svarade inte på avfrågningen. Var de anslutna vid uppstarten? Svarar de om du gör om den?
+3. Står LocoNet helt tyst när inget händer? En minuts monitorering i vila räcker.
+4. Vad sänder korten när de får ström (när den andra adaptern finns)?
+5. Finns en SV som får korten att rapportera med jämna mellanrum?
+
+**Gjort i 0.76.1:** avfrågningen avkodas som avfrågning (`interrogation()` bygger JMRI:s åtta ramar; kärnan bortser från
+dem), SV-svaren i simulatorn behåller frågarens SRC, MGP:s identitet (126/1, produkt 6 och 9) i Studio och simulatorn,
+prov med Bennys ramar.

@@ -35,11 +35,11 @@ test('simulatorn svarar som tolv kort: Discover, Identify, läsning, skrivning o
   const field = new Field(fieldProfile), got = []; field.on('frame', b => { const sv = decodeSv(b); if (sv) got.push(sv); });
   assert.equal(fieldProfile.modules.length, 12); assert.equal(fieldProfile.modules[0].name, 'M00'); assert.ok(fieldProfile.modules.every(m => m.simulated));
   field.accept(discover()); assert.equal(got.length, 12); assert.deepEqual(got.map(g => g.dst), fieldProfile.modules.map(m => m.address)); assert.equal(got[1].identity.serial, 1001); assert.equal(got[1].cmd, 0x47);
-  got.length = 0; field.accept(identify(17)); assert.equal(got.length, 1); assert.equal(got[0].cmd, 0x48); assert.equal(got[0].src, 17);
+  got.length = 0; field.accept(identify(17)); assert.equal(got.length, 1); assert.equal(got[0].cmd, 0x48); assert.equal(got[0].dst, 17); assert.equal(got[0].src, 1, 'SRC är frågarens agentnummer, som på MGP-korten');
   got.length = 0; field.accept(readSv4(17, 1)); assert.deepEqual(got[0].data, [2, 1, 233, 3]); assert.equal(got[0].cmd, 0x46);
   got.length = 0; field.accept(svMessage({ cmd: SV_CMD.write, dst: 17, sv: 23, data: [5] })); assert.deepEqual(got[0].data, [5, 0, 0, 0]); assert.equal(field.modules[1].sv[23], 5);
   got.length = 0; field.accept(svMessage({ cmd: SV_CMD.maskedWrite, dst: 17, sv: 23, data: [0xff, 0x02] })); assert.equal(field.modules[1].sv[23], 7);
-  got.length = 0; field.accept(svMessage({ cmd: SV_CMD.changeAddress, dst: 40, sv: 13 | (1 << 8), data: [10, 0, 1001 & 0xff, 1001 >> 8] })); assert.equal(field.modules[1].address, 40); assert.equal(got[0].dst, 40);
+  got.length = 0; field.accept(svMessage({ cmd: SV_CMD.changeAddress, dst: 40, sv: 126 | (1 << 8), data: [6, 0, 1001 & 0xff, 1001 >> 8] })); assert.equal(field.modules[1].address, 40); assert.equal(got[0].dst, 40);
   got.length = 0; field.accept(identify(17)); assert.equal(got.length, 0, 'den gamla adressen svarar inte längre');
   field.accept(svMessage({ cmd: SV_CMD.read, dst: 999, sv: 1 })); assert.equal(got.length, 0);
   // Svar (bit 6) och vanliga order påverkas inte.
@@ -61,7 +61,7 @@ test('kortinventeringen samlar Discover-svaren, läser SV1–4 och kopplar kort 
   const offline = new CardInventory({ storage: tempStorage(), send: () => false }); await assert.rejects(offline.discover(), e => e.status === 503);
   field.modules[3].address = 16; const dup = await cards.discover(); assert.deepEqual(dup.duplicateAddresses, [16]);
   const summary = mgpSummary(sources, buildRegistry(sources), dup.cards, { sections: detectionInventory(sources).sections });
-  const m01 = summary.find(m => m.id === 'M01'); assert.equal(m01.card.serial, 1001); assert.equal(m01.decoder, 'Signal10 (antaget)'); assert.equal(m01.counts.outputs, 21); assert.equal(m01.counts.inputs, 15);
+  const m01 = summary.find(m => m.id === 'M01'); assert.equal(m01.card.serial, 1001); assert.equal(m01.decoder, 'MGP Signal10 SE'); assert.equal(m01.counts.outputs, 21); assert.equal(m01.counts.inputs, 15);
   assert.ok(m01.outputs.some(o => o.object === 'Vx95' && o.kind === 'turnout' && o.address === profile.turnouts.Vx95.address));
   assert.ok(m01.outputs.some(o => o.object === '1/1' && o.kind === 'signal' && o.xmlAddress === 200 && o.address === 200));
   assert.ok(m01.inputs.some(i => i.blocks.length));
