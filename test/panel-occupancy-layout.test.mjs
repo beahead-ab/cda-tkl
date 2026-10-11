@@ -39,10 +39,12 @@ test('0.45.2: a focus ring only after Tab, and a reload chip for a new release',
   assert.match(server,/\.\.\.panelProfile,release,/);
 });
 
-test('0.50.0: CHARLOTTENDAL in its own status row, no zoom, no simulation chip, notices beside the name',()=>{
+test('0.50.0: CHARLOTTENDAL in its own status row, no zoom, notices beside the name; 0.78.0: the live/offline chip right after the name',()=>{
   const head=fs.readFileSync(new URL('../public/panel-head.js',import.meta.url),'utf8');
   const app=fs.readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
-  assert.match(head,/<span class="plan-head-title">Charlottendal<\/span><span class="chip chip-status" id="plan-head-status"/);
+  // 0.50.0 tog bort simuleringschipet; sedan 0.78.0 visar lägesknappen live eller offline, eftersom det avgör om panelen styr banan.
+  assert.match(head,/<span class="plan-head-title">Charlottendal<\/span><button type="button" class="chip chip-mode" id="plan-head-mode" hidden>.*?<\/button><span class="chip chip-status" id="plan-head-status"/);
+  assert.match(app,/panelHead\?\.modeNotice\(modeChip\(state\.connectionMode,state,online\)\)/);
   assert.doesNotMatch(head,/plan-head-zoom|plan-head-gateway|plan-head-sub/);
   // One method per name: a duplicate key silently replaced the update notice in 0.49.0.
   const keys=[...head.matchAll(/^    ([a-zA-Z]+)\(/gm)].map(m=>m[1]);assert.deepEqual(keys,[...new Set(keys)]);

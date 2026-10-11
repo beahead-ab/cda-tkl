@@ -28,6 +28,11 @@ CHARLOTTENDAL_STATE_DIR=/private/tmp/charlottendal-demo npm start
 
 Felprov, beläggningar och tåg körs i simulatorns egen vy. Menyn och kommunikationsvyn anger att det är simulerade svar. Även inspelningsfilerna sparar anslutningsläget.
 
+## Live och offline i panelen
+
+Sedan 0.78.0 byts mellan live (LocoNet via LocoBuffer, gatewayen startad av TKL) och offline (simulatorn) i panelen,
+utan omstart; se [live och offline](live-och-offline.md). Avsnittet nedan är den fristående vägen.
+
 ## Fysisk anslutning
 
 Starta endast TKL med `npm run backend`. Ange `CHARLOTTENDAL_CONNECTION_MODE=hardware`, `CHARLOTTENDAL_WIRE_HOST` och `CHARLOTTENDAL_WIRE_PORT` för den avsedda LocoNet-over-TCP-gatewayen. Använd en separat beständig `CHARLOTTENDAL_STATE_DIR` för verklig drift. Samma instans kan inte växla mellan simulator och hårdvara under pågående manövrer; läget väljs vid serverstart.

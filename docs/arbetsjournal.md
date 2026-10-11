@@ -1729,3 +1729,29 @@ svara, handmanöver av okänd och rörlig växel, återanslutning, återtagning 
 `staleMs`; processproven väntar tills alla ingångar svarat, och lägger växel 133 före programmering.
 
 Publicerad 11 oktober: cda-tkl main `a7d04f1` (#52), `beahead-ab/cda-tkl-install` main `3c53bc1`.
+
+## 11 oktober 2026, 0.78.0: live och offline
+
+Casper: "Vi måste ha två lägen: live och offline så man kan köra stationen utan anslutning till loconet." Förut valdes
+förbindelsen i `app.env` vid installationen, och installationerna körde alltid mot simulatorn. Nu byts läget i panelen
+utan omstart ([live och offline](live-och-offline.md)).
+
+`src/connection-mode.mjs` (`ConnectionMode`): läget och LocoBufferns enhet, hastighet och flödeskontroll i
+`connection.json`; målet för kärnans LocoNet-klient (offline simulatorns ledning, live 127.0.0.1:8913); gatewayen
+(`scripts/locobuffer-gateway.mjs`) som TKL startar i live, startar om allt glesare upp till var 15:e sekund om den
+faller, och stoppar offline. Live finns inte i webbdriften (Render) och inte på Windows, och kräver en inställd
+LocoBuffer; `CHARLOTTENDAL_CONNECTION_MODE=hardware` låser läget till live mot en fristående gateway som förut.
+
+Servern: `connectionModeStatus` (inga tågvägar, programmeringsspärr, rangerbegäran eller inspelning; live kräver
+LocoBuffer), `switchConnection` (sparar läget, stänger av Simulerad trafik och tömmer dess väntande anmälningar, och
+installerar en ny körning mot den andra förbindelsen, som vid profilbyte), `GET /api/connection`,
+`POST /api/connection/mode` (alla vid panelen) och `POST /api/connection/locobuffer` (ägare eller administratör);
+`connectionMode` i läget. Simulerad trafik, tågspårning och Automat följer läget (offline).
+
+Panelen: lägesknappen i statusraden (`public/panel-head.js`, `public/connection-mode.js`): LIVE · LocoNet grön,
+LIVE · ingen LocoNet röd, OFFLINE · simulerad bana gul; rutan *Live eller offline* med båda lägena och villkoret.
+Inställningar → Banan (LocoNet) har kortet *Live eller offline* med LocoBuffern och gatewayens läge. Raspberry Pi:
+tjänsten `cda-tkl` får `SupplementaryGroups=dialout` för serieporten.
+
+Prov: `test/connection-mode.test.mjs` (sex prov) och `test/live-offline-integration.mjs` (TKL och simulatorn som
+processer, en virtuell LocoBuffer på en pty med en simulerad bana bakom som ekar och svarar som MGP-korten).
