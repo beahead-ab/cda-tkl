@@ -1791,3 +1791,5 @@ ursprungliga designexporten, och ett femtontal filer har handskrivna tabeller f�
 grannstationerna, programmeringsspåret, rangerbangården, vägskydden V1–V4, automatens spårordning, gränser i ritningen).
 Uppskattning: några dagar till ett par veckor om Bennys XML följer samma konventioner, annars mer. Förslaget är en motor
 plus en stationsfil, och en konverterare från JMRI:s LayoutEditor till spårplanen.
+
+Publicerad 11 oktober: cda-tkl main `c0ffb59` (#56), `beahead-ab/cda-tkl-install` main `48b6f4b`. Installationsförrådet har `docs/loconet-anslutning.md` i stället för `docs/live-och-offline.md`; publiceringen tar med den nya filen.
