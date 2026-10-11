@@ -34,10 +34,11 @@ test('the kernel owns the ranger\'s requests over HTTP: request, approve, lock, 
     await post('turnout',{name:'Vx112',position:'T',operator:'ranger'});
     for(const kind of ['ranger-request','ranger-approved'])assert.ok(laid.events.some(e=>e.kind===kind),kind);
     await stop(backend);backend=start('src/server.mjs');
-    const restored=await until(async()=>{const s=await get();return s.connection==='connected'&&s.yard?.requests[0]?.state==='laid'&&s;});
+    const restored=await until(async()=>{const s=await get();return s.connection==='connected'&&s.yard?.requests[0]?.state==='laid'&&Object.values(s.blocks).every(b=>b.occupied===false)&&s;});
     assert.equal(restored.yard.requests[0].id,laid.yard.requests[0].id);
     assert.equal(restored.bindingActivation.allowed,false);
-    await until(async()=>(await get()).turnouts.Vx131.position==='T');
+    // MGP-korten upprepar inget (0.77.0): efter omstarten är gruppens växlar okända tills de får en order; låset ligger kvar.
+    assert.equal((await get()).turnouts.Vx131.position,'unknown');
     await post('ranger/return',{id:open.id});
     await until(async()=>{const s=await get();return s.turnouts.Vx131.position==='C'&&s.turnouts.Vx132.position==='C'&&s.yard.requests.length===0;});
     assert.equal(JSON.parse(fs.readFileSync(path.join(dir,'controls.json'))).yard.requests.length,0);

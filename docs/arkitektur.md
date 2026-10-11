@@ -24,7 +24,18 @@ TKL-kärnan importerar inte simulatorn, läser inte dess driftdata och anropar i
 6. Vid beläggning eller fel begärs stopp och reservationerna ligger kvar. Provversionen har ingen automatisk sektionsvis upplåsning.
 7. Återtagning inväntar fria avsnitt, aktuella kända växellägen och stopp på relevanta signaler innan låsen släpps. Ny körning kräver ny beställning.
 
-Rapporter äldre än sju sekunder blir okända. Simulatorn upprepar rapporter varannan sekund. En fysisk adapter behöver en verifierad metod för initial synkronisering och aktualitetskontroll; periodiska rapporter kan inte antas från verklig utrustning. Bennys trace 10 oktober 2026 visar att MGP-korten inte upprepar något: ingångar rapporterar vid ändring och som svar på avfrågning, växlar och signaler när de får en order. Regeln måste därför ändras före drift mot riktig bana ([genomgången](genomgang-mgp-2026-10-06.md#bennys-andra-trace-10-oktober-0761)).
+**Återrapporternas aktualitet (sedan 0.77.0).** MGP-korten upprepar inga rapporter (Bennys trace 10 oktober 2026), så TKL
+gör som JMRI: en växel- eller signalrapport gäller tills förbindelsen bryts. Ingångarna frågar kärnan av vid anslutning och
+sedan var 15:e sekund, med JMRI:s åtta avfrågningsramar en sekund isär (`interrogateMs` och `interrogateStepMs` i profilen).
+En ingång som inte svarat på 40 sekunder (`staleMs`) blir okänd, så att ett tyst kort aldrig betyder fritt. Vid anslutning
+begär kärnan också stopp i alla signaler och normalläge i programmeringsreläet; korten svarar på ordern.
+
+En växel är okänd tills den får en order, av en tågväg, av operatören eller av rangeraren; kärnan lägger ingen växel av sig
+själv. En växel *rör sig* när den fått en order under förbindelsen och inte rapporterat sedan dess. Bara en växel som rör
+sig hindrar handmanöver, lägesbyte och återtagning; en okänd växel som inte rör sig gör det inte, så en tågväg som hålls
+efter en omstart kan återtas utan växelorder. Vid aktivering av driftbindningar krävs en växelrapport sedan anslutningen
+bara för de växlar vars bindning ändras. Simulatorn gör som korten: den rapporterar vid ändring, order och avfrågning, inget
+annat. Tystnadsvakten kopplar ned efter 40 sekunder utan trafik; avfrågningen ger trafik var 15:e sekund.
 
 ## Filer
 

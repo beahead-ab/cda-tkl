@@ -171,7 +171,10 @@ for(const line of Object.values(operatingControls.lines)) {
 // 'se' = SE-telegram (E4 09) med beskedskoder. Byts per profil eller per signal i driftbindningarna om mätningen visar något annat.
 const profile={id:'charlottendal-network-v1',title:'Charlottendal',commissioned:false,sourceHash:source.sourceHash,signalReport:{kind:'switch',provenance:'Växelrapport B1 enligt Bennys LocoNet-monitorering 9 oktober 2026 (signalerna hanteras som växlar; JMRI läste B1 med feedback MONITORING). CLOSED = kör, THROWN = stopp ur Cda60.xml:s mastdefinitioner. Bekräftas per signal vid Mät objekt.'},
   description:'Utökad anläggningsmodell med källstyrda tågvägsval och signalriktningar. Fysiska MGP-bindningar återstår att verifiera.',
-  transport:{host:'127.0.0.1',port:8912},staleMs:7000,commandTimeoutMs:6000,signalStepMs:300,
+  // MGP-korten upprepar inga rapporter (Bennys trace 10 oktober 2026): kärnan frågar av ingångarna var 15:e sekund (JMRI:s åtta
+  // ramar med en sekunds mellanrum), och en ingång som inte svarat på 40 sekunder blir okänd. Växlar och signaler gäller tills
+  // förbindelsen bryts.
+  transport:{host:'127.0.0.1',port:8912},staleMs:40000,interrogateMs:15000,interrogateStepMs:1000,commandTimeoutMs:6000,signalStepMs:300,
   turnouts,blocks,signals,routes,routeAlternatives,coupled,manualPolicies,yardBoundaries,operatingControls,buttons:Object.fromEntries(Object.entries(routeButtons).map(([id,b])=>[id,{label:b.label,segment:b.segment,...(b.presentation?{presentation:b.presentation,sourceSensor:b.sourceSensor}:{})}])),
   sourcePolicy:[...source.mainRoutePolicies,...source.shuntRoutePolicies],excluded,releasePolicy:'whole-route-after-ordered-passage-and-stop-feedback'};
 profile.yardArea=compileYardArea(panel,profile);

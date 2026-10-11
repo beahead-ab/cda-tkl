@@ -33,7 +33,7 @@ const signals = Object.fromEntries([...new Set(routes.flatMap(r => r.signals))].
 const coupled = Object.fromEntries(names.map(name => [name, Object.keys(topology.expand({ [name]: 'C' })).filter(n => names.includes(n))]));
 const profile = { id: 'charlottendal-etapp1', title: 'Charlottendal · etapp 1', commissioned: false,
   description: 'Avgränsad utvecklingsprofil. Källgeometri och växeladresser från JMRI; sensor- och signaladresser är separata provadresser. Ingen fysisk anslutning verifierad.',
-  transport: { host: '127.0.0.1', port: 8912 }, staleMs: 7000, commandTimeoutMs: 6000, signalStepMs: 300,
+  transport: { host: '127.0.0.1', port: 8912 }, staleMs: 40000, interrogateMs: 15000, interrogateStepMs: 1000, commandTimeoutMs: 6000, signalStepMs: 300,
   turnouts, blocks, signals, routes, coupled };
 const protection = {};
 for (const name of Object.keys(signals)) {

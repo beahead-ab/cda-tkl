@@ -44,7 +44,7 @@ test('programming locks durably before order, allows a locomotive on Lastspår3 
   assert.equal(r.engine.controls.programming.reserved,false);assert.equal(r.engine.operating.phase,'normal');assert.equal(r.engine.blocks.SLIII.occupied,true);
 });
 test('programming refuses wrong point, occupied approach, reserved route, AIS, stale feedback and remote mode',()=>{
-  for(const change of [r=>{r.field.turnouts.Vx133.position='T';r.field.reportTurnout('Vx133');r.drain();},r=>{r.field.setBlock('S133',true);r.drain();},r=>r.engine.request('htvCu','htvSpVI'),r=>r.engine.allStop(true),r=>{r.field.setProgrammingFault(true);r.advance(8000);},r=>r.engine.setMode('remote')]) {
+  for(const change of [r=>{r.field.turnouts.Vx133.position='T';r.field.reportTurnout('Vx133');r.drain();},r=>{r.field.setBlock('S133',true);r.drain();},r=>r.engine.request('htvCu','htvSpVI'),r=>r.engine.allStop(true),r=>{r.field.setProgrammingFault(true);r.advance(profile.staleMs+1000);},r=>r.engine.setMode('remote')]) {
     const r=rig();change(r);const count=r.commands.length;assert.throws(()=>r.engine.operating.setProgramming(true));assert.equal(r.commands.length,count);assert.equal(r.engine.controls.programming.reserved,false);
   }
 });
@@ -79,7 +79,7 @@ test('two panels cannot overwrite newer line/program choices; corrupt persisted 
 
 test('loss of normal programming feedback stops an active affected route while keeping its lock',()=>{
   const r=rig(),route=r.engine.request('htvCu','htvSpVI');r.advance(6500);assert.equal(route.state,'active');
-  r.field.setProgrammingFault(true);r.advance(8000);assert.equal(route.state,'held');assert.equal(r.engine.routes.length,1);assert.ok(route.signals.every(n=>r.engine.signals[n].desired==='STOP'));
+  r.field.setProgrammingFault(true);r.advance(profile.staleMs+1000);assert.equal(route.state,'held');assert.equal(r.engine.routes.length,1);assert.ok(route.signals.every(n=>r.engine.signals[n].desired==='STOP'));
 });
 test('unexpected programming in remote mode can return to confirmed normal without an authority deadlock',()=>{
   const r=rig();r.engine.setMode('remote');r.engine.receive(sensorReport(940,true));assert.equal(r.engine.controls.programming.reserved,true);

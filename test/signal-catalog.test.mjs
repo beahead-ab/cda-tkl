@@ -39,9 +39,11 @@ test('reference generation verifies pinned definitions and original GIF hashes a
 });
 test('signal reference inspector distinguishes current report, request and unknown or stale state',()=>{
   const config={staleMs:7000,signals:{'1/5':{address:1501,reportAddress:1601}}};
-  const state={connection:'connected',serverTime:10000,signals:{'1/5':{updatedAt:9500,aspect:'go',desired:'STOP',code:8}}};
+  const state={connection:'connected',connectionAt:9000,serverTime:10000,signals:{'1/5':{updatedAt:9500,aspect:'go',desired:'STOP',code:8}}};
   assert.deepEqual(signalLiveView('1/5',config,state,true),{report:'Kör återrapporterat',permission:'Stopp begärt',raw:'8',address:'1601 (E4)'});
-  for(const [s,online] of [[state,false],[{...state,connection:'disconnected'},true],[{...state,serverTime:18000},true]]) {
+  // Signalens rapport åldras inte (0.77.0): den gäller tills förbindelsen bryts, och en rapport från förra förbindelsen är okänd.
+  assert.equal(signalLiveView('1/5',config,{...state,serverTime:9500+60*config.staleMs},true).report,'Kör återrapporterat');
+  for(const [s,online] of [[state,false],[{...state,connection:'disconnected'},true],[{...state,connectionAt:9600},true]]) {
     const view=signalLiveView('1/5',config,s,online);assert.equal(view.report,'Okänt besked');assert.equal(view.raw,'—');
   }
   const unknown=structuredClone(state);unknown.signals['1/5'].aspect='unknown';

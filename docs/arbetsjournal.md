@@ -1705,3 +1705,25 @@ Prov: tre nya prov i `test/benny-monitoring.test.mjs` (avfrågningen och svaren,
 med simulatorns svar); proven för kortinventeringen följer den riktiga identiteten.
 
 Publicerad 10 oktober: cda-tkl main `f9eacbe` (#50), `beahead-ab/cda-tkl-install` main `0ef627b`.
+
+## 11 oktober 2026, 0.77.0: återrapporter som korten sänder dem
+
+Bennys trace visade att MGP-korten inte upprepar något, och Casper valde 11 oktober regeln *som JMRI med avfrågning*.
+Kärnan (`src/engine.mjs`): en växel- eller signalrapport gäller tills förbindelsen bryts; spårledningarnas ingångar
+åldras (`staleMs`, nu 40 s) och förnyas av avfrågningen, som kärnan sänder vid anslutning och var 15:e sekund
+(`interrogateMs`), JMRI:s åtta ramar en sekund isär (`interrogateStepMs`). Vid anslutning begärs också stopp i alla
+signaler (som förut) och normalläge i programmeringsreläet, vars återrapport åldras som en ingång. En växel är okänd
+tills den får en order; kärnan lägger ingen växel av sig själv. Ny `moving()`: en växel som fått en order under
+förbindelsen och inte rapporterat sedan dess. Bara den hindrar handmanöver, lägesbyte och återtagning, så en tågväg som
+hålls efter omstart kan återtas utan växelorder. Aktivering av driftbindningar kräver en växelrapport sedan anslutningen
+bara för växlar vars bindning ändras.
+
+Simulatorn (`src/field.mjs`, `src/simulator.mjs`) rapporterar som korten: vid ändring, order och avfrågning. Den sänder
+inget vid anslutning och inget varannan sekund; den svarar på avfrågningen med ingångarna fördelade på de åtta grupperna
+efter adress. Reläet som redan står rätt svarar direkt. `allReports()` finns kvar bara för proven. Klienterna
+(`communication-diagnostics`, `signal-details`, `station-model`) räknar växlar och signaler som aktuella sedan
+anslutningen (`connectionAt` i läget).
+
+Prov: `test/event-reports.test.mjs` (sju prov: avfrågningen vid anslutning, tre minuters tystnad, ett kort som slutar
+svara, handmanöver av okänd och rörlig växel, återanslutning, återtagning efter återanslutning); stale-proven väntar
+`staleMs`; processproven väntar tills alla ingångar svarat, och lägger växel 133 före programmering.

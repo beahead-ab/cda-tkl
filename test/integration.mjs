@@ -25,7 +25,7 @@ test('network profile runs parallel trains across separate processes and release
   };
   try {
     launch('src/simulator.mjs'); launch('src/server.mjs');
-    await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && s.blocks.S100.occupied === false && s.panelIndications.V1.complete; });
+    await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && Object.values(s.blocks).every(b => b.occupied === false) && s.panelIndications.V1.complete; });
     const comm=await (await fetch(`http://127.0.0.1:${httpPort}/api/communication`)).json();
     assert.equal(comm.connection.mode,'simulator');assert.equal(comm.connectionState,'connected');
     assert.ok(comm.trace.some(r=>r.kind==='report'&&r.objects.length));
@@ -54,6 +54,8 @@ test('network profile runs parallel trains across separate processes and release
     await operate('line-block',{id:'CU',blocked:true});
     await post(httpPort,'route',{from:'htvCu',to:'htvSpIA'},400);
     await operate('line-block',{id:'CU',blocked:false});
+    // MGP-korten upprepar inget (0.77.0): växel 133 blir känd när operatören lägger den, först därefter programmering.
+    await post(httpPort,'turnout',{name:'Vx133',position:'C'});await until(async()=>(await get(httpPort)).turnouts.Vx133.position==='C');
     await post(simPort,'block',{name:'SLIII',occupied:true});
     await until(async()=>(await get(httpPort)).blocks.SLIII.occupied===true);
     await operate('programming',{enabled:true});
@@ -144,8 +146,11 @@ test('network profile runs parallel trains across separate processes and release
     await until(async()=>(await get(httpPort)).allStopReset.allowed);await post(httpPort,'all-stop',{enabled:false});
     const denied=await post(httpPort,'route',{from:'htvCu',to:'htvSpIA'},400);assert.match(denied.error,/driftinställningarna/);
     await bind('restore',{version:0});await post(httpPort,'all-stop',{enabled:true});await until(async()=>(await get(httpPort)).allStopReset.allowed);
+    // Efter profilbytet ansluter TKL på nytt och frågar av ingångarna; aktiveringen kräver deras frirapporter.
+    await until(async()=>Object.values((await get(httpPort)).blocks).every(b=>b.occupied===false));
     await bind('activate',{reason:'Restore reviewed baseline'});await until(async()=>(await get(httpPort)).allStopReset.allowed);await post(httpPort,'all-stop',{enabled:false});
     assert.equal((await get(httpPort)).bindingVersion,2);
+    await until(async()=>Object.values((await get(httpPort)).blocks).every(b=>b.occupied===false));
     const exported=await (await fetch(`http://127.0.0.1:${httpPort}/api/bindings/export`)).json();assert.equal(exported.version,2);assert.equal(exported.commissioned,false);
 
 
@@ -225,7 +230,7 @@ test('separate processes exchange LocoNet, reject conflicts, persist locks and r
   const post = async (port, url, data, expected = 200, headers = {}) => { const r = await fetch(`http://127.0.0.1:${port}/api/${url}`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(data) }); assert.equal(r.status, expected); return r.json(); };
   try {
     launch('src/simulator.mjs'); let backend = launch('src/server.mjs');
-    await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && s.blocks.S121.occupied === false; });
+    await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && Object.values(s.blocks).every(b => b.occupied === false); });
     assert.equal((await get(httpPort, '/api/config')).fieldUrl, '/anlaggning/');
     assert.equal((await get(simPort, '/api/config')).tklUrl, '/');
     const head = await fetch(`http://127.0.0.1:${httpPort}/api/events`, { method: 'HEAD', signal: AbortSignal.timeout(1000) });
@@ -237,7 +242,7 @@ test('separate processes exchange LocoNet, reject conflicts, persist locks and r
     await post(httpPort, 'route', { from: 'htvSpIIA', to: 'htvSpIIB' }, 400);
     await post(httpPort, 'note', { key: 'signals:0', note: 'Integrationstest åäö <text>' });
     backend.kill('SIGTERM'); await new Promise(r => backend.once('exit', r)); backend = launch('src/server.mjs');
-    await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && s.signals['2/8'].aspect === 'stop' && s.routes[0]?.state === 'held'; });
+    await until(async () => { const s = await get(httpPort); return s.connection === 'connected' && s.signals['2/8'].aspect === 'stop' && s.routes[0]?.state === 'held' && Object.values(s.blocks).every(b => b.occupied === false); });
     assert.equal((await get(httpPort, '/api/config')).notes['signals:0'], 'Integrationstest åäö <text>');
     let s = await get(httpPort); await post(httpPort, 'cancel', { id: s.routes[0].id }); await until(async () => !(await get(httpPort)).routes.length);
     await post(httpPort, 'route', { from: 'htvCu', to: 'htvSpIIB' }); await until(async () => (await get(httpPort)).routes[0]?.state === 'active');
@@ -248,7 +253,7 @@ test('separate processes exchange LocoNet, reject conflicts, persist locks and r
     await post(simPort, 'block', { name: 'S100', occupied: false }); await until(async () => !(await get(httpPort)).routes.length);
     await post(simPort, 'link', { connected: false }); await until(async () => (await get(httpPort)).connection === 'disconnected');
     assert.equal((await get(httpPort)).blocks.S100.occupied, null);
-    await post(simPort, 'link', { connected: true }); await until(async () => (await get(httpPort)).blocks.S100.occupied === false);
+    await post(simPort, 'link', { connected: true }); await until(async () => Object.values((await get(httpPort)).blocks).every(b => b.occupied === false));
   } catch (e) { e.message += '\nChild output: ' + output; throw e; }
   finally { await Promise.all(children.filter(c => c.exitCode === null).map(c => new Promise(r => { c.once('exit', r); c.kill('SIGTERM'); }))); fs.rmSync(dir, { recursive: true, force: true }); }
 });

@@ -19,7 +19,7 @@ test('panel reset across real processes preserves occupied track and crossing wa
   const post=async(p,command,data={},expected=200)=>{const r=await fetch(`http://127.0.0.1:${p}/api/${command}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const v=await r.json();assert.equal(r.status,expected,JSON.stringify(v));return v;};
   try{
     for(const script of ['src/simulator.mjs','src/server.mjs']){const c=spawn(process.execPath,[script],{cwd:root,env});children.push(c);c.stdout.on('data',d=>output+=d);c.stderr.on('data',d=>output+=d);}
-    await until(async()=>{const s=await get(app);return s.connection==='connected'&&s.blocks.S100.occupied===false&&s.panelIndications.V1.warning.value===false;});
+    await until(async()=>{const s=await get(app);return s.connection==='connected'&&Object.values(s.blocks).every(b=>b.occupied===false)&&s.panelIndications.V1.warning.value===false;});
     const from='htvCu',to='htvSpIA';await post(app,'route',{from,to});
     await until(async()=>(await get(app)).routes[0]?.state==='active');
     await post(sim,'block',{name:'S100',occupied:true});await until(async()=>(await get(app)).blocks.S100.occupied===true);
