@@ -1,6 +1,6 @@
-# Charlottendal TKL – lägesbild 9 oktober 2026
+# Charlottendal TKL – lägesbild 11 oktober 2026
 
-Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter ännu inte den fysiska JMRI-installationen fullt ut. Att information finns importerad betyder inte att motsvarande funktion är implementerad eller verifierad mot banan.
+Grunden är körbar med LocoNet ansluten eller ej ansluten; trafiken kommer från trafikspelet på en TrainMeet-server, och TKL har inget simuleringsläge (0.79.0, [LocoNet ansluten eller ej ansluten](loconet-anslutning.md)). Den ersätter ännu inte den fysiska JMRI-installationen fullt ut: LocoNet är provat mot en virtuell LocoBuffer, inte vid banan. Att information finns importerad betyder inte att motsvarande funktion är implementerad eller verifierad mot banan.
 
 ## Färdigt i den körbara grunden
 
@@ -8,11 +8,12 @@ Grunden är körbar som separat TKL och anläggningssimulator. Den ersätter än
 
 - Originalpanelen med förladdade originalikoner, större träffytor och tågväg som tänds i färdriktningen. Samma start och mål återtar vägen.
 - 210 huvudtågvägar och 130 växeltågvägar med etablerings- och passageprov. 49 växlar, 197 körbara layoutblock och 66 signaler, sedan 0.67.0 med adresserna ur Cda60.xml (växlarnas LT, signalernas huvudutgång, spårledningarnas LS-ingångar; 13 panelsignaler utan utgång och 35 spårledningar utan ingång i källan, sedan S100a fick LS60 i 0.72.2). Låsta växlar kan inte läggas om manuellt. Kompisväxlar följer med; omläggning kontrollerar även kompisens spår utanför färdvägen.
-- Separat simulator över telegramgränsen, inklusive två samtidiga tåg, beläggning, avbrott och uteblivna återrapporter. TKL läser inte simulatorns interna tillstånd.
+- Med LocoNet ej ansluten svarar TKL själv, genom en egen återrapport i en separat process över telegramgränsen, och kör trafikspelets tåg längs tågvägarna: tåg på väg hit på linjen och tåg som anmälts uppställda (0.79.0). Den egna återrapporten rapporterar som MGP-korten, bara vid ändring, order och avfrågning (0.77.0), och klarar flera samtidiga tåg, beläggning, avbrott och uteblivna återrapporter. TKL läser inte dess interna tillstånd.
+- Med LocoNet ansluten går order och återrapporter över en LocoBuffer på USB, vars gateway TKL startar själv (0.78.0). Växel- och signalrapporter gäller tills förbindelsen bryts; spårledningarnas ingångar frågas av vid anslutning och var 15:e sekund, och en ingång som inte svarat på 40 sekunder blir okänd (0.77.0). Valet består över omstart.
 - Beständiga lås, spårspärrar, AIS, nödåtertagning, sju linjespärrar, programmeringsspår samt lokal-/fjärrläge. Läget fjärr innebär ännu ingen anslutning till ett fjärrsystem.
 - Tåginformation för 197 block och sju inkommande fält. Valbar nummerföljning kopplas uttryckligen till en klar tågväg och följer ordnade återrapporter; vid osäkerhet pausas den för kontroll.
 - Hela original-XML bevarad och sökbar; 1 377 regeldefinitioner har spårbar införandestatus. Signalregistret innehåller alla 329 aspektrader och 117 relationer. V1–V4 visas som beräknade panelindikeringar, med okänt underlag där villkor saknas.
-- Gemensam modellklocka med paus/start, trafikdygn och hastighet samt valbar lokal felsignal. Programmeringsspåret har beständigt lås och separat återrapport i simulatorn; fysisk funktion återstår att verifiera.
+- Gemensam modellklocka med paus/start, trafikdygn och hastighet samt valbar lokal felsignal. Programmeringsspåret har beständigt lås och separat återrapport; reläet får normalläge vid varje anslutning (0.77.0). Fysisk funktion återstår att verifiera.
 - Inloggning, befintlig webbdrift och kontrollerade versionsbyten med backup. Visningsnamn och beskrivningar kan ändras med utkast och versionshistorik.
 
 ## Publicerat på webbadressen
@@ -41,11 +42,11 @@ Version 0.25.0 klarade serverns XML-/operations- och syntaxkontroller, 171 enhet
 
 | Del | Vad som återstår | Underlag som behövs |
 |---|---|---|
-| Verklig MGP/LocoBuffer | Seriell gateway och virtuellt portprov är byggda. Sedan 0.67.0 bär profilen signalernas utgångar och spårledningarnas ingångar ur Cda60.xml ([genomgången](genomgang-mgp-2026-10-06.md)); anslutning vid banan, mätning av varje adress och Signal10:s rapportadress återstår. | Buffertmodell, inställningar, moduler/firmware och inspelad fysisk trafik. |
+| Verklig MGP/LocoBuffer | Sedan 0.67.0 bär profilen signalernas utgångar och spårledningarnas ingångar ur Cda60.xml ([genomgången](genomgang-mgp-2026-10-06.md)). Efter Bennys monitorering läser TKL B1 i ingångsformatet (0.76.0), avkodar avfrågningen och MGP-kortens identitet (0.76.1) och följer kortens rapportsätt med avfrågning (0.77.0). *Anslut till LocoNet* startar gatewayen mot en LocoBuffer (0.78.0), provat mot en virtuell LocoBuffer. Kvar: anslutning vid banan, mätning av varje adress, att varje ingångskort svarar på avfrågningen, och uppstarten när korten får ström. | Buffertmodell, inställningar, moduler/firmware och inspelad fysisk trafik. |
 | Svenska signalbesked | Fulla huvud-/försignalbesked, signalberoenden och fysisk beskedsmappning. Nuvarande kör/stopp använder en uttryckligt preliminär CZ-profil. | Verifierade svenska beskedskoder och de saknade exakta ikondefinitionerna där originalunderlaget inte räcker. |
 | Återstående driftfunktioner | Vändskiva, återstående automatik och frigivning i delar av en tågväg. | Källbundna regler och specificerade ersättningar för saknade skript. |
 | Oklara tågvägar | Tre motsägande huvudtågvägsregler, 15 undantagna växelpar och 20 NX-definitioner utan körbar koppling behöver avgöras. Dessa antal överlappar och ska inte summeras. | Rättelse eller beslutat undantag för de konkreta källoklarheterna. |
-| TrainMeet | TKL-terminalkontraktet är byggt för klarering och tågrörelser utan trafikpass (kräver TrainMeet Server 2.5.0) och provat mot fejkad server med träffens verkliga data. Riktig parkoppling mot server.trainmeet.app 1.16.5 är verifierad från den lokala installationen. Prov i skarp träff med klarering samt webbdriftens egen parkoppling återstår; linjen klar är inte infört. | Serverns anslutningskod via administratörsinloggning; stations-id är `station-charlottendal`. |
+| TrainMeet | TKL-terminalkontraktet är byggt för klarering och tågrörelser utan trafikpass (kräver TrainMeet Server 2.5.0) och provat mot fejkad server med träffens verkliga data. Sedan 0.79.0 kör TKL trafikspelets tåg när LocoNet inte är ansluten (provat mot en TrainMeet-server i provet). Riktig parkoppling mot server.trainmeet.app 1.16.5 är verifierad från den lokala installationen. Prov i skarp träff med klarering samt webbdriftens egen parkoppling återstår; linjen klar är inte infört. | Serverns anslutningskod via administratörsinloggning; stations-id är `station-charlottendal`. |
 | Admin och panel | Driftbindningar, adresser och administrativa begränsningar har en färdig versionseditor. Godtycklig regeländring återstår; första visuella avstämningen och trafikprovkörningen är genomförda, därefter återstår Caspers eget acceptansprov. | Den befintliga designen och provfallens förväntade beteenden. |
 
 Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumenterade och provade ersättningar, men full överensstämmelse med den gamla installationen är inte fastställd. Nummerföljningen använder manuellt tilldelad tågidentitet; den identifierar inte lok och ändrar ingen TrainMeet-klarering.
@@ -62,7 +63,12 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
 - **Signalernas rapport** (0.76.0): Bennys LocoNet-monitorering den 9 oktober visar att korten rapporterar
   signalerna som växlar, B1 på signalens egen adress i ingångsformatet, ingen E4. Profilen står nu på B1
   (SE kvar som val per signal), och avkodaren läser ingångsformatet, som den inte gjorde förut. Vid Mät
-  objekt: bekräfta per signal, och notera utgångar som inte rapporterar alls (fyra sådana på Bennys bana).
+  objekt: bekräfta per signal. De fyra utgångarna utan rapport på Bennys bana satt i en sektion som inte var
+  ansluten (rättat 10 oktober), och hans omvända polaritet är bänkkortets standardvärden.
+- **Avfrågningen** (0.77.0): korten upprepar inga rapporter, så TKL frågar av ingångarna var 15:e sekund. Bennys
+  kort 6 svarade inte på avfrågningen med sina ingångar. Kontrollera efter *Anslut till LocoNet* att alla
+  spårledningar blir kända inom några sekunder; ett kort som inte svarar gör sina spårledningar okända efter
+  40 sekunder utan ändring.
 - **Tretton panelsignaler**: elva virtuella (3/1, 6/5–9/5, 6/6, 6/7, 6/10–9/10) utan utgång i JMRI
   samt 4/2 och L1 vars utgångar LT307/LT308 är märkta "Ej använd" på linje D utan drift. Kärnan
   bekräftar dem själv. Bedömning: panelbesked som förr; prova LT214 (3/1) och LT307/308 vid mätningen.
