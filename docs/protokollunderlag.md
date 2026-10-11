@@ -134,9 +134,10 @@ konfigurationen så (SV 33–81, 294–725 och 800–899). Maskad skrivning är 
 - Svenska SE-koder behövs bara om någon mast sänder `E4`; Bennys monitorering visar `B1` (stopp/kör), inte beskedskoder.
 - Återrapportering vid start och återanslutning: **delvis uppmätt** (Bennys trace 10 oktober). Ingångskorten svarar på
   avfrågningen (`B0 78–7B 27/07`, växelorder OFF till 1017–1020) med `B2` för varje ingång; växel- och signalkorten svarar
-  bara med `B1` när de får en order. Korten upprepar inget av sig själva, så TKL:s regel att en rapport blir okänd efter
-  sju sekunder håller inte mot riktig bana (se [genomgången](genomgang-mgp-2026-10-06.md#bennys-andra-trace-10-oktober-0761)).
-  Tystnad får fortfarande inte betyda fritt.
+  bara med `B1` när de får en order. Korten upprepar inget av sig själva. Sedan 0.77.0 frågar TKL av ingångarna vid
+  anslutning och var 15:e sekund, och växel- och signalrapporter gäller tills förbindelsen bryts (se
+  [arkitekturen](arkitektur.md)). Tystnad betyder fortfarande aldrig fritt: en ingång som inte svarat på 40 sekunder blir
+  okänd. Kvar att se: att varje ingångskort på Charlottendal svarar på avfrågningen.
 - Orderns ON/OFF-sekvens är uppmätt (ON, rapport, OFF; TKL sänder OFF 200 ms efter ON sedan 0.76.0); svar på upprepad order och verkliga fördröjningar återstår.
 - Om återrapporten bygger på beräknat servoläge eller oberoende lägesgivare.
 

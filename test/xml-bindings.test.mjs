@@ -53,7 +53,7 @@ test('the engine confirms a virtual signal itself, never sends it an order and n
   let now = 100000; const sent = [];
   const e = new Engine(profile, { now: () => now, send: b => sent.push(decode(b)) }); e.connection(true);
   const s = e.signals['6/6']; assert.equal(s.virtual, true); assert.equal(s.aspect, 'stop'); assert.ok(e.fresh(s)); assert.ok(s.reportSequence > s.commandSequence);
-  assert.ok(sent.every(d => d.address !== undefined && !Number.isNaN(d.address)), 'ingen order utan adress');
+  assert.ok(sent.filter(d => d.kind === 'order').every(d => d.address !== undefined && !Number.isNaN(d.address)), 'ingen order utan adress');
   now += 10 * profile.staleMs; e.tick(); assert.equal(s.aspect, 'stop', 'virtuellt besked blir inte okänt'); assert.ok(e.fresh(s));
   const before = sent.length; e.permission('6/6', 'GO'); assert.equal(s.aspect, 'go'); assert.equal(sent.length, before); assert.ok(s.reportSequence > s.commandSequence);
   e.permission('1/1', 'GO'); assert.equal(sent.at(-1).address, 200); assert.equal(sent.at(-1).position, 'C'); assert.equal(e.signals['1/1'].aspect, 'unknown', 'en verklig signal väntar på rapporten');

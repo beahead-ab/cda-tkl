@@ -60,11 +60,12 @@ test('ranger may only lay the boundary back, with physical inversion applied onc
     r.drain();r.advance();assert.equal(r.engine.turnouts[name].position,position);
   }
 });
-test('ranger restoration never overrides route locks, occupancy, unknown peers, blocks or stop',()=>{
+test('ranger restoration never overrides route locks, occupancy, moving peers, blocks or stop',()=>{
   for(const name of Object.keys(profile.yardBoundaries))for(const change of [
     r=>{r.field.setBlock(profile.turnouts[name].block,true);r.drain();},
     r=>r.engine.blockTrack(profile.turnouts[name].block,true),
-    r=>{const peer=profile.manualPolicies.byTurnout[name].guardTurnouts?.find(n=>n!==name);r.engine.turnouts[peer||name].position='unknown';},
+    // En växel i gruppen som fått en order och inte rapporterat rör sig (0.77.0: utan order är en växel bara okänd, och det hindrar inte).
+    r=>{const peer=profile.manualPolicies.byTurnout[name].guardTurnouts?.find(n=>n!==name),t=r.engine.turnouts[peer||name];t.desired=t.position==='C'?'T':'C';t.commandAt=r.engine.now();t.position='unknown';t.updatedAt=0;},
     r=>{const peer=profile.manualPolicies.byTurnout[name].guardTurnouts?.find(n=>n!==name);r.engine.routes.push({turnouts:{[peer||name]:'C'},blocks:[]});},
     r=>{r.engine.controls.stopAll=true;},
     r=>{r.engine.connected=false;},

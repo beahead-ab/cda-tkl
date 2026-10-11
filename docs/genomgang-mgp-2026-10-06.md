@@ -295,15 +295,20 @@ Alla 338 växel-, signal- och sensortelegram i tracen avkodas som JMRI läser de
 när de får en order. TKL räknar i dag en rapport som okänd efter sju sekunder (simulatorn upprepar allt varannan sekund)
 och kopplar ned förbindelsen efter sju sekunder utan trafik. Mot riktig bana skulle allt bli okänt sju sekunder efter
 anslutningen, och förbindelsen gå ned och upp om bussen är tyst. Det är frågan som [objektmodellen](objektmodell.md)
-kallade den viktigaste till MGP-underlaget. Förslag till ny regel (beslut hos Casper):
+kallade den viktigaste till MGP-underlaget. **Casper valde 11 oktober regeln som JMRI med avfrågning; byggd i 0.77.0**
+(se [arkitekturen](arkitektur.md)):
 
-1. En rapport gäller tills förbindelsen bryts, som i JMRI.
-2. Vid anslutning avfrågar TKL ingångskorten med samma åtta ramar som JMRI, och begär stopp i alla signaler som i dag;
-   signalkorten svarar med B1. En växel är okänd tills den får en order.
-3. Tystnadsvakten ersätts av en avfrågning med jämna mellanrum: LocoBufferns eko visar att bussen lever, och ett
-   ingångskort som inte svarar gör sina spårledningar okända. Tystnad betyder fortfarande aldrig fritt.
+1. En växel- eller signalrapport gäller tills förbindelsen bryts, som i JMRI.
+2. Vid anslutning frågar TKL av ingångskorten med samma åtta ramar som JMRI (en sekund isär), begär stopp i alla signaler
+   och normalläge i programmeringsreläet. En växel är okänd tills den får en order.
+3. Avfrågningen upprepas var 15:e sekund. En ingång som inte svarat på 40 sekunder blir okänd: tystnad betyder aldrig
+   fritt. Tystnadsvakten kopplar ned efter 40 sekunder utan trafik.
 4. Simulatorn gör som korten: rapporterar vid ändring, order och avfrågning, inget varannan sekund. Då provar
    simuleringen samma regel som banan.
+
+Viktigt att se på Charlottendal: Bennys kort 6 svarade inte på avfrågningen med sina ingångar. Svarar ett av
+Charlottendals ingångskort inte heller, blir dess spårledningar okända 40 sekunder efter senaste ändringen. Det syns
+direkt under Driftsättning och är fråga 2 nedan.
 
 **Frågor till Benny**
 

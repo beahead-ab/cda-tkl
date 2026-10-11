@@ -159,7 +159,10 @@ test('catalog shunt lock and STOP conditions survive conflicts, cancellation and
   r.field.allReports();r.drain();r.advance(300);assert.equal(r.engine.routes.length,0);
   const signalAddresses=new Set(Object.values(profile.signals).map(s=>s.address));
   assert.ok(r.commands.length>reconnected);
-  assert.ok(r.commands.slice(reconnected).every(c=>c.kind==='order'&&signalAddresses.has(c.address)&&c.position==='T'));
+  // Vid återanslutning: stopp till signalerna, normalläge till programmeringsreläet och avfrågningen. Ingen växelorder.
+  const relay=profile.operatingControls.programming.relayAddress,after=r.commands.slice(reconnected);
+  assert.ok(after.every(c=>c.kind==='interrogate'||(c.kind==='order'&&c.position==='T'&&(signalAddresses.has(c.address)||c.address===relay))));
+  assert.ok(after.some(c=>c.kind==='interrogate'),'kärnan frågar av ingångarna vid anslutning');
   const refused=rig();refused.field.setFault('signal','6/8');refused.drain();
   const denied=refused.request('tvv6/8','tvv3/10');refused.advance(10000);
   assert.equal(denied.state,'held');assert.equal(refused.engine.routes.length,1);assert.equal(refused.engine.signals['6/8'].desired,'STOP');
@@ -207,7 +210,7 @@ test('manual turnout conditions are local but still reject occupied, stale, bloc
   r.engine.manual('Vx100','T');r.drain();r.advance(300);assert.equal(r.engine.turnouts.Vx101.position,'T');
   r.field.setBlock('S100',true);r.drain();assert.throws(()=>r.engine.manual('Vx100','C'),/belagt/);
   r.field.setBlock('S100',false);r.drain();r.engine.blockTrack('S101',true);assert.throws(()=>r.engine.manual('Vx100','C'),/spärrat/);
-  r.engine.blockTrack('S101',false);r.field.setFault('sensor','S100');r.drain();r.advance(8000);assert.throws(()=>r.engine.manual('Vx100','C'),/återrapport/);
+  r.engine.blockTrack('S101',false);r.field.setFault('sensor','S100');r.drain();r.advance(profile.staleMs+1000);assert.throws(()=>r.engine.manual('Vx100','C'),/återrapport/);
   const second=rig(),route=second.request('htvCu','htvSpIA');second.advance(4000);
   second.engine.manual('Vx170','T');second.drain();second.advance(300);assert.equal(route.state,'active','independent route remains active');
   assert.throws(()=>second.engine.manual('Vx100','T'),/låst/);

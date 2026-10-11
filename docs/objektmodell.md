@@ -70,7 +70,7 @@ Riktiga ställverk arbetar på samma sätt, med tågvägstabeller som granskas i
 | Risk | Hur vi möter den |
 |---|---|
 | Fel adress | Driftsättning objekt för objekt; inget räknas som klart förrän det mätts. |
-| Dekodrarna rapporterar bara vid ändring | **Bekräftat** av Bennys trace 10 oktober 2026: ingångarna rapporterar vid ändring och svarar på avfrågning, växlar och signaler rapporterar när de får en order, inget upprepas. TKL räknar i dag ett läge som okänt efter 7 sekunder utan rapport, eftersom simulatorn rapporterar varannan sekund; den regeln måste ändras före drift. |
+| Dekodrarna rapporterar bara vid ändring | **Bekräftat** av Bennys trace 10 oktober 2026 och **löst i 0.77.0**: växel- och signalrapporter gäller tills förbindelsen bryts, kärnan frågar av ingångarna var 15:e sekund och en ingång som inte svarat på 40 sekunder blir okänd. En växel är okänd tills den får en order. Kvar att se på Charlottendal: att varje ingångskort svarar på avfrågningen (Bennys kort 6 gjorde det inte). Se [arkitekturen](arkitektur.md). |
 | Dekodrarna har egna beroenden | MGP-underlaget; beroendet speglas i modellen och syns som "verkställs även i MGP". |
 | En spårledning har flera ingångar, eller en ingång flera spårledningar | Uttryckligt i bindningen. SIA har två ingångar på två moduler. |
 | En tågväg saknas eller är fel | Jämförelsen mot JMRI:s signalrelationer, och provkörning av varje tågväg på banan. |

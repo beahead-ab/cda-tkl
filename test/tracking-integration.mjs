@@ -23,7 +23,7 @@ test('tågspårningen följer ett simulerat tåg från Kungsfors till spår 1c o
   const post = async (port, command, data) => { const r = await fetch(`http://127.0.0.1:${port}/api/${command}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); const result = await r.json(); assert.equal(r.status, 200, JSON.stringify(result)); return result; };
   try {
     launch('src/simulator.mjs'); launch('src/server.mjs');
-    await until(async () => { const s = await get(); return s.connection === 'connected' && s.blocks.S100.occupied === false; });
+    await until(async () => { const s = await get(); return s.connection === 'connected' && Object.values(s.blocks).every(b => b.occupied === false); });
     assert.deepEqual((await get()).trainTracking, { enabled: true, trains: [], lines: [] });
     await post(httpPort, 'route', { from: 'htvAu', to: 'htvSpIA' });
     await until(async () => (await get()).routes.some(r => r.state === 'active'));
@@ -54,7 +54,7 @@ test('simulerade tåg kommer in från linjen med nummer, stannar på spåret och
   const post = async (command, data) => { const r = await fetch(`http://127.0.0.1:${httpPort}/api/${command}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); const result = await r.json(); assert.equal(r.status, 200, JSON.stringify(result)); return result; };
   try {
     launch('src/simulator.mjs'); launch('src/server.mjs');
-    await until(async () => { const s = await get(); return s.connection === 'connected' && s.blocks.S100.occupied === false; });
+    await until(async () => { const s = await get(); return s.connection === 'connected' && Object.values(s.blocks).every(b => b.occupied === false); });
     assert.equal((await get()).trainSimulation.available, true);
     await post('simulation/trains', { enabled: true });
     const announced = await until(async () => (await get()).trainSimulation.waiting[0], 15000);
@@ -88,7 +88,7 @@ test('med simulerad trafik och automat kör stationen ett tåg in och ut av sig 
   const said = async pattern => (await get()).operatingEvents.some(e => pattern.test(e.message));
   try {
     launch('src/simulator.mjs'); launch('src/server.mjs');
-    await until(async () => { const s = await get(); return s.connection === 'connected' && s.blocks.S100.occupied === false; });
+    await until(async () => { const s = await get(); return s.connection === 'connected' && Object.values(s.blocks).every(b => b.occupied === false); });
     assert.deepEqual((await post('automation', { enabled: true })).enabled, true);
     await post('simulation/trains', { enabled: true });
     const number = (await until(async () => (await get()).trainSimulation.waiting[0], 15000)).number;

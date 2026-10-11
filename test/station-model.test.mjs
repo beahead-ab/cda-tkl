@@ -37,6 +37,8 @@ test('live indications require fresh reports, respect detector polarity and use 
   const sensor={kind:'sensors',bindings:[{block:'A',activeMeansOccupied:false}]};
   assert.equal(stationLiveValue(sensor,state,true,7000).text,'Rapporterad inaktiv');
   const signal={kind:'signals',name:'S',bindings:[{}]};assert.equal(stationLiveValue(signal,state,true,7000).text,'Rapporterat kör');
-  state.signals.S.updatedAt=1;assert.equal(stationLiveValue(signal,state,true,7000).tone,'unknown');
+  // Växlar och signaler gäller tills förbindelsen bryts (0.77.0); ingångarna åldras.
+  state.serverTime=100000;assert.equal(stationLiveValue(signal,state,true,7000).text,'Rapporterat kör');assert.equal(stationLiveValue(sensor,state,true,7000).tone,'unknown');
+  state.connectionAt=9995;assert.equal(stationLiveValue(signal,state,true,7000).tone,'unknown');
   state.connection='disconnected';assert.equal(stationLiveValue(sensor,state,true,7000).tone,'unknown');
 });

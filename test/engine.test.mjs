@@ -80,7 +80,7 @@ test('unknown signal codes, stale sensors and unexpected switch changes stop est
     const r = rig(), route = r.request('2b-2c'); r.advance(3500); assert.equal(route.state, 'active');
     if (fault === 'code') r.engine.receive(signalReport(profile.signals['2/8'].reportAddress, 77));
     if (fault === 'switch') r.engine.receive(switchReport(profile.turnouts.Vx121.address, 'T'));
-    if (fault === 'stale') { r.field.setFault('sensor', 'S121'); r.advance(8000); }
+    if (fault === 'stale') { r.field.setFault('sensor', 'S121'); r.advance(profile.staleMs + 1000); }
     assert.ok(['held', 'occupied'].includes(route.state)); assert.equal(r.engine.signals['2/8'].desired, 'STOP');
   }
 });
