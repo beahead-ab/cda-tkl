@@ -28,10 +28,11 @@ CHARLOTTENDAL_STATE_DIR=/private/tmp/charlottendal-demo npm start
 
 Felprov, beläggningar och tåg körs i simulatorns egen vy. Menyn och kommunikationsvyn anger att det är simulerade svar. Även inspelningsfilerna sparar anslutningsläget.
 
-## Live och offline i panelen
+## LocoNet i panelen
 
-Sedan 0.78.0 byts mellan live (LocoNet via LocoBuffer, gatewayen startad av TKL) och offline (simulatorn) i panelen,
-utan omstart; se [live och offline](live-och-offline.md). Avsnittet nedan är den fristående vägen.
+Sedan 0.78.0 ansluts och kopplas LocoNet från i panelen, utan omstart: ansluten går över en LocoBuffer vars gateway TKL
+startar, ej ansluten svarar TKL själv och kör trafikspelets tåg (sedan 0.79.0); se
+[LocoNet ansluten eller ej ansluten](loconet-anslutning.md). Avsnittet nedan är den fristående vägen.
 
 ## Fysisk anslutning
 

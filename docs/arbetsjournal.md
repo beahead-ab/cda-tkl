@@ -1757,3 +1757,37 @@ Prov: `test/connection-mode.test.mjs` (sex prov) och `test/live-offline-integrat
 processer, en virtuell LocoBuffer på en pty med en simulerad bana bakom som ekar och svarar som MGP-korten).
 
 Publicerad 11 oktober: cda-tkl main `102ed54` (#54), `beahead-ab/cda-tkl-install` main `342123b`. Installationsförrådet har nu också `docs/live-och-offline.md`; publiceringen tar med den och README länkar dit.
+
+## 11 oktober 2026, 0.79.0: LocoNet ansluten eller ej ansluten, trafikspelets tåg
+
+Casper efter 0.78.0: inget simuleringsläge. Trafiken är trafikspelet på en TrainMeet-server (server.trainmeet.app eller
+vilken som helst, lokalt eller i molnet); att köra TKL helt utan server har ingen poäng för drift. LocoNet är ett eget val:
+utan LocoNet ska TKL inte vänta utan svara själv, och en knapp *Anslut till LocoNet* ger återrapporterna från banan.
+Beslut i två frågor: utan LocoNet **kör TKL trafikspelets tåg längs vägen** (spåren blir belagda och tågvägen löses upp
+vid ankomst), och **valet består över omstart** (var LocoNet ansluten ansluter TKL igen).
+
+`src/traffic-trains.mjs` (`TrafficTrains`) ersätter `src/train-simulation.mjs`: varje sekund, när LocoNet inte är
+ansluten, ställs ett tåg ut för varje sträcka som är belagd mot stationen med tågnummer (utanför infartssignalen på
+linjens infartsspår, det spår vars TrainMeet-station i Orter och telefon är grannstationen) och för varje rörelse anmäld
+uppställd eller förare på plats (på spåret med tidtabellens namn, 1a = Spår 1a). Ett tåg som redan syns ställs inte ut,
+ett belagt spår väntar, ett misslyckat utställande försöks igen efter fem sekunder. `src/field.mjs` kan ställa ett tåg
+på ett spår, och spårningen får numret med `expect()` (källa *trafikspelet*). Knappen *Simulerad trafik* och
+`/api/simulation/trains` är borta; Automat finns kvar.
+
+Språket: lägesknappen säger *LocoNet ansluten* (grön), *LocoNet svarar inte* (röd) eller *LocoNet ej ansluten* (gul);
+rutan heter *LocoNet* med *Anslut till LocoNet* och *Koppla från LocoNet*; Inställningar → Banan (LocoNet) har kortet
+*Anslutning till LocoNet*. Studio visar *EJ DRIFTSATT* i stället för *SIMULERING*, och länken till den egna
+återrapportens sida heter *Egen återrapport ↗*. Internt heter lägena fortfarande `live` och `offline`.
+`docs/live-och-offline.md` heter nu `docs/loconet-anslutning.md`.
+
+Prov: trafikspelets tåg i `test/simulated-trains.test.mjs`; i `test/tracking-integration.mjs` en TrainMeet-server i
+provet där Kungsfors sänt tåg 421, som TKL ställer ut, kör in med sitt nummer och löser upp vid ankomst, och med
+automaten kör in och ut.
+
+**Svar på Caspers fråga om en TKL för en annan station** (Bennys Träkvista eller Bilbo): kärnan är generisk och styrs av
+profilen, men vägen från XML till profil följer Charlottendals JMRI-konventioner (Logix-grupperna 0012, 0013, 0019, 0023,
+0025 och knappnamnen htv/tvv/tvs), spårplanens geometri (`public/data/panel.json`) har ingen generator utan kom från den
+ursprungliga designexporten, och ett femtontal filer har handskrivna tabeller för Charlottendal (linjerna och
+grannstationerna, programmeringsspåret, rangerbangården, vägskydden V1–V4, automatens spårordning, gränser i ritningen).
+Uppskattning: några dagar till ett par veckor om Bennys XML följer samma konventioner, annars mer. Förslaget är en motor
+plus en stationsfil, och en konverterare från JMRI:s LayoutEditor till spårplanen.

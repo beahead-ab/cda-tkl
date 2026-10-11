@@ -30,7 +30,7 @@ test('stationen byter mellan offline (simulerad bana) och live (LocoNet via Loco
   try {
     launch(process.execPath, ['src/simulator.mjs']); launch(process.execPath, ['src/server.mjs']);
     const offline = await ready('offline');
-    assert.match(offline.connectionInfo.label, /^Offline/); assert.equal(offline.trainSimulation.available, true);
+    assert.match(offline.connectionInfo.label, /^LocoNet ej ansluten/); assert.equal(offline.trafficTrains.available, true);
     assert.match((await post('connection/mode', { mode: 'live' }, 409)).error, /Ingen LocoBuffer/);
 
     pty = launch(process.env.PYTHON || 'python3', ['-u', 'test/fixtures/pty-locobuffer.py']);
@@ -51,14 +51,14 @@ test('stationen byter mellan offline (simulerad bana) och live (LocoNet via Loco
 
     await post('connection/mode', { mode: 'live' });
     const live = await ready('live');
-    assert.match(live.connectionInfo.label, /^Live · LocoNet via LocoBuffer/);
+    assert.match(live.connectionInfo.label, /^LocoNet ansluten via LocoBuffer/);
     assert.equal(live.connectionMode.gateway.state, 'running');
-    assert.equal(live.trainSimulation.available, false, 'simulerad trafik finns bara offline');
+    assert.equal(live.trafficTrains.available, false, 'trafikspelets tåg kör TKL bara när LocoNet inte är ansluten');
     assert.equal(live.automation.available, false, 'automaten finns bara offline');
     assert.ok(bus.some(d => d.kind === 'interrogate'), 'TKL frågade av ingångarna på LocoNet');
     assert.ok(Object.values(live.signals).filter(s => !s.virtual).every(s => s.aspect === 'stop'), 'signalerna svarade på stopp');
     assert.ok(Object.values(live.turnouts).every(t => t.position === 'unknown'), 'växlarna är okända tills de får en order');
-    assert.ok(live.events.some(e => /^Live: TKL styr banan/.test(e.message)), 'bytet står i journalen');
+    assert.ok(live.events.some(e => /^LocoNet ansluten: TKL styr banan/.test(e.message)), 'bytet står i journalen');
 
     // En tågväg live går ut på LocoNet och etableras med banans återrapporter.
     const before = bus.length;
@@ -71,7 +71,7 @@ test('stationen byter mellan offline (simulerad bana) och live (LocoNet via Loco
     // Tillbaka till offline: simulatorn igen, gatewayen stoppad.
     await post('connection/mode', { mode: 'offline' });
     const back = await ready('offline');
-    assert.equal(back.connectionMode.gateway.state, 'stopped'); assert.equal(back.trainSimulation.available, true);
+    assert.equal(back.connectionMode.gateway.state, 'stopped'); assert.equal(back.trafficTrains.available, true);
     const quiet = bus.length; await new Promise(r => setTimeout(r, 1500));
     assert.equal(bus.length, quiet, 'offline går inget ut på LocoNet');
     assert.equal(JSON.parse(fs.readFileSync(path.join(dir, 'connection.json'))).mode, 'offline');
