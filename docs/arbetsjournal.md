@@ -1755,3 +1755,5 @@ tjänsten `cda-tkl` får `SupplementaryGroups=dialout` för serieporten.
 
 Prov: `test/connection-mode.test.mjs` (sex prov) och `test/live-offline-integration.mjs` (TKL och simulatorn som
 processer, en virtuell LocoBuffer på en pty med en simulerad bana bakom som ekar och svarar som MGP-korten).
+
+Publicerad 11 oktober: cda-tkl main `102ed54` (#54), `beahead-ab/cda-tkl-install` main `342123b`. Installationsförrådet har nu också `docs/live-och-offline.md`; publiceringen tar med den och README länkar dit.
