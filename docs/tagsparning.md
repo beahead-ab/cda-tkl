@@ -74,7 +74,7 @@ Banan, trafiken och tågklareraren är tre roller som var och en kan vara verkli
 
 Simulatorn är banan och syns inte för operatören. Dess egen sida (klicka i block, lägg in fel) nås för felsökning från
 Studio → Driftsättning → *Simulatorn ↗*; Inställningar har ingen länk dit längre, och knappen *Starta* för enskilda
-färder är borta. Simulerad trafik och Automat ligger bland driftknapparna under Drift och finns bara i simuleringsläge.
+färder är borta. Simulerad trafik och Automat ligger bland driftknapparna under Drift och finns bara offline ([live och offline](live-och-offline.md), sedan 0.78.0).
 Med båda påslagna kör stationen av sig själv; med bara Simulerad trafik klarerar operatören.
 
 ## Automaten (0.75.0)
@@ -104,7 +104,7 @@ linjerna: omkring fjorton tåg in och ut per körning, utan överlämning, spök
 
 ## Simulerad trafik (0.74.0, namnet sedan 0.75.0)
 
-Knappen **Simulerad trafik** (före 0.75.0 *Simulera tåg*) bland driftknapparna under Drift (bara i simuleringsläge) låter simulerade grannstationer släppa
+Knappen **Simulerad trafik** (före 0.75.0 *Simulera tåg*) bland driftknapparna under Drift (bara offline) låter simulerade grannstationer släppa
 in tåg på linjerna, ungefär ett var 45:e–90:e sekund och högst sex på stationen åt gången.
 
 1. TKL väljer en linje vars infartsspår (det som inte är normal utfart enligt Orter och telefon) är fritt och ger tåget
