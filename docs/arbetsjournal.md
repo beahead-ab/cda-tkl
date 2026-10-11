@@ -1727,3 +1727,5 @@ anslutningen (`connectionAt` i läget).
 Prov: `test/event-reports.test.mjs` (sju prov: avfrågningen vid anslutning, tre minuters tystnad, ett kort som slutar
 svara, handmanöver av okänd och rörlig växel, återanslutning, återtagning efter återanslutning); stale-proven väntar
 `staleMs`; processproven väntar tills alla ingångar svarat, och lägger växel 133 före programmering.
+
+Publicerad 11 oktober: cda-tkl main `a7d04f1` (#52), `beahead-ab/cda-tkl-install` main `3c53bc1`.
