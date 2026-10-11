@@ -17,7 +17,7 @@ const make = (over = {}) => { const s = fakeSpawn(), timers = []; return { s, ti
 test('utan val kör TKL offline mot simulatorn, och live kräver en LocoBuffer', () => {
   const { c } = make();
   assert.equal(c.mode, 'offline');
-  assert.deepEqual(c.target(profile), { mode: 'simulator', host: '127.0.0.1', port: 8912, label: 'Offline · simulerad bana, ingen LocoNet' });
+  assert.deepEqual(c.target(profile), { mode: 'simulator', host: '127.0.0.1', port: 8912, label: 'LocoNet ej ansluten · TKL svarar själv och kör trafikspelets tåg' });
   assert.match(c.liveReason(), /Ingen LocoBuffer/);
   assert.throws(() => c.switch('live'), /Ingen LocoBuffer/);
   assert.throws(() => c.switch('kanske'), /Okänt läge/);
@@ -37,9 +37,9 @@ test('LocoBuffern sparas och prövas; live startar gatewayen, offline stoppar de
   assert.equal(c.mode, 'live'); assert.equal(c.storage.files['connection.json'].mode, 'live');
   assert.deepEqual(s.calls[0].args.slice(1), ['--device', '/dev/serial/by-id/usb-RR-CirKits_LocoBuffer-USB-if00', '--baud', '57600', '--flow', 'rtscts', '--port', '8913']);
   assert.match(s.calls[0].args[0], /scripts\/locobuffer-gateway\.mjs$/);
-  assert.deepEqual(c.target(profile), { mode: 'hardware', host: '127.0.0.1', port: 8913, label: 'Live · LocoNet via LocoBuffer (/dev/serial/by-id/usb-RR-CirKits_LocoBuffer-USB-if00)' });
+  assert.deepEqual(c.target(profile), { mode: 'hardware', host: '127.0.0.1', port: 8913, label: 'LocoNet ansluten via LocoBuffer (/dev/serial/by-id/usb-RR-CirKits_LocoBuffer-USB-if00)' });
   s.calls[0].child.stdout.emit('data', 'LocoBuffer gateway: 127.0.0.1:8913\n'); assert.equal(c.view().gateway.state, 'running');
-  assert.throws(() => c.setLocobuffer({ device: '', baud: '57600', flow: 'rtscts' }), /offline innan/);
+  assert.throws(() => c.setLocobuffer({ device: '', baud: '57600', flow: 'rtscts' }), /Koppla från LocoNet innan/);
   c.switch('offline');
   assert.equal(s.calls[0].child.killed, 'SIGTERM'); assert.equal(c.mode, 'offline'); assert.equal(c.view().gateway.state, 'stopped');
 });
@@ -71,7 +71,7 @@ test('valet består över omstart; live utan LocoBuffer faller tillbaka till off
 test('CHARLOTTENDAL_CONNECTION_MODE=hardware: fristående gateway, låst till live', () => {
   const { s } = make(), c = new ConnectionMode({ storage: memory(), env: { CHARLOTTENDAL_CONNECTION_MODE: 'hardware', CHARLOTTENDAL_WIRE_HOST: 'gateway.local', CHARLOTTENDAL_WIRE_PORT: '1234' }, platform: 'linux', root: '/x', spawn: s.spawn, listDevices: () => [] });
   assert.equal(c.mode, 'live'); assert.equal(c.locked, true);
-  assert.deepEqual(c.target(profile), { mode: 'hardware', host: 'gateway.local', port: 1234, label: 'Live · LocoNet via gateway gateway.local:1234' });
+  assert.deepEqual(c.target(profile), { mode: 'hardware', host: 'gateway.local', port: 1234, label: 'LocoNet ansluten via gateway gateway.local:1234' });
   assert.throws(() => c.switch('offline'), /fristående/); c.start(); assert.equal(s.calls.length, 0, 'TKL startar ingen egen gateway');
   assert.throws(() => new ConnectionMode({ storage: memory(), env: { CHARLOTTENDAL_CONNECTION_MODE: 'gissning' }, root: '/x' }), /Okänt anslutningsläge/);
 });

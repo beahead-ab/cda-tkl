@@ -8,9 +8,10 @@ den avstängd tills den är provad där.
 **Publicerad: 0.75.0** (cda-tkl main `45ec00a`, #46; `beahead-ab/cda-tkl-install` main `ba895b6`, 8 oktober). Webbdriften
 på Render tar den när Render bygger om main, eller med Uppdatera nu när Deploy Hook är inlagd; datorer som installerats
 med installationsraden kör den igen eller väljer Uppdatering. Tågspårningen kom i 0.73.0, simulerade tåg och upplösning
-vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0. På ställverket ligger *Simulerad trafik* och *Automat*
-bland driftknapparna under Drift, listan *Spårade tåg* under Drift → Tågnummer, och simulatorns egen sida nås från
-Studio → Driftsättning → *Simulatorn ↗*.
+vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0. Sedan 0.79.0 kommer tågen från trafikspelet på
+TrainMeet-servern (se nedan) och *Simulerad trafik* är borta. På ställverket ligger *Automat* bland driftknapparna under
+Drift, listan *Spårade tåg* under Drift → Tågnummer, och den egna återrapportens sida nås från Studio → Driftsättning →
+*Egen återrapport ↗*.
 
 ## Vad som syns
 
@@ -64,18 +65,18 @@ växel bara i det läge som leder dit, genom en korsning rakt över. Ett växell
 
 ## Tre roller (0.75.0)
 
-Banan, trafiken och tågklareraren är tre roller som var och en kan vara verklig eller simulerad:
+Banan, trafiken och tågklareraren är tre roller (sedan 0.79.0 utan simuleringsläge):
 
-| Roll | I verkligheten | I simulering |
+| Roll | Med LocoNet ansluten | Med LocoNet ej ansluten |
 |---|---|---|
-| **Banan**: växlar, signaler, spåravkänning och tågen som rullar | MGP-modulerna och riktiga tåg | Simulatorn |
-| **Trafiken**: vilka tåg som kommer, när och varifrån | TrainMeet och grannstationerna | Knappen *Simulerad trafik* |
-| **Tågklareraren**: lägger tågvägarna | Operatören | Knappen *Automat* |
+| **Banan**: växlar, signaler, spåravkänning och tågen som rullar | MGP-modulerna och riktiga tåg | TKL svarar själv och kör tågen |
+| **Trafiken**: vilka tåg som kommer, när och varifrån | Trafikspelet på TrainMeet-servern | Trafikspelet på TrainMeet-servern |
+| **Tågklareraren**: lägger tågvägarna | Operatören | Operatören eller knappen *Automat* |
 
-Simulatorn är banan och syns inte för operatören. Dess egen sida (klicka i block, lägg in fel) nås för felsökning från
-Studio → Driftsättning → *Simulatorn ↗*; Inställningar har ingen länk dit längre, och knappen *Starta* för enskilda
-färder är borta. Simulerad trafik och Automat ligger bland driftknapparna under Drift och finns bara offline ([live och offline](live-och-offline.md), sedan 0.78.0).
-Med båda påslagna kör stationen av sig själv; med bara Simulerad trafik klarerar operatören.
+Den egna återrapporten syns inte för operatören. Dess sida (klicka i block, lägg in fel) nås för felsökning från
+Studio → Driftsättning → *Egen återrapport ↗*. Automaten ligger bland driftknapparna under Drift och finns bara när
+LocoNet inte är ansluten ([LocoNet ansluten eller ej ansluten](loconet-anslutning.md)). Med automaten på kör stationen
+trafikspelets tåg av sig själv.
 
 ## Automaten (0.75.0)
 
@@ -98,27 +99,29 @@ som operatören, aldrig förbi dem. Statusraden visar *Automat · datorn lägger
 - Vilket tåg som står var vet automaten ur tågspårningen.
 
 Prov: `test/train-automation.test.mjs` (kärnan, simulatorn, spårningen och automaten i samma klocka: ett tåg in, uppehåll,
-ut mot Vagnsta; aldrig spår 6 eller 10; överlämning vid AIS) och `test/tracking-integration.mjs` (med simulerad trafik
-och automat som riktiga processer kör stationen ett tåg in och ut). Femton simulerade minuter med trafik från alla tre
-linjerna: omkring fjorton tåg in och ut per körning, utan överlämning, spöktåg eller osäkra nummer.
+ut mot Vagnsta; aldrig spår 6 eller 10; överlämning vid AIS) och `test/tracking-integration.mjs` (med trafikspelets tåg
+från en TrainMeet-server och automaten som riktiga processer kör stationen tåg 421 in och ut). I 0.75.0 gav femton
+simulerade minuter med trafik från alla tre linjerna omkring fjorton tåg in och ut per körning, utan överlämning,
+spöktåg eller osäkra nummer.
 
-## Simulerad trafik (0.74.0, namnet sedan 0.75.0)
+## Trafikspelets tåg (0.79.0; före det Simulerad trafik)
 
-Knappen **Simulerad trafik** (före 0.75.0 *Simulera tåg*) bland driftknapparna under Drift (bara offline) låter simulerade grannstationer släppa
-in tåg på linjerna, ungefär ett var 45:e–90:e sekund och högst sex på stationen åt gången.
+TKL har ingen egen simulerad trafik längre: trafiken kommer från trafikspelet på TrainMeet-servern. När LocoNet inte är
+ansluten ställer TKL ut trafikspelets tåg och kör dem (`src/traffic-trains.mjs`):
 
-1. TKL väljer en linje vars infartsspår (det som inte är normal utfart enligt Orter och telefon) är fritt och ger tåget
-   ett nummer: Kungsfors 4xx, Vagnsta 3xx, Lekby 2xx.
-2. Tåget **anmäls** i linjens inkommande fält, som en grannstation gör, och syns vid kanten.
-3. TKL ber simulatorn ställa tåget **på linjen utanför infartssignalen** (`SIM`-kommandot över den lokala förbindelsen
-   till simulatorn; en riktig LocoBuffer får aldrig sådana rader). Spårningen ser tåget och tar numret ur fältet.
-4. **Operatören lägger tågvägen.** Tåget kör när signalerna visar kör, stannar på målspåret och står kvar där.
-   Simulatorn vet inget om TKL:s tågvägar: den läser växlarna och signalerna.
-5. **Kärnan löser upp tågvägen vid ankomst** (se nedan). Lägger operatören en tågväg från spåret kör tåget vidare; ut på
-   en linje lämnar det anläggningen och visas på linjen.
+1. Ett tåg **på väg hit på linjen** (sträckan belagd mot stationen, med tågnummer) ställs **utanför infartssignalen** på
+   linjens infartsspår, det spår som enligt Orter och telefon hör till grannstationen. Spårningen tar numret från
+   TrainMeet.
+2. Ett tåg **anmält uppställt** (eller förare på plats) på ett spår här ställs **på spåret** (tidtabellens 1a = Spår 1a)
+   och får sitt nummer.
+3. **Operatören lägger tågvägen** (eller automaten). Tåget kör när signalerna visar kör, stannar på målspåret och står
+   kvar där. Den egna återrapporten vet inget om TKL:s tågvägar: den läser växlarna och signalerna.
+4. **Kärnan löser upp tågvägen vid ankomst** (se nedan). Lägger operatören en tågväg från spåret kör tåget vidare; ut på
+   en linje lämnar det stationen och visas på linjen.
 
-Det inkommande fältet töms när tåget passerat infartssignalen. Simulatorns knapp *Starta* för en enskild färd finns kvar
-och fungerar som förut (det tåget försvinner vid målet).
+Ett tåg som redan syns ställs inte ut igen, och ett belagt spår väntar. Klarering, avgång och ankomst anmäls i TrainMeet
+som vanligt. Före 0.79.0 släppte knappen *Simulerad trafik* in tåg med påhittade nummer (Kungsfors 4xx, Vagnsta 3xx,
+Lekby 2xx) och anmälde dem i det inkommande fältet; den är borta.
 
 ### Upplösning vid ankomst
 
@@ -133,8 +136,8 @@ Vx132 på LS145, S160c och Vx160 på LS190). Kärnan kan då inte se att tåget 
 tills spåret är fritt eller panelen återställs. Det löses först med en egen detektor för spåret.
 
 Prov: `test/simulated-trains.test.mjs` (kärnan och simulatorn tillsammans: in, uppställning, upplösning, vidare ut;
-väntan före upplösningen; spår 6) och `test/tracking-integration.mjs` (knappen via API:t, anmälan, spårningen tar numret,
-upplösning vid ankomst). Ett svep över alla 78 infarter från linjerna till spåren: 70 går hela vägen in, löses upp och
+väntan före upplösningen; spår 6; trafikspelets tåg på linjen och uppställda) och `test/tracking-integration.mjs`
+(TrainMeet-servern sänder tåg 421 från Kungsfors, spårningen tar numret, upplösning vid ankomst). Ett svep över alla 78 infarter från linjerna till spåren: 70 går hela vägen in, löses upp och
 ut igen; de åtta andra går till spår 6 och spår 10 enligt ovan.
 
 ## Begränsningar
