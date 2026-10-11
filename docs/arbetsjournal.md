@@ -1793,3 +1793,12 @@ Uppskattning: några dagar till ett par veckor om Bennys XML följer samma konve
 plus en stationsfil, och en konverterare från JMRI:s LayoutEditor till spårplanen.
 
 Publicerad 11 oktober: cda-tkl main `c0ffb59` (#56), `beahead-ab/cda-tkl-install` main `48b6f4b`. Installationsförrådet har `docs/loconet-anslutning.md` i stället för `docs/live-och-offline.md`; publiceringen tar med den nya filen.
+
+Publicerad: 0.79.0 (cda-tkl main `c0ffb59`, #56; `beahead-ab/cda-tkl-install` main `48b6f4b`, 11 oktober). Versionerna
+sedan förra lägesbilden, i ordning: 0.76.0 Bennys LocoNet-monitorering, B1 i ingångsformatet och ON/OFF-puls (#49),
+0.76.1 Bennys andra trace med avfrågningen och MGP-kortens identitet (#50), 0.77.0 återrapporter som korten sänder dem,
+med avfrågning (#52), 0.78.0 live och offline med LocoBuffer-gatewayen som TKL startar (#54) och 0.79.0 LocoNet ansluten
+eller ej ansluten med trafikspelets tåg (#56). Webbdriften på Render tar 0.79.0 när Render bygger om main (automatisk
+driftsättning) eller med Uppdatera nu när Deploy Hook är inlagd; den har ingen LocoNet och svarar alltid själv. Datorer
+som installerats med installationsraden kör den igen eller väljer Uppdatering; en Pi får gruppen `dialout` för
+LocoBuffern vid uppdateringen. Samma uppgifter står i status.md (lägesbild 11 oktober).
