@@ -1834,3 +1834,6 @@ inte blir kod, och kopplingen i tidtabellen och inställningarna). Skärmprov i 
 med tio tåg i olika lägen, i alla fyra stilarna vid 1500, 1100 och 390 px bredd, och inställningsrutan med
 förhandsvisningarna.
 
+Publicerad 13 oktober: cda-tkl main `a503d09` (#60), `beahead-ab/cda-tkl-install` main `5133be9`. Webbdriften på Render
+tar 0.80.0 när Render bygger om main eller med Uppdatera nu; datorer som installerats med installationsraden kör den igen
+eller väljer Uppdatering. Stilvalet är per webbläsare, så varje skärm börjar med Ord tills någon väljer en annan stil.
