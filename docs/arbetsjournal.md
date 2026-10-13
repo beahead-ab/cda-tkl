@@ -1802,3 +1802,35 @@ eller ej ansluten med trafikspelets tåg (#56). Webbdriften på Render tar 0.79.
 driftsättning) eller med Uppdatera nu när Deploy Hook är inlagd; den har ingen LocoNet och svarar alltid själv. Datorer
 som installerats med installationsraden kör den igen eller väljer Uppdatering; en Pi får gruppen `dialout` för
 LocoBuffern vid uppdateringen. Samma uppgifter står i status.md (lägesbild 11 oktober).
+
+## 13 oktober 2026, 0.80.0: tidtabellens stil
+
+Casper: ”Det snygga sättet som vi har gjort nu med tidtabellsalternativen för iPhone tycker jag vi implementerar också
+för CDA-TKL. Så att man kan välja vilken typ av hur man vill representera de olika tåggrejerna i tåglistan.” Förebilden
+är TrainMeet-appens gren `claude/tidtabellens-stil` (Ord, Symboler, Linjebild, Linjebild + symboler; förhandsvisning per
+val; spåret en gång, i ram när tåget står inne; tecknen förklarade för den valda stilen).
+
+`public/timetable-style.js` ritar raderna i den valda stilen: tecknen är ritade SVG i textens färg, linjebilden är 84 × 16
+med stationen i mitten och grannarnas koder på sidorna, och färgerna är appens (planerat #5c656e streckat, begärt
+#f5c518 streckat, klart #4cd787, på linjen #6ea8fe med tåget, avklarat #3a424a). `groupRows` i
+`public/timetable-rows.js` ger varje rad läget i delar (status, sen, anmält, tågväg ej lagd, om N min, genomfart, ändrat
+spår), vad som pågår (på väg hit, begär, begärt, klart, står inne, ankommet, avgått), linjen in och linjen ut som
+linjebilden ritar dem, om tåget står inne, och minuterna sen och till nästa tåg. Orden byggs av samma delar och är
+oförändrade. Sidorna kommer från Orter (linjerna C och A vänster, B och D höger, nytt fält `side` i
+`public/destination-data.js`), riktningen från TrainMeets `directions` och klareringen från förbindelselägena för
+tågets nummer. Valet ligger under Inställningar → Utseende och ljud med förhandsvisning, sparas i webbläsaren
+(`charlottendal-timetable-style`) och byter listan direkt, också i andra flikar. Teckenförklaringen visar tecknen för
+den valda stilen.
+
+Beslut på vägen: Ord är som i dag (plus ramen runt spåret), eftersom det är TKL:s egen tidtabell. Symboler och
+Linjebild visar dessutom klareringen på linjen, som Ord inte visar. TKL svarar på en klareringsbegäran under Klarering,
+inte med # som en TMBox, så tecknet för grannens begäran är bara ett gult frågetecken. Uppställt och Redo har inga
+tecken i appen; i Symboler står de kvar i ord, och i Linjebild står Redo kvar eftersom bilden bara visar att tåget står
+inne.
+
+Prov: `test/timetable-style.test.mjs` (nio prov: valet och lagringen, sidorna, klareringen per tåg, radernas delar och
+läge, Ord oförändrat och Symboler, linjebilden, rubriker, teckenförklaring och förhandsvisning, att namn från TrainMeet
+inte blir kod, och kopplingen i tidtabellen och inställningarna). Skärmprov i Chromium mot en TrainMeet-server i provet
+med tio tåg i olika lägen, i alla fyra stilarna vid 1500, 1100 och 390 px bredd, och inställningsrutan med
+förhandsvisningarna.
+
