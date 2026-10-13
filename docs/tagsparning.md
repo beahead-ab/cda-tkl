@@ -1,15 +1,17 @@
 # Tågspårning
 
 Sedan 0.73.0 räknar TKL ut vilket tåg som står var, ur spåravkänningarna, växellägena och tågvägarna, och visar
-det på ställverket. Spårningen är **bara presentation**: låsning, signaler och tågvägar läser den aldrig. Den
-provas först i **simulering** (`CHARLOTTENDAL_CONNECTION_MODE=simulator`, som i webbdriften); mot riktig bana är
-den avstängd tills den är provad där.
+det på ställverket. Spårningen är **bara presentation**: låsning, signaler och tågvägar läser den aldrig. Den är på
+när **LocoNet inte är ansluten** och TKL själv kör trafikspelets tåg (sedan 0.79.0, [LocoNet ansluten eller ej
+ansluten](loconet-anslutning.md); före det i simuleringsläget, som i webbdriften). Med LocoNet ansluten är den
+avstängd tills den är provad mot riktig bana.
 
-**Publicerad: 0.75.0** (cda-tkl main `45ec00a`, #46; `beahead-ab/cda-tkl-install` main `ba895b6`, 8 oktober). Webbdriften
+**Publicerad: 0.79.0** (cda-tkl main `c0ffb59`, #56; `beahead-ab/cda-tkl-install` main `48b6f4b`, 11 oktober). Webbdriften
 på Render tar den när Render bygger om main, eller med Uppdatera nu när Deploy Hook är inlagd; datorer som installerats
 med installationsraden kör den igen eller väljer Uppdatering. Tågspårningen kom i 0.73.0, simulerade tåg och upplösning
-vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0. Sedan 0.79.0 kommer tågen från trafikspelet på
-TrainMeet-servern (se nedan) och *Simulerad trafik* är borta. På ställverket ligger *Automat* bland driftknapparna under
+vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0 (cda-tkl `45ec00a`, #46). I 0.77.0 rapporterar den egna
+återrapporten som MGP-korten, och i 0.79.0 kommer tågen från trafikspelet på TrainMeet-servern (se nedan) och
+*Simulerad trafik* är borta. På ställverket ligger *Automat* bland driftknapparna under
 Drift, listan *Spårade tåg* under Drift → Tågnummer, och den egna återrapportens sida nås från Studio → Driftsättning →
 *Egen återrapport ↗*.
 
@@ -57,9 +59,9 @@ växel bara i det läge som leder dit, genom en korsning rakt över. Ett växell
 - `test/train-tracking.test.mjs`: spårgrafen, ett tåg från Kungsfors med nummer ur TrainMeet längs tågvägen förbi
   LS60:s andra block, LS72 vid spår 11–13, ett tåg som lämnar mot Vagnsta och ett okänt nummer som rättas, glapp
   och senast sett, en brygga utan ingång, operatörens nummer och avstängt läge.
-- `test/tracking-integration.mjs`: TKL och simulatorn i egna processer; Au → Spår 1c läggs, simulatorn kör tåget och
+- `test/tracking-integration.mjs`: TKL och den egna återrapporten i egna processer; Au → Spår 1c läggs, den kör tåget och
   spårningen följer det över LocoNet.
-- Svep över alla 340 tågvägar som simulatorn kör dem: spårningen följer tåget utan spöktåg i 330. De tio andra
+- Svep över alla 340 tågvägar som den egna återrapporten kör dem (0.73.0): spårningen följer tåget utan spöktåg i 330. De tio andra
   börjar eller slutar på spårledningar helt utan avkänning (S164, S164b, S112b, S155b); där syns tåget inte förrän
   ingången är bunden (se [genomgången](genomgang-mgp-2026-10-06.md)).
 
@@ -98,7 +100,7 @@ som operatören, aldrig förbi dem. Statusraden visar *Automat · datorn lägger
   tågväg redan ligger.
 - Vilket tåg som står var vet automaten ur tågspårningen.
 
-Prov: `test/train-automation.test.mjs` (kärnan, simulatorn, spårningen och automaten i samma klocka: ett tåg in, uppehåll,
+Prov: `test/train-automation.test.mjs` (kärnan, den egna återrapporten, spårningen och automaten i samma klocka: ett tåg in, uppehåll,
 ut mot Vagnsta; aldrig spår 6 eller 10; överlämning vid AIS) och `test/tracking-integration.mjs` (med trafikspelets tåg
 från en TrainMeet-server och automaten som riktiga processer kör stationen tåg 421 in och ut). I 0.75.0 gav femton
 simulerade minuter med trafik från alla tre linjerna omkring fjorton tåg in och ut per körning, utan överlämning,
@@ -129,13 +131,13 @@ Tidigare löstes en tågväg bara upp när alla dess block var fria, så ett tå
 låst. Sedan 0.74.0 (Caspers beslut 8 oktober) löses tågvägen upp när tåget lämnat alla avsnitt före målspåret och
 står helt på det, utan någon av tågvägens växlar under sig, efter tre sekunder. Låsen släpps först efter stoppbesked som
 vid all återtagning, och målspåret förblir belagt, så ingen ny tågväg kan läggas in på det. En tågväg från spåret kan
-läggas. Det gäller både simulering och riktig bana.
+läggas. Det gäller både med och utan LocoNet.
 
 På **spår 6** och **spår 10** delar målspårets detektor med en växel i tågvägen (S144b och Vx144 på LS158, S132b och
 Vx132 på LS145, S160c och Vx160 på LS190). Kärnan kan då inte se att tåget lämnat växeln, och tågvägen ligger kvar
 tills spåret är fritt eller panelen återställs. Det löses först med en egen detektor för spåret.
 
-Prov: `test/simulated-trains.test.mjs` (kärnan och simulatorn tillsammans: in, uppställning, upplösning, vidare ut;
+Prov: `test/simulated-trains.test.mjs` (kärnan och den egna återrapporten tillsammans: in, uppställning, upplösning, vidare ut;
 väntan före upplösningen; spår 6; trafikspelets tåg på linjen och uppställda) och `test/tracking-integration.mjs`
 (TrainMeet-servern sänder tåg 421 från Kungsfors, spårningen tar numret, upplösning vid ankomst). Ett svep över alla 78 infarter från linjerna till spåren: 70 går hela vägen in, löses upp och
 ut igen; de åtta andra går till spår 6 och spår 10 enligt ovan.
