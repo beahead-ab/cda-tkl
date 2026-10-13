@@ -2,6 +2,32 @@
 
 Ställverket öppnas på `/#panel`. Överkanten innehåller namn, anslutningsstatus och meny. Från version 0.29.0 är den stora knappraden borttagen enligt Caspers godkända förenkling.
 
+## Tidtabellens stil (0.80.0)
+
+Som i TrainMeet-appen för iPhone väljer man under Inställningar → Utseende och ljud hur tåglistan visar läget och vägen.
+Valet gäller den här webbläsaren och sparas inte i TKL-servern; varje stil har en förhandsvisning med samma tre tåg.
+
+- **Ord** (standard): som tidigare, Närmar sig, Ankommet, Redo, Avgått, sen 6 min, om 9 min.
+- **Symboler**: små tecken i stället för orden. Tåg på väg hit, begärt (timglas), klart (bock), avgått och ankommet med
+  pil åt tågets håll, grannen begär klarering (gul ?), minuter sen (+6′) och minuter till nästa tåg (klocka 9′). Den här
+  stationen är en ring med prick där orden säger att tåget börjar eller slutar här, och ett tåg som vänder får en
+  vändpil. Ank och Avg har pilar in till och ut från stationen som rubrik. Det som saknar tecken, som Redo och
+  tågväg ej lagd, står kvar i ord.
+- **Linjebild**: Från och Till blir en kolumn, Linje, med stationen som en prick i mitten och grannarnas koder på sin
+  sida av panelen. Varje linje ritas som det som händer på den: streckad grå planerat, streckad gul begärt, grön klart,
+  blå med tåget när det är ute på linjen, mörkgrå avklarat, och pilen pekar åt tågets håll. Gul prick: tåget står
+  inne. Under bilden står bara det bilden inte visar.
+- **Linjebild + symboler**: linjebilden, med tecken för klareringsbegäran och minuterna.
+
+I alla stilar står spåret bara i Spår-kolumnen, i en gul ram när tåget står inne (ankommet, uppställt eller förare på
+plats). Tecknen förklaras under Utseende och ljud → Teckenförklaring, för den valda stilen; vid pekaren står orden.
+
+Sidan för en granne kommer från Inställningar → Orter: en ort som är kopplad till en TrainMeet-station ger stationen
+sin linjes sida (C och A till vänster, B och D till höger). En granne utan koppling ritas mittemot tågets andra ände,
+och utan någon känd sida går tåget från vänster till höger, som orden läses. Klareringen tas från TrainMeets
+förbindelselägen för tågets nummer: begärd, klar eller belagd på linjen in och linjen ut. Ordens innehåll och
+tidtabellens gruppering kring NU-linjen är oförändrade; Symboler och Linjebild visar dessutom klareringen på linjen.
+
 ## Original som enda panel (0.30.2)
 
 Reläpanel och Trafikskärm har tagits bort som val på Caspers begäran. Original används från första sidrenderingen, även om webbläsaren tidigare sparat ett annat tema. Det gamla temavalet rensas. Översikten visar Original som fast information; redigeringsmodalen har enbart zoom, övergångslampor och ljud. Nya skins skjuts upp tills originalpanelen är färdig. Befintliga vilande stilregler finns kvar utan åtkomliga val; ingen spårgeometri eller driftlogik har ändrats.
