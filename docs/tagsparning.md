@@ -6,12 +6,13 @@ när **LocoNet inte är ansluten** och TKL själv kör trafikspelets tåg (sedan
 ansluten](loconet-anslutning.md); före det i simuleringsläget, som i webbdriften). Med LocoNet ansluten är den
 avstängd tills den är provad mot riktig bana.
 
-**Publicerad: 0.79.0** (cda-tkl main `c0ffb59`, #56; `beahead-ab/cda-tkl-install` main `48b6f4b`, 11 oktober). Webbdriften
+**Publicerad: 0.80.0** (cda-tkl main `a503d09`, #60; `beahead-ab/cda-tkl-install` main `5133be9`, 13 oktober). Webbdriften
 på Render tar den när Render bygger om main, eller med Uppdatera nu när Deploy Hook är inlagd; datorer som installerats
 med installationsraden kör den igen eller väljer Uppdatering. Tågspårningen kom i 0.73.0, simulerade tåg och upplösning
 vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0 (cda-tkl `45ec00a`, #46). I 0.77.0 rapporterar den egna
 återrapporten som MGP-korten, och i 0.79.0 kommer tågen från trafikspelet på TrainMeet-servern (se nedan) och
-*Simulerad trafik* är borta. På ställverket ligger *Automat* bland driftknapparna under
+*Simulerad trafik* är borta. I 0.80.0 kan tidtabellen visa tågen på linjen och tågen som står inne som en linjebild
+eller med tecken (se nedan); spårningen är oförändrad. På ställverket ligger *Automat* bland driftknapparna under
 Drift, listan *Spårade tåg* under Drift → Tågnummer, och den egna återrapportens sida nås från Studio → Driftsättning →
 *Egen återrapport ↗*.
 
@@ -141,6 +142,19 @@ Prov: `test/simulated-trains.test.mjs` (kärnan och den egna återrapporten till
 väntan före upplösningen; spår 6; trafikspelets tåg på linjen och uppställda) och `test/tracking-integration.mjs`
 (TrainMeet-servern sänder tåg 421 från Kungsfors, spårningen tar numret, upplösning vid ankomst). Ett svep över alla 78 infarter från linjerna till spåren: 70 går hela vägen in, löses upp och
 ut igen; de åtta andra går till spår 6 och spår 10 enligt ovan.
+
+## Tidtabellen och tågen på linjen (0.80.0)
+
+Under Inställningar → Utseende och ljud väljs tidtabellens stil: Ord, Symboler, Linjebild eller Linjebild + symboler
+([panel och verktyg](panel-och-verktyg.md)). Linjebilden visar för varje tåg linjen in och linjen ut som det
+TrainMeet säger om dem för tågets nummer: begärd (streckad gul), klar (grön), belagd (blå med tåget, ute på linjen)
+eller avklarad (mörkgrå), med grannen på samma sida som linjen på panelen. Tåget som står inne (ankommet, uppställt
+eller förare på plats enligt TrainMeet) får en gul prick i linjebilden och en ram runt spåret, i alla stilar.
+
+Tidtabellen läser bara TrainMeet, inte tågspårningen. Ett tåg kan alltså vara blått på linjen i tidtabellen och
+samtidigt stå som `← 319` vid linjens infartsspår på planen, eftersom båda kommer från samma förbindelseläge; men ramen
+runt spåret betyder att tåget är anmält inne i TrainMeet, inte att spårningen har sett det där. Med LocoNet ej
+ansluten följer de två varandra, eftersom TKL ställer ut trafikspelets tåg efter samma uppgifter.
 
 ## Begränsningar
 
