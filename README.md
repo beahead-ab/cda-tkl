@@ -102,6 +102,8 @@ Geometri och register kommer från den exporterade Charlottendal-designen och de
 
 [Driftbindningar, manöverbegränsningar och granskade profilbyten](docs/driftbindningar.md)
 
+[Träkvista och flera stationer · förstudie](docs/trakvista-forstudie.md)
+
 Senaste leveransavstämning: [samtliga användningsfall](docs/acceptans-2026-09-23.md), [aktuell status](docs/status.md) och [testresultat](docs/provresultat.md).
 
 ## Installera

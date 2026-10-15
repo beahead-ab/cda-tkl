@@ -1837,3 +1837,22 @@ förhandsvisningarna.
 Publicerad 13 oktober: cda-tkl main `a503d09` (#60), `beahead-ab/cda-tkl-install` main `5133be9`. Webbdriften på Render
 tar 0.80.0 när Render bygger om main eller med Uppdatera nu; datorer som installerats med installationsraden kör den igen
 eller väljer Uppdatering. Stilvalet är per webbläsare, så varje skärm börjar med Ord tills någon väljer en annan stil.
+
+## 15 oktober 2026: förstudie Träkvista och flera stationer
+
+Casper: ”Kan vi använda cda-tkl och skapa en ny för Benny men för Träkvista? Kan vi t o m se Träkvista som en
+konfiguration av cda-tkl dvs att vi faktiskt kan konfigurera flera stationer?” Benny skickade `Träkvista.xml` (JMRI
+5.10.0), skärmbild och brev: etiketterna kommer från konfigurationsservern, rakt ned är ingen station ansluten (lila,
+XX), ofyllda spår är bara lokalt styrda, 23 och 22a är ofyllda av misstag.
+
+Svar och underlag i [förstudien](trakvista-forstudie.md). Kärnan är stationsoberoende; det stationsbundna är
+importkedjan och handskrivna tabeller. Provat: `scripts/import-layout.py` läser LayoutEditor-panelen ur en JMRI-fil och
+ger exakt dagens panel.json för Charlottendal (`npm run verify:layout`; 16 dekorativa texter och sju handdolda
+växelnummer rapporteras men avgör inte), och Träkvista går igenom (83 segment, 11 växlar, en dubbel korsningsväxel
+Vx22a/Vx23, 94 sensorikoner, 25 signalikoner). Träkvistas 27 huvudtågvägar (12 infarter, 11 utfarter, 4 genomfarter)
+har exakt två NX-knappar var som Charlottendals, och `Topology` hittar alla 27 med korsningsväxeln som nod och en
+uttrycklig knapp → spår-tabell (6 av 27 utan). Skiljer: LogixNG i stället för Logix/Jython, växelläge via två sensorer,
+enkelspår med körriktning, mod68, och sex CSV-tabeller utanför XML. Förslag: motor och stationsfil per station under
+`stations/`, en station per installation; två till tre veckor. Bennys fil ligger i `stations/trakvista/`. Ingen
+Charlottendal-funktion ändrad; 468 prov gröna.
+
