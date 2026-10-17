@@ -50,7 +50,8 @@ def build(source):
     parser=ET.XMLParser(target=ET.TreeBuilder(insert_comments=True,insert_pis=True))
     tree=convert(ET.fromstring(raw,parser=parser),'/layout-config[1]')
     nodes=list(descendants(tree)); records=[]
-    legacy=json.loads((ROOT/'public/data/admin.json').read_text())
+    # Charlottendals äldre adminanteckningar knyts till posterna; en annan stations fil har inga.
+    legacy=json.loads((ROOT/'public/data/admin.json').read_text()) if source.name=='Cda60.xml' else {}
     previous=collections.defaultdict(collections.deque)
     for kind in ['signals','layoutTurnouts','turnouts','sensors','blocks','layoutBlocks','conditionals']:
         for i,obj in enumerate(legacy.get(kind,[])):
@@ -120,10 +121,18 @@ def enriched_admin(index, tree):
     return admin
 
 def main():
-    parser=argparse.ArgumentParser(); parser.add_argument('--check',action='store_true'); args=parser.parse_args()
-    source=ROOT/'public/data/source/Cda60.xml'; index,tree=build(source)
-    for file,data in [('index.json',index),('tree.json',tree),('../admin.json',enriched_admin(index,tree)),('signals.json',dict(signals=enriched_admin(index,tree)['signals']))]:
-        content=json.dumps(data,ensure_ascii=False,separators=(',',':'))+'\n'; target=source.parent/file
+    # Utan argument: Charlottendals Cda60.xml i public/data/source. --source och --out: en annan stations JMRI-fil, till
+    # exempel stations/trakvista/Trakvista.xml till stations/trakvista/data/source (bara index.json och tree.json).
+    parser=argparse.ArgumentParser(); parser.add_argument('--check',action='store_true'); parser.add_argument('--source'); parser.add_argument('--out')
+    args=parser.parse_args()
+    if args.source:
+        source=(Path.cwd()/args.source).resolve(); out=(Path.cwd()/(args.out or source.parent)).resolve(); index,tree=build(source)
+        files=[('index.json',index),('tree.json',tree)]
+    else:
+        source=ROOT/'public/data/source/Cda60.xml'; out=source.parent; index,tree=build(source)
+        files=[('index.json',index),('tree.json',tree),('../admin.json',enriched_admin(index,tree)),('signals.json',dict(signals=enriched_admin(index,tree)['signals']))]
+    for file,data in files:
+        content=json.dumps(data,ensure_ascii=False,separators=(',',':'))+'\n'; target=out/file
         if args.check:
             if target.read_text()!=content: raise SystemExit(f'Stale source import: {file}')
         else: target.write_text(content)
