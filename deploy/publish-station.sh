@@ -25,11 +25,8 @@ REPOSITORY=$(field repository); NAME=$(field name); DOCS=$(field docs)
 REMOTE="${STATION_REMOTE:-https://github.com/$REPOSITORY.git}"
 VERSION=$(git show "$FULL:package.json" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.parse(s).version))")
 MARK="Publicerad från cda-tkl"
-# Charlottendal's own tools and the tests that read its data; everything else in scripts/ and test/ is the program.
-CHARLOTTENDAL_ONLY="scripts/audit-turnout-addresses.py scripts/import-operations.py scripts/import-source.py
-  scripts/make-indications.mjs scripts/make-migration.mjs scripts/make-network-profile.mjs scripts/make-profile.mjs
-  scripts/make-rules.mjs scripts/make-signal-catalog.py scripts/make-signal-endpoints.mjs scripts/make-train-fields.mjs
-  scripts/studio-overview.mjs scripts/verify-source.py"
+# Charlottendal's own tools and the tests that read its data (deploy/charlottendal-only.txt) stay in cda-tkl.
+CHARLOTTENDAL_ONLY=$(git show "$FULL:deploy/charlottendal-only.txt" | grep -v '^#' | grep .)
 
 WORK=$(mktemp -d)
 [ "${STATION_NO_PUSH:-}" = 1 ] || trap 'rm -rf "$WORK"' EXIT
@@ -48,8 +45,6 @@ find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 (cd "$SOURCE" && git archive "$FULL" install.sh install.ps1 package.json package-lock.json .gitignore var/.gitkeep \
   src public scripts packaging test "stations/$ID" $DOCS) | tar -x -C .
 rm -rf public/data $CHARLOTTENDAL_ONLY
-# A test that reads Charlottendal's files (profiles/, public/data, the station by default) stays in cda-tkl.
-for t in test/*; do [ -f "$t" ] && grep -q -E "charlottendal-network|profiles/charlottendal|public/data|data/source|loadProfile\(\)|currentStation\(\{\}\)" "$t" && rm -f "$t"; done
 node scripts/make-station-repository.mjs "$ID" >/dev/null
 
 # The station's own changes since the last publication must be in what is published now.

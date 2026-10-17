@@ -1,0 +1,57 @@
+# Charlottendals egna filer: följer inte med när deploy/publish-station.sh publicerar en annan stations förråd.
+# public/data/ och profiles/ följer aldrig med. Ett nytt prov eller skript som läser Charlottendals filer läggs här;
+# publiceringen kör proven i paketet och stannar annars.
+
+# Generatorer och kontroller för Charlottendals källor (Cda60.xml, handskrivna tabeller)
+scripts/audit-turnout-addresses.py
+scripts/import-operations.py
+scripts/import-source.py
+scripts/make-indications.mjs
+scripts/make-migration.mjs
+scripts/make-network-profile.mjs
+scripts/make-profile.mjs
+scripts/make-rules.mjs
+scripts/make-signal-catalog.py
+scripts/make-signal-endpoints.mjs
+scripts/make-train-fields.mjs
+scripts/studio-overview.mjs
+scripts/verify-source.py
+
+# Prov som läser Charlottendals profil, panel eller källor
+test/benny-monitoring.test.mjs
+test/binding-configuration.test.mjs
+test/crossing-indications.test.mjs
+test/design-routing.test.mjs
+test/engine.test.mjs
+test/event-reports.test.mjs
+test/incoming-trains.test.mjs
+test/integration.mjs
+test/network.test.mjs
+test/operating-controls.test.mjs
+test/panel-indications.test.mjs
+test/password-integration.mjs
+test/profile.test.mjs
+test/ranger-paths.test.mjs
+test/ranger-scope.test.mjs
+test/route-presentation.test.mjs
+test/route-selection.test.mjs
+test/signal-catalog.test.mjs
+test/signal-route-controls.test.mjs
+test/signal-switch-report.test.mjs
+test/simulated-trains.test.mjs
+test/source.test.mjs
+test/station-model.test.mjs
+test/studio-assistant.test.mjs
+test/studio-drafts.test.mjs
+test/studio-measure.test.mjs
+test/studio-rules.test.mjs
+test/studio-view.test.mjs
+test/studio.test.mjs
+test/telegram-recorder.test.mjs
+test/track-restrictions.test.mjs
+test/train-automation.test.mjs
+test/train-information.test.mjs
+test/train-tracking.test.mjs
+test/xml-bindings.test.mjs
+test/yard-boundaries.test.mjs
+test/yard-control.test.mjs

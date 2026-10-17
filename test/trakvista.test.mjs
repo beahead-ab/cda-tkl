@@ -68,14 +68,19 @@ test('en tågväg genom korsningsväxeln spärrar den korsande vägen',()=>{
   assert.throws(()=>r.request('htvC','htvII'));
   assert.throws(()=>r.request('htvIII','htvC'));
 });
-test('stationsvalet: Charlottendal är standard, Träkvista väljs med CHARLOTTENDAL_STATION och okända namn vägras',async()=>{
-  const {currentStation,stateDirectory,stationIds}=await import('../src/station.mjs');
-  assert.ok(stationIds().includes('charlottendal')&&stationIds().includes('trakvista'));
-  const cda=currentStation({}),tk=currentStation({CHARLOTTENDAL_STATION:'trakvista'});
-  assert.equal(cda.builtIn,true);assert.match(cda.dataDir,/public\/data$/);
+test('stationsvalet: paketets station är standard, Träkvista väljs med CHARLOTTENDAL_STATION och okända namn vägras',async()=>{
+  const {currentStation,stateDirectory,stationIds,DEFAULT_STATION}=await import('../src/station.mjs');
+  // cda-tkl har Charlottendal som standard; Tk-TKL saknar Charlottendals filer och har Träkvista.
+  const withCharlottendal=fs.existsSync(new URL('../profiles/charlottendal-network.json',import.meta.url));
+  assert.equal(DEFAULT_STATION,withCharlottendal?'charlottendal':'trakvista');
+  assert.deepEqual(stationIds().filter(id=>['charlottendal','trakvista'].includes(id)),withCharlottendal?['charlottendal','trakvista']:['trakvista']);
+  const tk=currentStation({CHARLOTTENDAL_STATION:'trakvista'});
+  assert.equal(currentStation({}).id,DEFAULT_STATION);
   assert.equal(tk.title,'Träkvista');assert.match(tk.dataDir,/stations\/trakvista\/data$/);assert.match(tk.profile,/stations\/trakvista\/profiles\/network\.json$/);
   assert.throws(()=>currentStation({CHARLOTTENDAL_STATION:'../profiles'}),/Okänd station/);
-  assert.match(stateDirectory({},cda),/var$/);assert.match(stateDirectory({},tk),/var\/trakvista$/);
+  if(withCharlottendal){const cda=currentStation({});assert.equal(cda.builtIn,true);assert.match(cda.dataDir,/public\/data$/);assert.match(stateDirectory({},cda),/var$/);}
+  else assert.throws(()=>currentStation({CHARLOTTENDAL_STATION:'charlottendal'}),/Okänd station/);
+  assert.match(stateDirectory({},tk),/var\/trakvista$/);
   assert.equal(stateDirectory({CHARLOTTENDAL_STATE_DIR:'/tmp/x'},tk),'/tmp/x');
 });
 test('panelen visar korsningsväxelns förbindelse först när båda växlarna rapporterat',async()=>{

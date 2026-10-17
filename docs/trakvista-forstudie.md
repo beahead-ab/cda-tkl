@@ -1,6 +1,6 @@
 # Träkvista och flera stationer · förstudie 15 oktober 2026
 
-> **17 oktober:** Träkvista körs nu i cda-tkl på branchen, med Bennys CSV-tabeller som kontroll. Se [Träkvista i cda-tkl](trakvista.md) för hur den startas, vad som gjordes och jämförelsen med Charlottendal.
+> **17 oktober:** Träkvista körs nu i cda-tkl på branchen, med Bennys CSV-tabeller som kontroll. Se [Träkvista TKL](trakvista.md) för hur den startas och vad som gjordes, och [Flera stationer](stationer.md) för jämförelsen med Charlottendal.
 
 Caspers fråga: kan cda-tkl bli en TKL för Bennys Träkvista, och kan Träkvista ses som en konfiguration av cda-tkl så
 att flera stationer kan konfigureras? Underlag: Bennys `Träkvista.xml` (JMRI 5.10.0, sparad 10 oktober 2026, nu i

@@ -1,9 +1,8 @@
 # Träkvista TKL
 
 Ställverk för Träkvista: panelen, huvud- och växeltågvägar, frigivning efter tågets passage, TrainMeet och en egen
-anläggningssimulator med LocoNet. Det är samma program som Charlottendal TKL
-([beahead-ab/cda-tkl](https://github.com/beahead-ab/cda-tkl)) med Träkvista som station. Spårplanen, tågvägarna och
-Bennys JMRI-filer finns i [`stations/trakvista/`](stations/trakvista).
+anläggningssimulator med LocoNet. Det är samma program som Charlottendal TKL, med Träkvista som station.
+Spårplanen, tågvägarna och Bennys JMRI-filer finns i [`stations/trakvista/`](stations/trakvista).
 
 ![Träkvista i TKL](docs/trakvista-tkl.png)
 
@@ -67,18 +66,12 @@ node --test test/trakvista.test.mjs
 `npm run verify:trakvista` kontrollerar att de är aktuella. Vad som är gjort och vad som är kvar för Träkvista står i
 [docs/trakvista.md](docs/trakvista.md).
 
-## Samma plattform som Charlottendal
+## Hur Tk-TKL hålls aktuellt
 
-Tk-TKL är en kopia av cda-tkl med samma historik. Programmet är detsamma; det enda som skiljer är installationens
-identitet (`packaging/identity.env`, förrådet i `install.sh` och `install.ps1`, paketets namn och den här filen), som
-skrivs av `node scripts/make-station-repository.mjs trakvista` ur `installation` i `stations/trakvista/station.json`.
-Rättelser i kärnan hämtas från cda-tkl:
+Tk-TKL innehåller programmet och Träkvista. Programmet är detsamma som Charlottendals och publiceras hit därifrån, en
+commit per publicering (*Publicerad från cda-tkl …*). En Pi med Träkvista hämtar den nya versionen med
+`sudo tk-tkl-update`.
 
-```sh
-git remote add cda-tkl https://github.com/beahead-ab/cda-tkl.git   # en gång
-git pull --no-rebase cda-tkl main
-node scripts/make-station-repository.mjs trakvista                  # Träkvistas identitet igen
-```
-
-Blir det konflikt i någon av identitetsfilerna, ta Tk-TKL:s version (`git checkout --ours <fil>`) och kör skriptet
-igen. Charlottendal och Träkvista använder samma portar, så kör en station per Pi.
+Rättelser som görs här, i programmet eller i `stations/trakvista/`, tas in där programmet utvecklas före nästa
+publicering, så att de gäller båda stationerna. Publiceringen stannar om en ändring här inte finns med, så inget skrivs
+över. Charlottendal och Träkvista använder samma portar, så kör en station per Pi.
