@@ -1986,3 +1986,23 @@ applikationen.” och ”Studio ska Träkvista ha sin variant av också.”
   en ram ur ritningen och utan vändskiva, och Källa ur `Trakvista.xml` (`import-source.py --source --out`).
   Införandestatus (Charlottendals Logix-migrering) visas inte för Träkvista. Charlottendals Studio är oförändrad; alla
   Studio-flikar öppnade för båda stationerna utan fel.
+
+## 17 oktober 2026, 0.81.1: Uppdatering visar inte gamla försök
+
+Casper 17 oktober, med en skärmbild av Inställningar → Uppdatering på Render: «uppdateringen failade». Skärmbilden
+visade Installerad 0.81.0, Senaste 0.81.0 och Senaste versionen, men raden Senaste uppdatering sa Misslyckades:
+«0.68.0 startade inte. 0.59.1 är återställd; säkerhetskopia i …, 2026-10-06 15:57 UTC». Det var den gamla serverns
+sista update.json, skrivet av `charlottendal-update` före flytten till Render och kvar i tillståndsmappen. Render
+skriver ingen fil när det bygger main av sig självt, och `settle` rör bara ett pågående försök, så raden stod kvar.
+Uppdateringen till 0.81.0 hade inte misslyckats.
+
+`UpdateCheck.lastRun()` lämnar nu ute ett försök där den körande versionen är nyare än båda versionerna i det
+(`from` och `to`, eller `from` när `to` saknas). Ett försök som gäller den körande versionen visas som förut: det
+misslyckade när TKL står kvar på `from`, det klara när den kör `to`. Ett försök utan versioner kan inte bedömas och
+visas. Filen ligger kvar; bara visningen ändras.
+
+Prov: `test/update-check.test.mjs` (nytt prov med Renders rad från 6 oktober: borta på 0.81.0, kvar på 0.59.1 och
+0.68.0; ett klart försök syns på sin version men inte efter ett bygge som Render startade självt).
+
+Publicerad 17 oktober: cda-tkl main `8a404ba` (#67), `beahead-ab/cda-tkl-install` main `ab46183`. Render tar den när
+den bygger om main.
