@@ -1856,3 +1856,6 @@ tidtabellen). Skärmprov i Chromium mot en TrainMeet-server i provet: rubrikens 
 tryck, kvar efter omladdning, tillbaka med Enter; telefonraden vid 390 px och miniraden vid 844 × 390 px växlar, och
 inget ligger över klockorna där trycket landar.
 
+Publicerad 17 oktober: cda-tkl main `05e5761` (#65), `beahead-ab/cda-tkl-install` main `929927a`. iPhone-appens del
+ligger i trainmeet-iphone #22.
+
