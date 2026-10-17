@@ -1963,3 +1963,8 @@ ska få tillgång.
 Provat: 487 prov i cda-tkl och 221 i Tk-TKL:s paket gröna. Installerad från det publicerade Tk-TKL i containern, med tom
 driftdata: 57 tågvägar, A → Spår II lagd genom att klicka i panelen. Kvar i programkoden: Charlottendals handskrivna
 funktioner (Spår 6, rangerbangården, V1–V4, orterna) och versionsnoterna i `public/releases.json`.
+
+Senare samma kväll: Benny ska kunna ändra i Tk-TKL. Tk-TKL:s README har avsnittet *Göra ändringar* (pull request mot
+main, prova lokalt, vilka filer som är Träkvistas och vilka publiceringen skriver om), och publiceringen lägger in
+GitHub-kontrollen *Prov* (`packaging/github/station-tests.yml` → `.github/workflows/prov.yml`): `npm test` och
+`npm run verify:trakvista` på varje pull request och varje ändring av main. Publicerat som 0e234ab.
