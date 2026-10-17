@@ -2,6 +2,11 @@
   "id": "trakvista",
   "title": "Träkvista",
   "signature": "Tk",
+  "installation": {
+    "id": "tk-tkl",
+    "name": "Träkvista",
+    "repository": "beahead-ab/Tk-TKL"
+  },
   "source": "Trakvista.xml",
   "panel": "Träkvista",
   "format": "logixng",

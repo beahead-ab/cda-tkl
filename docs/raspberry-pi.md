@@ -314,6 +314,21 @@ Inställningar i `/etc/cda-tkl/app.env` som kan vara värda att ändra:
 
 Starta om efter en ändring: `sudo systemctl restart cda-tkl`.
 
+### En annan station än Charlottendal
+
+Installationen är densamma för varje station; `packaging/identity.env` i paketet säger vilken den blir:
+
+| Värde | Charlottendal | Träkvista ([beahead-ab/Tk-TKL](https://github.com/beahead-ab/Tk-TKL)) |
+|---|---|---|
+| `TKL_ID`: användare, tjänster, `/opt`, `/etc`, `/var/lib` | `cda-tkl` | `tk-tkl` |
+| `TKL_NAME`: namnet i texter och på genvägen | Charlottendal | Träkvista |
+| `TKL_STATION`: stationen i `stations/` | `charlottendal` | `trakvista` |
+| `TKL_REPOSITORY`: förrådet som installationen och uppdateringen hämtar från | `beahead-ab/cda-tkl-install` | `beahead-ab/Tk-TKL` |
+
+Paketfilerna i `packaging/raspberry-pi/` är skrivna för Charlottendal; installationen byter namn, sökvägar och förråd
+när den skriver dem. En Träkvista-Pi får alltså tjänsterna `tk-tkl` och `tk-tkl-simulator`, `sudo tk-tkl-update` och
+`/etc/tk-tkl/app.env` med `CHARLOTTENDAL_STATION=trakvista`. Båda använder portarna 8910–8912, så kör en station per Pi.
+
 ## 15. Begränsningar
 
 - **Riktig anläggning.** Installationen startar med LocoNet ej ansluten. *Anslut till LocoNet*, via en LocoBuffer

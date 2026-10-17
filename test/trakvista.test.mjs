@@ -3,6 +3,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { Engine } from '../src/engine.mjs';
 import { Field } from '../src/field.mjs';
 import { decode, sensorReport, switchReport } from '../src/protocol.mjs';
@@ -119,4 +122,25 @@ test('växelmotorns två givare: läget när exakt en är aktiv, okänt medan v�
   r.engine.receive(sensorReport(255,false));assert.equal(r.engine.turnouts.Vx22b.position,'C');
   r.engine.receive(switchReport(3,'T'));assert.equal(r.engine.turnouts.Vx22b.position,'C','växelrapporten räknas inte för en växel med givare');
   assert.equal(profile.turnouts.Vx21a.feedbackSensors,undefined,'21a saknar givare i XML');
+});
+
+test('Tk-TKL: make-station-repository gives Träkvista its own installation, and a second run changes nothing',()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'tk-tkl-'));
+  for(const f of ['packaging/identity.env','install.sh','install.ps1','package.json','package-lock.json','stations/trakvista/station.json','stations/trakvista/README.md','scripts/make-station-repository.mjs']){
+    fs.mkdirSync(path.dirname(path.join(dir,f)),{recursive:true});fs.copyFileSync(new URL('../'+f,import.meta.url),path.join(dir,f));
+  }
+  fs.writeFileSync(path.join(dir,'README.md'),'# Charlottendal TKL\n');
+  const run=()=>execFileSync(process.execPath,[path.join(dir,'scripts/make-station-repository.mjs'),'trakvista'],{encoding:'utf8'}),at=f=>fs.readFileSync(path.join(dir,f),'utf8');
+  run();
+  assert.match(at('packaging/identity.env'),/^TKL_ID=tk-tkl\nTKL_NAME=Träkvista\nTKL_STATION=trakvista\nTKL_REPOSITORY=beahead-ab\/Tk-TKL$/m);
+  assert.match(at('install.sh'),/^REPOSITORY="beahead-ab\/Tk-TKL"\nNAME="Träkvista TKL"$/m);
+  assert.match(at('install.ps1'),/^\$Repository = 'beahead-ab\/Tk-TKL'$/m);
+  assert.doesNotMatch(at('install.sh')+at('install.ps1'),/githubusercontent\.com\/beahead-ab\/cda-tkl-install/);
+  assert.match(at('install.ps1'),/-ne 'beahead-ab\/cda-tkl-install'/,'the comparison with Charlottendal\'s repository is kept');
+  const pkg=JSON.parse(at('package.json')),lock=JSON.parse(at('package-lock.json'));
+  assert.equal(pkg.name,'tk-tkl');assert.equal(pkg.scripts.start,'node scripts/start.mjs trakvista');
+  assert.equal(lock.name,'tk-tkl');assert.equal(lock.packages[''].name,'tk-tkl');assert.equal(lock.version,pkg.version);
+  assert.equal(at('README.md'),at('stations/trakvista/README.md'));
+  assert.match(run(),/redan inställd/);
+  fs.rmSync(dir,{recursive:true,force:true});
 });

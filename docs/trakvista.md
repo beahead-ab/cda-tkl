@@ -122,12 +122,32 @@ skärmbild och med stationsfilen.
 5. **Manöver av enskild växel.** Regeln är härledd ur grafen, inte översatt från gruppen *Spärra växlar*.
 6. **Automatiskt tågmöte och Friställd.** Automaten ska godkänna klareringen genom TrainMeet när infarten är lagd.
 
+## Eget förråd och installation: Tk-TKL
+
+Träkvista får ett eget förråd, `beahead-ab/Tk-TKL`, och installeras som Charlottendal: en rad på en Raspberry Pi.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/beahead-ab/Tk-TKL/main/install.sh | sudo sh
+```
+
+Tk-TKL är cda-tkl med samma historik. Programmet är detsamma; det som skiljer är installationens identitet, som
+`node scripts/make-station-repository.mjs trakvista` skriver ur `installation` i `stations/trakvista/station.json`:
+
+| | Charlottendal (cda-tkl) | Träkvista (Tk-TKL) |
+|---|---|---|
+| Hämtas från | `beahead-ab/cda-tkl-install` (publikt) | `beahead-ab/Tk-TKL` |
+| Tjänster och kataloger | `cda-tkl`, `/opt/cda-tkl`, `/etc/cda-tkl`, `/var/lib/cda-tkl` | `tk-tkl`, `/opt/tk-tkl` … |
+| Station i `app.env` | ingen (Charlottendal är standard) | `CHARLOTTENDAL_STATION=trakvista` |
+| Uppdatering | `sudo cda-tkl-update` eller panelen | `sudo tk-tkl-update`; panelen när förrådet är publikt |
+| README | Charlottendals | `stations/trakvista/README.md` |
+
+Installationen läser `packaging/identity.env` ([Raspberry Pi, En annan station](raspberry-pi.md#en-annan-station-än-charlottendal)).
+Charlottendals filer blir byte för byte desamma som förut; det är provat genom att installera den publicerade versionen
+och därefter branchens i samma container och jämföra varje installerad fil.
+
 ## Kopia eller plattform
 
-En separat GitHub-kopia går att skapa med ett kommando från branchen, eftersom den har hela historiken. Den här
-sessionen kan bara skriva till cda-tkl, så ett nytt förråd behöver skapas av en ägare i beahead-ab.
-
-Rekommendationen är ändå en gemensam plattform. Två kopior skulle dela samma kärna men utvecklas isär; varje rättelse i
-kärnan skulle behöva göras två gånger. Den här branchen visar att samma kod bär båda stationerna med ett stationsval.
-Nästa steg är att flytta Charlottendals källor till `stations/charlottendal/` och dess handskrivna tabeller till
-stationsfilen, och att läsa linjerna ur stationsfilen.
+Tk-TKL är en kopia men ingen gaffel. Rättelser i kärnan görs i cda-tkl och hämtas till Tk-TKL med `git pull`; därefter
+skriver skriptet Träkvistas identitet igen. Två kopior som utvecklas isär skulle kräva att varje rättelse gjordes två
+gånger. Nästa steg för plattformen är att flytta Charlottendals källor till `stations/charlottendal/` och dess
+handskrivna tabeller till stationsfilen, och att läsa linjerna ur stationsfilen.
