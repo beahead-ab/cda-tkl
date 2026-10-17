@@ -17,6 +17,10 @@ scripts/make-train-fields.mjs
 scripts/studio-overview.mjs
 scripts/verify-source.py
 
+# Webbdriftens uppdaterare (Charlottendal på servern)
+packaging/web
+test/web-updater.test.mjs
+
 # Prov som läser Charlottendals profil, panel eller källor
 test/benny-monitoring.test.mjs
 test/binding-configuration.test.mjs
