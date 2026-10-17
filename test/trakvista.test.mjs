@@ -126,7 +126,7 @@ test('v채xelmotorns tv책 givare: l채get n채r exakt en 채r aktiv, ok채nt medan v�
 
 test('Tk-TKL: make-station-repository gives Tr채kvista its own installation, and a second run changes nothing',()=>{
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'tk-tkl-'));
-  for(const f of ['packaging/identity.env','install.sh','install.ps1','package.json','package-lock.json','stations/trakvista/station.json','stations/trakvista/README.md','scripts/make-station-repository.mjs']){
+  for(const f of ['packaging/identity.env','install.sh','install.ps1','package.json','package-lock.json','stations/trakvista/station.json','stations/trakvista/README.md','scripts/make-station-repository.mjs','scripts/start.mjs']){
     fs.mkdirSync(path.dirname(path.join(dir,f)),{recursive:true});fs.copyFileSync(new URL('../'+f,import.meta.url),path.join(dir,f));
   }
   fs.writeFileSync(path.join(dir,'README.md'),'# Charlottendal TKL\n');
@@ -139,6 +139,7 @@ test('Tk-TKL: make-station-repository gives Tr채kvista its own installation, and
   assert.match(at('install.ps1'),/-ne 'beahead-ab\/cda-tkl-install'/,'the comparison with Charlottendal\'s repository is kept');
   const pkg=JSON.parse(at('package.json')),lock=JSON.parse(at('package-lock.json'));
   assert.equal(pkg.name,'tk-tkl');assert.equal(pkg.scripts.start,'node scripts/start.mjs trakvista');
+  assert.equal(pkg.scripts['verify:layout'],undefined,'scripts for files the station repository lacks are left out');assert.equal(pkg.scripts.backend,'node src/server.mjs');
   assert.equal(lock.name,'tk-tkl');assert.equal(lock.packages[''].name,'tk-tkl');assert.equal(lock.version,pkg.version);
   assert.equal(at('README.md'),at('stations/trakvista/README.md'));
   assert.match(run(),/redan inst채lld/);

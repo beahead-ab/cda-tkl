@@ -1,19 +1,23 @@
 // Vilken station den här installationen kör. En installation kör en station, som en TMBox står på en station.
-// CHARLOTTENDAL_STATION väljer bland katalogerna i stations/ som har en genererad profil; standard är charlottendal,
-// vars filer ligger kvar där de alltid legat (profiles/, public/data). Anroparen kan inte ange en sökväg.
+// CHARLOTTENDAL_STATION väljer bland katalogerna i stations/ som har en genererad profil, och Charlottendal, vars filer
+// ligger kvar där de alltid legat (profiles/, public/data). Anroparen kan inte ange en sökväg. Standard är paketets
+// station i packaging/identity.env: Charlottendal i cda-tkl, Träkvista i Tk-TKL, som saknar Charlottendals filer.
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
-export const DEFAULT_STATION = 'charlottendal';
+const BUILT_IN = 'charlottendal';
+const identity = fs.existsSync(ROOT + 'packaging/identity.env') ? fs.readFileSync(ROOT + 'packaging/identity.env', 'utf8') : '';
+export const DEFAULT_STATION = /^TKL_STATION=([a-z0-9-]+)\s*$/m.exec(identity)?.[1] || BUILT_IN;
 export function stationIds() {
   const dir = ROOT + 'stations';
   const found = fs.existsSync(dir) ? fs.readdirSync(dir).filter(id => /^[a-z0-9-]+$/.test(id) && fs.existsSync(`${dir}/${id}/station.json`) && fs.existsSync(`${dir}/${id}/profiles/network.json`)) : [];
-  return [DEFAULT_STATION, ...found.filter(id => id !== DEFAULT_STATION)];
+  const builtIn = fs.existsSync(ROOT + 'profiles/charlottendal-network.json') ? [BUILT_IN] : [];
+  return [...builtIn, ...found.filter(id => id !== BUILT_IN)];
 }
 export function currentStation(env = process.env) {
   const id = env.CHARLOTTENDAL_STATION || DEFAULT_STATION;
   if (!stationIds().includes(id)) throw Error('Okänd station: ' + id + '. Finns: ' + stationIds().join(', ') + '.');
-  if (id === DEFAULT_STATION) return { id, title: 'Charlottendal', builtIn: true, dataDir: ROOT + 'public/data', profile: null, field: null };
+  if (id === BUILT_IN) return { id, title: 'Charlottendal', builtIn: true, dataDir: ROOT + 'public/data', profile: null, field: null };
   const dir = `${ROOT}stations/${id}`, station = JSON.parse(fs.readFileSync(dir + '/station.json', 'utf8'));
   return { id, title: station.title, signature: station.signature, builtIn: false, dataDir: dir + '/data', profile: dir + '/profiles/network.json', field: dir + '/profiles/field.json' };
 }

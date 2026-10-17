@@ -5,7 +5,13 @@
   "installation": {
     "id": "tk-tkl",
     "name": "Träkvista",
-    "repository": "beahead-ab/Tk-TKL"
+    "repository": "beahead-ab/Tk-TKL",
+    "docs": [
+      "docs/trakvista.md",
+      "docs/trakvista-tkl.png",
+      "docs/raspberry-pi.md",
+      "docs/loconet-anslutning.md"
+    ]
   },
   "source": "Trakvista.xml",
   "panel": "Träkvista",
