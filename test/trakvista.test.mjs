@@ -162,7 +162,7 @@ test('Träkvistas server och anläggning startar som processer och lägger A →
   const until=async(fn,ms=20000)=>{const end=Date.now()+ms;while(Date.now()<end){try{const v=await fn();if(v)return v;}catch{}await new Promise(r=>setTimeout(r,200));}throw Error('Tidsgräns. '+output.slice(-2000));};
   try{
     const config=await until(()=>api('/api/config'));
-    assert.equal(config.station.id,'trakvista');assert.equal(config.routes.length,57);
+    assert.equal(config.station.id,'trakvista');assert.equal(config.station.studio,false,'Studio and the source register need Charlottendal\'s sources');assert.equal(config.routes.length,57);
     await until(async()=>(await api('/api/state')).connection==='connected');
     // Direkt efter anslutningen har spårledningarna inte rapporterat än; begäran nekas tills de har det.
     await until(async()=>(await api('/api/route',{from:'htvA',to:'htvII'})).ok);
