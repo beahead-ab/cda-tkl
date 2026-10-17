@@ -29,6 +29,10 @@ Skriptet bygger paketet ur en commit i cda-tkl (aldrig ur arbetsträdet), ger de
 pushar en commit, *Publicerad från cda-tkl <commit> · Träkvista TKL <version>*. En Pi med Träkvista hämtar den med
 `sudo tk-tkl-update`. Första gången ersattes Tk-TKL:s historik med `--first`.
 
+Paketet får också `.github/workflows/prov.yml` (ur `packaging/github/station-tests.yml`): GitHub kör proven och
+`npm run verify:trakvista` på varje pull request i Tk-TKL. Skyddas main så att ändringar måste gå via pull request
+(Settings → Branches), behöver ägaren och Claudes GitHub-app stå som undantag, annars stoppas publiceringens push.
+
 ## Rättelser från Tk-TKL
 
 Rättar Benny något i Tk-TKL, i programmet eller i `stations/trakvista/`, tas det in i cda-tkl innan nästa publicering.

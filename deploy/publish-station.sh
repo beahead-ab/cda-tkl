@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Publishes a station's own repository from cda-tkl, for example Träkvista in beahead-ab/Tk-TKL: the program, the
-# station's folder, its documents (installation.docs in stations/<id>/station.json), the installers and the tests
-# that do not need Charlottendal's files. Charlottendal's data, the work journal, the deployment files and the
-# history stay in cda-tkl. One commit per publication.
+# station's folder, its documents (installation.docs in stations/<id>/station.json), the installers, the tests that
+# do not need Charlottendal's files, and a GitHub workflow that runs them on every pull request. Charlottendal's
+# data, the work journal, the deployment files and the history stay in cda-tkl. One commit per publication.
 #
 #   deploy/publish-station.sh trakvista                  # publishes HEAD
 #   deploy/publish-station.sh trakvista <commit>         # publishes the given commit
@@ -46,6 +46,8 @@ find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
   src public scripts packaging test "stations/$ID" $DOCS) | tar -x -C .
 rm -rf public/data $CHARLOTTENDAL_ONLY
 node scripts/make-station-repository.mjs "$ID" >/dev/null
+# The tests run on GitHub for every pull request in the station's repository.
+mkdir -p .github/workflows && cp packaging/github/station-tests.yml .github/workflows/prov.yml
 
 # The station's own changes since the last publication must be in what is published now.
 MISSING=""
