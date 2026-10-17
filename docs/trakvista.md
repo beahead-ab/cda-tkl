@@ -30,7 +30,7 @@ ligger i `var/trakvista/`, så två stationers lås blandas aldrig. Kör inte b�
 
 ![Träkvista i TKL](trakvista-tkl.png)
 
-Bilden: A → Spår II och växeltågvägen 1/7 → 4s lagda genom att klicka i panelen. Lokspåren, Tankplatsen och
+Bilden: A → Spår II och växeltågvägen 2/6 → 4v lagda genom att klicka i panelen; 4v står före växel 13 efter Bennys rättelse. Lokspåren, Tankplatsen och
 Timmerlossningen är ritade ofyllda, som i Bennys panel.
 
 ## Vad som gjordes
@@ -58,7 +58,7 @@ Timmerlossningen är ritade ofyllda, som i Bennys panel.
 | Växlar | 49, kompisväxlar, 3 spårkorsningar, vändskiva | 13: 9 på LocoNet, 4 interna (lokala), en dubbel korsningsväxel |
 | Huvudtågvägar | 210 | 27 |
 | Växeltågvägar | 130, 15 undantagna | 30, inga undantagna |
-| Signaler | 66, varav 13 utan utgång, bildsats mod59 | 25, alla med utgång, bildsats mod68 |
+| Signaler | 66, varav 13 utan utgång, bildsats mod59 | 25, alla med utgång, mod68 eller mod59 efter panelmodell |
 | Spårledningar | 197, varav 162 med ingång | 36, varav 25 med ingång |
 | Linjer | 7 riktade spår (dubbelspår) | 3 enkelspår med körriktning och TAM |
 | Växelns återrapport | Växelrapport B1 | Två sensorer per växel (TWOSENSOR) |
@@ -82,28 +82,45 @@ Träkvista utan stationsspecifik kod, sedan korsningsväxeln och den lodräta ri
 - **Charlottendals handskrivna funktioner.** Spår 6, rangerbangården, programmeringsspåret, V1–V4 och automatens
   spårordning ligger kvar i koden och gäller bara Charlottendal. De bör flyttas till stationsfilen eller egna moduler.
 
+## Bennys svar 17 oktober och vad som ändrades
+
+| Fråga | Bennys svar | I TKL |
+|---|---|---|
+| 1. Jython-skripten | Bifogade | Sparade i `stations/trakvista/jython/` som källa. De körs inte; se nästa avsnitt. |
+| 2. Växlarnas återrapport | Motorerna har inbyggda lägesgivare; alla är inte inställda i JMRI | Kärnan läser läget från två givare per växel (`feedbackSensors`), tagna efter namn: vx<nr>-t avvikande, vx<nr>-c rakt. Nio växlar har givare. Vx21a saknar givare i XML och väntar på växelrapport. |
+| 3. Tabellen 23-37.csv | Troligen kopieringsfel | Står kvar som känt fel i provet. |
+| 4. Växel 13 och signal 4v | 13 och L2 ska inte vara med i tågvägen; 4v ska stå före växel 13. Lokala växlar läggs om elektriskt på plats och har givare | Rättelsen i `station.json` flyttar 4v och tvs4v till växel 13:s ben mot diagonalen. 2/6 → 4v går nu över S32, S34 och S4/7. Lokala växlar läggs aldrig av TKL. |
+| 5. De lokala spåren | Listan stämmer | Oförändrad. |
+| 6. Linjerna | Konfigurationsservern är ersatt av TrainMeet; A, B och C är med när de har en anslutning, C hade ingen | Linjerna i stationsfilen hämtar sin anslutning från TrainMeet. Kopplingen till panelen återstår. |
+| 7. Bildsatserna | mod59 för relästyrda paneler, mod68 för skärm; båda finns i JMRI | Bennys panel växlar mellan mod68 (ljus) och mod59 (mörk). TKL:s panel är mörk och motsvarar hans mod59-modell, så mod59 används. |
+
+Växelrapporten via givare gäller bara stationer vars profil anger `feedbackSensors`; Charlottendal är oförändrat. En order
+till en växel som redan ligger rätt ändrar inga givare, så kärnan räknar läget som bekräftat direkt när båda givarna
+visat det sedan anslutningen. Simulatorn gör som motorerna: den svarar med givarna och tiger när växeln redan ligger rätt.
+
+## Bennys skript
+
+| Skript | Vad det gör | Motsvarighet i TKL |
+|---|---|---|
+| TamSignaling.py | Klarering (TAM) med grannarna över MQTT: begär, godkänn, neka, återta, körriktning | Klareringen genom TrainMeet, som TKL redan har |
+| BlockSignaling.py | Linjeblockering över MQTT: signaler, block och trafikriktning mot grannarna | Tåg på linjen och linjeläget från TrainMeet |
+| RemoteControl.py | Fjärrstyrning: en fjärrnod lägger och återtar tågvägar (htv- och vtv-par) när stationen inte är lokalt betjänad | TKL:s lokal- och fjärrläge; anslutningen till ett fjärrsystem finns inte än |
+| Automaten.py | Automatiskt tågmöte: vid en TAM-begäran läggs infarten till spåret i tidtabellen och begäran godkänns, annars nekas den. Tågpassering är inte skriven | TKL:s automat lägger tågvägarna; godkännandet av klareringen behöver kopplas på |
+| CheckMqtt.py | Kontrollerar att MQTT-anslutningen finns | Behövs inte |
+
+Konfigurationsserverns exempel i skripten anger A = Bilbo (BLO) och B = Charlottendal (CDA), vilket stämmer med Bennys
+skärmbild och med stationsfilen.
+
 ## Kvar för Träkvista
 
-1. **Linjerna A, B och C.** Klareringen och tågen på linjen följer i dag Charlottendals orter (Au, An …).
-   Enkelspåret med körriktning, Linjen fri, Tåg på linjen och TAM behöver läsas ur stationsfilen. Lamporna syns i
-   panelen men är inte kopplade.
-2. **Växlarnas återrapport via två sensorer.** Kärnan läser växelrapport B1. Bennys växlar rapporterar på två ingångar.
-3. **Lokalt styrda spår.** De är märkta och ritade, men kärnan hindrar ännu inte fjärrstyrning av dem.
-4. **Bildsatsen mod68.** Panelen använder mod59-bilderna tills mod68 finns med proveniens.
-5. **Studio.** Studio bygger på Charlottendals källor och är avstängt för Träkvista.
-6. **Manöver av enskild växel.** Regeln är härledd ur grafen, inte översatt från gruppen *Spärra växlar*.
-7. **Automatiskt tågmöte, tågpassering och Friställd** finns inte. De bygger på Bennys Automaten.py.
-
-## Att fråga Benny
-
-- De fem Jython-skripten, särskilt BlockSignaling.py, TamSignaling.py och Automaten.py.
-- Tre växlar har avvikande återrapport i XML. Vx31 har sensorerna i omvänd ordning (vx31-c före vx31-t). Vx21a läser
-  21b:s sensorer (vx21b-c, vx21b-t). Vx21b läser ir21a och ir21b. Det finns inga sensorer vx21a-t och vx21a-c.
-- Tabellen `23-37.csv` (2/3 → 3/7) listar S22a och S22c. Tågvägen går över S21a, S21b och SIII, så tabellen ser ut att
-  vara kopierad från 2/4 → 2/6. De andra 29 tabellerna med motsvarande tågväg stämmer exakt.
-- Hur växlarna 10–13 läggs. De är interna i JMRI och har ingen LocoNet-adress; TKL ger dem en bänkadress i simuleringen.
-  Växeltågvägen 2/6 → 4v går genom Vx13.
-- Konfigurationsserverns format, om grannarna ska komma därifrån i stället för TrainMeet.
+1. **Linjerna A, B och C i panelen.** Klareringen och tågen på linjen följer i dag Charlottendals orter (Au, An …).
+   Linjerna ska läsas ur stationsfilen och anslutningarna ur TrainMeet, med enkelspår, körriktning och Linjen fri.
+2. **Spärr för lokalt styrda spår.** Växlarna är spärrade för TKL, men tågvägar in på lokala spår är inte spärrade i
+   fjärrläge. Ingen tågväg går dit i dag.
+3. **Givarna på plats.** Vx21a:s givare och de lokala växlarnas givare behöver ställas in och mätas.
+4. **Studio.** Studio bygger på Charlottendals källor och är avstängt för Träkvista.
+5. **Manöver av enskild växel.** Regeln är härledd ur grafen, inte översatt från gruppen *Spärra växlar*.
+6. **Automatiskt tågmöte och Friställd.** Automaten ska godkänna klareringen genom TrainMeet när infarten är lagd.
 
 ## Kopia eller plattform
 

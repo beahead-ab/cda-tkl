@@ -80,22 +80,30 @@ for (const pair of policy.allowed()) {
 }
 const allRoutes = [...routes, ...routeAlternatives];
 
+const lsOf = name => source.sensors.find(s => s.name === name)?.system;
 // Växlar: LT-adressen ur JMRI. Interna växlar (IT) är lokalt manövrerade och har ingen LocoNet-adress; de får en
 // bänkadress från 1001 så att simuleringen kan lägga dem, och märks local.
 const sourceTurnouts = Object.fromEntries(source.turnouts.filter(t => t.name).map(t => [t.name, t]));
 let localAddress = 1001;
 const turnouts = Object.fromEntries(Object.keys(topology.turnouts).sort().map(name => {
   const t = sourceTurnouts[name], block = topology.turnouts[name].block;
-  if (t && /^LT\d+$/.test(t.system)) return [name, { address: Number(t.system.slice(2)), inverted: t.inverted, source: t.system, block,
-    ...(t.feedback === 'TWOSENSOR' ? { feedbackSensors: { thrown: t.sensors[0], closed: t.sensors[1] } } : {}),
-    provenance: `JMRI ${t.system} (${t.comment || 'utan kommentar'}), återrapport ${t.feedback}${t.feedback === 'TWOSENSOR' ? ' ' + t.sensors.join('/') : ''}. Ej uppmätt.` }];
+  if (t && /^LT\d+$/.test(t.system)) {
+    // Växelmotorerna har inbyggda lägesgivare (Benny 17 oktober, svar 2), men alla är inte inställda i JMRI. Givarna tas
+    // därför efter namn, vx<nr>-t för avvikande och vx<nr>-c för rakt, inte efter växelns sensor1/sensor2 i XML.
+    const id = name.replace(/^Vx/, '').toLowerCase(), thrown = lsOf('vx' + id + '-t'), closed = lsOf('vx' + id + '-c');
+    const sensors = thrown && closed ? { thrown: Number(thrown.slice(2)), closed: Number(closed.slice(2)), thrownSensor: 'vx' + id + '-t', closedSensor: 'vx' + id + '-c' } : null;
+    const xmlSensors = t.feedback === 'TWOSENSOR' ? t.sensors.join('/') : t.feedback;
+    const differs = sensors && t.feedback === 'TWOSENSOR' && (t.sensors[0] !== sensors.thrownSensor || t.sensors[1] !== sensors.closedSensor);
+    return [name, { address: Number(t.system.slice(2)), inverted: t.inverted, source: t.system, block, ...(sensors ? { feedbackSensors: sensors } : {}),
+      provenance: `JMRI ${t.system} (${t.comment || 'utan kommentar'}). ` + (sensors ? `Läget från motorns givare ${sensors.thrownSensor} (${thrown}) och ${sensors.closedSensor} (${closed})` +
+        (differs ? `; XML anger ${xmlSensors}, som Benny säger inte är färdigställt.` : '.') : `Givare vx${id}-t och vx${id}-c saknas i XML; läget väntas som växelrapport tills givarna är inställda.`) + ' Ej uppmätt.' }];
+  }
   if (station.localTurnouts?.[name]) return [name, { address: localAddress++, inverted: false, source: station.localTurnouts[name], block, local: true,
-    provenance: `Intern JMRI-växel ${station.localTurnouts[name]} utan LocoNet-adress: lokalt manövrerad enligt Benny. Bänkadress för simuleringen.` }];
+    provenance: `Intern JMRI-växel ${station.localTurnouts[name]} utan LocoNet-adress. Läggs om elektriskt på plats; motorns givare är inte inställda i JMRI än. Bänkadress som TKL aldrig beordrar.` }];
   throw Error('Växeln saknar adress i källan: ' + name);
 }));
 
 // Spårledningar: ingången ur gruppen för spårledningar (sl22a → LS239). Utan regel: bänkadress från 3001.
-const lsOf = name => source.sensors.find(s => s.name === name)?.system;
 const blocks = {}; let bench = 3001;
 for (const b of panel.lblocks) {
   const rule = source.detection.find(d => d.sets.includes(b.sensor));
@@ -151,6 +159,10 @@ const manualRules = names.map(name => {
   return { rule: 'härledd', button: name, names: group, freeSensors: [], blocks: blockNames.sort(), inactiveNX, signals: sig, status: 'ready', reason: '',
     provenance: 'Härledd ur grafen: spårledningen fri, skyddande signaler i stopp, ingen tågväg genom växeln. Ej ur källans Spärra växlar.' };
 });
+// En lokalt styrd växel läggs om elektriskt på plats (Benny 17 oktober, svar 4). TKL lägger den aldrig, varken i en tågväg
+// eller som enskild manöver.
+for (const r of manualRules) if (r.names.some(n => turnouts[n].local)) Object.assign(r, { status: 'unresolved', reason: 'Lokalt styrd växel: den läggs om på plats, inte från TKL.' });
+for (const r of allRoutes) if (Object.keys(r.turnouts).some(n => turnouts[n].local)) throw Error('Tågvägen går genom en lokalt styrd växel: ' + r.id);
 const manualPolicies = { rules: manualRules, byTurnout: Object.fromEntries(manualRules.map(r => [r.button, r])), boundaryOverrides: {} };
 // Linjerna: knappen och spårledningen vid den. Linjespärren motsvarar källans Spärra spår (ssA, ssB, ssC).
 const lines = Object.fromEntries(Object.entries(station.lines).map(([id, l]) => {

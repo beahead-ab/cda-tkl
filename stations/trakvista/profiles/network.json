@@ -26,7 +26,7 @@
       "source": "IT4",
       "block": "S10",
       "local": true,
-      "provenance": "Intern JMRI-växel IT4 utan LocoNet-adress: lokalt manövrerad enligt Benny. Bänkadress för simuleringen."
+      "provenance": "Intern JMRI-växel IT4 utan LocoNet-adress. Läggs om elektriskt på plats; motorns givare är inte inställda i JMRI än. Bänkadress som TKL aldrig beordrar."
     },
     "Vx11": {
       "address": 1002,
@@ -34,7 +34,7 @@
       "source": "IT3",
       "block": "S11",
       "local": true,
-      "provenance": "Intern JMRI-växel IT3 utan LocoNet-adress: lokalt manövrerad enligt Benny. Bänkadress för simuleringen."
+      "provenance": "Intern JMRI-växel IT3 utan LocoNet-adress. Läggs om elektriskt på plats; motorns givare är inte inställda i JMRI än. Bänkadress som TKL aldrig beordrar."
     },
     "Vx12": {
       "address": 1003,
@@ -42,7 +42,7 @@
       "source": "IT2",
       "block": "S12",
       "local": true,
-      "provenance": "Intern JMRI-växel IT2 utan LocoNet-adress: lokalt manövrerad enligt Benny. Bänkadress för simuleringen."
+      "provenance": "Intern JMRI-växel IT2 utan LocoNet-adress. Läggs om elektriskt på plats; motorns givare är inte inställda i JMRI än. Bänkadress som TKL aldrig beordrar."
     },
     "Vx13": {
       "address": 1004,
@@ -50,18 +50,14 @@
       "source": "IT1",
       "block": "S13",
       "local": true,
-      "provenance": "Intern JMRI-växel IT1 utan LocoNet-adress: lokalt manövrerad enligt Benny. Bänkadress för simuleringen."
+      "provenance": "Intern JMRI-växel IT1 utan LocoNet-adress. Läggs om elektriskt på plats; motorns givare är inte inställda i JMRI än. Bänkadress som TKL aldrig beordrar."
     },
     "Vx21a": {
       "address": 12,
       "inverted": false,
       "source": "LT12",
       "block": "S21a",
-      "feedbackSensors": {
-        "thrown": "vx21b-c",
-        "closed": "vx21b-t"
-      },
-      "provenance": "JMRI LT12 (Sektion 3 Växelkort 1-2), återrapport TWOSENSOR vx21b-c/vx21b-t. Ej uppmätt."
+      "provenance": "JMRI LT12 (Sektion 3 Växelkort 1-2). Givare vx21a-t och vx21a-c saknas i XML; läget väntas som växelrapport tills givarna är inställda. Ej uppmätt."
     },
     "Vx21b": {
       "address": 13,
@@ -69,10 +65,12 @@
       "source": "LT13",
       "block": "S21b",
       "feedbackSensors": {
-        "thrown": "ir21a",
-        "closed": "ir21b"
+        "thrown": 214,
+        "closed": 215,
+        "thrownSensor": "vx21b-t",
+        "closedSensor": "vx21b-c"
       },
-      "provenance": "JMRI LT13 (Sektion 3 Växelkort 1-3), återrapport TWOSENSOR ir21a/ir21b. Ej uppmätt."
+      "provenance": "JMRI LT13 (Sektion 3 Växelkort 1-3). Läget från motorns givare vx21b-t (LS214) och vx21b-c (LS215); XML anger ir21a/ir21b, som Benny säger inte är färdigställt. Ej uppmätt."
     },
     "Vx22a": {
       "address": 1,
@@ -80,10 +78,12 @@
       "source": "LT1",
       "block": "S22a",
       "feedbackSensors": {
-        "thrown": "vx22a-t",
-        "closed": "vx22a-c"
+        "thrown": 251,
+        "closed": 252,
+        "thrownSensor": "vx22a-t",
+        "closedSensor": "vx22a-c"
       },
-      "provenance": "JMRI LT1 (Sektion 1 Växelkort 1-1), återrapport TWOSENSOR vx22a-t/vx22a-c. Ej uppmätt."
+      "provenance": "JMRI LT1 (Sektion 1 Växelkort 1-1). Läget från motorns givare vx22a-t (LS251) och vx22a-c (LS252). Ej uppmätt."
     },
     "Vx22b": {
       "address": 3,
@@ -91,10 +91,12 @@
       "source": "LT3",
       "block": "S22b",
       "feedbackSensors": {
-        "thrown": "vx22b-t",
-        "closed": "vx22b-c"
+        "thrown": 255,
+        "closed": 256,
+        "thrownSensor": "vx22b-t",
+        "closedSensor": "vx22b-c"
       },
-      "provenance": "JMRI LT3 (Sektion 1 Växelkort 1-3), återrapport TWOSENSOR vx22b-t/vx22b-c. Ej uppmätt."
+      "provenance": "JMRI LT3 (Sektion 1 Växelkort 1-3). Läget från motorns givare vx22b-t (LS255) och vx22b-c (LS256). Ej uppmätt."
     },
     "Vx22c": {
       "address": 4,
@@ -102,10 +104,12 @@
       "source": "LT4",
       "block": "S22c",
       "feedbackSensors": {
-        "thrown": "vx22c-t",
-        "closed": "vx22c-c"
+        "thrown": 258,
+        "closed": 257,
+        "thrownSensor": "vx22c-t",
+        "closedSensor": "vx22c-c"
       },
-      "provenance": "JMRI LT4 (Sektion 1 Växelkort 1-4), återrapport TWOSENSOR vx22c-t/vx22c-c. Ej uppmätt."
+      "provenance": "JMRI LT4 (Sektion 1 Växelkort 1-4). Läget från motorns givare vx22c-t (LS258) och vx22c-c (LS257). Ej uppmätt."
     },
     "Vx23": {
       "address": 2,
@@ -113,10 +117,12 @@
       "source": "LT2",
       "block": "S22a",
       "feedbackSensors": {
-        "thrown": "vx23-t",
-        "closed": "vx23-c"
+        "thrown": 254,
+        "closed": 253,
+        "thrownSensor": "vx23-t",
+        "closedSensor": "vx23-c"
       },
-      "provenance": "JMRI LT2 (Sektion 1 Växelkort 1-2), återrapport TWOSENSOR vx23-t/vx23-c. Ej uppmätt."
+      "provenance": "JMRI LT2 (Sektion 1 Växelkort 1-2). Läget från motorns givare vx23-t (LS254) och vx23-c (LS253). Ej uppmätt."
     },
     "Vx31": {
       "address": 11,
@@ -124,10 +130,12 @@
       "source": "LT11",
       "block": "S31",
       "feedbackSensors": {
-        "thrown": "vx31-c",
-        "closed": "vx31-t"
+        "thrown": 212,
+        "closed": 213,
+        "thrownSensor": "vx31-t",
+        "closedSensor": "vx31-c"
       },
-      "provenance": "JMRI LT11 (Sektion 3 Växelkort 1-1), återrapport TWOSENSOR vx31-c/vx31-t. Ej uppmätt."
+      "provenance": "JMRI LT11 (Sektion 3 Växelkort 1-1). Läget från motorns givare vx31-t (LS212) och vx31-c (LS213); XML anger vx31-c/vx31-t, som Benny säger inte är färdigställt. Ej uppmätt."
     },
     "Vx32": {
       "address": 6,
@@ -135,10 +143,12 @@
       "source": "LT6",
       "block": "S32",
       "feedbackSensors": {
-        "thrown": "vx32-t",
-        "closed": "vx32-c"
+        "thrown": 225,
+        "closed": 224,
+        "thrownSensor": "vx32-t",
+        "closedSensor": "vx32-c"
       },
-      "provenance": "JMRI LT6 (Sektion 2 Växelkort 1-1), återrapport TWOSENSOR vx32-t/vx32-c. Ej uppmätt."
+      "provenance": "JMRI LT6 (Sektion 2 Växelkort 1-1). Läget från motorns givare vx32-t (LS225) och vx32-c (LS224). Ej uppmätt."
     },
     "Vx34": {
       "address": 7,
@@ -146,10 +156,12 @@
       "source": "LT7",
       "block": "S34",
       "feedbackSensors": {
-        "thrown": "vx34-t",
-        "closed": "vx34-c"
+        "thrown": 226,
+        "closed": 227,
+        "thrownSensor": "vx34-t",
+        "closedSensor": "vx34-c"
       },
-      "provenance": "JMRI LT7 (Sektion 2 Växelkort 1-2), återrapport TWOSENSOR vx34-t/vx34-c. Ej uppmätt."
+      "provenance": "JMRI LT7 (Sektion 2 Växelkort 1-2). Läget från motorns givare vx34-t (LS226) och vx34-c (LS227). Ej uppmätt."
     }
   },
   "blocks": {
@@ -10318,22 +10330,18 @@
       "blocks": [
         "S32",
         "S34",
-        "S4/7",
-        "S13",
-        "L2"
+        "S4/7"
       ],
       "turnouts": {
         "Vx32": "T",
-        "Vx34": "C",
-        "Vx13": "T"
+        "Vx34": "C"
       },
       "crossings": [],
       "segments": [
         "T1",
         "T19",
         "T21",
-        "T32",
-        "T22"
+        "T32"
       ],
       "flow": [
         {
@@ -10415,36 +10423,6 @@
           "block": "S4/7",
           "length": 155.56349186104046,
           "distance": 151.06601717798213
-        },
-        {
-          "id": "VX:Vx13:C",
-          "x1": 365,
-          "y1": 325,
-          "x2": 350,
-          "y2": 340,
-          "block": "S13",
-          "length": 21.213203435596427,
-          "distance": 306.6295090390226
-        },
-        {
-          "id": "VX:Vx13:A",
-          "x1": 350,
-          "y1": 340,
-          "x2": 330,
-          "y2": 340,
-          "block": "S13",
-          "length": 20,
-          "distance": 327.842712474619
-        },
-        {
-          "id": "T22",
-          "x1": 330,
-          "y1": 340,
-          "x2": 90,
-          "y2": 340,
-          "block": "L2",
-          "length": 240,
-          "distance": 347.842712474619
         }
       ],
       "signals": [
@@ -10495,23 +10473,12 @@
           "kind": "segment",
           "id": "T32",
           "end": 1
-        },
-        {
-          "kind": "turnout",
-          "name": "Vx13",
-          "from": "C",
-          "to": "A"
-        },
-        {
-          "kind": "segment",
-          "id": "T22",
-          "end": 1
         }
       ],
       "routePreference": {
         "blockedMovements": 15,
-        "divergentLegs": 2,
-        "length": 587.842712474619,
+        "divergentLegs": 1,
+        "length": 306.6295090390226,
         "alternatives": 1
       },
       "autoRelease": true,
@@ -17252,8 +17219,8 @@
         ],
         "inactiveNX": [],
         "signals": [],
-        "status": "ready",
-        "reason": "",
+        "status": "unresolved",
+        "reason": "Lokalt styrd växel: den läggs om på plats, inte från TKL.",
         "provenance": "Härledd ur grafen: spårledningen fri, skyddande signaler i stopp, ingen tågväg genom växeln. Ej ur källans Spärra växlar."
       },
       {
@@ -17268,8 +17235,8 @@
         ],
         "inactiveNX": [],
         "signals": [],
-        "status": "ready",
-        "reason": "",
+        "status": "unresolved",
+        "reason": "Lokalt styrd växel: den läggs om på plats, inte från TKL.",
         "provenance": "Härledd ur grafen: spårledningen fri, skyddande signaler i stopp, ingen tågväg genom växeln. Ej ur källans Spärra växlar."
       },
       {
@@ -17284,8 +17251,8 @@
         ],
         "inactiveNX": [],
         "signals": [],
-        "status": "ready",
-        "reason": "",
+        "status": "unresolved",
+        "reason": "Lokalt styrd växel: den läggs om på plats, inte från TKL.",
         "provenance": "Härledd ur grafen: spårledningen fri, skyddande signaler i stopp, ingen tågväg genom växeln. Ej ur källans Spärra växlar."
       },
       {
@@ -17298,14 +17265,10 @@
         "blocks": [
           "S13"
         ],
-        "inactiveNX": [
-          "IN:ca405742-1035-4d25-b7db-15bf8f489025"
-        ],
-        "signals": [
-          "2/6"
-        ],
-        "status": "ready",
-        "reason": "",
+        "inactiveNX": [],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Lokalt styrd växel: den läggs om på plats, inte från TKL.",
         "provenance": "Härledd ur grafen: spårledningen fri, skyddande signaler i stopp, ingen tågväg genom växeln. Ej ur källans Spärra växlar."
       },
       {
@@ -17696,8 +17659,8 @@
         ],
         "inactiveNX": [],
         "signals": [],
-        "status": "ready",
-        "reason": "",
+        "status": "unresolved",
+        "reason": "Lokalt styrd växel: den läggs om på plats, inte från TKL.",
         "provenance": "Härledd ur grafen: spårledningen fri, skyddande signaler i stopp, ingen tågväg genom växeln. Ej ur källans Spärra växlar."
       },
       "Vx11": {
@@ -17712,8 +17675,8 @@
         ],
         "inactiveNX": [],
         "signals": [],
-        "status": "ready",
-        "reason": "",
+        "status": "unresolved",
+        "reason": "Lokalt styrd växel: den läggs om på plats, inte från TKL.",
         "provenance": "Härledd ur grafen: spårledningen fri, skyddande signaler i stopp, ingen tågväg genom växeln. Ej ur källans Spärra växlar."
       },
       "Vx12": {
@@ -17728,8 +17691,8 @@
         ],
         "inactiveNX": [],
         "signals": [],
-        "status": "ready",
-        "reason": "",
+        "status": "unresolved",
+        "reason": "Lokalt styrd växel: den läggs om på plats, inte från TKL.",
         "provenance": "Härledd ur grafen: spårledningen fri, skyddande signaler i stopp, ingen tågväg genom växeln. Ej ur källans Spärra växlar."
       },
       "Vx13": {
@@ -17742,14 +17705,10 @@
         "blocks": [
           "S13"
         ],
-        "inactiveNX": [
-          "IN:ca405742-1035-4d25-b7db-15bf8f489025"
-        ],
-        "signals": [
-          "2/6"
-        ],
-        "status": "ready",
-        "reason": "",
+        "inactiveNX": [],
+        "signals": [],
+        "status": "unresolved",
+        "reason": "Lokalt styrd växel: den läggs om på plats, inte från TKL.",
         "provenance": "Härledd ur grafen: spårledningen fri, skyddande signaler i stopp, ingen tågväg genom växeln. Ej ur källans Spärra växlar."
       },
       "Vx21a": {
@@ -18271,7 +18230,7 @@
     },
     "vtv4v": {
       "label": "4v",
-      "segment": "T22"
+      "segment": "T32"
     },
     "vtv3.4": {
       "label": "3/4",

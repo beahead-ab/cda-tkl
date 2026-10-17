@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { Engine } from '../src/engine.mjs';
 import { Field } from '../src/field.mjs';
-import { decode } from '../src/protocol.mjs';
+import { decode, sensorReport, switchReport } from '../src/protocol.mjs';
 import { Topology } from '../src/topology.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url)));
 const profile=read('stations/trakvista/profiles/network.json'),fieldProfile=read('stations/trakvista/profiles/field.json');
@@ -41,7 +41,7 @@ test('C-linjen är lodrät: 1/2 är infart och 1/9 utfart enligt stationens rikt
   const inn=profile.routes.find(r=>r.id==='htvC--htvII'),out=profile.routes.find(r=>r.id==='htvII--htvC');
   assert.equal(inn.signals[0],'1/2');assert.equal(out.exitSignal,'1/9');assert.equal(out.blocks.at(-1),'SC2');
 });
-test('blocklistorna stämmer med Bennys tågvägstabeller utom 2/3 → 3/7, där tabellen pekar på andra sidan stationen',()=>{
+test('blocklistorna stämmer med Bennys tågvägstabeller utom 2/3 → 3/7 (kopieringsfel) och 2/6 → 4v (signalen flyttad till före växel 13)',()=>{
   const all=[...profile.routes,...profile.routeAlternatives],sensor=x=>'tvs'+(/^\d\d$/.test(x)?x[0]+'/'+x[1]:/^\d\d\d$/.test(x)?x[0]+'/'+x.slice(1):x);
   const wrong=[];
   for(const [name,blocks] of Object.entries(source.tables)){
@@ -49,7 +49,7 @@ test('blocklistorna stämmer med Bennys tågvägstabeller utom 2/3 → 3/7, där
     if(!rs.length)continue;   // 2/1 → 2/3 och 2/2 → 2/4 är inre steg i huvudtågvägarna
     if(!rs.some(r=>JSON.stringify([...r.blocks].sort())===JSON.stringify([...blocks].sort())))wrong.push(name);
   }
-  assert.deepEqual(wrong,['23-37']);
+  assert.deepEqual(wrong.sort(),['23-37','26-4v']);
 });
 test('alla Träkvistas tågvägar läggs, klareras och löses upp efter tågets passage',{timeout:120000},()=>{
   for(const def of profile.routes){
@@ -94,4 +94,29 @@ test('Bennys ofyllda spår är lokala; 22a och 23 är det inte',()=>{
   assert.ok(!profile.panelStyle.localBlocks.includes('S22a'));
   for(const n of ['Vx10','Vx11','Vx12','Vx13'])assert.equal(profile.turnouts[n].local,true);
   assert.equal(profile.turnouts.Vx22a.address,1);assert.equal(profile.turnouts.Vx23.address,2);
+});
+
+test('Bennys rättelse: 4v står före växel 13, och 2/6 → 4v går varken genom 13 eller in på Timmerlossningen',()=>{
+  const r=profile.routes.find(r=>r.id==='vtv2.6--vtv4v');
+  assert.deepEqual(r.blocks,['S32','S34','S4/7']);assert.ok(!('Vx13' in r.turnouts));assert.ok(r.guardSignals.includes('S4v'));
+  assert.deepEqual(source.corrections.map(c=>c.id),['4v-fore-vaxel-13']);
+  assert.ok(source.turnoutEnds.some(e=>e.id==='TO9'&&e.leg==='C'&&e.mast==='S4v'&&e.sensor==='tvs4v'));
+  assert.ok(!source.anchors.some(a=>a.ident==='EB4'));
+  for(const t of ['Vx10','Vx11','Vx12','Vx13'])assert.equal(profile.manualPolicies.byTurnout[t].status,'unresolved');
+  assert.ok([...profile.routes,...profile.routeAlternatives].every(r=>!Object.keys(r.turnouts).some(n=>profile.turnouts[n].local)));
+});
+test('växelmotorns två givare: läget när exakt en är aktiv, okänt medan växeln går, bekräftat direkt om den redan ligger rätt',()=>{
+  const r=rig(),f=profile.turnouts.Vx22b.feedbackSensors;
+  assert.deepEqual([f.thrown,f.closed],[255,256]);
+  // Simulatorn: alla växlar ligger rakt och rapporterar via givarna, inte växelrapporten.
+  assert.equal(r.engine.turnouts.Vx22b.position,'C');
+  const before=r.commands.length;r.engine.turnoutOrder('Vx22b','C');
+  assert.equal(r.engine.turnouts.Vx22b.position,'C','redan rakt: givarna bekräftar direkt');assert.ok(r.engine.turnoutConfirmed('Vx22b','C'));
+  assert.equal(r.commands.length,before+1,'ordern skickas ändå');r.drain();
+  r.engine.turnoutOrder('Vx22b','T');r.drain();assert.equal(r.engine.turnouts.Vx22b.position,'unknown');
+  r.advance(800);assert.equal(r.engine.turnouts.Vx22b.position,'T');assert.ok(r.engine.turnoutConfirmed('Vx22b','T'));
+  r.engine.receive(sensorReport(256,true));assert.equal(r.engine.turnouts.Vx22b.position,'unknown','båda aktiva = fel');
+  r.engine.receive(sensorReport(255,false));assert.equal(r.engine.turnouts.Vx22b.position,'C');
+  r.engine.receive(switchReport(3,'T'));assert.equal(r.engine.turnouts.Vx22b.position,'C','växelrapporten räknas inte för en växel med givare');
+  assert.equal(profile.turnouts.Vx21a.feedbackSensors,undefined,'21a saknar givare i XML');
 });

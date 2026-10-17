@@ -213,9 +213,21 @@ if __name__ == '__main__':
     parser.add_argument('source', type=Path); parser.add_argument('--panel', help='LayoutEditor-panelens namn (standard: den första)')
     parser.add_argument('--out', type=Path); parser.add_argument('--compare', type=Path, help='befintlig panel.json att jämföra med')
     parser.add_argument('--check', action='store_true', help='med --out: kontrollera att filen är aktuell i stället för att skriva den')
+    parser.add_argument('--station', type=Path, help='stationens station.json: dess rättelser flyttar ikoner (signal, knapp, text)')
     args = parser.parse_args()
     raw = args.source.read_bytes(); root = ET.fromstring(raw)
     panel = Layout(root, args.panel).build(hashlib.sha256(raw).hexdigest())
+    if args.station:
+        station = json.loads(args.station.read_text())
+        for c in station.get('corrections', []):
+            icons, applied = c.get('icons', {}), []
+            for key, items, match in (('signal', panel['micons'], lambda i, v: i['mast'] == v['mast']), ('button', panel['sicons'], lambda i, v: i['sensor'] == v['sensor']),
+                                      ('label', panel['labels'], lambda i, v: i['text'] == v['text'])):
+                if key not in icons: continue
+                found = [i for i in items if match(i, icons[key])]
+                if len(found) != 1: raise SystemExit(f"Rättelsen {c['id']}: {key} finns inte exakt en gång i panelen.")
+                found[0].update({k: v for k, v in icons[key].items() if k in ('x', 'y', 'deg')}); applied.append(key)
+            panel['importNotes'].setdefault('corrections', []).append(dict(id=c['id'], icons=applied, source=c.get('source')))
     summary = dict(panel=panel['importNotes']['panel'], jmri=panel['importNotes']['jmriVersion'], size=[panel['w'], panel['h']], segs=len(panel['segs']), turnouts=len(panel['turnouts']),
                    slips=len(panel['slips']), xings=len(panel['xings']), turntables=len(panel['turntables']), labels=len(panel['labels']), sicons=len(panel['sicons']),
                    micons=len(panel['micons']), lblocks=len(panel['lblocks']), masts=len(panel['masts']), tdefs=len(panel['tdefs']), sensors=len(panel['sensors']),

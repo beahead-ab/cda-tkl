@@ -1877,3 +1877,22 @@ Jython-skript saknas, tre växlar har avvikande återrapport i XML (Vx31, Vx21a,
 LocoNet-adress. Kvar: linjerna A–C med körriktning och TAM, återrapport via två sensorer, spärr av lokala spår, mod68,
 Studio. Rekommendation: gemensam plattform i stället för två kopior. Jämförelsen i [Träkvista i cda-tkl](trakvista.md).
 
+## 17 oktober 2026: Bennys svar för Träkvista
+
+Casper vidarebefordrade Bennys svar på brevet och hans fem Jython-skript. Svaren och ändringarna står i
+[Träkvista i cda-tkl](trakvista.md#bennys-svar-17-oktober-och-vad-som-ändrades).
+
+- **Signal 4v** flyttad till före växel 13 genom en rättelse i `stations/trakvista/station.json`, som båda importörerna
+  tillämpar; källfilen är orörd. Växeltågvägen 2/6 → 4v går över S32, S34 och S4/7 och slutar vid 4v.
+- **Växlarnas lägesgivare:** kärnan och simulatorn läser läget från två givare per växel när profilen anger
+  `feedbackSensors`. Givarna tas efter namn (vx<nr>-t, vx<nr>-c), eftersom JMRI-inställningen inte är färdig. Nio växlar
+  har givare; Vx21a väntar på växelrapport. En order till en växel som redan ligger rätt bekräftas direkt av givarna.
+- **Lokala växlar** (10–13) läggs aldrig av TKL, varken i tågvägar eller som manöver.
+- **Linjerna** hämtar sin anslutning från TrainMeet; C har ingen i dag. Kopplingen till panelen återstår.
+- **Bildsatserna:** TKL:s mörka panel motsvarar Bennys mod59-modell, så mod59 används även för Träkvista.
+- **Skripten** sparade i `stations/trakvista/jython/`; de körs inte. TamSignaling och BlockSignaling motsvaras av
+  TrainMeet, RemoteControl av fjärrläget och Automaten av TKL:s automat.
+
+Prov: 12 prov i `test/trakvista.test.mjs`, bland annat rättelsen och givarna. 480 enhetsprov och 14 helhetsprov gröna;
+Charlottendals genererade filer oförändrade.
+

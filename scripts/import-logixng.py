@@ -116,6 +116,22 @@ def build(station_dir, station):
             mast, sensor = s.findtext('signal' + leg + 'Mast'), s.findtext('sensor' + leg)
             if mast or sensor: ends.append(dict(turnout=s.findtext('turnout'), id=s.get('ident'), leg=leg, mast=mast, sensor=sensor, segment=s.get('connect' + leg.lower() + 'name'), slip=True))
 
+    # Stationens rättelser (station.json → corrections): en signal och dess NX-knapp som Benny bett oss flytta. Källfilen
+    # lämnas orörd; rättelsen syns i operations-source.json med sin källa.
+    corrections = []
+    for c in station.get('corrections', []):
+        if 'signal' not in c: continue
+        frm, to = c['from'], c['to']
+        point = next((a for a in anchors if a.get('ident') == frm['point']), None)
+        if point is None or point.get(frm['direction'] + 'signalmast') != c['signal'] or point.get(frm['direction'] + 'sensor') != c['sensor']:
+            raise SystemExit('Rättelsen stämmer inte längre med källan: ' + c['id'])
+        del point[frm['direction'] + 'signalmast'], point[frm['direction'] + 'sensor']
+        t = next(t for t in editor.findall('layoutturnout') if t.get('ident') == to['turnout'])
+        if t.findtext('signal' + to['leg'] + 'Mast') or t.findtext('sensor' + to['leg']): raise SystemExit('Växelbenet har redan en signal: ' + c['id'])
+        ends.append(dict(turnout=t.get('turnoutname'), id=t.get('ident'), leg=to['leg'], mast=c['signal'], sensor=c['sensor'], segment=t.get('connect' + to['leg'].lower() + 'name'), correction=c['id']))
+        corrections.append(dict(id=c['id'], source=c['source'], signal=c['signal'], sensor=c['sensor'], moved=f"{frm['point']} {frm['direction']} → {to['turnout']} ben {to['leg']}"))
+    anchors = [a for a in anchors if any('signal' in k or 'sensor' in k for k in a if k not in ('class',))]
+
     detection = []
     for c in rules.group(g['detection']):
         nodes = rules.tree(c.findtext('Socket/systemName'))
@@ -136,7 +152,7 @@ def build(station_dir, station):
     groups = [dict(id=x.findtext('systemName'), name=x.findtext('userName'), enabled=x.get('enabled') == 'yes', conditionals=len(x.find('ConditionalNGs')) if x.find('ConditionalNGs') is not None else 0) for x in rules.groups]
     return dict(sourceHash=hashlib.sha256(raw).hexdigest(), format='logixng', station=station['id'], panel=station['panel'], groups=groups,
                 mainRoutePolicies=main, shuntRoutePolicies=shunt, anchors=anchors, turnoutEnds=ends, nxPairs=nx, signalRelations=relations,
-                sensors=sensors, turnouts=turnouts, detection=detection, tables=tables, verticalEastbound=station.get('verticalEastbound'),
+                sensors=sensors, turnouts=turnouts, detection=detection, tables=tables, corrections=corrections, verticalEastbound=station.get('verticalEastbound'),
                 note='Källfakta ur LogixNG. Importerade regler är inte automatiskt aktiverade funktioner. Adresserna är inte uppmätta.')
 
 if __name__ == '__main__':

@@ -117,9 +117,11 @@ const iconTypes = {
   hsi_2: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_4: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_5: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32],
   'hsi_3+dvsi': ['Hsi0+Sh0', 'Hsi1+Sh1', 'Hsi-dark+Sh-dark', 12, 32], hdvsi_8: ['Hdvsi0+Sh0', 'Hdvsi1+Sh1', 'Hdvsi-dark', 18, 31],
   dvsi_4: ['Dvsi0', 'Dvsi1', 'Dvsi-dark', 18, 25], sly_2: ['Ssi0', 'Ssi1', 'Dark', 18, 25],
-  // Träkvistas typer, med mod59-bilderna: Bennys bildsats mod68 finns inte i förrådet.
+  // Träkvistas typer, med mod59-bilderna (se nedan om mod68).
   hsi_7: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hdvsi_5: ['Hdvsi0+Sh0', 'Hdvsi1+Sh1', 'Hdvsi-dark', 18, 31], ssi_2: ['Ssi0', 'Ssi1', 'Dark', 18, 25]
 };
+// mod59 hör till den mörka panelen. Bennys Träkvista växlar mellan mod68 (ljus skärm) och mod59 (mörk) med Ändra
+// panelmodell; TKL:s mörka panel motsvarar hans mod59-modell, så samma bilder gäller för båda stationerna.
 const icon = file => '/assets/mod59/icons/' + encodeURIComponent(file) + '.gif';
 const imageCache = [], decodedIcons = new Set();
 const rendered = new Map();
