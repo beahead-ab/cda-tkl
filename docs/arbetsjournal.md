@@ -1875,3 +1875,6 @@ visas. Filen ligger kvar; bara visningen ändras.
 
 Prov: `test/update-check.test.mjs` (nytt prov med Renders rad från 6 oktober: borta på 0.81.0, kvar på 0.59.1 och
 0.68.0; ett klart försök syns på sin version men inte efter ett bygge som Render startade självt).
+
+Publicerad 17 oktober: cda-tkl main `8a404ba` (#67), `beahead-ab/cda-tkl-install` main `ab46183`. Render tar den när
+den bygger om main.
