@@ -2,6 +2,15 @@
 
 Ställverket öppnas på `/#panel`. Överkanten innehåller namn, anslutningsstatus och meny. Från version 0.29.0 är den stora knappraden borttagen enligt Caspers godkända förenkling.
 
+## Träffklockans sekunder (0.81.0)
+
+Ett tryck på träffklockan visar eller döljer sekunderna, som i TrainMeet Server och iPhone-appen (Casper 16
+oktober: «Klickar man på klockan så togglas sekunder av/på (snabbinställning)»). Det gäller klockan i tidtabellens
+rubrik, telefonraden i stående läge och miniraden i liggande läge; klockan i rubriken är en knapp, så Enter och
+mellanslag gör samma sak, och pekaren säger vad ett tryck gör. Valet gäller den här webbläsaren
+(`charlottendal-clock-seconds`); utan val visas sekunderna, som förut. Med sekunderna framme visar en 4×-klocka
+varje träffsekund. Modellklockan under Drift är oförändrad.
+
 ## Tidtabellens stil (0.80.0)
 
 Som i TrainMeet-appen för iPhone väljer man under Inställningar → Utseende och ljud hur tåglistan visar läget och vägen.
