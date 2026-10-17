@@ -71,11 +71,16 @@ fi
 
 [ "$FIRST" = true ] && git checkout -q --orphan publish
 git add -A
-if [ "$FIRST" = false ] && git diff --cached --quiet; then echo "$REPOSITORY har redan innehållet i $VERSION."; exit 0; fi
+EMPTY=""
+if [ "$FIRST" = false ] && git diff --cached --quiet; then
+  # The station's own changes are in cda-tkl now: an empty publication marks where the two are in step.
+  if [ -z "$OLD" ] || [ "$(git rev-parse HEAD)" = "$LAST" ]; then echo "$REPOSITORY har redan innehållet i $VERSION."; exit 0; fi
+  EMPTY=--allow-empty
+fi
 printf '%s %s · %s TKL %s\n%s' "$MARK" "$(git -C "$SOURCE" rev-parse --short "$FULL")" "$NAME" "$VERSION" "${STATION_MESSAGE:+
 $STATION_MESSAGE
-}" | git commit -q -F -
+}" | git commit -q $EMPTY -F -
 if [ "$FIRST" = true ]; then git branch -q -M main; fi
 if [ "${STATION_NO_PUSH:-}" = 1 ]; then echo "Inte pushat: $WORK/repo"; exit 0; fi
 if [ "$FIRST" = true ] && [ -n "$OLD" ]; then git push -q --force-with-lease="main:$OLD" origin HEAD:main; else git push -q origin HEAD:main; fi
-echo "Publicerat i $REPOSITORY: $NAME TKL $VERSION ($(git rev-parse --short HEAD))"
+echo "Publicerat i ${STATION_REMOTE:-$REPOSITORY}: $NAME TKL $VERSION ($(git rev-parse --short HEAD))"
