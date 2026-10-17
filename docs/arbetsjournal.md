@@ -1917,3 +1917,25 @@ Casper vidarebefordrade Bennys svar på brevet och hans fem Jython-skript. Svare
 Prov: 12 prov i `test/trakvista.test.mjs`, bland annat rättelsen och givarna. 480 enhetsprov och 14 helhetsprov gröna;
 Charlottendals genererade filer oförändrade.
 
+
+## 17 oktober 2026: Träkvista som egen installation, Tk-TKL
+
+Casper: ”Att vi gör en superenkel installationsgrej, för både Träkvista och för Charlottendal, så att det är lika lätt
+att installera Träkvista som Charlottendal. Och sen lägger vi in Träkvista i ett eget GitHub-repo som heter Tk-TKL, med
+readme-fil för att med en enda kommando kunna installera hela applikationen på en Raspberry Pi. Verifiera också att det
+går att göra så med Charlottendals cda-tkl.”
+
+- **Installationen efter station.** `packaging/identity.env` (TKL_ID, TKL_NAME, TKL_STATION, TKL_REPOSITORY) säger vilken
+  installation paketet blir. Pi-installeraren skriver paketfilerna med stationens namn; Mac och Windows kopierar
+  `stations/` och skriver stationen i app.env. Uppdateringskontrollen läser installationens förråd.
+- **Tk-TKL.** `node scripts/make-station-repository.mjs trakvista` gör en klon av cda-tkl till Träkvistas förråd ur
+  `installation` i `stations/trakvista/station.json`: tk-tkl från `beahead-ab/Tk-TKL`, README ur
+  `stations/trakvista/README.md`. Förrådet kunde inte skapas från sessionen (GitHub 403); innehållet är klart att pushas.
+- **Provat i en Ubuntu 24.04-container utan systemd** (x86_64; tjänsterna startade som systemd skulle): Charlottendals
+  publicerade enradsinstallation 0.81.0, därefter branchens installerare ovanpå. Alla nio installerade filerna är byte
+  för byte desamma, och TKL svarar med 340 tågvägar. Tk-TKL:s paket, packat som GitHub packar ett förråd, installerar
+  Träkvista bredvid: `/opt/tk-tkl`, användaren och tjänsterna `tk-tkl`, `CHARLOTTENDAL_STATION=trakvista`, 57
+  tågvägar, A → Spår II lagd i panelen. En andra körning uppdaterar och lämnar `app.env` orörd. Hämtningen från
+  github.com är spärrad i containerns nät och provades därför med `CDA_TKL_SOURCE`.
+
+485 enhetsprov gröna i cda-tkl.
