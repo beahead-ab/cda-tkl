@@ -1968,3 +1968,21 @@ Senare samma kväll: Benny ska kunna ändra i Tk-TKL. Tk-TKL:s README har avsnit
 main, prova lokalt, vilka filer som är Träkvistas och vilka publiceringen skriver om), och publiceringen lägger in
 GitHub-kontrollen *Prov* (`packaging/github/station-tests.yml` → `.github/workflows/prov.yml`): `npm test` och
 `npm run verify:trakvista` på varje pull request och varje ändring av main. Publicerat som 0e234ab.
+
+## 17 oktober 2026: Uppdatera nu för båda stationerna, och Studio för Träkvista
+
+Casper: ”Bygg in funktion så att det är enkelt att uppdatera både cda-tkl och tk-tkl via knapptryckning inifrån admin i
+applikationen.” och ”Studio ska Träkvista ha sin variant av också.”
+
+- **Uppdatera nu** (Inställningar → Uppdatering) fungerade redan för Charlottendals Pi. Tk-TKL är privat, så Träkvistas
+  versionskontroll fick 404 och knappen visades aldrig. Nu läser kontrollen förrådet genom GitHubs API med
+  installationens token (`CHARLOTTENDAL_GITHUB_TOKEN_FILE`, `/etc/tk-tkl/github-token`, läsbar för root och tk-tkl),
+  och kunde versionen inte läsas visar en Pi **Hämta senaste versionen**. Provat i containern: installation med token,
+  knappen och bekräftelsen i panelen, och `tk-tkl-update.service` startad (systemctl ersatt, ingen systemd).
+- **Träkvistas inställningar** visar stationens namn; källregistret och Studio-länken bara där källorna finns.
+- **Studio för Träkvista:** källorna per station (`src/studio/sources.mjs`), spåravkänningen ur LogixNG, regler som
+  kompileras tillbaka identiskt (linjernas egna uppgifter och manöverreglernas härkomst följer med; tomma
+  `boundaryOverrides` utgår ur profilen), Studios texter och AI-uppmaningar med stationens namn och JMRI-fil, planen i
+  en ram ur ritningen och utan vändskiva, och Källa ur `Trakvista.xml` (`import-source.py --source --out`).
+  Införandestatus (Charlottendals Logix-migrering) visas inte för Träkvista. Charlottendals Studio är oförändrad; alla
+  Studio-flikar öppnade för båda stationerna utan fel.
