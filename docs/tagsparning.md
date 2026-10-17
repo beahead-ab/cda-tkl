@@ -6,15 +6,16 @@ när **LocoNet inte är ansluten** och TKL själv kör trafikspelets tåg (sedan
 ansluten](loconet-anslutning.md); före det i simuleringsläget, som i webbdriften). Med LocoNet ansluten är den
 avstängd tills den är provad mot riktig bana.
 
-**Publicerad: 0.80.0** (cda-tkl main `a503d09`, #60; `beahead-ab/cda-tkl-install` main `5133be9`, 13 oktober). Webbdriften
+**Publicerad: 0.81.1** (cda-tkl main `8a404ba`, #67; `beahead-ab/cda-tkl-install` main `ab46183`, 17 oktober). Webbdriften
 på Render tar den när Render bygger om main, eller med Uppdatera nu när Deploy Hook är inlagd; datorer som installerats
 med installationsraden kör den igen eller väljer Uppdatering. Tågspårningen kom i 0.73.0, simulerade tåg och upplösning
 vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0 (cda-tkl `45ec00a`, #46). I 0.77.0 rapporterar den egna
 återrapporten som MGP-korten, och i 0.79.0 kommer tågen från trafikspelet på TrainMeet-servern (se nedan) och
 *Simulerad trafik* är borta. I 0.80.0 kan tidtabellen visa tågen på linjen och tågen som står inne som en linjebild
-eller med tecken (se nedan); spårningen är oförändrad. På ställverket ligger *Automat* bland driftknapparna under
-Drift, listan *Spårade tåg* under Drift → Tågnummer, och den egna återrapportens sida nås från Studio → Driftsättning →
-*Egen återrapport ↗*.
+eller med tecken (se nedan). I 0.81.0 visar eller döljer ett tryck på träffklockan sekunderna, och 0.81.1 visar
+inte längre ett gammalt försök under Uppdatering; spårningen är oförändrad sedan 0.79.0. På ställverket ligger
+*Automat* bland driftknapparna under Drift, listan *Spårade tåg* under Drift → Tågnummer, och den egna
+återrapportens sida nås från Studio → Driftsättning → *Egen återrapport ↗*.
 
 ## Vad som syns
 
@@ -155,6 +156,10 @@ Tidtabellen läser bara TrainMeet, inte tågspårningen. Ett tåg kan alltså va
 samtidigt stå som `← 319` vid linjens infartsspår på planen, eftersom båda kommer från samma förbindelseläge; men ramen
 runt spåret betyder att tåget är anmält inne i TrainMeet, inte att spårningen har sett det där. Med LocoNet ej
 ansluten följer de två varandra, eftersom TKL ställer ut trafikspelets tåg efter samma uppgifter.
+
+Sedan 0.81.0 visar eller döljer ett tryck på träffklockan sekunderna, i tidtabellens rubrik, telefonraden och
+miniraden i liggande läge ([panel och verktyg](panel-och-verktyg.md)). Valet gäller webbläsaren; tidtabellen och
+spårningen räknar som förut.
 
 ## Begränsningar
 
