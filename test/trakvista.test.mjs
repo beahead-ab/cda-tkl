@@ -173,5 +173,8 @@ test('Träkvistas server och anläggning startar som processer och lägger A →
 test('Tk-TKL: publiceringen lägger in en GitHub-kontroll som kör proven och stationens kontroll på varje pull request',()=>{
   const workflow=fs.readFileSync(new URL('../packaging/github/station-tests.yml',import.meta.url),'utf8');
   assert.match(workflow,/^on:\n  pull_request:/m);assert.match(workflow,/- run: npm test$/m);assert.match(workflow,/verify:\$\(sed -n 's\/\^TKL_STATION=\/\/p' packaging\/identity\.env\)/);
-  assert.match(fs.readFileSync(new URL('../deploy/publish-station.sh',import.meta.url),'utf8'),/cp packaging\/github\/station-tests\.yml \.github\/workflows\/prov\.yml/);
+  // cda-tkl har publiceringen, Tk-TKL har kontrollen som publiceringen lade in.
+  const publish=new URL('../deploy/publish-station.sh',import.meta.url),installed=new URL('../.github/workflows/prov.yml',import.meta.url);
+  if(fs.existsSync(publish))assert.match(fs.readFileSync(publish,'utf8'),/cp packaging\/github\/station-tests\.yml \.github\/workflows\/prov\.yml/);
+  else assert.equal(fs.readFileSync(installed,'utf8'),workflow);
 });
