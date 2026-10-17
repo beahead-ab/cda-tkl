@@ -1885,8 +1885,8 @@ Casper vidarebefordrade Bennys svar på brevet och hans fem Jython-skript. Svare
 - **Signal 4v** flyttad till före växel 13 genom en rättelse i `stations/trakvista/station.json`, som båda importörerna
   tillämpar; källfilen är orörd. Växeltågvägen 2/6 → 4v går över S32, S34 och S4/7 och slutar vid 4v.
 - **Växlarnas lägesgivare:** kärnan och simulatorn läser läget från två givare per växel när profilen anger
-  `feedbackSensors`. Givarna tas efter namn (vx<nr>-t, vx<nr>-c), eftersom JMRI-inställningen inte är färdig. Nio växlar
-  har givare; Vx21a väntar på växelrapport. En order till en växel som redan ligger rätt bekräftas direkt av givarna.
+  `feedbackSensors`. Givarna tas efter namn (vx<nr>-t, vx<nr>-c), eftersom JMRI-inställningen inte är färdig. Åtta växlar
+  har givare (21b, 22a, 22b, 22c, 23, 31, 32, 34); Vx21a väntar på växelrapport. En order till en växel som redan ligger rätt bekräftas direkt av givarna.
 - **Lokala växlar** (10–13) läggs aldrig av TKL, varken i tågvägar eller som manöver.
 - **Linjerna** hämtar sin anslutning från TrainMeet; C har ingen i dag. Kopplingen till panelen återstår.
 - **Bildsatserna:** TKL:s mörka panel motsvarar Bennys mod59-modell, så mod59 används även för Träkvista.

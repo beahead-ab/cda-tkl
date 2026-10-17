@@ -87,7 +87,7 @@ Träkvista utan stationsspecifik kod, sedan korsningsväxeln och den lodräta ri
 | Fråga | Bennys svar | I TKL |
 |---|---|---|
 | 1. Jython-skripten | Bifogade | Sparade i `stations/trakvista/jython/` som källa. De körs inte; se nästa avsnitt. |
-| 2. Växlarnas återrapport | Motorerna har inbyggda lägesgivare; alla är inte inställda i JMRI | Kärnan läser läget från två givare per växel (`feedbackSensors`), tagna efter namn: vx<nr>-t avvikande, vx<nr>-c rakt. Nio växlar har givare. Vx21a saknar givare i XML och väntar på växelrapport. |
+| 2. Växlarnas återrapport | Motorerna har inbyggda lägesgivare; alla är inte inställda i JMRI | Kärnan läser läget från två givare per växel (`feedbackSensors`), tagna efter namn: vx<nr>-t avvikande, vx<nr>-c rakt. Åtta växlar har givare: 21b, 22a, 22b, 22c, 23, 31, 32 och 34. Vx21a saknar givare i XML och väntar på växelrapport. |
 | 3. Tabellen 23-37.csv | Troligen kopieringsfel | Står kvar som känt fel i provet. |
 | 4. Växel 13 och signal 4v | 13 och L2 ska inte vara med i tågvägen; 4v ska stå före växel 13. Lokala växlar läggs om elektriskt på plats och har givare | Rättelsen i `station.json` flyttar 4v och tvs4v till växel 13:s ben mot diagonalen. 2/6 → 4v går nu över S32, S34 och S4/7. Lokala växlar läggs aldrig av TKL. |
 | 5. De lokala spåren | Listan stämmer | Oförändrad. |
