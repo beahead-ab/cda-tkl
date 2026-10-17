@@ -62,7 +62,7 @@ test('password login protects both processes, requires change, revokes sessions 
     assert.equal((await request(ports[0], '/auth.js')).status, 200);
     for(const resource of ['/api/recordings','/api/recordings/00000000-0000-0000-0000-000000000000/download'])assert.equal((await request(ports[0],resource)).status,401);
     for(const command of ['start','stop'])assert.equal((await request(ports[0],'/api/recordings/'+command,{})).status,401);
-    for(const command of ['destinations','yard-authority','panel-reset','programming','line-block','clock','trainmeet/configure','trainmeet/pair','trainmeet/refresh','trainmeet/disconnect','bindings/save','bindings/activate','train-information/follow','train-information/unfollow'])assert.equal((await request(ports[0],'/api/'+command,{})).status,401);
+    for(const command of ['destinations','yard-authority','panel-reset','programming','line-block','clock','trainmeet/connect','trainmeet/configure','trainmeet/pair','trainmeet/refresh','trainmeet/disconnect','bindings/save','bindings/activate','train-information/follow','train-information/unfollow'])assert.equal((await request(ports[0],'/api/'+command,{})).status,401);
     const login = () => request(ports[0], '/api/auth/login', { username: 'admin@example.se', password: initial });
     assert.equal((await request(ports[0], '/api/auth/login', { username: 'admin@example.se', password: 'wrong' })).status, 401);
     assert.equal((await request(ports[0], '/api/auth/login', { username: 'admin@example.se', password: initial }, null, null)).status, 403);

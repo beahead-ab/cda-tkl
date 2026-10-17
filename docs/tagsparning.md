@@ -161,6 +161,26 @@ Sedan 0.81.0 visar eller döljer ett tryck på träffklockan sekunderna, i tidta
 miniraden i liggande läge ([panel och verktyg](panel-och-verktyg.md)). Valet gäller webbläsaren; tidtabellen och
 spårningen räknar som förut.
 
+## Tåg som trafikspelet inte har tas bort (0.82.0)
+
+Casper 17 oktober, efter en parkoppling: planen visade sju tåg men tidtabellen två uppställda (92 på 1a och 8101 på 13).
+Tågen från ett tidigare trafikläge stod kvar på banan och spärrade spåren, så de uppställda tågen kunde inte ställas ut.
+
+Sedan 0.82.0 jämför TKL tågen på banan med trafikspelet (`TrafficTrains.present`/`stale`). Trafikspelet har ett tåg här
+när det är på linjen hit eller härifrån, eller ankommet, på väg in, uppställt eller med förare på plats, och inte
+avgånget. Ett spårat tåg som saknas där i tio sekunder (`ABSENT_MS`) tas bort från banan (`{kind:'remove'}` till
+simulatorn), och spårningen glömmer det (`TrainTracker.forget`).
+
+Simulatorn tar bara bort ett av trafikspelets tåg som står still:
+- Ett tåg som kör försöks igen efter fem sekunder.
+- En provkörning får stå kvar.
+- Ett nummer som bara spårningen minns glöms.
+
+Utan färskt trafikläge från TrainMeet rörs inget.
+
+Ett tåg som TKL just ställt på ett spår väcker inte heller tåget som stod där förut. Det gamla stod kvar i spårningen som
+senast sett och tog annars över numret.
+
 ## Begränsningar
 
 - Spårningen ser bara det detektorerna ser. Två tåg tätt efter varandra på samma detektor, eller ett tåg som rör sig

@@ -1,5 +1,43 @@
 # Läsande TrainMeet-anslutning
 
+## Anslut med adress och kod · 0.82.0
+
+Casper 17 oktober: "Anslutningen till server ska vara mycket enklare. Det ska bara behövas mata in adress + kod i tkl -
+inget mer. Nu kan man göra mer och det funkar dessutom dåligt i tkl."
+
+Inställningar → TrainMeet har nu ett enda formulär: **Serverns adress**, **Anslutningskod** och **Anslut**. Ansluten
+visar sidan status, station och server, och knappen **Koppla från**. Formuläret står kvar så länge parkopplingen inte
+når fram, till exempel efter en ny träff med ny kod; knappen heter då **Anslut med ny kod**. Dialogerna Redigera
+anslutning och Parkoppla, TKL-id-fältet, de sparade servrarna i gränssnittet, Hämta senaste och Visa tidtabell är
+borta.
+
+`POST /api/trainmeet/connect` (`TrainMeet.connect`, bara ägare och administratör) tar `{origin, code}`.
+- Byter server vid behov, på samma sätt som `configure`.
+- Läser träffens stationer ur den öppna `/v1/display`. TrainMeet har en kod för hela träffen och knyter inte koden till
+  en station.
+- Väljer ställverkets station (`matchStation`): samma namn som profilens titel, *Charlottendal*, annars den enda
+  station vars namn innehåller den.
+- Parkopplar med koden.
+
+Har träffen ingen sådan station svarar `connect` med `choose` (träffens stationer och skälet) utan att använda koden.
+Formuläret visar då en stationslista, och nästa Anslut skickar `stationId`.
+
+Inget TKL-id anges längre. Ett sparat id står kvar. En ny installation får ett id efter installationstyp, så att den inte
+kopplar bort webbdriften: TrainMeet släpper in ett TKL per id och station.
+
+| Installation | TKL-id |
+|---|---|
+| Raspberry Pi | `cda-tkl-pi` |
+| Mac | `cda-tkl-mac` |
+| PC | `cda-tkl-pc` |
+| Webbdriften och utvecklingskörningar | `cda-tkl` |
+
+`configure` och `pair` finns kvar i API:t, för prov och äldre klienter.
+
+Koden finns i TrainMeet Server på sidan **Anslut ett ställverk** (`/anslut`), som deltagarvyn länkar till. Sidan
+visar adressen och koden för den som är inloggad som administratör (trainmeet-server #200), och felbeskedet vid en
+nekad kod säger var den finns. Avsnitten nedan beskriver hur anslutningen såg ut före 0.82.0.
+
 En separat adapter implementerar TrainMeets HTTP-v1-kontrakt, ursprungligen granskat i commit63f3fd1 (18 september). Den nu angivna demoserverns version har också identifierats och dess matchande källkod granskats enligt nedan. Verklig parkoppling har ännu inte utförts.
 
 ## TKL-id från 0.27.0
