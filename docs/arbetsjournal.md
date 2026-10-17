@@ -1838,6 +1838,27 @@ Publicerad 13 oktober: cda-tkl main `a503d09` (#60), `beahead-ab/cda-tkl-install
 tar 0.80.0 när Render bygger om main eller med Uppdatera nu; datorer som installerats med installationsraden kör den igen
 eller väljer Uppdatering. Stilvalet är per webbläsare, så varje skärm börjar med Ord tills någon väljer en annan stil.
 
+## 17 oktober 2026, 0.81.0: ett tryck på träffklockan visar eller döljer sekunderna
+
+Casper 16 oktober, om TrainMeet Server: «Klickar man på klockan så togglas sekunder av/på (snabbinställning).»
+Det byggdes först i servern (trainmeet-server #192: Kör, rubrikraden, storskärmen och deltagarvyn), och sedan bad
+Casper om samma sak i iPhone-appen och CDA-TKL.
+
+I TKL gäller det träffklockan i tidtabellens rubrik, telefonraden (`#panel-phone-clock`) och miniraden i liggande
+läge (`.tt-mini-clock`). `public/clock-seconds.js` håller valet (`charlottendal-clock-seconds`, på eller av; utan val
+visas sekunderna som förut), och `trainmeet-timetable.js` ritar alla tre klockorna genom `paintClock`, fyra gånger i
+sekunden som förut. Rubrikens klocka är en knapp med Enter och mellanslag och en förklaring vid pekaren; ett byte i
+en annan flik slår igenom direkt. Modellklockan under Drift är oförändrad. I iPhone-appen är träffklockan överst en
+knapp som växlar samma val som Sekunder under Inställningar (trainmeet-iphone #22).
+
+Prov: `test/clock-seconds.test.mjs` (tre prov: valet och lagringen, texten och förklaringen, kopplingen i
+tidtabellen). Skärmprov i Chromium mot en TrainMeet-server i provet: rubrikens klocka 12:36:00 → 12:36 efter ett
+tryck, kvar efter omladdning, tillbaka med Enter; telefonraden vid 390 px och miniraden vid 844 × 390 px växlar, och
+inget ligger över klockorna där trycket landar.
+
+Publicerad 17 oktober: cda-tkl main `05e5761` (#65), `beahead-ab/cda-tkl-install` main `929927a`. iPhone-appens del
+ligger i trainmeet-iphone #22.
+
 ## 15 oktober 2026: förstudie Träkvista och flera stationer
 
 Casper: ”Kan vi använda cda-tkl och skapa en ny för Benny men för Träkvista? Kan vi t o m se Träkvista som en
