@@ -212,6 +212,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('source', type=Path); parser.add_argument('--panel', help='LayoutEditor-panelens namn (standard: den första)')
     parser.add_argument('--out', type=Path); parser.add_argument('--compare', type=Path, help='befintlig panel.json att jämföra med')
+    parser.add_argument('--check', action='store_true', help='med --out: kontrollera att filen är aktuell i stället för att skriva den')
     args = parser.parse_args()
     raw = args.source.read_bytes(); root = ET.fromstring(raw)
     panel = Layout(root, args.panel).build(hashlib.sha256(raw).hexdigest())
@@ -220,7 +221,11 @@ if __name__ == '__main__':
                    micons=len(panel['micons']), lblocks=len(panel['lblocks']), masts=len(panel['masts']), tdefs=len(panel['tdefs']), sensors=len(panel['sensors']),
                    otherPanels=panel['importNotes']['otherPanels'], unresolvedSegments=len(panel['importNotes'].get('unresolvedSegments', [])))
     print(json.dumps(summary, ensure_ascii=False))
-    if args.out: args.out.write_text(json.dumps(panel, ensure_ascii=False, separators=(',', ':')) + '\n'); print('skrev', args.out)
+    if args.out:
+        content = json.dumps(panel, ensure_ascii=False, separators=(',', ':')) + '\n'
+        if args.check:
+            if not args.out.exists() or args.out.read_text() != content: raise SystemExit('Inaktuell spårplan: ' + str(args.out))
+        else: args.out.parent.mkdir(parents=True, exist_ok=True); args.out.write_text(content); print('skrev', args.out)
     if args.compare:
         ok, report = compare(panel, json.loads(args.compare.read_text()))
         print('\n'.join(report)); print('JÄMFÖRELSE:', 'samma geometri' if ok else 'avvikelser finns')

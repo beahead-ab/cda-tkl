@@ -13,6 +13,7 @@ import { LocoNetClient } from './transport.mjs';
 import { createAuth } from './auth.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
 import { loadProfile } from './profile.mjs';
+import { currentStation, stateDirectory, stationData } from './station.mjs';
 import { BindingConfiguration } from './binding-configuration.mjs';
 import { Configuration } from './configuration.mjs';
 import { TrainInformation } from './train-information.mjs';
@@ -38,16 +39,16 @@ import { StudioReview } from './studio/review.mjs';
 import { signalReportKind } from './signal-report.mjs';
 import { spawn } from 'node:child_process';
 
-const baseProfile=loadProfile();
+const station=currentStation(),baseProfile=loadProfile();
 const port = Number(process.env.CHARLOTTENDAL_PORT || 8910), root = fileURLToPath(new URL('../public', import.meta.url));
-const storage = new Storage(process.env.CHARLOTTENDAL_STATE_DIR || fileURLToPath(new URL('../var', import.meta.url)));
+const storage = new Storage(stateDirectory(process.env, station));
 const auth = createAuth(root, true, process.env, { stateDir: storage.directory });
 // Live eller offline (src/connection-mode.mjs): var kärnans LocoNet-klient ansluter, och LocoBufferns gateway i live.
 const connection=new ConnectionMode({storage,root:fileURLToPath(new URL('..',import.meta.url))});
 const connectionInfo=p=>connection.target(p);
 let profile,client,engine,configuration,trainInformation,panelIndications,recorder,tracker,automation;
 // Panelens geometri, för tågspårningens spårgraf (src/train-tracking.mjs).
-const panelGeometry=JSON.parse(fs.readFileSync(new URL('../public/data/panel.json',import.meta.url),'utf8'));
+const panelGeometry=stationData('panel.json',station);
 const bindingReports=new Map();
 function activationStatus(proposed){
   const deny=reason=>({allowed:false,reason});
@@ -102,9 +103,9 @@ function createRuntime(p){
   const t=new TrainTracker({profile:p,panel:panelGeometry,enabled:target.mode==='simulator',reason:'Tågspårningen följer TKL:s egna tåg när LocoNet inte är ansluten; mot banan är den avstängd tills den är provad där.',log:(kind,message)=>e.log(kind,message)});
   return {profile:p,client:c,engine:e,
     configuration:new Configuration(p,{storage,canActivate:()=>!e.routes.length&&!e.controls.programming.reserved&&!e.yard.requests.length&&!e.storageFault}),
-    trainInformation:new TrainInformation(JSON.parse(fs.readFileSync(new URL('../public/data/train-fields.json',import.meta.url))),p,{storage}),
+    trainInformation:new TrainInformation(stationData('train-fields.json',station),p,{storage}),
     // Vägövergångarna ur profilen när en crossing-regel äger dem, annars ur katalogen.
-    panelIndications:new PanelIndications(p.indications||JSON.parse(fs.readFileSync(new URL('../public/data/indications.json',import.meta.url))),p),
+    panelIndications:new PanelIndications(p.indications||stationData('indications.json',station),p),
     recorder:new TelegramRecorder(storage.directory,p,{connectionInfo:target}),
     // Tågspårningen provas i simulering först; mot riktig bana är den avstängd (docs/tagsparning.md).
     tracker:t,
@@ -215,6 +216,9 @@ const server = http.createServer(async (req, res) => {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
     if (await auth.handle(req, res, url)) return;
     const expires = await auth.authenticate(req, url);
+    // Studio bygger på Charlottendals källor (Cda60.xml, regelkorten, MGP-korten). För en annan station finns det ännu
+    // inget Studio-underlag; att visa Charlottendals vore fel, så Studio svarar att det saknas.
+    if (!station.builtIn && url.pathname.startsWith('/api/studio')) return json(res, { error: `Studio finns ännu bara för Charlottendal. ${station.title} saknar Studio-underlag.` }, 404);
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (url.pathname === '/api/state') return json(res, snapshot());
       if(url.pathname==='/api/connection')return json(res,connectionView({devices:true}));
@@ -231,7 +235,7 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(200,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Disposition':'attachment; filename="charlottendal-mgp.json"'});return res.end(req.method==='HEAD'?undefined:JSON.stringify(doc,null,2)+'\n');}
       // A preview only: the ranger's own targets are a narrower list, never a wider one.
       if(url.pathname==='/api/route-targets')return json(res,{targets:engine.routeTargets(url.searchParams.get('from'),url.searchParams.get('kind')||'main',url.searchParams.get('operator')==='ranger'?'ranger':'tkl')});
-      if (url.pathname === '/api/config') { const {routeAlternatives,...panelProfile}=profile; return json(res, { ...panelProfile,release,bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: auth.mode === 'external' ? '/account' : null, authMode: auth.mode, onboarding: (v => ({ done: v.done, remaining: v.remaining, steps: v.steps.map(x => ({ id: x.id, label: x.label, done: x.done, skipped: x.skipped })) }))(onboarding.view(onboardingContext())) }); }
+      if (url.pathname === '/api/config') { const {routeAlternatives,...panelProfile}=profile; return json(res, { ...panelProfile,release,station:{id:station.id,title:station.title,signature:station.signature||null},bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: auth.mode === 'external' ? '/account' : null, authMode: auth.mode, onboarding: (v => ({ done: v.done, remaining: v.remaining, steps: v.steps.map(x => ({ id: x.id, label: x.label, done: x.done, skipped: x.skipped })) }))(onboarding.view(onboardingContext())) }); }
       if (url.pathname === '/api/train-information') return json(res, {...trainInformation.snapshot(),...trainInformation.catalog()});
       if(url.pathname==='/api/bindings')return json(res,bindings.view());
       if(url.pathname==='/api/bindings/export'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','Content-Disposition':'attachment; filename=charlottendal-driftprofil.json'});return res.end(req.method==='HEAD'?undefined:JSON.stringify(bindings.export(),null,2));}
@@ -251,6 +255,8 @@ const server = http.createServer(async (req, res) => {
         req.on('close', () => { streams.delete(res); clearTimeout(expiry); }); return;
       }
       if (url.pathname.startsWith('/api/')) return json(res, { error: 'Finns inte' }, 404);
+      // En annan station har sin egen data/ (panel.json, signalregister …). Charlottendals filer lämnas aldrig ut i dess ställe.
+      if (!station.builtIn && url.pathname.startsWith('/data/')) return staticFile(res, station.dataDir, decodeURIComponent(url.pathname.slice(5)));
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
     const data = await body(req,65536);
@@ -375,7 +381,7 @@ const server = http.createServer(async (req, res) => {
 let tick, publish;
 // CHARLOTTENDAL_LISTEN=0.0.0.0 lets the rangerare's station reach TKL over the layout's network.
 server.listen(port, process.env.CHARLOTTENDAL_LISTEN || '127.0.0.1', () => {
-  console.log(`Charlottendal TKL: http://127.0.0.1:${port}`); connection.start(); client.start();
+  console.log(`${station.title} TKL: http://127.0.0.1:${port}`); connection.start(); client.start();
   tick = setInterval(() => {protect(() => engine.tick());if(Date.now()-tracked>300)track();playTraffic();automate();recorder.tick();modelClock.checkpoint();trainMeet.tick();if(Date.now()-clockPublished>1000){dirty=true;clockPublished=Date.now();}}, 100);
   publish = setInterval(() => {
     if (!dirty) return; dirty = false; const text = `data: ${JSON.stringify(snapshot())}\n\n`;

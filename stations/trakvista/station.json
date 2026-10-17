@@ -1,0 +1,95 @@
+{
+  "id": "trakvista",
+  "title": "Träkvista",
+  "signature": "Tk",
+  "source": "Trakvista.xml",
+  "panel": "Träkvista",
+  "format": "logixng",
+  "groups": {
+    "main": "Ställa huvudtågväg",
+    "shunt": "Ställa växeltågväg",
+    "detection": "Spårledningar"
+  },
+  "verticalEastbound": "down",
+  "verticalEastboundNote": "JMRI anger öst och väst även på lodrätt spår. Ändbommen vid 4s (S4s österut, spåret nedåt) och A6 (1/9 österut mot C nedåt) visar att österut är nedåt i Träkvistas ritning.",
+  "buttons": {
+    "htvA": {
+      "label": "A",
+      "block": "SA2"
+    },
+    "htvB": {
+      "label": "B",
+      "block": "SB2"
+    },
+    "htvC": {
+      "label": "C",
+      "block": "SC2"
+    },
+    "htvI": {
+      "label": "Spår I",
+      "block": "SI"
+    },
+    "htvII": {
+      "label": "Spår II",
+      "block": "SII"
+    },
+    "htvIII": {
+      "label": "Spår III",
+      "block": "SIII"
+    },
+    "htvIIIA": {
+      "label": "Spår IIIa",
+      "block": "SIIIa"
+    },
+    "htvIIIC": {
+      "label": "Spår IIIc",
+      "block": "SIIIc"
+    }
+  },
+  "lines": {
+    "A": {
+      "button": "htvA",
+      "label": "Linje A",
+      "side": "left",
+      "neighbour": "Bilbo",
+      "singleTrack": true,
+      "entrySignal": "2/1",
+      "exitSignal": "2/10"
+    },
+    "B": {
+      "button": "htvB",
+      "label": "Linje B",
+      "side": "right",
+      "neighbour": "Charlottendal",
+      "singleTrack": true,
+      "entrySignal": "2/2",
+      "exitSignal": "2/9"
+    },
+    "C": {
+      "button": "htvC",
+      "label": "Linje C",
+      "side": "right",
+      "neighbour": null,
+      "singleTrack": true,
+      "entrySignal": "1/2",
+      "exitSignal": "1/9"
+    }
+  },
+  "linesNote": "Grannarna A och B enligt Bennys skärmbild; etiketterna kommer i JMRI från konfigurationsservern. Linje C har ingen ansluten station (lila linje, etiketten XX).",
+  "localTurnouts": {
+    "Vx10": "IT4",
+    "Vx11": "IT3",
+    "Vx12": "IT2",
+    "Vx13": "IT1"
+  },
+  "localNote": "Benny 15 oktober: ofyllda spår är endast lokalt kontrollerbara, övrigt ska kunna fjärrstyras. Växlarna 10–13 är interna JMRI-växlar utan LocoNet-adress. Växel 22a och 23 är ofyllda av misstag och ska vara fyllda (LT1 och LT2).",
+  "transport": {
+    "host": "127.0.0.1",
+    "port": 8912
+  },
+  "panelStyle": {
+    "hiddenTracks": "local-outline",
+    "shuntButtons": "visible"
+  },
+  "panelStyleNote": "I Bennys panel är de ofyllda spåren dolda segment och växlar i JMRI (hidden). TKL ritar dem som konturer och märker dem lokala; Charlottendals dolda segment ritas inte, som förut. Växeltågvägarna läggs med Bennys vtv-knappar vid signalerna; i Charlottendal är tvv-knapparna dolda och växling startas från signalen."
+}

@@ -1856,3 +1856,24 @@ enkelspår med körriktning, mod68, och sex CSV-tabeller utanför XML. Förslag:
 `stations/`, en station per installation; två till tre veckor. Bennys fil ligger i `stations/trakvista/`. Ingen
 Charlottendal-funktion ändrad; 468 prov gröna.
 
+## 17 oktober 2026: Träkvista körs i cda-tkl
+
+Casper: ”Här är mer information. Kolla om det går att kopiera cda-tkl-repot och att du där kan snurra upp Träkvista, så
+kan vi sen jämföra stationerna och om det skulle gå att skapa en gemensam plattform.” Benny skickade 38 CSV-tabeller ur
+sin JMRI-profil (`Tk-csvfiler.zip`): knapplistor, blockfärger, texter, tidtabell och blocklistan för varje tågväg.
+
+Kopian är branchen `claude/trakvista-station-config-3aacbi`, skild från main och webbdriften. Träkvista körs med samma
+kärna, simulator och panel som Charlottendal och väljs med `CHARLOTTENDAL_STATION=trakvista` (`npm run start:trakvista`);
+utan variabeln startar Charlottendal som förut, och dess genererade filer är oförändrade. Nytt: `src/station.mjs`
+(stationsval, stationens data och `var/<id>/`), `scripts/import-logixng.py` (regler ur LogixNG),
+`scripts/make-station-profile.mjs` (drift- och fältprofil) och `stations/trakvista/` med station.json, källan, CSV-filerna
+och de genererade filerna. Kärnan fick dubbel korsningsväxel och riktning på lodrätt spår (Träkvistas C-linje); panelen
+fick korsningsväxeln, stationens egna växlingsknappar (vtv), ofyllda lokala spår och stationens namn.
+
+Resultat: 27 huvudtågvägar och 30 växeltågvägar, inga undantagna, alla lagda, klarerade och upplösta mot simulatorn i
+`test/trakvista.test.mjs` och över servern med simulerad LocoNet. 29 av 32 CSV-tabeller stämmer exakt med TKL:s
+tågvägar; två är inre steg i huvudtågvägarna och `23-37.csv` ser ut att vara kopierad från 2/4 → 2/6. Till Benny: fem
+Jython-skript saknas, tre växlar har avvikande återrapport i XML (Vx31, Vx21a, Vx21b), och växlarna 10–13 är interna utan
+LocoNet-adress. Kvar: linjerna A–C med körriktning och TAM, återrapport via två sensorer, spärr av lokala spår, mod68,
+Studio. Rekommendation: gemensam plattform i stället för två kopior. Jämförelsen i [Träkvista i cda-tkl](trakvista.md).
+
