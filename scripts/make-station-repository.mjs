@@ -20,7 +20,7 @@ if (!target || !/^[a-z0-9-]+$/.test(target.id) || !target.name || !/^[\w.-]+\/[\
 const identity = Object.fromEntries([...read('packaging/identity.env').matchAll(/^(TKL_\w+)=(.*)$/gm)].map(m => [m[1], m[2]]));
 const values = { TKL_ID: target.id, TKL_NAME: target.name, TKL_STATION: id, TKL_REPOSITORY: target.repository };
 const changed = [];
-const write = (name, content) => { if (read(name) !== content) { fs.writeFileSync(file(name), content); changed.push(name); } };
+const write = (name, content) => { if (!fs.existsSync(file(name)) || read(name) !== content) { fs.writeFileSync(file(name), content); changed.push(name); } };
 const replaceAll = (text, from, to) => text.split(from).join(to);
 
 write('packaging/identity.env', read('packaging/identity.env').replace(/^(TKL_\w+)=.*$/gm, (line, key) => key in values ? `${key}=${values[key]}` : line));
