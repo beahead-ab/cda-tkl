@@ -76,7 +76,7 @@ Rättelser i kärnan hämtas från cda-tkl:
 
 ```sh
 git remote add cda-tkl https://github.com/beahead-ab/cda-tkl.git   # en gång
-git pull cda-tkl main
+git pull --no-rebase cda-tkl main
 node scripts/make-station-repository.mjs trakvista                  # Träkvistas identitet igen
 ```
 
