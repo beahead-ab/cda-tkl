@@ -25,7 +25,7 @@ import { PanelIndications } from './panel-indications.mjs';
 import { TrainMeet } from './trainmeet.mjs';
 import { ModelClock } from './model-clock.mjs';
 import { describeProtocol, TelegramRecorder } from './telegram-recorder.mjs';
-import { UpdateCheck, UPDATE_UNITS } from './update-check.mjs';
+import { UpdateCheck, UPDATE_UNITS, installRepository } from './update-check.mjs';
 import { studioData, studioRules, buildRegistry, detectionInventory } from './studio/index.mjs';
 import { CardInventory, mgpSummary } from './studio/cards.mjs';
 import { Measurements } from './studio/measure.mjs';
@@ -207,7 +207,7 @@ const release=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.u
 // makes it one, so Inställningar → Uppdatering can update it from cda-tkl-install. On Render, deploy/render
 // sets the kind and RENDER_DEPLOY_HOOK_URL (a secret set in Render) lets the panel start a new build.
 const installKind=process.env.CHARLOTTENDAL_INSTALL_KIND||(fs.existsSync('/usr/local/sbin/charlottendal-update')?'web':'');
-const updateCheck=installKind?new UpdateCheck({current:release,kind:installKind,statusFile:path.join(storage.directory,'update.json'),readFile:file=>fs.readFileSync(file,'utf8'),
+const updateCheck=installKind?new UpdateCheck({current:release,kind:installKind,repository:installRepository(),product:station.title+' TKL',statusFile:path.join(storage.directory,'update.json'),readFile:file=>fs.readFileSync(file,'utf8'),
   writeFile:(file,text)=>{fs.writeFileSync(file+'.tmp',text,{mode:0o640});fs.renameSync(file+'.tmp',file);},hook:process.env.RENDER_DEPLOY_HOOK_URL}):null;
 updateCheck?.start();
 const snapshot = () => {const state=engine.snapshot();return { ...state,release,update:updateCheck?.view()??null,connectionInfo:connectionInfo(profile),connectionMode:connectionView(),destinations:destinations.view(),streamDeck:streamDeckLayouts.view(),bindingVersion:bindings.data.activeVersion,bindingActivation:activationStatus(), recordings:recorder.view(),clock:modelClock.snapshot(),trainMeet:trainMeet.view(),panelIndications:panelIndications.snapshot(state),trace, configurationVersion:configuration.data.activeVersion,trainInformation:trainInformation.snapshot(),trainTracking:tracker.view(),trafficTrains:trafficTrains.view(),automation:automation.view() };};
@@ -320,7 +320,8 @@ const server = http.createServer(async (req, res) => {
         engine.log('update','Render bygger '+(updateCheck.view().latest||'senaste versionen')+'. Webbdriften startar om när bygget är klart.');dirty=true;
         return json(res,{started:true});
       }
-      const unit=UPDATE_UNITS[updateCheck.kind];
+      // Pi:ns uppdateringstjänst heter som installationen (cda-tkl-update, tk-tkl-update för Träkvista).
+      const unit=updateCheck.kind==='raspberry-pi'&&/^[\w.-]+\.service$/.test(process.env.CHARLOTTENDAL_UPDATE_UNIT||'')?process.env.CHARLOTTENDAL_UPDATE_UNIT:UPDATE_UNITS[updateCheck.kind];
       const run=spawn('systemctl',['start','--no-block',unit],{stdio:'ignore'});
       const code=await new Promise(r=>{run.on('error',()=>r(-1));run.on('exit',r);});
       if(code!==0)return json(res,{error:'Uppdateringen kunde inte startas (systemctl '+code+'). Kör sudo '+unit.replace('.service','')+' på '+(updateCheck.kind==='web'?'servern':'Pi:n')+'.'},409);

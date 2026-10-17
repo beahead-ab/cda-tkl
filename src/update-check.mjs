@@ -2,10 +2,15 @@
 // newer release exists, at start, every hour, and when Uppdatering asks. Only reads one small file;
 // sends nothing about this installation. The web deployment checks too: on its own server
 // (charlottendal-update installed) and on Render (deploy/render sets the kind).
-export const UPDATE_URL='https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/package.json';
+// Förrådet är Charlottendals cda-tkl-install om installationen inte anger ett annat (CHARLOTTENDAL_INSTALL_REPOSITORY,
+// som installationen skriver för en annan station, till exempel beahead-ab/Tk-TKL för Träkvista).
+export const DEFAULT_REPOSITORY='beahead-ab/cda-tkl-install';
+export const installRepository=(env=process.env)=>/^[\w.-]+\/[\w.-]+$/.test(env.CHARLOTTENDAL_INSTALL_REPOSITORY||'')?env.CHARLOTTENDAL_INSTALL_REPOSITORY:DEFAULT_REPOSITORY;
+export const repositoryUrls=repository=>({url:`https://raw.githubusercontent.com/${repository}/main/package.json`,releasesUrl:`https://raw.githubusercontent.com/${repository}/main/public/releases.json`});
+export const UPDATE_URL=repositoryUrls(DEFAULT_REPOSITORY).url;
 // What each release did, headings only (public/releases.json): read beside the version
 // so Inställningar → Uppdatering can say what a newer release brings.
-export const RELEASES_URL='https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/public/releases.json';
+export const RELEASES_URL=repositoryUrls(DEFAULT_REPOSITORY).releasesUrl;
 // web: the deployment at cda-tkl.trainmeet.app, which has charlottendal-update installed.
 // render: the same deployment on Render since 6 October 2026 (deploy/render): Render builds cda-tkl main
 // into a container, which cannot update itself; its Deploy Hook starts a new build when one is set.
@@ -19,9 +24,9 @@ const IN_PROGRESS=new Set(['fetching','installing','backup','restarting']);
 export const UPDATE_UNITS={'raspberry-pi':'cda-tkl-update.service',web:'charlottendal-update.service'};
 export const newer=(a,b)=>{const x=String(a).split(/[.+-]/).map(Number),y=String(b).split(/[.+-]/).map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d>0;}return false;};
 export class UpdateCheck{
-  constructor({current,kind,fetcher=fetch,now=Date.now,url=UPDATE_URL,releasesUrl=RELEASES_URL,intervalMs=3600000,statusFile=null,readFile=null,writeFile=null,hook=''}){
+  constructor({current,kind,fetcher=fetch,now=Date.now,repository=DEFAULT_REPOSITORY,product='Charlottendal TKL',url=repositoryUrls(repository).url,releasesUrl=repositoryUrls(repository).releasesUrl,intervalMs=3600000,statusFile=null,readFile=null,writeFile=null,hook=''}){
     if(!KINDS.has(kind))throw Error('Okänd installationstyp: '+kind);
-    Object.assign(this,{current,kind,fetcher,now,url,releasesUrl,intervalMs,statusFile,readFile,writeFile,hook:kind==='render'?renderHook(hook):''});this.runCache={text:null,value:null};this.latest=null;this.checkedAt=0;this.error='';this.timer=null;this.newReleases=[];
+    Object.assign(this,{current,kind,fetcher,now,repository,product,url,releasesUrl,intervalMs,statusFile,readFile,writeFile,hook:kind==='render'?renderHook(hook):''});this.runCache={text:null,value:null};this.latest=null;this.checkedAt=0;this.error='';this.timer=null;this.newReleases=[];
   }
   start(delayMs=30000){this.settle();const run=()=>this.check().catch(()=>{});this.timer=setTimeout(()=>{run();this.timer=setInterval(run,this.intervalMs);this.timer.unref?.();},delayMs);this.timer.unref?.();}
   async check(){
@@ -69,5 +74,5 @@ export class UpdateCheck{
     const to=this.latest||'senaste versionen';
     this.write('restarting','Render bygger '+to+'. Webbdriften startar om när bygget är klart, vanligen inom tio minuter.',this.current,this.latest||'');
   }
-  view(){return {kind:this.kind,current:this.current,latest:this.latest,available:!!this.latest&&newer(this.latest,this.current),newReleases:this.newReleases,checkedAt:this.checkedAt,error:this.error,canStart:this.kind==='render'?!!this.hook:!!UPDATE_UNITS[this.kind],run:this.run()};}
+  view(){return {kind:this.kind,repository:this.repository,product:this.product,current:this.current,latest:this.latest,available:!!this.latest&&newer(this.latest,this.current),newReleases:this.newReleases,checkedAt:this.checkedAt,error:this.error,canStart:this.kind==='render'?!!this.hook:!!UPDATE_UNITS[this.kind],run:this.run()};}
 }
