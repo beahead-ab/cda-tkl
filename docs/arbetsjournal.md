@@ -1939,3 +1939,27 @@ går att göra så med Charlottendals cda-tkl.”
   github.com är spärrad i containerns nät och provades därför med `CDA_TKL_SOURCE`.
 
 485 enhetsprov gröna i cda-tkl.
+
+## 17 oktober 2026: Tk-TKL helt separat från Charlottendal
+
+Casper: ”Jag tycker det är bra om vi kör helt separata, TKL med Träkvista och CDA:s, i två varsitt GitHub.” Tk-TKL
+var först en kopia av hela cda-tkl, med Charlottendals data, arbetsjournalen och historiken; det passar inte när Benny
+ska få tillgång.
+
+- **Tk-TKL publiceras ur cda-tkl** med `deploy/publish-station.sh trakvista`, som cda-tkl-install: programmet,
+  `stations/trakvista/`, dokumenten i `installation.docs`, installationerna och de prov som inte läser Charlottendals
+  filer. Charlottendals data (`profiles/`, `public/data/` med Cda60.xml), generatorer, webbdriftens uppdaterare och
+  prov (`deploy/charlottendal-only.txt`), arbetsjournalen och driftsättningen stannar i cda-tkl. Proven körs i paketet
+  före varje publicering.
+- **Historiken ersatt:** Tk-TKL har två commits, *Publicerad från cda-tkl bf2c195* (`--first`) och *a3d8ad7*.
+- **Rättelser från Tk-TKL** tas in med `git format-patch | git am -3`; publiceringen stannar om en ändring i Tk-TKL
+  saknas i cda-tkl. Provat på kopior av båda förråden.
+- **Programmet utan Charlottendal:** standardstationen kommer ur `packaging/identity.env`, och Studios källor läses
+  bara för Charlottendal. Utan det startade Träkvistas server inte i Tk-TKL; ett nytt prov startar Träkvistas server och
+  anläggning som processer och lägger A → Spår II.
+- **Dokumenten delade:** `docs/stationer.md` (bara i cda-tkl) har jämförelsen och publiceringen; `docs/trakvista.md`
+  handlar om Träkvista och följer med.
+
+Provat: 487 prov i cda-tkl och 221 i Tk-TKL:s paket gröna. Installerad från det publicerade Tk-TKL i containern, med tom
+driftdata: 57 tågvägar, A → Spår II lagd genom att klicka i panelen. Kvar i programkoden: Charlottendals handskrivna
+funktioner (Spår 6, rangerbangården, V1–V4, orterna) och versionsnoterna i `public/releases.json`.
