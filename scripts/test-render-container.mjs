@@ -122,13 +122,17 @@ async function browserSmoke() {
   await context.route('**/*', route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort('blockedbyclient'));
   const page = await context.newPage();
   page.on('pageerror', error => browserErrors.push(error.message));
-  page.on('response', response => { if (response.status() >= 400) responseErrors.push(`${response.status()} ${new URL(response.url()).pathname}`); });
+  page.on('response', response => {
+    const resource = new URL(response.url()).pathname;
+    // Chromium kan själv fråga efter en favicon som programmet inte tillhandahåller.
+    if (response.status() >= 400 && resource !== '/favicon.ico') responseErrors.push(`${response.status()} ${resource}`);
+  });
   await page.goto(origin + '/login', { waitUntil: 'domcontentloaded' });
   await page.locator('#login:not([hidden])').waitFor();
   await page.locator('#username').fill(username); await page.locator('#password').fill(password);
   await page.locator('#login button[type="submit"]').click();
   await page.waitForFunction(() => document.querySelector('#track-plan')?.querySelectorAll('*').length > 100);
-  assert.match(await page.locator('footer').innerText(), new RegExp(release.replaceAll('.', '\\.')));
+  assert.match(await page.locator('body > footer').innerText(), new RegExp(release.replaceAll('.', '\\.')));
   await page.screenshot({ path: path.join(artifacts, '01-panel.png'), fullPage: true });
   mark('Webbläsarinloggning och panel med renderad spårplan');
 
