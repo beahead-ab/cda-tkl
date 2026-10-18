@@ -48,7 +48,7 @@ test('stationspaketet behåller källimporten och publiceringen stoppar gamla ge
     const pkg = JSON.parse(fs.readFileSync(path.join(packaged, 'package.json'), 'utf8'));
     assert.ok(pkg.scripts['test:station-traffic']); assert.ok(pkg.scripts['test:station-selection']); assert.ok(pkg.scripts['verify:trakvista']); assert.ok(pkg.scripts['import:trakvista']);
     assert.ok(fs.existsSync(path.join(packaged, 'scripts/import-source.py')));
-    for (const name of ['profiles', 'public/data', 'docs/arbetsjournal.md', 'deploy/publish-station.sh']) {
+    for (const name of ['profiles', 'public/data', 'docs/arbetsjournal.md', 'deploy/publish-station.sh', 'scripts/test-render-container.mjs']) {
       assert.equal(fs.existsSync(path.join(packaged, name)), false, name + ' ska stanna i cda-tkl');
     }
     assert.doesNotMatch(fs.readFileSync(path.join(packaged, '.github/workflows/prov.yml'), 'utf8'), /--if-present/);

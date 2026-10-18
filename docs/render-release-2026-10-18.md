@@ -30,3 +30,10 @@ Behåll den fungerande Render-deployen ovan och en aktuell skyddad säkerhetskop
 ## Resultat
 
 Förberedelse pågår. Ingen merge eller driftsättning är utförd när denna kandidat skrivs. Provresultat, säkerhetskopia, release-PR, faktisk deploy och efterkontroll kompletteras i samma protokoll.
+
+Förberedelse verifierad 18 oktober:
+
+- Samlad release: [PR #89](https://github.com/beahead-ab/cda-tkl/pull/89), utan publicering av installationsförråden.
+- Säkerhetskopia: `/data/release-backups/before-0.82.10-20261018T145421Z.tar.gz`, skapad kl. 16:54:21 svensk tid. Arkivet innehåller 19 filer, varav 12 JSON-filer som lästs och validerats. Storlek 1 719 128 byte, filbehörighet 0600, skyddad katalog. SHA-256: `20a5c9cb9c23a50a780cccceb66dc08f2143facc161c0668eb1b0408ccc02780`. Inga drift- eller autentiseringsfiler laddas upp till GitHub.
+- Faktiskt container- och Chromium-prov är grönt i [39138960895](https://github.com/beahead-ab/cda-tkl/actions/runs/39138960895), på kodhuvudet `cc52c6c`. Inloggning, panel, Studio, Uppdatering, fast station och riktig containeromstart med bevarad session, ort, anteckning och klocka passerar. De fyra skärmbilderna är visuellt granskade. Detta är syntetisk provdata, inte en kontroll av drifttjänsten.
+- Charlottendals nya containerprov stannar i cda-tkl genom `deploy/charlottendal-only.txt`; paketprovet kräver att det inte följer med till Träkvista. Den sista samlade kontrollen körs på releasegrenens slutliga commit före merge.

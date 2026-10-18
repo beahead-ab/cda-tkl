@@ -15,6 +15,7 @@ scripts/make-signal-endpoints.mjs
 scripts/make-train-fields.mjs
 scripts/studio-overview.mjs
 scripts/verify-source.py
+scripts/test-render-container.mjs
 
 # Webbdriftens uppdaterare (Charlottendal på servern)
 packaging/web
