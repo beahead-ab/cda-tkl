@@ -58,13 +58,18 @@ function stationSources(station) {
   if (!station.source) throw Error(`${station.title} saknar sin JMRI-fil; Studio har inget att läsa.`);
   const read = (file, optional = false) => {
     if (!file) return null;
-    try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
+    try {
+      const document = JSON.parse(fs.readFileSync(file, 'utf8'));
+      if (!document || typeof document !== 'object' || Array.isArray(document))
+        throw Error(`${path.basename(file)} måste innehålla ett JSON-objekt.`);
+      return document;
+    }
     catch (e) { if (optional && e.code === 'ENOENT') return null; throw e; }
   };
   const profile = read(station.profile), empty = { sourceHash: profile.sourceHash };
   return { profile, panel: read(station.dataDir + '/panel.json'),
-    coverage: read(station.dataDir + '/route-coverage.json', station.optionalStudioData) || { ...empty, nx: [], excluded: [] },
-    indications: read(station.dataDir + '/indications.json', station.optionalStudioData) || { ...empty, indicators: [] },
+    coverage: read(station.dataDir + '/route-coverage.json', station.optionalStudioData) ?? { ...empty, nx: [], excluded: [] },
+    indications: read(station.dataDir + '/indications.json', station.optionalStudioData) ?? { ...empty, indicators: [] },
     migration: read(station.migration), rules: read(station.rules, true), xml: parseLayoutXml(fs.readFileSync(station.source, 'utf8')),
     station: { id: station.id, title: station.title, sourceName: station.sourceName } };
 }

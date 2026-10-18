@@ -100,6 +100,36 @@ test('Studio tillåter saknad granskad regelfil men avvisar felaktig fil och ann
   }
 });
 
+for (const file of ['profiles/charlottendal-network.json', 'profiles/charlottendal-rules.json', 'public/data/panel.json',
+  'public/data/route-coverage.json', 'public/data/indications.json', 'public/data/migration.json']) {
+  test(`Studio avvisar befintlig ${path.basename(file)} som saknar ett JSON-objekt`, t => {
+    for (const value of [null, false, 0, '', [], true]) {
+      const { dir, root } = sourceFixture(t);
+      fs.writeFileSync(path.join(dir, file), JSON.stringify(value));
+      assert.throws(() => loadSources(root), { message: `${path.basename(file)} måste innehålla ett JSON-objekt.` });
+    }
+  });
+}
+test('Studio ersätter en annan stations valfria data endast när filerna saknas', t => {
+  for (const value of [undefined, null, false, 0, '', []]) {
+    const { dir, root } = sourceFixture(t);
+    const station = { ...currentStation({ CHARLOTTENDAL_STATION: 'charlottendal' }, root),
+      id: 'provstation', optionalStudioData: true, migration: null, rules: null };
+    for (const file of ['route-coverage.json', 'indications.json']) {
+      const target = path.join(dir, 'public/data', file);
+      if (value === undefined) fs.unlinkSync(target);
+      else fs.writeFileSync(target, JSON.stringify(value));
+    }
+    if (value === undefined) {
+      const sources = loadSources(root, station);
+      assert.deepEqual(sources.coverage, { sourceHash: 'provhash', nx: [], excluded: [] });
+      assert.deepEqual(sources.indications, { sourceHash: 'provhash', indicators: [] });
+      assert.equal(sources.migration, null);
+      assert.equal(sources.rules, null);
+    } else assert.throws(() => loadSources(root, station), /måste innehålla ett JSON-objekt/);
+  }
+});
+
 async function freePort() {
   const server = net.createServer();
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
