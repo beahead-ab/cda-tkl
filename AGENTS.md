@@ -57,10 +57,10 @@ något för just det dokumentet.
 
 ## Överlämning 18 oktober 2026
 
-**Publicerat:** 0.82.1 (cda-tkl main `a5d2add`, #72; cda-tkl-install `a4e4ed0`).
+**Publicerat:** 0.82.2 (cda-tkl main `bdb6601`, #78; cda-tkl-install `65039a0`; Tk-TKL `008d18b`).
 
-**Efter 0.82.1:** main har #75 och #76 (Tk-TKL på Render och versionsnoteringar för flera stationer). De ändrar
-`public/` och `packaging/` utan att höja versionen. De finns inte i cda-tkl-install, så nästa release tar med dem.
+**0.82.2** tar med #75 och #76 (versionsnoteringar för flera stationer och Tk-TKL på Render), som ändrade `public/` och
+`packaging/` efter 0.82.1. Både cda-tkl-install och Tk-TKL har 0.82.2.
 
 **Klart i den här omgången:**
 - 0.82.0: TrainMeet ansluts med bara serverns adress och anslutningskoden.
@@ -75,11 +75,13 @@ något för just det dokumentet.
 - Översättningskatalogen är synkad: trainmeet-cloud #83 och trainmeet-tkl #46.
 
 **Öppet:** inga issues och inga öppna PR:er i cda-tkl, trainmeet-server, trainmeet-cloud, trainmeet-tkl, trainmeet,
-trainmeet-iphone, trainmeet-tmbox eller trainmeet-hem. Tk-TKL har inte kontrollerats.
+trainmeet-iphone, trainmeet-tmbox eller trainmeet-hem. Alla lokala grenar hör till pull requests som redan är
+sammanslagna; undantaget är `claude/anslut-sida` (trainmeet-server #200), som stängdes med avsikt.
 
 **Kvar sedan tidigare, låg prioritet:** förslag för mätpunkterna och svar om MGP-genomgången
 (`docs/genomgang-mgp-2026-10-06.md`, Studio → mätning).
 
 **Bra att veta:**
-- Tk-TKL är inte publicerat med 0.82.x i den här omgången.
+- Tk-TKL publiceras med `deploy/publish-station.sh trakvista` efter varje release, som cda-tkl-install. Skriptet kör
+  paketets prov och stannar om Tk-TKL har ändringar som saknas i cda-tkl.
 - Borttagningen av tåg gäller bara med LocoNet ej ansluten. Med LocoNet ansluten rör TKL aldrig tågen.
