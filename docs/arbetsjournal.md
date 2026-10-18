@@ -2166,3 +2166,41 @@ Automaten pausades, frånvaro av lås verifierades och en färsk skyddad backup 
 Efterkontroll i faktisk drift: version 0.82.10, rätt profil/källhash, fungerande befintlig session, panel, Studio (340/49/66), Uppdatering och anläggningsvy, intern förbindelse, inga lagringsfel och samma TrainMeet-parkoppling/publikation/dag/grannar. Privat backupjämförelse bekräftar 13 statiska filer byteoförändrade och samma två användare med bevarade lösenordsuppgifter och roller. Inga driftdata eller hemligheter laddades upp. Automaten återställdes till på; inget nytt trafikförlopp tvingades fram i driften.
 
 Installationsförråden publicerades inte, TrainMeet Server ändrades inte och native installationer är kvar. Charlottendal kör fortsatt fast station på Render. [Slutprotokoll och förslag till steg 2](render-release-2026-10-18.md). Rapporteringen görs i en egen dokumentations-PR som lämnas utan main-merge för att undvika ännu en omstart. Nästa steg är Träkvistas container, därefter uttryckligt godkänd publicering och Caspers egen Render-tjänst; fysisk bana och native stationsval återstår separat.
+
+## 18 oktober 2026 – installationsförråden publicerade som 0.82.10
+
+**Publicerad: 0.82.10 (18 oktober 2026; cda-tkl main `88942ef`, #90; programrelease #89; `beahead-ab/cda-tkl-install` main `e5b89e6`; `beahead-ab/tk-tkl` main `4dac44b`).**
+
+Casper bad att slutföra publiceringen som tidigare stoppats av HTTP 403 i Claude-sessionen. Den befintliga GitHub-anslutningen här hade skrivrätt till båda målförråden. Källan var exakt `88942ef718e1cafbc749f72948bf3568ce3ad4e7`; hela källträdet och källcommitens hash verifierades. `publish-install.sh` hämtades ur #91 (`5f53405`) för att bevara de två användarskripten och de två guiderna. `publish-station.sh trakvista 88942ef` byggde Träkvistapaketet.
+
+Skripten kördes mot lokala provförråd. GitHubs Git-API användes därefter för två vanliga publiceringscommitar med respektive befintligt main-huvud som förälder, och main flyttades med kontroll av förväntad tidigare commit. Installationspaketets träd `0ec94b3cb2ea422d368cead09c8ec60b6738b176` och Träkvistas träd `1fd64647f616a4f74f7fa6e8f16077e2f1a5c330` var exakt lika skriptens lokala resultat, även efter publiceringen. Skillnaden var 35 respektive 57 filer och inga borttagningar. Tk-TKL:s tidigare huvud var själv den senaste publiceringsmarkören `008d18b`, så inga mellanliggande Benny-rättelser fanns att ta in. Installationsförrådet fick taggen `v0.82.10` och en GitHub-release med samma innehåll.
+
+Verifiering: hela CI-kedjan på #91, körning `39160402376`, var grön (`prov`, `station-container`, `render-container`, `windows-syntax`), inklusive paketproven. Den lokala paketkörningen här gav 344 godkända prov och tre miljöfel: sandboxen nekar `listen` på `127.0.0.1` med `EPERM`. Stationens genererade filer och alla 57 tågvägar klarade `verify:trakvista`. Serverproven ändrades eller hoppades inte över för att få ett grönt lokalt resultat; publiceringen stöds av GitHubs godkända körning och identiska programfiler.
+
+Ingen merge av #91, ingen ny programversion och ingen ändring av Render-tjänster eller TrainMeet Server gjordes. Källans main är kvar på `88942ef`; själva publiceringen behöver ingen omstart av Charlottendals Render-tjänst. Rapporten lämnas i en separat dokumentations-PR. Fram till att #91 mergas måste det rättade installationsskriptet användas även vid nästa publicering; main-versionen saknar fortfarande de fyra filerna i arkivlistan.
+## 18 oktober 2026 – containerprov för Träkvistas egen avbildning
+
+Steg 2 i Render-protokollet börjar med att stationens egen Docker-avbildning ska provas separat. `scripts/test-station-container.mjs` bygger ett riktigt stationspaket med `deploy/publish-station.sh` mot ett tomt provförråd utan push, bygger paketets `Dockerfile.render` och kör den på ett internt nät med syntetiska data: tom volym, ägare ur miljön, lösenordsbyte vid första inloggningen, låst station med rätt profil och källhash, webbläsarkontroll av panel, Studio och stationsinställningar, riktig containeromstart och återgång till föregående publicerade version på samma volym. Charlottendals prov och det nya delar infrastrukturen i `scripts/container-prov.mjs`, och båda stannar i cda-tkl (`deploy/charlottendal-only.txt`, paketprovet).
+
+Lokalt finns ingen Docker-tjänst, så själva körningen sker i GitHub-jobbet `station-container`. Här är paketbygget och valet av föregående version provade: paketet blir Träkvista 0.82.10 med egen identitet och Blueprint, och återgången pekar på 0.82.2 (`bdb6601`), som är den version tk-tkl har i dag. Enhetsproven i källan är gröna lokalt (621 av 622; ett Mac-prov hoppas över), liksom syntax- och operationskontrollerna och paketprovet.
+
+Provet hittade att panelens sidfot är statisk text i `public/index.html` och säger *Charlottendal TKL* också i en annan stations installation; rubriken, sidhuvudet och fliknamnet följer stationen. Rättelsen rör `public/` och tas i en egen versionshöjning med publicering. Ingen merge, ingen publicering och ingen ändring på Render ingår; versionen är oförändrad eftersom stationspaketet inte ändras.
+
+## 18 oktober 2026 – containerprovets fynd om återgång
+
+Träkvistas containerprov går igenom i GitHub fram till återgången: ny installation med ägare ur miljön, lösenordsbyte vid första inloggningen, rätt station och profil, panel, Studio och stationsinställningar i webbläsaren, och riktig containeromstart med ägare, session, ort och klocka kvar. Sidorna hanterar att stationen saknar Charlottendals signalregister och införandestatus; provet kräver att det är just de två filerna som saknas.
+
+Återgången till föregående publicerade version startar inte. Felet är reproducerat lokalt: 0.82.2 läser `destinations.json` mot Charlottendals sju linjer (`src/destinations.mjs`), medan stationens egna linjer kom med 0.82.7, så containern avslutas med `Ogiltiga sparade ortsuppgifter`. Provet kräver nu just det utfallet och att 0.82.10 startar igen på samma volym med allt kvar. Följden för drift står i [driftprotokollet](render-release-2026-10-18.md): en rollback av Träkvistas framtida tjänst till en version före 0.82.7 kräver att diskens säkerhetskopia läggs tillbaka. Charlottendal berörs inte, eftersom dess linjer är desamma i båda versionerna.
+
+## 18 oktober 2026 – det intermittenta automatprovet
+
+Provkedjan på pull request #91 föll en gång i `test:integration`, i Träkvistas automatprov genom hela processkedjan: avgångsanmälan var skickad och bekräftad av provets TrainMeet, men TKL:s egen bild av `context` visade fortfarande `departure: none` när provet läste av. Tåget, tågvägarna och spårledningarna var då redan i mål. Det är alltså provets väntevillkor som släpper igenom för tidigt, inte en brist i automaten: TKL hämtar `context` på nytt först när ändringsflödet säger att revisionen ändrats.
+
+Väntevillkoret kräver nu också att TKL:s egen bild hunnit ikapp: rörelsen anmäld som avgången, infartslinjen fri och utfartslinjen i riktning ut. Kontrollerna efteråt är oförändrade. Ingen programkod är ändrad och versionen är oförändrad.
+
+
+## 18 oktober 2026 – samlad release 0.82.11
+
+Casper bad att slutföra återstående punkter. #91 och #92 samlas med sidfotsrättelsen i en release för ett kontrollerat driftbyte. Sidfoten får stationens namn från samma konfiguration som panelrubriken; versionsnumret är 0.82.11. Träkvistas webbläsarprov kräver nu hela rätta sidfotstexten. Återgångsprovet använder föregående publicerade 0.82.10 och kräver fungerande inloggning, samma ägare, session, ortsuppgifter och modellklocka på samma disk, följt av ny start med 0.82.11. Den dokumenterade begränsningen för versioner före 0.82.7 gäller fortfarande.
+
+Kandidaten ska passera hela CI-kedjan före merge. Publicering av installationsförråden och faktisk Render-efterkontroll bokförs först efter genomförandet.

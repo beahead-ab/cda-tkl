@@ -16,6 +16,8 @@ scripts/make-train-fields.mjs
 scripts/studio-overview.mjs
 scripts/verify-source.py
 scripts/test-render-container.mjs
+scripts/test-station-container.mjs
+scripts/container-prov.mjs
 
 # Webbdriftens uppdaterare (Charlottendal på servern)
 packaging/web

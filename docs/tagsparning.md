@@ -6,7 +6,7 @@ när **LocoNet inte är ansluten** och TKL själv kör trafikspelets tåg (sedan
 ansluten](loconet-anslutning.md); före det i simuleringsläget, som i webbdriften). Med LocoNet ansluten är den
 avstängd tills den är provad mot riktig bana.
 
-**Publicerad: 0.82.2** (cda-tkl main `bdb6601`, #78; `beahead-ab/cda-tkl-install` main `65039a0`, 18 oktober). Webbdriften
+**Publicerad: 0.82.10** (cda-tkl main `88942ef`, #90; programrelease #89; `beahead-ab/cda-tkl-install` main `e5b89e6`; tk-tkl `4dac44b`, 18 oktober). Webbdriften
 på Render tar den när Render bygger om main, eller med Uppdatera nu när Deploy Hook är inlagd; datorer som installerats
 med installationsraden kör den igen eller väljer Uppdatering. Tågspårningen kom i 0.73.0, simulerade tåg och upplösning
 vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0 (cda-tkl `45ec00a`, #46). I 0.77.0 rapporterar den egna
@@ -18,6 +18,8 @@ spårningen glömmer dem (se nedan). TrainMeet, som trafikspelets tåg kommer if
 adress och anslutningskoden ([TrainMeet-anslutningen](trainmeet-adapter.md#anslut-med-adress-och-kod--0820)). I 0.82.1
 säger TKL var adressen och koden finns i TrainMeet Server: Drift → Anslut en box. 0.82.2 tar med Uppdateringens och
 Renders ändringar för andra stationer. Spårningen är oförändrad i 0.82.1 och 0.82.2.
+0.82.10 publicerar stationernas egna linjer och trafik, Träkvistas offlineautomat och spårning samt lokalt stationsval genom `npm start`. Återgång av Träkvistas disk till en version före 0.82.7 kräver återställning av säkerhetskopian, se [driftprotokollet](render-release-2026-10-18.md).
+
 På ställverket ligger *Automat* bland driftknapparna under Drift, listan *Spårade tåg* under Drift → Tågnummer, och
 den egna återrapportens sida nås från Studio → Driftsättning → *Egen återrapport ↗*.
 

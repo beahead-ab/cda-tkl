@@ -503,3 +503,7 @@ Med LocoNet ej ansluten kan Automatrutinen följa trafikspelets tåg via station
 ## Station, förslag 0.82.9
 
 Inställningar → Den här datorn → Station visar installerade stationer. Ägaren kan byta när installationen körs via npm start och driftläget tillåter det. Programmet startar om kontrollerat, och varje station behåller sina egna användare och inställningar. Anslut till den stationens TrainMeet uttryckligen efter bytet. Fasta installationer visar varför stationsbyte är låst. [Detaljer och befintliga installationer](stationsval.md).
+
+## Sidfot per station (0.82.11)
+
+Panelens sidfot visar stationens namn ur samma konfiguration som rubriken, följt av TKL och versionsnumret. Träkvista visar Träkvista TKL och Charlottendal visar Charlottendal TKL. Stationsvalet och versionsnumret ändras inte av rättelsen.

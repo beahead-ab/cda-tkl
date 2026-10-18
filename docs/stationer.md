@@ -93,7 +93,7 @@ Träkvista utan stationsspecifik kod, sedan korsningsväxeln och den lodräta ri
 
 [Stationsprovet](stationsprov-2026-10-18.md) beskriver den kontrollerade grunden och förslagen till rättelser. Charlottendals filer ligger kvar i profiles/ och public/data/. En gemensam stationsbeskrivning ändrar läsvägen, inte stationsunderlagen eller driftkatalogen.
 
-Träkvistas A/B/C, manuella trafikflöden, spårning och offlineautomat ingår i 0.82.10 och har kompletta process-/paketprov mot en lokal TrainMeet-provserver. Charlottendal är uppdaterat och kontrollerat i webbläsaren på Render. Träkvistas faktiska grannar och webbläsaracceptans, riktig bana och uppdatering av native installationer återstår. Installationsförråden är inte publicerade med ändringen. [Driftprotokollet](render-release-2026-10-18.md) skiljer de provade miljöerna.
+Träkvistas A/B/C, manuella trafikflöden, spårning och offlineautomat ingår i 0.82.10 och har kompletta process-/paketprov mot en lokal TrainMeet-provserver. Charlottendal är uppdaterat och kontrollerat i webbläsaren på Render. Träkvistas faktiska grannar och webbläsaracceptans, riktig bana och uppdatering av native installationer återstår. Installationsförråden publicerades senare den 18 oktober som 0.82.10: cda-tkl-install `e5b89e6` och tk-tkl `4dac44b`, ur cda-tkl `88942ef`. [Driftprotokollet](render-release-2026-10-18.md) skiljer de provade miljöerna.
 
 ## Förrådet heter nu tk-tkl
 
