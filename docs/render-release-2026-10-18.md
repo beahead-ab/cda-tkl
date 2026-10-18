@@ -64,7 +64,7 @@ Installationsförråden publicerades inte och TrainMeet Server ändrades inte. P
 
 ## Förslag till steg 2
 
-1. Prova Träkvistas egen Docker-avbildning med syntetisk tom disk, första ägare, omstart och återgång. Charlottendals containerprov är klart; Träkvistas avbildning och nya Render-start ska fortfarande provas separat.
+1. Prova Träkvistas egen Docker-avbildning med syntetisk tom disk, första ägare, omstart och återgång. Charlottendals containerprov är klart; Träkvistas avbildning och nya Render-start ska fortfarande provas separat. **Provet finns nu**, se nedan; den verkliga Render-tjänsten återstår.
 2. Före publicering: jämför tk-tkl med senaste publiceringsmarkören, ta in eventuella Benny-rättelser och kör hela publiceringsprovet. Själva publiceringen görs först i en uttryckligen godkänd omgång.
 3. Casper skapar Träkvistas Render-tjänst med egen beständig disk och ägare. Prova rätt station, inloggning, uppdatering/återgång och verkliga, uttryckligt valda TrainMeet-grannar tillsammans med Casper/Benny. Varje station kör och uppdateras separat.
 4. Pi och Mac behåller vanliga installationer med USB, helskärm och Stream Deck. Önskas stationsval i deras befintliga tjänster krävs en separat integration av startövervakaren per plattform, med bevarade driftkataloger och verkliga installationsprov.
@@ -79,3 +79,31 @@ Förberedelse verifierad 18 oktober:
 - Säkerhetskopia: `/data/release-backups/before-0.82.10-20261018T145421Z.tar.gz`, skapad kl. 16:54:21 svensk tid. Arkivet innehåller 19 filer, varav 12 JSON-filer som lästs och validerats. Storlek 1 719 128 byte, filbehörighet 0600, skyddad katalog. SHA-256: `20a5c9cb9c23a50a780cccceb66dc08f2143facc161c0668eb1b0408ccc02780`. Inga drift- eller autentiseringsfiler laddas upp till GitHub.
 - Faktiskt container- och Chromium-prov är grönt i [39138960895](https://github.com/beahead-ab/cda-tkl/actions/runs/39138960895), på kodhuvudet `cc52c6c`. Inloggning, panel, Studio, Uppdatering, fast station och riktig containeromstart med bevarad session, ort, anteckning och klocka passerar. De fyra skärmbilderna är visuellt granskade. Detta är syntetisk provdata, inte en kontroll av drifttjänsten.
 - Charlottendals nya containerprov stannar i cda-tkl genom `deploy/charlottendal-only.txt`; paketprovet kräver att det inte följer med till Träkvista. Den sista samlade kontrollen körs på releasegrenens slutliga commit före merge.
+
+## Träkvistas containerprov
+
+`scripts/test-station-container.mjs` provar stationens egen avbildning på samma sätt som Charlottendals, fast för en ny
+installation. Paketet byggs av `deploy/publish-station.sh` mot ett tomt provförråd utan push, och avbildningen byggs ur
+paketets eget `Dockerfile.render`. Ett eget jobb i `.github/workflows/prov.yml` kör det på varje pull request, med
+protokoll, containerlogg och skärmbilder som artefakt. Infrastrukturen delas med Charlottendals prov i
+`scripts/container-prov.mjs`; inget av det följer med till stationens förråd.
+
+Provet kontrollerar, allt med syntetiska data på ett internt Docker-nät:
+
+- Tom datavolym ger en ny installation: ägaren skapas ur `TKL_OWNER_EMAIL` och `TKL_OWNER_PASSWORD`, `/healthz` svarar
+  running utan väntan på återställning, panelen och Studio kräver inloggning och fel `Host` nekas.
+- Det tillfälliga lösenordet byts vid första inloggningen: skyddade API:er svarar 428 före bytet, och det gamla
+  lösenordet går inte att använda efteråt.
+- Rätt station: `trakvista`, profilen `trakvista-network-v1` med sin källhash, låst stationsval med bara Träkvista i
+  listan, inget lagringsfel och ansluten intern simulator.
+- Webbläsaren: inloggning, renderad spårplan, stationens namn i panelens rubrik och sidhuvud, Studio utan fel med
+  stationens plan, och stationsinställningarna med Träkvista som fast installation. Tre skärmbilder sparas.
+- Riktig containeromstart på samma volym bevarar ägare, session, ortsinställning och modellklocka.
+- Återgång: föregående publicerade version (den senaste i cda-tkl:s historik med ett annat versionsnummer) byggs som
+  egen avbildning, startas på samma volym och ska logga in med det bytta lösenordet och visa samma ortsinställning och
+  klocka. Därefter startas den nya versionen igen.
+
+Kvar att notera: panelens sidfot är statisk text i `public/index.html` och säger *Charlottendal TKL · version X* också i
+en annan stations installation. Versionen stämmer, och rubriken, sidhuvudet och fliknamnet följer stationen. Rättelsen
+rör `public/` och kräver därför en egen versionshöjning med publicering; den ingår inte här. Provet är syntetiskt: ingen
+verklig bana, ingen TrainMeet-parkoppling, ingen publicering och ingen Render-tjänst.

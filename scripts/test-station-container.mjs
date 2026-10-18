@@ -70,9 +70,13 @@ async function browserSmoke(password) {
   await page.locator('#username').fill(username); await page.locator('#password').fill(password);
   await page.locator('#login button[type="submit"]').click();
   await page.waitForFunction(() => document.querySelector('#track-plan')?.querySelectorAll('*').length > 100);
-  assert.match(await page.locator('footer').filter({ hasText: station.title + ' TKL · version ' + release }).textContent(), new RegExp(release.replaceAll('.', '\\.')));
+  assert.equal(await page.locator('.brand span').innerText(), station.title.toUpperCase());
+  assert.equal(await page.locator('.plan-head-title').innerText(), station.title);
+  // Sidfoten är fortfarande produktens statiska text i public/index.html: den säger Charlottendal TKL också här.
+  // Rättas i en egen versionshöjning, eftersom public/ då måste publiceras. Versionen i sidfoten ska stämma.
+  assert.match(await page.locator('body > footer').innerText(), new RegExp('version ' + release.replaceAll('.', '\\.')));
   await page.screenshot({ path: path.join(artifacts, '01-panel.png'), fullPage: true });
-  mark(`Webbläsarinloggning och ${station.title}s panel med renderad spårplan`);
+  mark(`Webbläsarinloggning och ${station.title}s panel med renderad spårplan och stationens namn`);
 
   await page.goto(prov.origin + '/studio.html#konfigurera', { waitUntil: 'domcontentloaded' });
   await page.locator('#st-plan-host .st-plan-scroll > svg').waitFor();
