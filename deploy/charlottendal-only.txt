@@ -5,7 +5,6 @@
 # Generatorer och kontroller för Charlottendals källor (Cda60.xml, handskrivna tabeller)
 scripts/audit-turnout-addresses.py
 scripts/import-operations.py
-scripts/import-source.py
 scripts/make-indications.mjs
 scripts/make-migration.mjs
 scripts/make-network-profile.mjs
@@ -45,6 +44,7 @@ test/signal-switch-report.test.mjs
 test/simulated-trains.test.mjs
 test/source.test.mjs
 test/station-model.test.mjs
+test/station-package.test.mjs
 test/studio-assistant.test.mjs
 test/studio-drafts.test.mjs
 test/studio-measure.test.mjs

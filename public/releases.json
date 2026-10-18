@@ -1,5 +1,12 @@
 [
   {
+    "version": "0.82.4",
+    "date": "2026-10-18",
+    "notes": [
+      "Stationspaketet behåller den delade XML-importören och kräver att stationens genererade filer stämmer före publicering"
+    ]
+  },
+  {
     "version": "0.82.3",
     "date": "2026-10-18",
     "notes": [

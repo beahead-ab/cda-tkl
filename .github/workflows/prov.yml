@@ -23,3 +23,11 @@ jobs:
       - run: npm run -s verify:xml
       - run: npm run verify:trakvista
       - run: npm run -s test:integration
+      - name: Prova Tk-paketet utan publicering
+        shell: bash
+        run: |
+          git config user.name 'TKL paketprov'
+          git config user.email 'paketprov@example.test'
+          remote=$(mktemp -d)/station.git
+          git init --bare -q -b main "$remote"
+          STATION_REMOTE="$remote" STATION_NO_PUSH=1 deploy/publish-station.sh trakvista

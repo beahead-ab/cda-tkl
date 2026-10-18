@@ -33,7 +33,7 @@ Det använder inga produktionsuppgifter och driftsätter inget.
 
 ## Konkreta fynd
 
-1. Tk-paketets borttagningslista tar bort den delade XML-importören. Då försvinner `verify:trakvista` ur package.json, och arbetsflödets `--if-present` döljer det. Rättas separat.
+1. Tk-paketets borttagningslista tar bort den delade XML-importören. Då försvinner `verify:trakvista` ur package.json, och arbetsflödets `--if-present` döljer det. Föreslagen rättelse i egen PR.
 2. `create-owner.mjs` och `recover-user.mjs` väljer `var/` även för Träkvista utan explicit state-variabel. Rättas separat så att verktyg och server väljer samma användarregister.
 3. Mac och Windows använder Charlottendals installationsnamn och kan ersätta en befintlig installation när Tk-TKL installeras. Rättas separat med stationens befintliga identitet; Charlottendals standardvägar bevaras.
 4. Träkvistas trafik från A/B/C är inte färdig. `destination-data.js`, `TrainTracker` och automaten känner Charlottendals linjer och knappnamn. Direkt modulprov ger tom linjemappning och inga automatvägar för Träkvista, trots att manuella tågvägar kan provas. **Träkvistas TrainMeet-trafik och automat ska därför inte beskrivas som godkända.** Det kräver en egen stationsanpassning och processprov med en lokal provserver.
@@ -53,3 +53,7 @@ Därefter kan steg 2 prova befintliga Render-avbildningar, beständig lagring oc
 Casper skapar Träkvistas Render-tjänst och deltar i acceptansprovet. Pi och Mac behåller sina vanliga installationer.
 Ett separat programförråd `tkl`, filflytt för Charlottendal och gemensam tjänst med stationsval kräver ett senare beslut.
 Spår 6, rangerbangården, programmeringsspåret, V1–V4 och automatens spårordning ligger kvar i `src/`.
+
+## Paketrättelsen, 0.82.4
+
+Den delade XML-importören behålls och verifieringen krävs. Det negativa provet stoppar en inaktuell genererad fil före commit. Ett riktigt lokalt Tk-paket gav 230 godkända enhetsprov och två miljöblockerade socketprov; paketets verify:trakvista är grönt. Inget skickades till Tk-TKL eller något annat installationsförråd. GitHub kör ett nytt fullständigt paketprov utan stubbar och utan push.

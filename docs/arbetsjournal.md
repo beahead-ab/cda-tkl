@@ -2106,3 +2106,9 @@ Publicerad 18 oktober: cda-tkl main `bdb6601` (#78), `beahead-ab/cda-tkl-install
 Casper ändrade avgränsningen: inventera och verifiera före större ombyggnad. Charlottendals filer ligger kvar i `profiles/` och `public/data/`. Stationsbeskrivningen anger profiler, Studio-underlag, XML och befintligt TKL-id; servern använder stationens datakatalog för `/data/`. Charlottendals `var/` och hela profilobjektet bevaras. Inga verkliga driftdata har lästs eller ändrats.
 
 Riktade profil- och Studio-prov passerar, inklusive 340/49/66 för Charlottendal och 57/13/25 för Träkvista. HTTP-prov finns för exakta data och stationsgränser. Miljön blockerar lyssningsportar (`EPERM`), så process- och webbläsarprov är inte godkända lokalt. Ett PR-arbetsflöde kör hela provkedjan på GitHub. Protokoll och återstående arbete: [stationsprov](stationsprov-2026-10-18.md). Bara en PR; ingen merge, publicering eller ändring av Render.
+
+## 18 oktober 2026, förslag 0.82.4: obligatoriskt prov av stationspaketet
+
+Inventeringen hittade att den delade XML-importören togs bort ur Tk-paketet. Då försvann verify:trakvista och --if-present dolde det. Importören behålls nu; både publiceringsskriptet och paketets GitHub-prov kräver källverifieringen. Ett verkligt paketbygge mot ett lokalt tomt provförråd visar också att en inaktuell genererad fil stoppar före commit. Paketprovet följer inte med till Tk-TKL.
+
+Riktat paketprov och verify:trakvista gröna. I det byggda Tk-paketet passerade 230 enhetsprov; två processprov stoppades av sandboxens listen EPERM. Ingen push gjordes. Provets npm-installation ersattes enbart i den lokala provmiljön med redan installerade beroenden, eftersom nätverket är blockerat. GitHub-provet gör en vanlig npm ci och provar hela paketet utan push. Se [protokollet](stationsprov-2026-10-18.md).

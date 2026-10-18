@@ -102,3 +102,7 @@ Aktuell publicerad release och provstatus finns i [arbetsjournalen](arbetsjourna
 ## Föreslaget, inte publicerat: 0.82.3
 
 Stationernas läsvägar är samlade utan filflytt. Charlottendals hela profil, källhash, granskade regler och migreringsunderlag bevaras. Driftdata ligger kvar i `var/`, med `CHARLOTTENDAL_STATE_DIR` först. Se [stationsprovet](stationsprov-2026-10-18.md). Ingen merge eller publicering ingår; main driftsätter Charlottendal på Render.
+
+## Föreslaget, inte publicerat: 0.82.4
+
+Stationspaketets XML-importör följer med, och källverifieringen är obligatorisk både vid paketbygge och i stationens GitHub-prov. Ett lokalt paket har verifierats utan push. Se [stationsprovet](stationsprov-2026-10-18.md).
