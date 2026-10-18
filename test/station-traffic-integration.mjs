@@ -15,7 +15,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const available = stationIds().filter(id => ['charlottendal', 'trakvista'].includes(id));
 const cases = {
   charlottendal: { title: 'Charlottendal', stationId: 'meet-cda',
-    journeys: [{ edge: 'Au', out: 'An', block: 'SU2A', button: 'htvSpIA', track: '1a', trackBlock: 'SIA', number: '421' }] },
+    journeys: [{ edge: 'Au', out: 'Bu', block: 'SU2A', button: 'htvSpIA', track: '1a', trackBlock: 'SIA', number: '421' }] },
   trakvista: { title: 'Träkvista', stationId: 'meet-tk',
     journeys: [
       { edge: 'A', out: 'A', block: 'SA2', button: 'htvII', track: 'II', trackBlock: 'SII', number: '7101' },
