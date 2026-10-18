@@ -1,4 +1,10 @@
-# Charlottendal TKL – lägesbild 17 oktober 2026
+# Charlottendal TKL – lägesbild 18 oktober 2026
+
+## Förberedd Render-release 0.82.10
+
+Casper godkände den 18 oktober ett kontrollerat byte av Charlottendals befintliga Render-tjänst. Ändringarna från PR #80–88 samlas i en release-PR för att undvika upprepade driftsättningar under versionskedjan. Installationsförråden och TrainMeet Server ingår inte. Före merge krävs gröna kod-, paket- och containerprov samt säkerhetskopia och identifierad återgång till fungerande Render-deploy. Resultat förs in i [driftprotokollet](render-release-2026-10-18.md).
+
+En senare kontrollkörning av dokumentationsgrenen (#88, 39136533075) hittade ett intermittent överlämnande i Träkvistas automat under normal tågvägsupplösning. Felet rättas före releasen; tidigare gröna körningar ersätter inte den nya kontrollen. Charlottendals profil, sourceHash, stationsunderlag och driftkatalog är oförändrade.
 
 Grunden är körbar med LocoNet ansluten eller ej ansluten; trafiken kommer från trafikspelet på en TrainMeet-server, och TKL har inget simuleringsläge (0.79.0, [LocoNet ansluten eller ej ansluten](loconet-anslutning.md)). Den ersätter ännu inte den fysiska JMRI-installationen fullt ut: LocoNet är provat mot en virtuell LocoBuffer, inte vid banan. Att information finns importerad betyder inte att motsvarande funktion är implementerad eller verifierad mot banan.
 

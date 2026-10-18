@@ -62,10 +62,22 @@ export class TimetableAutomationPolicy{
     }
     this.plans.set(row.id,value);return value;
   }
-  route(plan,kind,state){
+  releasing(plan,kind,route,state){
+    if(!route.autoRelease||!route.cancelRequested||route.state!=='cancelling'||!route.passage?.length)return false;
+    const free=b=>state.blocks[b]?.occupied===false;
+    if(kind==='departure')return route.passage.every(p=>p.state==='clear')&&[plan.track.block,...route.blocks].every(free);
+    const last=route.passage.at(-1),address=this.automation.profile.blocks[plan.track.block]?.address;
+    return route.arrival===true&&last.address===address&&last.state==='occupied'&&route.passage.slice(0,-1).every(p=>p.state==='clear')&&
+      state.blocks[plan.track.block]?.occupied===true&&route.blocks.every(b=>this.automation.profile.blocks[b]?.address===address||free(b));
+  }
+  route(plan,kind,state,finishing=false){
     const pending=plan[kind];if(!pending)return null;
     const candidates=state.routes.filter(r=>r.from===pending.from&&r.to===pending.to&&(!pending.id||r.id===pending.id));
-    if(candidates.length!==1||candidates[0].cancelRequested||candidates[0].state==='cancelling'||!LIVE.has(candidates[0].state))problem('Automatens tågväg saknas, har ändrats eller återtas.');
+    if(candidates.length!==1)problem('Automatens tågväg saknas, har ändrats eller återtas.');
+    const route=candidates[0],normalRelease=finishing&&this.releasing(plan,kind,route,state);
+    // Kärnan begär själv stopp efter en fullständigt följd passage. Vänta då på dess stoppåterrapporter och
+    // låsfrigivning; en manuell återtagning mitt i passagen ska fortfarande lämnas till operatören.
+    if((route.cancelRequested||route.state==='cancelling')&&!normalRelease||!LIVE.has(route.state))problem('Automatens tågväg saknas, har ändrats eller återtas.');
     return candidates[0];
   }
   async command(plan,line,action,meet){
@@ -118,7 +130,7 @@ export class TimetableAutomationPolicy{
     if(plan.arrival?.active&&!plan.arrived){
       const laid=state.routes.find(r=>r.id===plan.arrival.id||!plan.arrival.id&&r.from===plan.arrival.from&&r.to===plan.arrival.to);
       const train=trains.find(t=>t.number===plan.number);
-      if(laid)this.route(plan,'arrival',state);
+      if(laid)this.route(plan,'arrival',state,true);
       else if(train?.head===plan.track.block&&train.certain!==false&&train.state==='station'&&state.blocks[plan.track.block]?.occupied===true)plan.arrived=true;
       else problem('Infarten försvann innan tågets ankomst kunde följas.');
       const line=meet.context.lines.find(l=>l.id===plan.originConnection);
@@ -136,7 +148,7 @@ export class TimetableAutomationPolicy{
     if(plan.departure?.active&&!plan.left){
       const laid=state.routes.find(r=>r.id===plan.departure.id||!plan.departure.id&&r.from===plan.departure.from&&r.to===plan.departure.to);
       let waiting=false;
-      if(laid)this.route(plan,'departure',state);
+      if(laid)this.route(plan,'departure',state,true);
       else{
         if(![plan.track.block,...plan.departure.blocks].every(block=>state.blocks[block]?.occupied===false))problem('Utfarten försvann med belagt eller okänt spår. Kontrollera tågets avgång.');
         if(!trains.some(t=>t.number===plan.number))plan.left=true;

@@ -433,7 +433,10 @@ test('Träkvistas automat följer tidtabellsspår I och verkliga A/B-klareringar
         const [s, f] = await Promise.all([rig.state(), rig.field()]);
         const tracked = s.trainTracking.trains.find(t => t.number === train.number);
         if (tracked) seen.add(tracked.head);
-        if (!s.automation.enabled) throw Error('Automaten lämnade över: ' + s.automation.last + '\n' + JSON.stringify(game.posts));
+        if (!s.automation.enabled) throw Error('Automaten lämnade över: ' + s.automation.last + '\n' + JSON.stringify({
+          posts: game.posts, routes: s.routes, blocks: s.blocks, trains: f.trains,
+          tracking: s.trainTracking.trains, events: s.operatingEvents.slice(-20)
+        }));
         return game.posts.some(p => p.path === '/v1/tkl/movement' && p.departure === 'departed') &&
           s.routes.length === 0 && f.trains.length === 0 && s.trainTracking.trains.length === 0 &&
           Object.values(s.blocks).every(b => b.occupied === false) && s;

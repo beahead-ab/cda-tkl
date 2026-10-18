@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.82.10",
+    "date": "2026-10-18",
+    "notes": [
+      "Samlad uppdatering för stationsstyrd trafik och lokalt stationsval; Charlottendal behåller sina stationsfiler och Render kör fortsatt en fast station",
+      "Träkvistas automat inväntar normal tågvägsupplösning efter passage även när stoppåterrapporten dröjer"
+    ]
+  },
+  {
     "version": "0.82.9",
     "date": "2026-10-18",
     "notes": [

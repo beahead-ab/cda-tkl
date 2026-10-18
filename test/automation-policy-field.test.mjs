@@ -11,8 +11,8 @@ import {stationTraffic} from '../src/station-traffic.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url)));
 const profile=read('stations/trakvista/profiles/network.json'),plant=read('stations/trakvista/profiles/field.json');
 const station=currentStation({CHARLOTTENDAL_STATION:'trakvista'}),panel=stationData('panel.json',station),traffic=stationTraffic(station,profile,panel);
-async function run({opposed=false}={}){
-  let now=100000;const queue=[],log=[],calls=[],spawned=new Set(),requests=[];
+async function run({opposed=false,slowRelease=false}={}){
+  let now=100000;const queue=[],delayed=[],releasing=new Set(),log=[],calls=[],spawned=new Set(),requests=[];
   const edges={A:{stationId:'bilbo',incoming:true},B:{stationId:'cda',incoming:true},C:{stationId:'',incoming:true}};
   let meet={sessionId:'session',revision:3,status:'connected',stale:false,busy:false,context:{publicationId:'pub',day:'day',revision:7,station:{id:'tk'},
     tracks:[{id:'track-i',label:'I'},{id:'track-ii',label:'II'}],trains:[{id:'m401',train_number:'401',track_id:'track-i'}],movements:[],directions:{m401:{from:'bilbo',to:'cda'}},
@@ -44,12 +44,18 @@ async function run({opposed=false}={}){
       if(data.departure){assert.ok(!field.trains.some(t=>t.number===data.trainNumber),'avgång anmäls först när tåget lämnat fältmodellen');record.departure=data.departure;}
       record.revision++;next.context.revision++;meet=next;return next;
     }});
-  const drain=()=>{let guard=20000;while(queue.length&&guard--){const [kind,bytes]=queue.shift();if(kind==='order')field.accept(bytes);else engine.receive(bytes);}assert.ok(guard>0);};
+  const drain=()=>{let guard=20000;while(queue.length&&guard--){const [kind,bytes]=queue.shift();if(kind==='order')field.accept(bytes);else if(slowRelease&&engine.routes.some(r=>r.cancelRequested))delayed.push([now+450,bytes]);else engine.receive(bytes);}assert.ok(guard>0);
+    // Stoppåterrapporten är asynkron också på en snabb dator. Kärnans normala upplösning ska därför synas för
+    // automaten under flera tickar, både efter ankomsten och efter den fullständiga utfarten.
+    while(delayed[0]?.[0]<=now)engine.receive(delayed.shift()[1]);};
   engine.connection(true);field.allReports();drain();automation.set(true);
   for(let i=0;i<130000;i+=50){
     now+=50;field.tick();if(now%1000===0)field.allReports();drain();engine.tick();drain();
     tracker.observe({blocks:engine.blocks,turnouts:engine.turnouts,routes:engine.routes,connected:true,lines:meet.context.lines,edgeInfo:edges});
-    if(now%250===0)await automation.tick({state:{...engine.snapshot(),connected:engine.connected},trains:tracker.view().trains,meet,edges});
+    if(now%250===0){
+      for(const r of engine.routes.filter(r=>r.cancelRequested))releasing.add(r.arrival?'arrival':'departure');
+      await automation.tick({state:{...engine.snapshot(),connected:engine.connected},trains:tracker.view().trains,meet,edges});
+    }
     for(const line of meet.context.lines)if(line.direction==='in'&&line.state==='reserved'&&!spawned.has(line.trainNumber)){
       assert.ok(engine.routes.some(r=>['active','traversing'].includes(r.state)),'tåget sänds först efter godkänd aktiv infart');
       const edge=Object.keys(edges).find(e=>edges[e].stationId===line.neighborId);
@@ -64,6 +70,8 @@ async function run({opposed=false}={}){
   assert.deepEqual(requests.filter(([from])=>from==='htvA'),[['htvA','htvI']]);
   assert.ok(requests.some(([from,to])=>from==='htvI'&&to==='htvB'));
   if(opposed){assert.ok(requests.some(([from,to])=>from==='htvB'&&to==='htvII'));assert.ok(requests.some(([from,to])=>from==='htvII'&&to==='htvA'));}
+  if(slowRelease)assert.deepEqual([...releasing].sort(),['arrival','departure'],'båda normala upplösningarna observerades före låsfrigivningen');
 }
 test('Träkvistas automat kör ett tåg A–I–B med full klarering genom kärna, fältmodell och spårning',()=>run());
 test('Träkvistas automat möter två tåg på tidtabellsspår I/II och skickar dem vidare på enkelspåren',()=>run({opposed:true}));
+test('Träkvistas automat inväntar kärnans normala ankomst- och utfartsupplösning med sen stoppåterrapport',()=>run({slowRelease:true}));

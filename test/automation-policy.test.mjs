@@ -113,6 +113,32 @@ test('ändrad revision, återtagen infart eller omstart lämnas till operatören
   restart.automation.set(true);await restart.tick([restart.train()]);assert.equal(restart.automation.enabled,false,'påslag igen ersätter inte en följd infart');assert.equal(restart.posts.length,0);
 });
 
+test('normal upplösning inväntas utan anmälan, men återtagning utan fullständigt passagebevis lämnas över',async()=>{
+  for(const phase of ['arrival','departure'])for(const fault of ['', 'manual', 'passage', 'occupancy', 'held']){
+    const r=rig();r.automation.set(true);await r.tick();r.state.routes[0].state='active';await r.tick();
+    r.changeLine('tk-bilbo',{state:'occupied',direction:'in',trainNumber:'401'});
+    if(phase==='departure'){
+      r.state.routes=[];r.state.blocks.SI.occupied=true;r.advance(4000);
+      for(let i=0;i<3;i++)await r.tick([r.train()]);
+      r.changeLine('tk-cda',{state:'reserved',direction:'out',trainNumber:'401'});await r.tick([r.train()]);
+      r.state.routes[0].state='active';await r.tick([r.train()]);r.state.blocks.SI.occupied=false;
+    }
+    const route=r.state.routes[0];route.cancelRequested=true;route.state='cancelling';
+    route.passage=[...new Set(route.blocks.map(b=>profile.blocks[b].address))].map(address=>({address,state:'clear'}));
+    if(phase==='arrival'){
+      route.arrival=true;route.passage.at(-1).state='occupied';r.state.blocks.SI.occupied=true;
+    }
+    if(fault==='manual'){if(phase==='arrival')delete route.arrival;else route.passage[0].state='occupied';}
+    if(fault==='passage')route.passage[0].state='pending';
+    if(fault==='occupancy')r.state.blocks[phase==='arrival'?'SI':route.blocks[0]].occupied=null;
+    if(fault==='held')route.state='held';
+    const sent=r.posts.length+r.declarations.length;
+    for(let i=0;i<3;i++)await r.tick(phase==='arrival'?[r.train()]:[]);
+    assert.equal(r.automation.enabled,!fault,phase+' / '+(fault||'normal upplösning'));
+    assert.equal(r.posts.length+r.declarations.length,sent,'inget nytt TrainMeet-steg före låsfrigivning');
+  }
+});
+
 test('ändrad linjeklarering under aktiv infart och ett obekräftat svar ger överlämning',async()=>{
   for(const values of [{state:'free',direction:'',trainNumber:''},{state:'occupied',direction:'in',trainNumber:'402'},{state:'occupied',direction:'out',trainNumber:'401'}]){
     const r=rig();r.automation.set(true);await r.tick();r.state.routes[0].state='active';await r.tick();r.changeLine('tk-bilbo',values);await r.tick();assert.equal(r.automation.enabled,false);assert.equal(r.posts.length,1);
