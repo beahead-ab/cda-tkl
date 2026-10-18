@@ -2064,3 +2064,11 @@ installationsdokumenten. 0.82.1 hänvisar i stället till Drift → Anslut en bo
 Prov: `test/trainmeet.test.mjs` med det nya felbeskedet.
 
 Publicerad 18 oktober: cda-tkl main `a5d2add` (#72), `beahead-ab/cda-tkl-install` main `a4e4ed0`.
+
+## 18 oktober 2026: flera stationer i 0.82.0
+
+Casper bad om 0.82.0 och publicering till cda-tkl-install. Det var redan gjort i en annan session: 0.82.0 (#70) och 0.82.1
+(#72) är publicerade (`beahead-ab/cda-tkl-install` main `a4e4ed0`) och innehåller allt från #69, eftersom de byggdes på
+main efter sammanslagningen. Versionsnoteringarna för 0.82.0 nämnde inte flera stationer; de har nu två rader om det, och
+lägesbilden en. Pull requesten för ett eget 0.82.0 (#74) stängdes utan sammanslagning. Tk-TKL publicerades från main
+(0.82.1). TrainMeet-valet i 0.82.0 är stationsberoende: Träkvista väljer stationen Träkvista och TKL-id `tk-tkl`.
