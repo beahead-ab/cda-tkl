@@ -36,9 +36,10 @@ En annan station tar sin signatur i stället för `cda`: Träkvista blir `tk-tkl
 
 `configure` och `pair` finns kvar i API:t, för prov och äldre klienter.
 
-Koden finns i TrainMeet Server på sidan **Anslut ett ställverk** (`/anslut`), som deltagarvyn länkar till. Sidan
-visar adressen och koden för den som är inloggad som administratör (trainmeet-server #200), och felbeskedet vid en
-nekad kod säger var den finns. Avsnitten nedan beskriver hur anslutningen såg ut före 0.82.0.
+Adressen och koden finns i TrainMeet Server under **Drift → Anslut en box** för den som är inloggad som
+administratör, och koden också under Inställningar → Anslutningskod. Felbeskedet vid en nekad kod och hjälptexten vid
+formuläret säger det (0.82.1). En egen sida för koden (trainmeet-server #200) stängdes: Drift räcker, och rutan där får
+en rad om CDA-TKL (trainmeet-server #201). Avsnitten nedan beskriver hur anslutningen såg ut före 0.82.0.
 
 En separat adapter implementerar TrainMeets HTTP-v1-kontrakt, ursprungligen granskat i commit63f3fd1 (18 september). Den nu angivna demoserverns version har också identifierats och dess matchande källkod granskats enligt nedan. Verklig parkoppling har ännu inte utförts.
 

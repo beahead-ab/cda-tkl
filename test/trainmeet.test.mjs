@@ -162,10 +162,10 @@ test('plain HTTP is accepted on the meet network only: private, link-local and .
 test('a refused pairing code reports the server reason with a hint, as a refusal rather than a gateway error',async()=>{
   const r=rig();const inner=r.fetcher;
   r.service.fetcher=async(url,options)=>url.endsWith('/v1/pair')?new Response(JSON.stringify({message:'Parkopplingskoden är ogiltig eller har gått ut'}),{status:401}):inner(url,options);
-  await assert.rejects(()=>pair(r),e=>e.status===409&&e.message==='Parkopplingskoden är ogiltig eller har gått ut. Koden finns i TrainMeet Server för den som är inloggad som administratör: Anslut ett ställverk i deltagarvyn eller under Drift, och under Inställningar → Anslutningskod. En ny träff ger en ny kod.');
+  await assert.rejects(()=>pair(r),e=>e.status===409&&e.message==='Parkopplingskoden är ogiltig eller har gått ut. Koden finns i TrainMeet Server för den som är inloggad som administratör: Drift → Anslut en box, eller Inställningar → Anslutningskod. En ny träff ger en ny kod.');
   assert.equal(r.saved(),undefined);assert.equal(r.service.view().status,'unpaired');assert.match(r.service.view().error,/ogiltig eller har gått ut/);
   r.service.fetcher=async(url,options)=>url.endsWith('/v1/pair')?new Response('',{status:403}):inner(url,options);
-  await assert.rejects(()=>pair(r),e=>e.status===409&&e.message==='TrainMeet godkände inte anslutningskoden. Koden finns i TrainMeet Server för den som är inloggad som administratör: Anslut ett ställverk i deltagarvyn eller under Drift, och under Inställningar → Anslutningskod. En ny träff ger en ny kod.');
+  await assert.rejects(()=>pair(r),e=>e.status===409&&e.message==='TrainMeet godkände inte anslutningskoden. Koden finns i TrainMeet Server för den som är inloggad som administratör: Drift → Anslut en box, eller Inställningar → Anslutningskod. En ny träff ger en ny kod.');
 });
 test('upstream failures answer 503, never 502 or 504 which the public proxy replaces with its own page',async()=>{
   const r=rig();const inner=r.fetcher;
