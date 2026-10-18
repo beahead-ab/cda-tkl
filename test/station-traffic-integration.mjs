@@ -56,7 +56,7 @@ async function stop(child) {
 
 // Ort-id:n är medvetet andra än A/B/C, Kungsfors och andra standardnamn. En koppling måste sparas av operatören
 // mot stationskatalogen från just denna träff. Ett ockuperat C ligger först omappat och ska då lämnas helt ifred.
-async function trafficGame(ids) {
+async function trafficGame(ids, { automatic = false, observe = async () => ({}) } = {}) {
   let revision = 1;
   const posts = [], pairs = [], requests = [], states = new Map();
   for (const id of ids) {
@@ -72,6 +72,23 @@ async function trafficGame(ids) {
     states.set(def.stationId, { id, ...def, journeys, positioned, trains: [...trains, ...positioned],
       tracks: tracks.map(track => ({ id: def.stationId + '-track-' + track.label.toLowerCase(), station_id: def.stationId, display_label: track.label })),
       movements: {}, lines: journeys.map(j => ({ id: j.connection, state: 'free', from_station_id: null, to_station_id: null, train_number: null })) });
+  }
+  if (automatic) {
+    assert.deepEqual(ids, ['trakvista']);
+    const s = states.get(cases.trakvista.stationId), from = s.journeys.find(j => j.edge === 'A'), to = s.journeys.find(j => j.edge === 'B');
+    s.automatic = { number: '7301', movementId: s.stationId + '-automatic', serviceId: 'service-A-Tk-B',
+      trackId: s.stationId + '-track-i', from, to };
+    const train = s.automatic;
+    s.trains = [{ id: train.movementId, service_id: train.serviceId, station_id: s.stationId,
+      train_number: train.number, track_id: train.trackId, arrival_time: '12:00', departure_time: '12:10' }];
+    s.routes = [
+      { service_id: train.serviceId, station_id: from.neighbor, stop_order: 0, departure_time: '11:55' },
+      { service_id: train.serviceId, station_id: s.stationId, stop_order: 1, arrival_time: '12:00', departure_time: '12:10' },
+      { service_id: train.serviceId, station_id: to.neighbor, stop_order: 2, arrival_time: '12:20' }
+    ];
+    s.movements[train.movementId] = { revision: 1, arrival: 'approaching', departure: 'none', actualTrack: train.trackId };
+    Object.assign(s.lines.find(l => l.id === from.connection), { state: 'requested', from_station_id: from.neighbor,
+      to_station_id: s.stationId, train_number: train.number });
   }
   const common = () => ({ protocol_version: 1, publication_id: 'traffic-process', active_day: 'Dagl' });
   const stationRows = () => [...states.values()].flatMap(s => [{ id: s.stationId, name: s.title },
@@ -96,7 +113,8 @@ async function trafficGame(ids) {
         clock: { configured: true, time: '12:00:00', running: true, speed: 1 },
         connections: [...states.values()].flatMap(s => s.journeys.map(j => ({ id: j.connection,
           station_a_id: s.stationId, station_b_id: j.neighbor, track_type: s.id === 'trakvista' ? 'single' : 'double' }))),
-        trains: [...states.values()].flatMap(s => s.trains) });
+        trains: [...states.values()].flatMap(s => s.trains),
+        ...(automatic ? { routes: [...states.values()].flatMap(s => s.routes || []) } : {}) });
       const state = states.get(data?.station_id || url.searchParams.get('station_id'));
       if (!state) { res.writeHead(404); return send({ error: 'okänd provstation' }); }
       if (url.pathname === '/v1/tkl/context') return send({ ...common(), station: { id: state.stationId, name: state.title },
@@ -105,14 +123,38 @@ async function trafficGame(ids) {
         stations: [{ id: state.stationId }], tracks: state.tracks, trains: state.trains });
       if (url.pathname === '/v1/tkl/movement') {
         assert.ok(state.trains.some(t => t.id === data.movement_id));
-        posts.push({ path: url.pathname, ...data });
+        const observed = automatic ? await observe({ path: url.pathname, ...data }) : {};
+        posts.push({ path: url.pathname, ...data, ...observed });
         state.movements[data.movement_id] = { revision: ++revision, arrival: data.arrival,
           departure: data.departure, actualTrack: data.actual_track || '' };
         return send({ movement: state.movements[data.movement_id] });
       }
       if (url.pathname === '/v1/tkl/clearance') {
         const line = state.lines.find(l => l.id === data.connection_id);
-        assert.ok(line); assert.equal(data.action, 'arrive'); assert.equal(line.state, 'occupied');
+        assert.ok(line);
+        if (automatic) {
+          const observed = await observe({ path: url.pathname, ...data }), train = state.automatic;
+          posts.push({ path: url.pathname, ...data, ...observed });
+          if (data.action === 'accept') {
+            assert.equal(line.id, train.from.connection); assert.equal(line.state, 'requested');
+            assert.equal(line.to_station_id, state.stationId);
+            // Grannen sänder direkt efter godkännandet. Först nu får TrafficTrains ställa tåget utanför A.
+            line.state = 'occupied';
+          } else if (data.action === 'arrive') {
+            assert.equal(line.id, train.from.connection); assert.equal(line.state, 'occupied');
+            Object.assign(line, { state: 'free', from_station_id: null, to_station_id: null, train_number: null });
+          } else if (data.action === 'request') {
+            assert.equal(line.id, train.to.connection); assert.equal(line.state, 'free'); assert.equal(data.train_number, train.number);
+            // Provgrannen beviljar den utgående klareringen i samma svar, med oförändrat tågnummer.
+            Object.assign(line, { state: 'reserved', from_station_id: state.stationId,
+              to_station_id: train.to.neighbor, train_number: train.number });
+          } else if (data.action === 'depart') {
+            assert.equal(line.id, train.to.connection); assert.equal(line.state, 'reserved');
+            assert.equal(line.from_station_id, state.stationId); line.state = 'occupied';
+          } else assert.fail('Oväntad automatklarering: ' + data.action);
+          revision++; return send({ connection: line });
+        }
+        assert.equal(data.action, 'arrive'); assert.equal(line.state, 'occupied');
         posts.push({ path: url.pathname, ...data });
         Object.assign(line, { state: 'free', from_station_id: null, to_station_id: null, train_number: null }); revision++;
         return send({ connection: line });
@@ -336,3 +378,89 @@ test('stationernas manuella trafik, ortskopplingar och sparade lås fungerar i o
     fs.rmSync(base, { recursive: true, force: true, maxRetries: 5 });
   }
 });
+
+test('Träkvistas automat följer tidtabellsspår I och verkliga A/B-klareringar genom hela processkedjan',
+  { skip: !available.includes('trakvista'), timeout: 150000 }, async () => {
+    const base = fs.mkdtempSync(path.join(os.tmpdir(), 'tkl-automatic-traffic-'));
+    fs.writeFileSync(path.join(base, 'local-fetch.mjs'), `const realFetch=globalThis.fetch; globalThis.fetch=(input,options)=>{const u=new URL(typeof input==='string'||input instanceof URL?input:input.url);if(!['127.0.0.1','localhost','[::1]'].includes(u.hostname))throw Error('Processprovet tillåter bara lokal HTTP: '+u.origin);return realFetch(input,options);};\n`);
+    let rig, game;
+    const witness = async command => {
+      const phase = command.path === '/v1/tkl/movement' ? command.departure === 'departed' ? 'departed' : 'arrived' : command.action;
+      const [s, f] = await Promise.all([rig.state(), rig.field()]);
+      assert.equal(s.automation.enabled, true, 'automatik på vid ' + phase);
+      const train = f.trains.find(t => t.number === '7301'), tracked = s.trainTracking.trains.find(t => t.number === '7301');
+      if (phase === 'accept' || phase === 'depart') {
+        const from = phase === 'accept' ? 'htvA' : 'htvI', to = phase === 'accept' ? 'htvI' : 'htvB';
+        const route = s.routes.find(r => r.from === from && r.to === to);
+        assert.ok(route && ['active', 'traversing'].includes(route.state) && !route.cancelRequested,
+          phase + ' skickas först efter aktiv och återrapporterad tågväg ' + from + ' → ' + to);
+        if (phase === 'accept') {
+          assert.equal(train, undefined, 'inget tåg ställs ut innan grannen fått infarten godkänd');
+          assert.equal(s.blocks.SA2.occupied, false);
+        }
+      } else if (['arrived', 'arrive', 'request'].includes(phase)) {
+        assert.equal(s.routes.length, 0, phase + ': infarten ska vara upplöst');
+        assert.equal(s.blocks.SI.occupied, true, phase + ': tåget ska stå på tidtabellsspår I');
+        assert.equal(tracked?.head, 'SI'); assert.equal(tracked?.certain, true);
+        assert.equal(train?.position, 'htvI'); assert.equal(train?.standing, true);
+      } else if (phase === 'departed') {
+        assert.equal(s.routes.length, 0, 'utfartens lås är frigivna före avgångsanmälan');
+        assert.equal(train, undefined, 'tåget har lämnat Field före avgångsanmälan');
+        assert.equal(tracked, undefined, 'spårningens eftersläpning är avslutad före avgångsanmälan');
+      } else assert.fail('Oväntat steg i automatprovet: ' + phase);
+      return { observed: { phase, routeStates: s.routes.map(r => ({ from: r.from, to: r.to, state: r.state })),
+        trackOccupied: s.blocks.SI.occupied, fieldTrain: train ? { position: train.position, standing: train.standing } : null,
+        trackedHead: tracked?.head || '' } };
+    };
+    try {
+      game = await trafficGame(['trakvista'], { automatic: true, observe: witness });
+      rig = await stationProcess('trakvista', base);
+      await rig.ready(); await rig.login(true);
+      const connected = await rig.post('trainmeet/connect', { origin: game.origin, code: 'test-code' });
+      const def = game.states.get(cases.trakvista.stationId), train = def.automatic;
+      assert.equal(connected.stationId, def.stationId);
+      assert.deepEqual(connected.context.directions[train.movementId], { from: train.from.neighbor, to: train.to.neighbor },
+        'riktningen kommer ur det enda tågets verkliga serviceföljd');
+      assert.equal(connected.context.trains.length, 1, 'en entydig tidtabellsrad');
+      assert.equal(connected.context.tracks.find(t => t.id === train.trackId)?.label, 'I');
+      await bind(rig, 'A', train.from.neighbor); await bind(rig, 'B', train.to.neighbor);
+      const initial = await rig.state();
+      assert.equal(initial.trainMeet.context.lines.find(l => l.id === train.from.connection)?.state, 'requested');
+      assert.equal(initial.routes.length, 0); assert.equal((await rig.field()).trains.length, 0);
+      assert.equal((await rig.post('automation', { enabled: true })).enabled, true);
+      const seen = new Set();
+      const finished = await rig.wait(async () => {
+        const [s, f] = await Promise.all([rig.state(), rig.field()]);
+        const tracked = s.trainTracking.trains.find(t => t.number === train.number);
+        if (tracked) seen.add(tracked.head);
+        if (!s.automation.enabled) throw Error('Automaten lämnade över: ' + s.automation.last + '\n' + JSON.stringify(game.posts));
+        return game.posts.some(p => p.path === '/v1/tkl/movement' && p.departure === 'departed') &&
+          s.routes.length === 0 && f.trains.length === 0 && s.trainTracking.trains.length === 0 &&
+          Object.values(s.blocks).every(b => b.occupied === false) && s;
+      }, 'automatens A → spår I → B inklusive verklig väntetid och avgångsanmälan', 120000);
+      assert.equal(finished.automation.enabled, true, 'automaten kör vidare efter tågets passage');
+      assert.ok(seen.has('SA2'), 'rätt inkommande yttre block observerades');
+      assert.ok(seen.has('SI'), 'tåget stannade på det tidtabellsvalda spåret');
+      assert.ok(seen.has('SB2'), 'tåget följdes till rätt utgående yttre block');
+      assert.ok(finished.trainTracking.lines.some(t => t.number === train.number && t.direction === 'out' && t.edge === 'B'));
+      assert.deepEqual(game.posts.map(p => p.observed.phase), ['accept', 'arrived', 'arrive', 'request', 'depart', 'departed'],
+        'varje klarering och tåganmälan skickas en gång och i säker ordning');
+      const [accepted, arrived, received, requested, departed, declared] = game.posts;
+      assert.equal(accepted.connection_id, train.from.connection);
+      assert.equal(arrived.movement_id, train.movementId); assert.equal(arrived.actual_track, train.trackId);
+      assert.equal(arrived.arrival, 'arrived'); assert.equal(received.connection_id, train.from.connection);
+      assert.equal(requested.connection_id, train.to.connection); assert.equal(requested.train_number, train.number);
+      assert.equal(departed.connection_id, train.to.connection); assert.equal(declared.movement_id, train.movementId);
+      assert.equal(declared.departure, 'departed');
+      assert.equal(finished.trainMeet.context.movements.find(m => m.id === train.movementId)?.departure, 'departed');
+      assert.equal(finished.trainMeet.context.lines.find(l => l.id === train.from.connection)?.state, 'free');
+      assert.equal(finished.trainMeet.context.lines.find(l => l.id === train.to.connection)?.direction, 'out');
+      assert.ok(finished.operatingEvents.some(e => e.kind === 'automation' && /A → Spår I/.test(e.message)),
+        'automatens infart finns i driftjournalen');
+      assert.ok(finished.operatingEvents.some(e => e.kind === 'automation' && /Spår I → B/.test(e.message)),
+        'automatens utfart finns i driftjournalen');
+    } finally {
+      await rig?.close(); await game?.close();
+      fs.rmSync(base, { recursive: true, force: true, maxRetries: 5 });
+    }
+  });

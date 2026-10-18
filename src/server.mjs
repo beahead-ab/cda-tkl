@@ -20,6 +20,7 @@ import { TrainInformation } from './train-information.mjs';
 import { TrainTracker } from './train-tracking.mjs';
 import { TrafficTrains } from './traffic-trains.mjs';
 import { TrainAutomation } from './train-automation.mjs';
+import { automationCommand } from './automation-command.mjs';
 import { stationTraffic, trafficEdgeInfo } from './station-traffic.mjs';
 import { PanelIndications } from './panel-indications.mjs';
 import { TrainMeet } from './trainmeet.mjs';
@@ -102,6 +103,12 @@ function createRuntime(p){
   const c=new LocoNetClient({host:target.host,port:target.port,silenceMs:p.staleMs});
   const e=new Engine(p,{storage,send:bytes=>c.send(bytes)});if(e.storageFault)throw Error(e.storageFault);
   const t=new TrainTracker({profile:p,panel:panelGeometry,traffic,enabled:target.mode==='simulator',reason:'Tågspårningen följer TKL:s egna tåg när LocoNet inte är ansluten; mot banan är den avstängd tills den är provad där.',log:(kind,message)=>e.log(kind,message)});
+  let a;
+  const guarded=data=>()=>automationCommand({automation,engine,connection},a,e,t,data);
+  a=new TrainAutomation({profile:p,available:target.mode==='simulator',reason:'Automaten finns bara när LocoNet inte är ansluten.',
+    policy:traffic.explicitConnections?'trainmeet':'legacy',traffic,
+    request:(from,to)=>e.request(from,to,'build'),edgeBlock:t.edgeBlock,log:(kind,message)=>e.log(kind,message),
+    clearance:data=>trainMeet.clearance(data,{guard:guarded(data)}),movement:data=>trainMeet.movement(data,{guard:guarded(data)})});
   return {profile:p,client:c,engine:e,
     configuration:new Configuration(p,{storage,canActivate:()=>!e.routes.length&&!e.controls.programming.reserved&&!e.yard.requests.length&&!e.storageFault}),
     trainInformation:new TrainInformation(stationData('train-fields.json',station),p,{storage}),
@@ -111,7 +118,7 @@ function createRuntime(p){
     // Tågspårningen provas i simulering först; mot riktig bana är den avstängd (docs/tagsparning.md).
     tracker:t,
     // Automaten (src/train-automation.mjs): datorn som tågklarerare, bara i simuleringsläge till att börja med.
-    automation:new TrainAutomation({profile:p,available:target.mode==='simulator',reason:'Automaten finns bara när LocoNet inte är ansluten.',request:(from,to)=>e.request(from,to,'build'),edgeBlock:t.edgeBlock,log:(kind,message)=>e.log(kind,message)})};
+    automation:a};
 }
 // Studio's rules describe the network profile; another profile (the legacy commissioning
 // one) runs as it is.
@@ -165,12 +172,13 @@ function playTraffic(){
   trafficTrains.tick({context:meet.context,fresh:!meet.stale,edges,tracks:stationTracks(),blocks:engine.blocks,tracked:tracker.view().trains,expect:(block,number)=>tracker.expect(block,number),forget:number=>tracker.forget(number)})
     .catch(error=>engine.log('error','Trafikspelets tåg: '+error.message)).finally(()=>{if(trafficTrains.revision!==trafficRevision){trafficRevision=trafficTrains.revision;dirty=true;}});
 }
-let automated=0,automationRevision=0;
-function automate(){
-  if(!automation?.enabled||Date.now()-automated<250)return;automated=Date.now();
-  try{automation.tick({state:{routes:engine.routes,blocks:engine.blocks,controls:engine.controls,connected:engine.connected},trains:tracker.view().trains,outgoing:destinations.view().outgoing});}
-  catch(error){engine.log('error','Automaten: '+error.message);automation.handOver('ett fel i automaten.');}
-  if(automation.revision!==automationRevision){automationRevision=automation.revision;dirty=true;}
+let automated=0,automationRevision=0,automating=false;
+async function automate(){
+  if(automating||!automation?.enabled||Date.now()-automated<250)return;automated=Date.now();automating=true;
+  const current=automation;
+  try{await current.tick({state:{routes:engine.routes,blocks:engine.blocks,controls:engine.controls,connected:engine.connected},trains:tracker.view().trains,outgoing:destinations.view().outgoing,meet:trainMeet.view(),edges:edgeInfo()});}
+  catch(error){engine.log('error','Automaten: '+error.message);current.handOver('ett fel i automaten.');}
+  finally{automating=false;if(automation===current&&current.revision!==automationRevision){automationRevision=current.revision;dirty=true;}}
 }
 let tracked=0,tracking=false;
 // Spårningens journalrader väcker kärnans change-händelse; den läser inte om sig själv under tiden.

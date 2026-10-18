@@ -26,3 +26,13 @@ Processprovet använder en lokal TrainMeet-provserver med andra orts-id:n än st
 ## Återstående acceptans
 
 Casper behöver prova gränssnittet, riktiga grannkopplingar i sin träff och LocoBuffer/MGP vid banan. Automatens TrainMeet-klarering och stationsbytet behandlas i följande PR:er. Ingen av dessa provresultat ger tillstånd att styra fysisk bana med ny automat.
+
+## Automat, förslag 0.82.8
+
+Träkvista använder en separat tidtabellspolicy med gemensam kärna. Förloppet är aktiv infart → accept → följd ankomst → ankomstanmälan på verkligt spår → mottaget → begäran till nästa granne → beviljad utfart → aktiv utfart → avgångsklarering → följd avgång → avgångsanmälan. Samtidiga tickar skickar inte dubbla kommandon. Vid oklart/ändrat underlag, återtagen tågväg eller avslag lämnas trafiken till operatören. Charlottendals gamla spårordning, väntetid och klareringsbeteende har inga nya TrainMeet-krav.
+
+65 riktade automat-, vakt- och adapterprov är gröna, varav två med verkliga Engine/Field/Tracker-klasser och mötande tåg på I/II. 24 adapter-/klareringsprov är gröna, med köad ändring av revision, tåg, dag, publikation och session. Dessa är direkta modulprov med lokala modeller. Det nya HTTP-processfallet kontrollerar hela sexstegssekvensen mot aktiva tågvägar och verkliga processers fält-/spårningsläge i både källa och paket; GitHub-resultat förs in när körningen är färdig. Ingen fysisk automatdrift eller webbläsaracceptans påstås.
+
+Den statiska panelgranskningen med verkliga stationsdata och produktens etikett-/tågskyltkod hittade avskurna A/B-skyltar; skyltarna ligger nu inåt i Träkvistas panel. CDA:s gamla placeringar är oförändrade och regressionstestade. Fem siffror och saknade linjekopplingar ryms i modellbilderna. Bilderna är förenklat rasteriserade SVG-bilder, inte en webbläsarkörning. Flera samtidiga C-skyltar kan överlappa originalpanelens TAM-dekoration och behöver visuell acceptans; motsatta riktningar samtidigt på samma enkelspår är inget godkänt trafikfall.
+
+Slutgranskningen rättade tre avbrottsfall: av/på kan inte återuppta ett köat gammalt beslut; ett nekat eller overifierat callbacksteg behandlas aldrig som lyckat vid återaktivering; och avgång kräver både följd spårning och bekräftat fria stations-/utfartsblock. Efter osäkert svar behåller planen sin spärr även över nya trafikrevisioner. Operatören tar över och verifierar tågläget; omstart lämnar automaten avstängd. Nya regressioner provar alla sex protokollsteg.

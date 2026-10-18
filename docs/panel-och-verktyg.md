@@ -495,3 +495,7 @@ och tåg på linjen vid kanterna. Ett klick på skylten anger eller bekräftar n
 ## Stationens linjer, förslag 0.82.7
 
 Panel, Orter och tidtabell använder den valda stationens linjer. Träkvista har A, B och C; C ritas lodrätt. Välj verklig grannstation i Orter efter anslutningen till TrainMeet. Utan koppling visas Ej ansluten och inga trafiktåg ställs ut på linjen. Äldre egna ortsuppgifter bevaras och uppmärksammas i ortsregistret. Charlottendal behåller sina tidigare linjer och placeringar.
+
+## Träkvistas automat, förslag 0.82.8
+
+Med LocoNet ej ansluten kan Automatrutinen följa trafikspelets tåg via stationens tidtabellsspår och nästa granne. Koppla först linjerna till verkliga TrainMeet-stationer under Orter. Automaten inväntar klarering på enkelspåret; vid okänd riktning, ändrat tåg, saknad koppling, belagt tidtabellsspår eller avslag lämnar den över med en orsak. Efter omstart behöver befintliga tåg kontrolleras; automaten gissar ingen tidigare infart. Charlottendal behåller sin tidigare automatik.

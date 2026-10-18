@@ -3,7 +3,7 @@
 // under Drift → Tågnummer. En skylt med ? är osäker; ett klick rättar eller bekräftar numret. Bara presentation.
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const SVG='http://www.w3.org/2000/svg';
-import {lineTrainPlacement} from './destination-data.js';
+import {lineTrainPlacement,destinationLines} from './destination-data.js';
 // Var ett block ligger i planen: mitten av dess längsta spårbit, annars växelns mittpunkt.
 export function blockPositions(panel){
   const out={},best={};
@@ -30,7 +30,9 @@ export function createTrainTracking({plan,panel,controls,api,message,displayName
   // Automaten bland driftknapparna (0.75.0): datorn som tågklarerare, bara när LocoNet inte är ansluten. Trafiken kommer
   // från trafikspelet på TrainMeet-servern (0.79.0); TKL har ingen egen simulerad trafik längre.
   const automate=document.createElement('button');automate.type='button';automate.id='automation-toggle';automate.hidden=true;
-  automate.title='Tågklareraren: datorn lägger tågvägarna med samma förregling som du. Tåg från väster går mot Vagnsta, tåg från Vagnsta mot Kungsfors och Lekby. Du kan ta över när som helst.';
+  automate.title=destinationLines.every(line=>line.tracks.length===1)
+    ?'Tågklareraren: datorn följer tidtabellens spår och grannar på stationens linjer och lägger tågvägarna med samma förregling som du. Du kan ta över när som helst.'
+    :'Tågklareraren: datorn lägger tågvägarna med samma förregling som du. Tåg från väster går mot Vagnsta, tåg från Vagnsta mot Kungsfors och Lekby. Du kan ta över när som helst.';
   document.querySelector('.drift-actions')?.append(automate);
   automate.onclick=async()=>{const answer=await api('automation',{enabled:!automation?.enabled});if(answer){automation=answer;paintAutomation();}};
   function paintAutomation(){

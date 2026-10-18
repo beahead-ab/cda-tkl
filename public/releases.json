@@ -1,5 +1,12 @@
 [
   {
+    "version": "0.82.8",
+    "date": "2026-10-18",
+    "notes": [
+      "Träkvistas automat följer tidtabellsspår och verkliga grannar samt inväntar enkelspårets klarering i TrainMeet; Charlottendals automat behåller sitt beteende"
+    ]
+  },
+  {
     "version": "0.82.7",
     "date": "2026-10-18",
     "notes": [

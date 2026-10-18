@@ -124,3 +124,7 @@ GitHub-förrådet för Träkvista heter sedan 18 oktober `beahead-ab/tk-tkl`, en
 ## Föreslaget, inte publicerat: 0.82.7
 
 Linjer, orter, tidtabell, tågspårning och fältmodell använder samma stationsbeskrivning. Träkvistas A/B/C och fem stationsspår är uttryckligt bundna; saknad TrainMeet-koppling placerar inga tåg. Charlottendals underlag och driftvägar ligger kvar. [Protokoll och begränsningar](stationsstyrd-trafik-2026-10-18.md).
+
+## Föreslaget, inte publicerat: 0.82.8
+
+Träkvistas automat väljer tidtabellens stationsspår och nästa verkliga granne, accepterar först efter aktiv infart och inväntar utgående enkelspårsklarering. Färskt trafikläge och oförändrad tågväg kontrolleras även efter väntande nätverksläsning. Charlottendals automat behåller sin prioritering och väntetid. [Trafikprotokoll](stationsstyrd-trafik-2026-10-18.md).
