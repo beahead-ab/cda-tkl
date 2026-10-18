@@ -133,3 +133,15 @@ Vad det betyder för drift:
   fungerande deploy att gå tillbaka till.
 - Att gå framåt igen är ofarligt. Den väg som provet visar är: återgången stoppas av den gamla versionen, tjänsten
   startas på nytt med den nya versionen, och driften är oförändrad.
+
+## Slutförd release 0.82.11 samma kväll
+
+**Publicerad: 0.82.11 (18 oktober 2026; cda-tkl main `24da68c`, #93; cda-tkl-install `4ffd4c8`; tk-tkl `33312ac`; tagg `v0.82.11`).**
+
+#93 samlar #91, #92 och sidfotsrättelsen. Grön CI `39162680842` på `873cf8a`, med båda containerproven, 619 enhetsprov, 19 integrationer, två separata återställningsprov och 346 paketprov. Träkvistas återgång till föregående publicerade 0.82.10 fungerar på samma disk och bevarar ägare, session, ort och modellklocka. Den tidigare begränsningen för återgång till 0.82.2 gäller fortfarande.
+
+Färsk backup före merge: `/data/release-backups/before-0.82.11-2026-10-18T20-37-20-404Z.tar.gz`, 683 495 byte, 0600, 16 filer/12 validerade JSON-filer. SHA-256 `7a3591d44f66e33dc8ab0c17daa0c555db924839927f9136fa4066f44335c8b4`. Känd fungerande återgång: deploy `dep-dbahbdrm8hqs73bdu3o0`, commit `88942ef`, 0.82.10.
+
+Ny deploy `dep-dbaisa942hec73dm7qp0` är verifierad live. Samma profil/källhash, befintlig ägarsession, tio oförändrade stabila filer och samma TrainMeet-parkoppling/publikation/dag/grannar. Automaten var redan avstängd och förblev avstängd. Det befintliga hållna tågvägslåset bevarades. Inget lagringsfel och inget nytt trafikförlopp tvingades fram. Installationspaketen är publicerade och deras träd verifierade exakt mot skripten: fem respektive sju ändringar, inga borttagningar.
+
+Träkvistas nya tjänst väntar på ägaruppgifter och aktivering i det förberedda Render-formuläret (tk-tkl/main, Frankfurt, Starter, disk 1 GB på /data). Verkliga grannar och fysisk bana återstår. Slutrapporten använder `[skip render]` enligt [Renders dokumentation](https://render.com/docs/deploys#skipping-an-auto-deploy), så att dokumentationsmergen inte ger en extra omstart. Inga inställningar eller andra tjänster ändrades.
