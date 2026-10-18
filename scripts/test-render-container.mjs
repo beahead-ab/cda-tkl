@@ -197,7 +197,8 @@ try {
   const xml = await request('/data/source/Cda60.xml', { cookie }); assert.equal(xml.status, 200); assert.equal(digest(xml.bytes), sourceHash);
   assert.equal((await json('/anlaggning/api/config', { cookie })).station.id, 'charlottendal');
   assert.ok((await json('/anlaggning/api/state', { cookie })).clients > 0);
-  assert.equal((await request('/api/auth/login', { data: { username, password }, headers: { Origin: 'https://fel.example.test' } })).status, 403);
+  const rejectedOrigin = await request('/api/auth/login', { data: { username, password }, headers: { Origin: 'https://fel.example.test' } });
+  assert.equal(rejectedOrigin.status, 400); assert.match(rejectedOrigin.text, /Otillåtet ursprung/);
   mark(`Version ${release}, oförändrat profil-id/källhash, Studio, skyddad session och ansluten intern simulator`);
 
   const entry = { ...state.destinations.entries[0], name: 'Ortsnamn i containerprov', phone: '12345', source: 'local', stationId: '' };
