@@ -2218,3 +2218,13 @@ Render-deploy `dep-dbaisa942hec73dm7qp0` blev live med 0.82.11. Efterkontrollen 
 Publicering ur den verifierade main-commiten `24da68c`: cda-tkl-install `4ffd4c8`, träd `a593fa9945a1bee5c4992762510a6d152a2b927b`; tk-tkl `33312ac`, träd `3e7ec4dc684d99eed25ae56882c0edc887915a09`. Båda träden är byteidentiska med publiceringsskriptens lokala byggen. Fem respektive sju ändrade filer, inga borttagningar, inga mellanliggande Tk-rättelser att ta in och taggen `v0.82.11` på rätt installationscommit.
 
 Träkvistas Render-Blueprint är förberedd från tk-tkl/main, med Frankfurt, Starter, 1 GB disk på /data och obligatoriska ägarvariabler. Nytt ägarlösenord måste anges av Casper i webbläsaren och kostnaden godkännas före aktivering. Ingen ny tjänst eller ny parkoppling skapades. Fysisk bana återstår. Slutrapporten mergas som ren dokumentation med `[skip render]` enligt Renders dokumenterade stöd, så att den inte startar en andra deploy.
+
+## 18 oktober 2026 kl. 23:03 – Träkvista startad på Render
+
+Casper slutförde formuläret och aktiverade den nya tjänsten. `tk-tkl` (`srv-dbaj7oajnfac73fu81vg`) är live på https://tk-tkl.onrender.com, deploy `dep-dbaj7oqjnfac73fu8510`, ur tk-tkl `33312ac` med 0.82.11. Egen beständig disk 1 GB på `/data`, markören för ny installation, skapad ägare, station `trakvista`, profil `trakvista-network-v1` och dess källhash är kontrollerade. Publika `/healthz` svarar `running`, ägarregistrering är spärrad och `/api/config` kräver inloggning.
+
+Ägaren har ännu ingen session och måste byta det tillfälliga lösenordet vid första inloggningen. Den inbyggda webbläsaren blockerar `/auth.js` med `ERR_BLOCKED_BY_CLIENT`, trots HTTP 200 och korrekt JavaScript-innehållstyp från servern. Faktisk panelacceptans väntar därför på Caspers första inloggning i en webbläsare där skriptet laddas. Inloggningssidans fasta Charlottendal-text är dokumenterad som kvarvarande presentationsfynd. Inga lösenord eller autentiseringsfiler lämnar Render. Verkliga grannar och fysisk bana återstår.
+
+Slutrapportens CI `39164669517` är helt grön. Render hoppade över dokumentationsmergen `4e0c6b0` enligt `[skip render]`, och Charlottendals drift ändrades inte. Denna uppföljning ändrar endast dokumentationen och använder samma markering.
+
+Privat startbackup på Träkvistas disk: `/data/release-backups/trakvista-initial-0.82.11-2026-10-18T21-06-14-590Z.tar.gz`, fyra filer/två validerade JSON-filer, 2 073 byte, 0600. SHA-256 `4a4b3c264310296d9bd9df808b2fab9b65ac1bf003e0b452318a509a483c7f2f`. Manifestet stannar också på disken.

@@ -145,3 +145,27 @@ Färsk backup före merge: `/data/release-backups/before-0.82.11-2026-10-18T20-3
 Ny deploy `dep-dbaisa942hec73dm7qp0` är verifierad live. Samma profil/källhash, befintlig ägarsession, tio oförändrade stabila filer och samma TrainMeet-parkoppling/publikation/dag/grannar. Automaten var redan avstängd och förblev avstängd. Det befintliga hållna tågvägslåset bevarades. Inget lagringsfel och inget nytt trafikförlopp tvingades fram. Installationspaketen är publicerade och deras träd verifierade exakt mot skripten: fem respektive sju ändringar, inga borttagningar.
 
 Träkvistas nya tjänst väntar på ägaruppgifter och aktivering i det förberedda Render-formuläret (tk-tkl/main, Frankfurt, Starter, disk 1 GB på /data). Verkliga grannar och fysisk bana återstår. Slutrapporten använder `[skip render]` enligt [Renders dokumentation](https://render.com/docs/deploys#skipping-an-auto-deploy), så att dokumentationsmergen inte ger en extra omstart. Inga inställningar eller andra tjänster ändrades.
+
+## Träkvistas faktiska Render-start, 18 oktober kl. 23:03
+
+Casper fyllde i ägaruppgifterna och aktiverade Blueprinten. Tjänsten är live på https://tk-tkl.onrender.com:
+
+| Kontroll | Resultat |
+|---|---|
+| Tjänst | `tk-tkl`, `srv-dbaj7oajnfac73fu81vg` |
+| Blueprint | `exs-dbaik92jnfac73frsk50` |
+| Live-deploy | `dep-dbaj7oqjnfac73fu8510`, lyckat bygge och start |
+| Källa | tk-tkl `33312ac32f9e6ae96e952f796f2f95994638df63`, ur cda-tkl `24da68c` |
+| Version/station | 0.82.11, `trakvista`, Träkvista |
+| Profil/källhash | `trakvista-network-v1`, `3e7b63c95d05e7c152304dd24b27cc3286cb66e9b6e89e9932aba73edff97e79` |
+| Beständig disk | Egen disk, 1 GB monterad på `/data` |
+| Hälsa | Publika `/healthz` svarar `{"status":"running"}` |
+| Autentisering | `external`, ägare skapad, öppen ägarregistrering spärrad; `/api/config` nekar utan session |
+
+Serverns `/data/.restored` och `/data/auth/users.json` finns. Den privata kontokontrollen visar en ägare, noll sessioner och obligatoriskt byte av det tillfälliga lösenordet vid första inloggningen. Inga lösenord, hashvärden eller sessionsuppgifter kopieras till dokumentationen.
+
+En första privat backup finns på disken: `/data/release-backups/trakvista-initial-0.82.11-2026-10-18T21-06-14-590Z.tar.gz`, 2 073 byte, behörighet 0600, fyra filer varav två validerade JSON-filer. SHA-256 `4a4b3c264310296d9bd9df808b2fab9b65ac1bf003e0b452318a509a483c7f2f`. Manifestet ligger bredvid arkivet; inget laddades upp till GitHub.
+
+Den inbyggda webbläsaren visar inloggningssidan men blockerar `/auth.js` med `ERR_BLOCKED_BY_CLIENT`; formuläret monteras därför inte där. Servern levererar samma fil med HTTP 200 och `text/javascript; charset=utf-8`. Första inloggningen och lösenordsbytet behöver göras av Casper i en webbläsare där skriptet laddas. Inloggningssidans fasta Charlottendal-text är ett kvarvarande presentationsfynd; stationsvalet på servern är verifierat som Träkvista. Panel, Studio och stationsnamn i den faktiska panelen är ännu inte accepterade med en ägarsession. Containerprovens godkända inloggning/omstart/återgång ska inte blandas ihop med detta återstående driftprov.
+
+Ingen TrainMeet-parkoppling, ingen vald verklig granne och inget prov mot fysisk bana har gjorts för den nya tjänsten. Charlottendals tjänst ändrades inte. Även slutrapportens CI `39164669517` gick igenom helt; Render bekräftade att dokumentationscommiten `4e0c6b0` hoppades över. Denna uppföljning använder också `[skip render]`.

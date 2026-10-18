@@ -113,4 +113,6 @@ Ett lokalt stationsbyte med kontrollerad omstart stöds genom startövervakaren 
 
 ## Publicering 0.82.11
 
-18 oktober: cda-tkl `24da68c` (#93) är publicerat som cda-tkl-install `4ffd4c8` och tk-tkl `33312ac`. Sidfoten följer stationens eget namn. Träkvistas container är provad med tom disk, första ägare, omstart och fungerande återgång till 0.82.10. Den faktiska Render-tjänsten är förberedd men väntar på Caspers ägaruppgifter och aktivering. Verkliga TrainMeet-grannar och fysisk bana är fortsatt separata acceptansprov.
+18 oktober: cda-tkl `24da68c` (#93) är publicerat som cda-tkl-install `4ffd4c8` och tk-tkl `33312ac`. Sidfoten följer stationens eget namn. Träkvistas container är provad med tom disk, första ägare, omstart och fungerande återgång till 0.82.10.
+
+Den faktiska tjänsten är nu live på [tk-tkl.onrender.com](https://tk-tkl.onrender.com), deploy `dep-dbaj7oqjnfac73fu8510`, med egen beständig disk 1 GB på `/data`. Rätt station, profil, version, skapad ägare och hälsokontroll är verifierade på servern. Caspers första inloggning och obligatoriska lösenordsbyte återstår; ingen ägarsession finns ännu. Panelacceptans i faktisk drift, verkliga TrainMeet-grannar och fysisk bana är fortsatt separata acceptansprov. Se [driftprotokollet](render-release-2026-10-18.md).

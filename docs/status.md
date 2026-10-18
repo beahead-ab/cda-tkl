@@ -8,7 +8,9 @@ Sidfoten visar stationens eget namn. #91 och #92 ingår i #93 och är avslutade.
 
 Charlottendal kör Render-deploy `dep-dbaisa942hec73dm7qp0`. Efterkontrollen bekräftar rätt profil/källhash, befintlig ägarsession, samma TrainMeet-parkoppling/publikation/dag/grannar och tio byteoförändrade stabila filer. Det redan hållna tågvägslåset bevarades, och automaten är fortsatt avstängd som före bytet. Inget lagringsfel. Installationspaketen fick fem respektive sju ändrade filer och inga borttagningar; publicerade träd är exakt lika skriptens resultat.
 
-Träkvistas Render-formulär är förberett med tk-tkl/main och befintlig Blueprint (Frankfurt, Starter, 1 GB disk på /data). Ägarens e-post och nytt lösenord samt godkännande av kostnaden återstår före aktivering; ingen ny tjänst har skapats. Verkliga grannar och fysisk bana återstår efter det. Slutrapporten märks `[skip render]` så att dokumentationen inte startar om driften.
+Träkvista är nu live på [tk-tkl.onrender.com](https://tk-tkl.onrender.com), från tk-tkl `33312ac` med deploy `dep-dbaj7oqjnfac73fu8510`. Tjänsten har egen beständig disk 1 GB på `/data` och skapad ägare. Serverkontrollen bekräftar 0.82.11, station `trakvista`, profil `trakvista-network-v1` och hälsokontroll `running`. API:t kräver inloggning och öppen ägarregistrering är spärrad. Första inloggningen med obligatoriskt lösenordsbyte återstår hos Casper. Den inbyggda webbläsaren blockerade inloggningsskriptet; panelen har därför ännu inte accepterats i faktisk drift. Verkliga grannar och fysisk bana återstår. Se [driftprotokollet](render-release-2026-10-18.md).
+
+Även slutrapportens hela CI-kedja `39164669517` är grön. Dokumentationsmergen `4e0c6b0` hoppades över av Render med `[skip render]`; Charlottendal startades inte om av rapporteringen.
 
 
 ## Installationsförråden publicerade som 0.82.10
