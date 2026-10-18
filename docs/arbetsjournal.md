@@ -2181,3 +2181,9 @@ Träkvistas containerprov går igenom i GitHub fram till återgången: ny instal
 
 Återgången till föregående publicerade version startar inte. Felet är reproducerat lokalt: 0.82.2 läser `destinations.json` mot Charlottendals sju linjer (`src/destinations.mjs`), medan stationens egna linjer kom med 0.82.7, så containern avslutas med `Ogiltiga sparade ortsuppgifter`. Provet kräver nu just det utfallet och att 0.82.10 startar igen på samma volym med allt kvar. Följden för drift står i [driftprotokollet](render-release-2026-10-18.md): en rollback av Träkvistas framtida tjänst till en version före 0.82.7 kräver att diskens säkerhetskopia läggs tillbaka. Charlottendal berörs inte, eftersom dess linjer är desamma i båda versionerna.
 
+## 18 oktober 2026 – det intermittenta automatprovet
+
+Provkedjan på pull request #91 föll en gång i `test:integration`, i Träkvistas automatprov genom hela processkedjan: avgångsanmälan var skickad och bekräftad av provets TrainMeet, men TKL:s egen bild av `context` visade fortfarande `departure: none` när provet läste av. Tåget, tågvägarna och spårledningarna var då redan i mål. Det är alltså provets väntevillkor som släpper igenom för tidigt, inte en brist i automaten: TKL hämtar `context` på nytt först när ändringsflödet säger att revisionen ändrats.
+
+Väntevillkoret kräver nu också att TKL:s egen bild hunnit ikapp: rörelsen anmäld som avgången, infartslinjen fri och utfartslinjen i riktning ut. Kontrollerna efteråt är oförändrade. Ingen programkod är ändrad och versionen är oförändrad.
+
