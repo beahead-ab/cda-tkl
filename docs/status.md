@@ -106,3 +106,7 @@ Stationernas läsvägar är samlade utan filflytt. Charlottendals hela profil, k
 ## Föreslaget, inte publicerat: 0.82.4
 
 Stationspaketets XML-importör följer med, och källverifieringen är obligatorisk både vid paketbygge och i stationens GitHub-prov. Ett lokalt paket har verifierats utan push. Se [stationsprovet](stationsprov-2026-10-18.md).
+
+## Föreslaget, inte publicerat: 0.82.5
+
+Skapa ägare och återställ användare väljer nu stationens egen driftkatalog, med befintlig prioritet för användar-, auth- och state-variablerna. Charlottendals register flyttas inte. Se [stationsprovet](stationsprov-2026-10-18.md).

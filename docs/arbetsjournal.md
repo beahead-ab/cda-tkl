@@ -2112,3 +2112,9 @@ Riktade profil- och Studio-prov passerar, inklusive 340/49/66 för Charlottendal
 Inventeringen hittade att den delade XML-importören togs bort ur Tk-paketet. Då försvann verify:trakvista och --if-present dolde det. Importören behålls nu; både publiceringsskriptet och paketets GitHub-prov kräver källverifieringen. Ett verkligt paketbygge mot ett lokalt tomt provförråd visar också att en inaktuell genererad fil stoppar före commit. Paketprovet följer inte med till Tk-TKL.
 
 Riktat paketprov och verify:trakvista gröna. I det byggda Tk-paketet passerade 230 enhetsprov; två processprov stoppades av sandboxens listen EPERM. Ingen push gjordes. Provets npm-installation ersattes enbart i den lokala provmiljön med redan installerade beroenden, eftersom nätverket är blockerat. GitHub-provet gör en vanlig npm ci och provar hela paketet utan push. Se [protokollet](stationsprov-2026-10-18.md).
+
+## 18 oktober 2026, förslag 0.82.5: användarverktygen följer stationen
+
+create-owner.mjs och recover-user.mjs använde var/ också för Träkvista när state-variabeln saknades. Verktygen använder nu samma stateDirectory som servern. Befintlig CHARLOTTENDAL_USERS_FILE, CHARLOTTENDAL_AUTH_FILE och CHARLOTTENDAL_STATE_DIR har samma prioritet. Charlottendals standard är fortfarande var/.
+
+Tio processcenarier i små tillfälliga installationer provar båda stationsvalen, paketets standardstation och de tre filvalen. Återställningen återanvänder samma ägare, avslutar sessionen och lämnar övriga register byteoförändrade. Tillsammans med användarproven: 13/13 gröna. Originalskriptets fel reproducerades i separat provkopia. Inga verkliga användare eller driftdata rörda.

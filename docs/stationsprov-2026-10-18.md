@@ -57,3 +57,7 @@ Spår 6, rangerbangården, programmeringsspåret, V1–V4 och automatens spåror
 ## Paketrättelsen, 0.82.4
 
 Den delade XML-importören behålls och verifieringen krävs. Det negativa provet stoppar en inaktuell genererad fil före commit. Ett riktigt lokalt Tk-paket gav 230 godkända enhetsprov och två miljöblockerade socketprov; paketets verify:trakvista är grönt. Inget skickades till Tk-TKL eller något annat installationsförråd. GitHub kör ett nytt fullständigt paketprov utan stubbar och utan push.
+
+## Användarverktygen, 0.82.5
+
+Två verktyg följer serverns driftkatalog. Tio nya processcenarier och tre användarprov passerar. De körs i isolerade kopior och verifierar ägarinloggning, återställning, sessionens ogiltigförklaring och att andra register inte ändras. Originalfelet har reproducerats. Det är inte ett prov av inloggningssidan i webbläsaren.

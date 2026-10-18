@@ -1,5 +1,12 @@
 [
   {
+    "version": "0.82.5",
+    "date": "2026-10-18",
+    "notes": [
+      "Verktygen för att skapa och återställa användare väljer samma tillståndskatalog som stationens server"
+    ]
+  },
+  {
     "version": "0.82.4",
     "date": "2026-10-18",
     "notes": [
