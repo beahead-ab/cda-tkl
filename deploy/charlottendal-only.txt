@@ -5,7 +5,6 @@
 # Generatorer och kontroller för Charlottendals källor (Cda60.xml, handskrivna tabeller)
 scripts/audit-turnout-addresses.py
 scripts/import-operations.py
-scripts/import-source.py
 scripts/make-indications.mjs
 scripts/make-migration.mjs
 scripts/make-network-profile.mjs
@@ -16,6 +15,7 @@ scripts/make-signal-endpoints.mjs
 scripts/make-train-fields.mjs
 scripts/studio-overview.mjs
 scripts/verify-source.py
+scripts/test-render-container.mjs
 
 # Webbdriftens uppdaterare (Charlottendal på servern)
 packaging/web
@@ -45,6 +45,7 @@ test/signal-switch-report.test.mjs
 test/simulated-trains.test.mjs
 test/source.test.mjs
 test/station-model.test.mjs
+test/station-package.test.mjs
 test/studio-assistant.test.mjs
 test/studio-drafts.test.mjs
 test/studio-measure.test.mjs

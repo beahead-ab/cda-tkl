@@ -68,6 +68,9 @@ if [ "${STATION_NO_TEST:-}" != 1 ]; then
   npm ci --ignore-scripts --no-audit --no-fund --loglevel=error >/dev/null
   npm test >"$WORK/test.log" 2>&1 || { grep -E "^not ok|^# (pass|fail)" "$WORK/test.log"; echo "Proven gick inte igenom; inget är publicerat. Loggen: $WORK/test.log"; trap - EXIT; exit 1; }
   grep -E "^# (pass|fail)" "$WORK/test.log"
+  npm run -s "verify:$ID" >>"$WORK/test.log" 2>&1 || { echo "Stationens genererade filer stämmer inte; inget är publicerat. Loggen: $WORK/test.log"; trap - EXIT; exit 1; }
+  npm run -s test:station-traffic >>"$WORK/test.log" 2>&1 || { echo "Stationens trafikprov gick inte igenom; inget är publicerat. Loggen: $WORK/test.log"; trap - EXIT; exit 1; }
+  npm run -s test:station-selection >>"$WORK/test.log" 2>&1 || { echo "Stationens omstartsprov gick inte igenom; inget är publicerat. Loggen: $WORK/test.log"; trap - EXIT; exit 1; }
   rm -rf node_modules
 fi
 

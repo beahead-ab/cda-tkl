@@ -2100,3 +2100,59 @@ med avsikt. Ingenting låg opushat.
 
 Publicerad 18 oktober: cda-tkl main `bdb6601` (#78), `beahead-ab/cda-tkl-install` main `65039a0`, Tk-TKL `008d18b`
 (`deploy/publish-station.sh trakvista`, 232 prov i paketet). Render tar 0.82.2 när det bygger om main.
+
+## 18 oktober 2026, förslag 0.82.3: samma läsväg utan filflytt
+
+Casper ändrade avgränsningen: inventera och verifiera före större ombyggnad. Charlottendals filer ligger kvar i `profiles/` och `public/data/`. Stationsbeskrivningen anger profiler, Studio-underlag, XML och befintligt TKL-id; servern använder stationens datakatalog för `/data/`. Charlottendals `var/` och hela profilobjektet bevaras. Inga verkliga driftdata har lästs eller ändrats.
+
+Riktade profil- och Studio-prov passerar, inklusive 340/49/66 för Charlottendal och 57/13/25 för Träkvista. HTTP-prov finns för exakta data och stationsgränser. Miljön blockerar lyssningsportar (`EPERM`), så process- och webbläsarprov är inte godkända lokalt. Ett PR-arbetsflöde kör hela provkedjan på GitHub. Protokoll och återstående arbete: [stationsprov](stationsprov-2026-10-18.md). Bara en PR; ingen merge, publicering eller ändring av Render.
+
+## 18 oktober 2026, förslag 0.82.4: obligatoriskt prov av stationspaketet
+
+Inventeringen hittade att den delade XML-importören togs bort ur Tk-paketet. Då försvann verify:trakvista och --if-present dolde det. Importören behålls nu; både publiceringsskriptet och paketets GitHub-prov kräver källverifieringen. Ett verkligt paketbygge mot ett lokalt tomt provförråd visar också att en inaktuell genererad fil stoppar före commit. Paketprovet följer inte med till Tk-TKL.
+
+Riktat paketprov och verify:trakvista gröna. I det byggda Tk-paketet passerade 230 enhetsprov; två processprov stoppades av sandboxens listen EPERM. Ingen push gjordes. Provets npm-installation ersattes enbart i den lokala provmiljön med redan installerade beroenden, eftersom nätverket är blockerat. GitHub-provet gör en vanlig npm ci och provar hela paketet utan push. Se [protokollet](stationsprov-2026-10-18.md).
+
+## 18 oktober 2026, förslag 0.82.5: användarverktygen följer stationen
+
+create-owner.mjs och recover-user.mjs använde var/ också för Träkvista när state-variabeln saknades. Verktygen använder nu samma stateDirectory som servern. Befintlig CHARLOTTENDAL_USERS_FILE, CHARLOTTENDAL_AUTH_FILE och CHARLOTTENDAL_STATE_DIR har samma prioritet. Charlottendals standard är fortfarande var/.
+
+Tretton processcenarier i små tillfälliga installationer provar båda stationsvalen, paketets standardstation och de tre filvalen. Återställningen återanvänder samma ägare, avslutar sessionen och lämnar övriga register byteoförändrade. Tillsammans med användarproven: 16/16 gröna. Originalskriptets fel reproducerades i separat provkopia. Inga verkliga användare eller driftdata rörda.
+
+## 18 oktober 2026, förslag 0.82.6: stationens namn vid installation på Mac och Windows
+
+Båda installerarna läser nu packaging/identity.env före val av programkatalog. Mac använder stationens appnamn och launchd-label, Windows dess katalog och genvägar. Charlottendals standardvägar och äldre datamigrering bevaras, liksom befintlig app.env. Ingen verklig installation har körts eller ändrats.
+
+15/15 riktade installationsprov gröna. Mac-installation och uppdatering körs i temporär miljö med ersatta systemkommandon; provet visar att Träkvista inte rör Charlottendals katalog eller data. Windows har endast statiska prov eftersom PowerShell saknas här. Samtidig körning på samma värd kräver skilda portar; denna PR ändrar inte standardportar eller panelgenvägarnas adresser. Slutlig inventering och förslag till steg 2 finns i [stationsprotokollet](stationsprov-2026-10-18.md). Alla PR:er väntar på Casper; main och installationsförråden har inte ändrats.
+
+## 18 oktober 2026: provresultat inför Caspers granskning
+
+PR #80–83 hålls som utkast, en sak per PR och staplade för versionsordningen. [Stationsprotokollet](stationsprov-2026-10-18.md) skiljer lokal sandboxbegränsning, GitHubs riktiga process-/paketprov och kvarstående fysisk/visuell acceptans. [Nästa trafiksteg](trakvista-nasta-trafiksteg.md) föreslår A/B/C och manuell TrainMeet-trafik i en egen PR, därefter automaten och sedan Rendersteget. Ingen stationsdata har flyttats eller skrivits om, ingen produktion har uppdaterats och inga installationsförråd har publicerats. Detta avsnitt och protokollet är bara dokumentation och höjer ingen version.
+
+Slutlig kodkontroll: #80 (6d428e3), #81 (2687572), #82 (82d85dd) och #83 (47de9a1) är gröna i GitHub. Senaste samlade koden: 533 enhetsprov godkända, tre överhoppade (två root och ett Mac); root-proven kördes separat 2/2, integration 14/14, Tk-paket 263 godkända och verify:trakvista grön, PowerShell-parser grön på Windows. Mac-installationsprovet kördes lokalt. Alla fem syntax-/källkontroller gröna. Slutkontroll av main: fortfarande 904d564; ingen driftsättning eller publicering gjord.
+
+18 oktober, efter proven: Casper bad att GitHub-förrådet Tk-TKL skulle heta tk-tkl. Namnbytet är gjort och verifierat: samma id 1423516520, main 008d18b8abb7f4009e32dd3d5d21ddae7807efbf. Både gamla och nya URL:en läses som samma förråd. Inga commits lades i tk-tkl och ingen publicering eller Render-ändring gjordes. Nuvarande hänvisningar och historiska publiceringsrader fungerar vidare.
+
+## 18 oktober 2026 – stationsstyrd linjetrafik, förslag 0.82.7
+
+Casper godkände nästa steg mot ett gemensamt program med stationen som inställning. Första ändringen samlar trafikens linjer och spår utan att flytta Charlottendals filer eller ändra profiler, sourceHash eller driftdata. Träkvistas A/B/C kräver verkliga sparade TrainMeet-kopplingar; äldre egna ortsuppgifter bevaras synligt. 32 riktade modulprov är gröna. Syntax och operations-/Träkvistakontroller är gröna. Ett nytt oberoende processprov körs i GitHub och i publiceringsskriptets temporära paket utan push; lokal nätverkslyssning är blockerad. Se [det nya protokollet](stationsstyrd-trafik-2026-10-18.md). Ingen merge eller publicering ingår.
+
+## 18 oktober 2026 – stationsstyrd automat, förslag 0.82.8
+
+Träkvistas egen policy väljer spår och nästa granne ur verifierad TrainMeet-tidtabell. Den svarar på begärd infart först efter aktiv tågväg, följer fysisk ankomst i fältmodellen, anmäler ankomst/mottaget och begär utfart med samma kärna och enkelspårsklarering. 43 riktade prov är gröna lokalt, inklusive två kompletta trafikfall genom Engine/Field/Tracker (ett tågmöte), Charlottendals befintliga automatprov och köade TrainMeet-kommandon. Revision, session, station, publikation, dag, tåg och aktuell tågväg kontrolleras inne i den exklusiva begäran. Upplöst utfart väntar på spårningens befintliga frist före avgångsanmälan. Handover kringgås inte genom att aktivera automaten igen. Fulla process-/paketprov körs i GitHub. [Protokoll](stationsstyrd-trafik-2026-10-18.md). Inget mergat, publicerat eller provat på riktig bana.
+
+## 18 oktober 2026 – lokalt stationsval, förslag 0.82.9
+
+Ägaren kan välja installerad station genom npm start och en kontrollerad omstart av båda processerna. Fasta installationer visar orsaken till att valet är låst. En uttrycklig karta kan behålla befintlig CDA STATE_DIR exakt och ge andra stationer egna kataloger. Pågående HTTP-manövrer och bakgrundstrafik hindrar byte. Efter byte pausas TrainMeet beständigt tills explicit anslutning lyckas. Granskningen lade till verklig katalogseparering över symlänkar, krav på felfritt processavslut samt rätt användarkatalog även i återrapportens standardstart. Inga driftdata används i proven. Se [stationsvalet](stationsval.md) och [protokollet](stationsstyrd-trafik-2026-10-18.md). Befintliga Pi/Mac-tjänster och Render ändras inte; ingen merge eller publicering.
+
+## 18 oktober 2026 – gröna trafik- och stationsprov, granskningsunderlag
+
+Samtliga tre kod-PR:er är gröna i GitHub och det riktiga Träkvistapaketet har provats utan push. #85 (7e45904): 550 enhetsprov, 15 helhetsprov, 277 paketenhetsprov. #86 (e472c3b): 603 enhetsprov, 16 helhetsprov, 330 paketenhetsprov samt hela automatsekvensen. #87 (a824c55): 617 enhetsprov, 19 helhetsprov, 344 paketenhetsprov samt omstart/stationsspärr. Alla obligatoriska kontroller passerar. Två root-uppdateringsprov körs dessutom separat och Windows-parsern är grön; ett Mac-specifikt prov kan inte köras på Linux. Se [slutprotokollet med exakta körningar och begränsningar](stationsstyrd-trafik-2026-10-18.md#fullständig-kontroll-i-github).
+
+Stationsbytet är provat åt båda håll med både uttrycklig karta och standardsökvägar i en helt isolerad installation, inklusive återrapportens användare och utebliven automatisk TrainMeet-kontakt. Charlottendals profiler/public/data och Träkvistas underlag är byteoförändrade mot main 904d564. Main och båda installationsförråden är oförändrade; inget mergat, publicerat eller ändrat på Render. Nativ Pi/Mac-tjänstestart, visuell webbläsaracceptans och riktig bana återstår. Förslag till steg 2 finns i protokollet.
+
+## 18 oktober 2026 – förberedd samlad Render-release 0.82.10
+
+Efter rekommendationen om sista container-/webbläsarprov, backup och återgång gav Casper klartecken: ”kör du”. Detta omfattar en kontrollerad uppdatering av den befintliga Charlottendal-tjänsten på Render. Installationsförråden och TrainMeet Server ingår inte. PR #80–88 samlas i en release för att undvika att varje delmerge driftsätter en mellanversion.
+
+Kontrollkörningen på dokumentationsgrenen #88 hittade en timingberoende överlämning i Träkvistas automat under normal tågvägsupplösning. Release 0.82.10 rättar felet före driftbyte och lägger till isolerat Docker-prov av den faktiska Render-avbildningen. Fungerande Render-deploy och diskens snapshots är identifierade; en aktuell skyddad filkopia tas före merge. [Driftprotokoll](render-release-2026-10-18.md) skiljer förberedelser, syntetiska prov och efterkontroll av faktisk drift.

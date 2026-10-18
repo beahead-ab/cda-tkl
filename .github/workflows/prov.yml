@@ -1,0 +1,74 @@
+name: Prov
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  prov:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run -s check
+      - run: npm run -s verify:operations
+      - run: npm run -s verify:layout
+      - run: npm run -s verify:xml
+      - run: npm run verify:trakvista
+      - run: npm run -s test:integration
+      - name: Prova återställning vid misslyckad uppdatering i isolerade kataloger
+        run: sudo env "PATH=$PATH" node --test test/web-updater.test.mjs
+      - name: Prova Tk-paketet utan publicering
+        shell: bash
+        run: |
+          git config user.name 'TKL paketprov'
+          git config user.email 'paketprov@example.test'
+          remote=$(mktemp -d)/station.git
+          git init --bare -q -b main "$remote"
+          STATION_REMOTE="$remote" STATION_NO_PUSH=1 deploy/publish-station.sh trakvista
+  render-container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Installera webbläsarprovet utanför programmet
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/tkl-browser" --no-save --ignore-scripts --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/tkl-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Bygg och prova Render-avbildningen med syntetisk driftdata
+        shell: bash
+        env:
+          TKL_PLAYWRIGHT_MODULE: ${{ runner.temp }}/tkl-browser/node_modules/playwright/index.mjs
+          TKL_RENDER_ARTIFACTS: ${{ runner.temp }}/render-container
+        run: node scripts/test-render-container.mjs
+      - name: Spara protokoll, containerlogg och webbläsarbilder
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: render-container-${{ github.sha }}
+          path: ${{ runner.temp }}/render-container
+          if-no-files-found: error
+          retention-days: 7
+  windows-syntax:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Läs Windows-installationsskriptet med PowerShells parser
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD 'install.ps1'), [ref]$tokens, [ref]$errors) | Out-Null
+          if ($errors.Count -gt 0) { $errors | Write-Error; exit 1 }

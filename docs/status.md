@@ -1,4 +1,10 @@
-# Charlottendal TKL – lägesbild 17 oktober 2026
+# Charlottendal TKL – lägesbild 18 oktober 2026
+
+## Förberedd Render-release 0.82.10
+
+Casper godkände den 18 oktober ett kontrollerat byte av Charlottendals befintliga Render-tjänst. Ändringarna från PR #80–88 samlas i en release-PR för att undvika upprepade driftsättningar under versionskedjan. Installationsförråden och TrainMeet Server ingår inte. Före merge krävs gröna kod-, paket- och containerprov samt säkerhetskopia och identifierad återgång till fungerande Render-deploy. Resultat förs in i [driftprotokollet](render-release-2026-10-18.md).
+
+En senare kontrollkörning av dokumentationsgrenen (#88, 39136533075) hittade ett intermittent överlämnande i Träkvistas automat under normal tågvägsupplösning. Felet rättas före releasen; tidigare gröna körningar ersätter inte den nya kontrollen. Charlottendals profil, sourceHash, stationsunderlag och driftkatalog är oförändrade.
 
 Grunden är körbar med LocoNet ansluten eller ej ansluten; trafiken kommer från trafikspelet på en TrainMeet-server, och TKL har inget simuleringsläge (0.79.0, [LocoNet ansluten eller ej ansluten](loconet-anslutning.md)). Den ersätter ännu inte den fysiska JMRI-installationen fullt ut: LocoNet är provat mot en virtuell LocoBuffer, inte vid banan. Att information finns importerad betyder inte att motsvarande funktion är implementerad eller verifierad mot banan.
 
@@ -98,3 +104,41 @@ Vid införandet av version 0.17.0 passerade 134 enhetstester och sex processhelh
 Aktuell publicerad release och provstatus finns i [arbetsjournalen](arbetsjournal.md), [provresultaten](provresultat.md); driftuppgifterna hålls utanför förrådet.
 
 [Avstämning av samtliga 54 användningsfall och tio produktkrav](acceptans-2026-09-23.md) visar exakt vad som är provat, avsiktligt vilande eller beroende av ytterligare underlag.
+
+## Föreslaget, inte publicerat: 0.82.3
+
+Stationernas läsvägar är samlade utan filflytt. Charlottendals hela profil, källhash, granskade regler och migreringsunderlag bevaras. Driftdata ligger kvar i `var/`, med `CHARLOTTENDAL_STATE_DIR` först. Se [stationsprovet](stationsprov-2026-10-18.md). Ingen merge eller publicering ingår; main driftsätter Charlottendal på Render.
+
+## Föreslaget, inte publicerat: 0.82.4
+
+Stationspaketets XML-importör följer med, och källverifieringen är obligatorisk både vid paketbygge och i stationens GitHub-prov. Ett lokalt paket har verifierats utan push. Se [stationsprovet](stationsprov-2026-10-18.md).
+
+## Föreslaget, inte publicerat: 0.82.5
+
+Skapa ägare och återställ användare väljer nu stationens egen driftkatalog, med befintlig prioritet för användar-, auth- och state-variablerna. Charlottendals register flyttas inte. Se [stationsprovet](stationsprov-2026-10-18.md).
+
+## Föreslaget, inte publicerat: 0.82.6
+
+Mac och Windows väljer stationsidentitet före katalog och autostart. Charlottendals standardvägar är kvar. Mac-installation och uppdatering är provade isolerat; Windows är statiskt granskat, inte körprovat. Två stationer på samma värd kräver egna portar. Se [stationsprovet](stationsprov-2026-10-18.md).
+
+## Granskningsläge 18 oktober 2026
+
+Förslagen 0.82.3–0.82.6 ligger i separata utkast-PR:er #80–83. Samtliga fyra kod-PR:er är gröna i GitHub. De är inte mergade eller publicerade. [Stationsprotokollet](stationsprov-2026-10-18.md) anger provade commits och återstående acceptansprov. Träkvistas linjetrafik och automat behöver egna trafikändringar före containersteget; se [nästa trafiksteg](trakvista-nasta-trafiksteg.md).
+
+GitHub-förrådet för Träkvista heter sedan 18 oktober `beahead-ab/tk-tkl`, enligt Caspers önskemål. Samma förråds-id och senaste commit; gamla URL:er fungerar. Namnbytet har inte publicerat någon ny version eller ändrat driften.
+
+## Föreslaget, inte publicerat: 0.82.7
+
+Linjer, orter, tidtabell, tågspårning och fältmodell använder samma stationsbeskrivning. Träkvistas A/B/C och fem stationsspår är uttryckligt bundna; saknad TrainMeet-koppling placerar inga tåg. Charlottendals underlag och driftvägar ligger kvar. [Protokoll och begränsningar](stationsstyrd-trafik-2026-10-18.md).
+
+## Föreslaget, inte publicerat: 0.82.8
+
+Träkvistas automat väljer tidtabellens stationsspår och nästa verkliga granne, accepterar först efter aktiv infart och inväntar utgående enkelspårsklarering. Färskt trafikläge och oförändrad tågväg kontrolleras även efter väntande nätverksläsning. Charlottendals automat behåller sin prioritering och väntetid. [Trafikprotokoll](stationsstyrd-trafik-2026-10-18.md).
+
+## Föreslaget, inte publicerat: 0.82.9
+
+Inställningar → Station väljer bland installerade stationer med kontrollerad omstart genom npm start. Separata driftkataloger och användare behålls; nya stationens TrainMeet ansluts uttryckligen. Befintliga fasta Pi/Mac-tjänster och Render behåller sin station. [Anvisning och avgränsning](stationsval.md), [protokoll](stationsstyrd-trafik-2026-10-18.md).
+
+## Verifierade utkast 0.82.7–0.82.9
+
+Kod-PR:erna #85–87 är gröna i GitHub: den senaste kodrevisionen a824c55 har 617 godkända enhetsprov och 19 helhetsprov samt 344 enhetsprov och gröna trafik-/omstartsprov i det riktiga Tk-paketet utan push. Obligatoriska kontroller, separat root-uppdatering och Windows-parser är gröna. [Slutprotokoll](stationsstyrd-trafik-2026-10-18.md#fullständig-kontroll-i-github) förklarar överhopp och återstående acceptans. Detta är verifierade förslag, inte publicerad drift. Main är kvar på 904d564; inga installationsförråd eller Render-tjänster har ändrats.
