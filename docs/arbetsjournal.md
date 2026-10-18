@@ -2047,3 +2047,7 @@ Skärmprov i Chromium mot en låtsad TrainMeet:
 - Med rätt kod ansluter TKL till Charlottendal, och formuläret ger plats för Koppla från.
 - Med fyra uppställda tåg ute och träffen sedan återställd till 92 på 1a och 8101 på 13 visar planen just 92 och 8101,
   efter 17 sekunder.
+
+Publicerad 18 oktober: cda-tkl main `3b1dcc9` (#70), `beahead-ab/cda-tkl-install` main `ac687ff`. Render tar den när
+den bygger om main. Tk-TKL publiceras för sig med `deploy/publish-station.sh trakvista`. Serverns sida `/anslut`
+(trainmeet-server #200) väntar på Caspers klartecken.

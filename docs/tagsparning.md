@@ -6,14 +6,15 @@ när **LocoNet inte är ansluten** och TKL själv kör trafikspelets tåg (sedan
 ansluten](loconet-anslutning.md); före det i simuleringsläget, som i webbdriften). Med LocoNet ansluten är den
 avstängd tills den är provad mot riktig bana.
 
-**Publicerad: 0.81.1** (cda-tkl main `8a404ba`, #67; `beahead-ab/cda-tkl-install` main `ab46183`, 17 oktober). Webbdriften
+**Publicerad: 0.82.0** (cda-tkl main `3b1dcc9`, #70; `beahead-ab/cda-tkl-install` main `ac687ff`, 18 oktober). Webbdriften
 på Render tar den när Render bygger om main, eller med Uppdatera nu när Deploy Hook är inlagd; datorer som installerats
 med installationsraden kör den igen eller väljer Uppdatering. Tågspårningen kom i 0.73.0, simulerade tåg och upplösning
 vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0 (cda-tkl `45ec00a`, #46). I 0.77.0 rapporterar den egna
 återrapporten som MGP-korten, och i 0.79.0 kommer tågen från trafikspelet på TrainMeet-servern (se nedan) och
 *Simulerad trafik* är borta. I 0.80.0 kan tidtabellen visa tågen på linjen och tågen som står inne som en linjebild
 eller med tecken (se nedan). I 0.81.0 visar eller döljer ett tryck på träffklockan sekunderna, och 0.81.1 visar
-inte längre ett gammalt försök under Uppdatering; spårningen är oförändrad sedan 0.79.0. På ställverket ligger
+inte längre ett gammalt försök under Uppdatering. I 0.82.0 tas tåg som trafikspelet inte har här bort från banan, och
+spårningen glömmer dem (se nedan). På ställverket ligger
 *Automat* bland driftknapparna under Drift, listan *Spårade tåg* under Drift → Tågnummer, och den egna
 återrapportens sida nås från Studio → Driftsättning → *Egen återrapport ↗*.
 
