@@ -10,7 +10,7 @@ test('versions compare by number, not by text',()=>{
 test('a newer release in cda-tkl-install is offered; the same or an older one is not',async()=>{
   let version='0.49.0';const urls=[];
   const check=new UpdateCheck({current:'0.48.0',kind:'raspberry-pi',now:()=>1000,fetcher:async url=>{urls.push(url);return new Response(JSON.stringify({version}));}});
-  assert.deepEqual(await check.check(),{kind:'raspberry-pi',current:'0.48.0',latest:'0.49.0',available:true,newReleases:[],checkedAt:1000,error:'',canStart:true,run:null});
+  assert.deepEqual(await check.check(),{kind:'raspberry-pi',repository:'beahead-ab/cda-tkl-install',product:'Charlottendal TKL',current:'0.48.0',latest:'0.49.0',available:true,newReleases:[],checkedAt:1000,error:'',canStart:true,run:null});
   assert.equal(urls[0],'https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/package.json');
   version='0.48.0';assert.equal((await check.check()).available,false);
 });
@@ -76,4 +76,39 @@ test('on Render the Deploy Hook starts a build, and the next version settles the
   await check.startRender();now+=31*60000;check.settle();
   assert.equal(check.view().run.phase,'failed');assert.match(check.view().run.message,/Render har inte bytt version/);
   await assert.rejects(()=>new UpdateCheck({current:'0.71.1',kind:'render',...io}).startRender(),/Ingen Deploy Hook/);
+});
+
+test('an installation of another station reads its own repository (Träkvista: beahead-ab/Tk-TKL)',async()=>{
+  const {installRepository}=await import('../src/update-check.mjs');
+  assert.equal(installRepository({}),'beahead-ab/cda-tkl-install');
+  assert.equal(installRepository({CHARLOTTENDAL_INSTALL_REPOSITORY:'beahead-ab/Tk-TKL'}),'beahead-ab/Tk-TKL');
+  assert.equal(installRepository({CHARLOTTENDAL_INSTALL_REPOSITORY:'../../etc'}),'beahead-ab/cda-tkl-install');
+  const urls=[];const check=new UpdateCheck({current:'0.81.0',kind:'raspberry-pi',repository:'beahead-ab/Tk-TKL',product:'Träkvista TKL',fetcher:async url=>{urls.push(url);return new Response('{"version":"0.81.0"}');}});
+  const view=await check.check();assert.equal(urls[0],'https://raw.githubusercontent.com/beahead-ab/Tk-TKL/main/package.json');
+  assert.equal(view.repository,'beahead-ab/Tk-TKL');assert.equal(view.product,'Träkvista TKL');
+});
+
+test('a private repository (Tk-TKL) is read through GitHub\'s API with the installation\'s token, which never reaches the panel',async()=>{
+  const {readToken}=await import('../src/update-check.mjs');
+  const token='github_pat_0123456789abcdefABCDEF_xyz',calls=[];
+  const check=new UpdateCheck({current:'0.81.0',kind:'raspberry-pi',repository:'beahead-ab/Tk-TKL',product:'Träkvista TKL',token:()=>token,
+    fetcher:async(url,options)=>{calls.push({url,options});return new Response(JSON.stringify(url.includes('releases.json')?[{version:'0.82.0',notes:['Nytt']}]:{version:'0.82.0'}));}});
+  const view=await check.check();
+  assert.equal(calls[0].url,'https://api.github.com/repos/beahead-ab/Tk-TKL/contents/package.json?ref=main');
+  assert.equal(calls[0].options.headers.Authorization,'Bearer '+token);assert.equal(calls[0].options.headers.Accept,'application/vnd.github.raw+json');
+  assert.equal(calls[1].url,'https://api.github.com/repos/beahead-ab/Tk-TKL/contents/public/releases.json?ref=main');
+  assert.equal(view.available,true);assert.deepEqual(view.newReleases.map(r=>r.version),['0.82.0']);
+  assert.ok(!JSON.stringify(view).includes(token),'the token is not in the view');
+  // Without a token a private repository answers 404, and the panel says what is missing.
+  const bare=new UpdateCheck({current:'0.81.0',kind:'raspberry-pi',repository:'beahead-ab/Tk-TKL',fetcher:async()=>new Response('',{status:404})});
+  assert.match((await bare.check()).error,/svar 404; är förrådet privat behöver installationen en token/);
+  const refused=new UpdateCheck({current:'0.81.0',kind:'raspberry-pi',repository:'beahead-ab/Tk-TKL',token:()=>token,fetcher:async()=>new Response('',{status:401})});
+  assert.match((await refused.check()).error,/GitHub godtar inte installationens token/);
+  // The token file: read at every check, trimmed, and only a token-shaped value is used.
+  const files={'/etc/tk-tkl/github-token':token+'\n','/etc/tk-tkl/bad':'token\r\nX-Injected: 1'};
+  const read=f=>{if(!(f in files))throw Object.assign(Error('ENOENT'),{code:'ENOENT'});return files[f];};
+  assert.equal(readToken({CHARLOTTENDAL_GITHUB_TOKEN_FILE:'/etc/tk-tkl/github-token'},read),token);
+  assert.equal(readToken({CHARLOTTENDAL_GITHUB_TOKEN_FILE:'/etc/tk-tkl/bad'},read),'');
+  assert.equal(readToken({CHARLOTTENDAL_GITHUB_TOKEN_FILE:'/etc/tk-tkl/missing'},read),'');
+  assert.equal(readToken({},read),'');
 });

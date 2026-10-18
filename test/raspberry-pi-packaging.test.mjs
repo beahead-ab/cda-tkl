@@ -2,12 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const identity=()=>Object.fromEntries([...read('packaging/identity.env').matchAll(/^(TKL_\w+)=(.*)$/gm)].map(m=>[m[1],m[2]]));
 
 test('the public installer fetches the package and hands it to the Raspberry Pi installer',()=>{
   const install=read('install.sh');
   assert.match(install,/INSTALLER="scripts\/install-raspberry-pi\.sh"/);
   assert.match(install,/github\.com\/\$\{REPOSITORY\}\/archive\/refs\/heads\/\$\{BRANCH\}\.tar\.gz/);
-  assert.match(install,/REPOSITORY="beahead-ab\/cda-tkl-install"/,'installs from the public install repository');
+  assert.ok(install.includes(`REPOSITORY="${identity().TKL_REPOSITORY}"`),'installs from the repository named in packaging/identity.env');
+  assert.ok(read('install.ps1').includes(`$Repository = '${identity().TKL_REPOSITORY}'`),'Windows installs from the same repository');
   assert.match(install,/CDA_TKL_TOKEN/,'a private fork can be read with a token');
 });
 
@@ -88,7 +90,22 @@ test('the Mac keeps its data in state although the path has a space, and re-regi
 test('a rangerare\'s station: kiosk URL from app.env, Stream Deck allowed for that origin, no TKL of its own',()=>{
   const browser=read('packaging/raspberry-pi/cda-tkl-browser'),install=read('scripts/install-raspberry-pi.sh'),env=read('packaging/raspberry-pi/app.env');
   assert.match(browser,/CHARLOTTENDAL_KIOSK_URL=/);assert.match(browser,/--unsafely-treat-insecure-origin-as-secure=\$ORIGIN/);assert.match(browser,/\/api\/auth\/session/);
-  assert.match(install,/KIOSK_URL=\$\{CDA_TKL_KIOSK_URL:-\}/);assert.match(install,/systemctl disable --now cda-tkl-simulator\.service cda-tkl\.service/);
+  assert.match(install,/KIOSK_URL=\$\{CDA_TKL_KIOSK_URL:-\}/);assert.match(install,/systemctl disable --now "\$TKL_ID-simulator\.service" "\$TKL_ID\.service"/);
   assert.match(install,/\$KIOSK_ORIGIN/);
   assert.match(env,/^# CHARLOTTENDAL_LISTEN=0\.0\.0\.0$/m);assert.match(env,/^# CHARLOTTENDAL_LAN_HOSTS=/m);
+});
+
+test('packaging/identity.env names the installation; Charlottendal\'s package installs as before',()=>{
+  const id=identity(),script=read('scripts/install-raspberry-pi.sh');
+  assert.match(id.TKL_ID,/^[a-z0-9-]+$/);assert.ok(id.TKL_NAME&&id.TKL_STATION&&id.TKL_REPOSITORY);
+  assert.match(script,/\. "\$SOURCE_DIR\/packaging\/identity\.env"/);
+  assert.match(script,/TKL_ID=cda-tkl TKL_NAME=Charlottendal TKL_STATION=charlottendal TKL_REPOSITORY=beahead-ab\/cda-tkl-install/,'defaults without the file');
+  assert.ok(fs.existsSync(new URL('../stations/'+id.TKL_STATION+'/station.json',import.meta.url))||id.TKL_STATION==='charlottendal','the station exists');
+});
+
+test('a token for a private repository is readable by the TKL service group, so Uppdatering can see new versions',()=>{
+  const script=read('scripts/install-raspberry-pi.sh');
+  assert.match(script,/chown "root:\$TKL_ID" "\$CONFIG_DIR\/github-token" && chmod 0640 "\$CONFIG_DIR\/github-token"/);
+  assert.match(script,/CHARLOTTENDAL_GITHUB_TOKEN_FILE=%s\\n' "\$CONFIG_DIR\/github-token"/);
+  assert.match(read('packaging/raspberry-pi/cda-tkl-update'),/github-token \] && TOKEN=/,'the update service reads the same token');
 });

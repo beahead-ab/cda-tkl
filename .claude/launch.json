@@ -14,6 +14,19 @@
       "port": 8920
     },
     {
+      "name": "trakvista",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "CHARLOTTENDAL_PORT=8940",
+        "CHARLOTTENDAL_SIM_PORT=8941",
+        "CHARLOTTENDAL_WIRE_PORT=8942",
+        "npm",
+        "run",
+        "start:trakvista"
+      ],
+      "port": 8940
+    },
+    {
       "name": "trainmeet-fake",
       "runtimeExecutable": "node",
       "runtimeArgs": [

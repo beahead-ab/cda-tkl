@@ -40,16 +40,23 @@ export function buildTrackGraph(panel,profile){
     for(const leg of ['A','B','C']){const seg=t['c'+leg.toLowerCase()];if(seg)link('s:'+seg,'t:'+id,leg==='A'?null:{turnout:t.name,position:leg===closed?'C':'T'});}
   }
   for(const [id,x] of Object.entries(panel.xings||{}))for(const [legs,path] of [[['ca','cc'],'AC'],[['cb','cd'],'BD']])for(const leg of legs)if(x[leg])link('s:'+x[leg],'x:'+id+':'+path);
+  // Korsningsväxeln (Träkvistas 22a/23): en nod per tillåten förbindelse, med båda växlarnas lägen som villkor.
+  for(const [id,sl] of Object.entries(panel.slips||{}))for(const [pair,st] of Object.entries(sl.states||{})){
+    const node='l:'+id+':'+pair,conds=[{turnout:sl.name,position:st.turnout===4?'T':'C'},{turnout:sl.name2,position:st.turnoutB===4?'T':'C'}];add(node,sl.block);
+    for(const leg of pair.split('-')){const seg=sl['c'+leg.toLowerCase()];if(seg&&nodes.has('s:'+seg)){nodes.get('s:'+seg).edges.push({to:node,cond:null});nodes.get(node).edges.push({to:'s:'+seg,cond:null});}}
+    // Villkoret ligger på passagen genom noden: båda lägena måste stämma för att tåget ska gå den här förbindelsen.
+    nodes.get(node).conds=conds;
+  }
   // Komprimera till block: från varje nod i ett block, genom noder utan block, till närmaste andra block.
   const edges={};
   for(const [id,n] of nodes){
     if(!n.block)continue;
-    const queue=[[id,[]]],seen=new Set([id]);
+    const queue=[[id,n.conds||[]]],seen=new Set([id]);
     while(queue.length){
       const [current,conds]=queue.shift();
       for(const e of nodes.get(current).edges){
         if(seen.has(e.to))continue;seen.add(e.to);
-        const next=nodes.get(e.to),path=e.cond?[...conds,e.cond]:conds;
+        const next=nodes.get(e.to),path=[...conds,...(e.cond?[e.cond]:[]),...(next.conds||[])];
         if(next.block===n.block)continue;
         if(next.block){const map=(edges[n.block]??=new Map());const list=map.get(next.block)||[];if(!list.some(c=>JSON.stringify(c)===JSON.stringify(path)))list.push(path);map.set(next.block,list);continue;}
         queue.push([e.to,path]);

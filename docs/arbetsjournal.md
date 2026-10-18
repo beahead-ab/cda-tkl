@@ -1859,6 +1859,134 @@ inget ligger över klockorna där trycket landar.
 Publicerad 17 oktober: cda-tkl main `05e5761` (#65), `beahead-ab/cda-tkl-install` main `929927a`. iPhone-appens del
 ligger i trainmeet-iphone #22.
 
+## 15 oktober 2026: förstudie Träkvista och flera stationer
+
+Casper: ”Kan vi använda cda-tkl och skapa en ny för Benny men för Träkvista? Kan vi t o m se Träkvista som en
+konfiguration av cda-tkl dvs att vi faktiskt kan konfigurera flera stationer?” Benny skickade `Träkvista.xml` (JMRI
+5.10.0), skärmbild och brev: etiketterna kommer från konfigurationsservern, rakt ned är ingen station ansluten (lila,
+XX), ofyllda spår är bara lokalt styrda, 23 och 22a är ofyllda av misstag.
+
+Svar och underlag i [förstudien](trakvista-forstudie.md). Kärnan är stationsoberoende; det stationsbundna är
+importkedjan och handskrivna tabeller. Provat: `scripts/import-layout.py` läser LayoutEditor-panelen ur en JMRI-fil och
+ger exakt dagens panel.json för Charlottendal (`npm run verify:layout`; 16 dekorativa texter och sju handdolda
+växelnummer rapporteras men avgör inte), och Träkvista går igenom (83 segment, 11 växlar, en dubbel korsningsväxel
+Vx22a/Vx23, 94 sensorikoner, 25 signalikoner). Träkvistas 27 huvudtågvägar (12 infarter, 11 utfarter, 4 genomfarter)
+har exakt två NX-knappar var som Charlottendals, och `Topology` hittar alla 27 med korsningsväxeln som nod och en
+uttrycklig knapp → spår-tabell (6 av 27 utan). Skiljer: LogixNG i stället för Logix/Jython, växelläge via två sensorer,
+enkelspår med körriktning, mod68, och sex CSV-tabeller utanför XML. Förslag: motor och stationsfil per station under
+`stations/`, en station per installation; två till tre veckor. Bennys fil ligger i `stations/trakvista/`. Ingen
+Charlottendal-funktion ändrad; 468 prov gröna.
+
+## 17 oktober 2026: Träkvista körs i cda-tkl
+
+Casper: ”Här är mer information. Kolla om det går att kopiera cda-tkl-repot och att du där kan snurra upp Träkvista, så
+kan vi sen jämföra stationerna och om det skulle gå att skapa en gemensam plattform.” Benny skickade 38 CSV-tabeller ur
+sin JMRI-profil (`Tk-csvfiler.zip`): knapplistor, blockfärger, texter, tidtabell och blocklistan för varje tågväg.
+
+Kopian är branchen `claude/trakvista-station-config-3aacbi`, skild från main och webbdriften. Träkvista körs med samma
+kärna, simulator och panel som Charlottendal och väljs med `CHARLOTTENDAL_STATION=trakvista` (`npm run start:trakvista`);
+utan variabeln startar Charlottendal som förut, och dess genererade filer är oförändrade. Nytt: `src/station.mjs`
+(stationsval, stationens data och `var/<id>/`), `scripts/import-logixng.py` (regler ur LogixNG),
+`scripts/make-station-profile.mjs` (drift- och fältprofil) och `stations/trakvista/` med station.json, källan, CSV-filerna
+och de genererade filerna. Kärnan fick dubbel korsningsväxel och riktning på lodrätt spår (Träkvistas C-linje); panelen
+fick korsningsväxeln, stationens egna växlingsknappar (vtv), ofyllda lokala spår och stationens namn.
+
+Resultat: 27 huvudtågvägar och 30 växeltågvägar, inga undantagna, alla lagda, klarerade och upplösta mot simulatorn i
+`test/trakvista.test.mjs` och över servern med simulerad LocoNet. 29 av 32 CSV-tabeller stämmer exakt med TKL:s
+tågvägar; två är inre steg i huvudtågvägarna och `23-37.csv` ser ut att vara kopierad från 2/4 → 2/6. Till Benny: fem
+Jython-skript saknas, tre växlar har avvikande återrapport i XML (Vx31, Vx21a, Vx21b), och växlarna 10–13 är interna utan
+LocoNet-adress. Kvar: linjerna A–C med körriktning och TAM, återrapport via två sensorer, spärr av lokala spår, mod68,
+Studio. Rekommendation: gemensam plattform i stället för två kopior. Jämförelsen i [Träkvista i cda-tkl](trakvista.md).
+
+## 17 oktober 2026: Bennys svar för Träkvista
+
+Casper vidarebefordrade Bennys svar på brevet och hans fem Jython-skript. Svaren och ändringarna står i
+[Träkvista i cda-tkl](trakvista.md#bennys-svar-17-oktober-och-vad-som-ändrades).
+
+- **Signal 4v** flyttad till före växel 13 genom en rättelse i `stations/trakvista/station.json`, som båda importörerna
+  tillämpar; källfilen är orörd. Växeltågvägen 2/6 → 4v går över S32, S34 och S4/7 och slutar vid 4v.
+- **Växlarnas lägesgivare:** kärnan och simulatorn läser läget från två givare per växel när profilen anger
+  `feedbackSensors`. Givarna tas efter namn (vx<nr>-t, vx<nr>-c), eftersom JMRI-inställningen inte är färdig. Åtta växlar
+  har givare (21b, 22a, 22b, 22c, 23, 31, 32, 34); Vx21a väntar på växelrapport. En order till en växel som redan ligger rätt bekräftas direkt av givarna.
+- **Lokala växlar** (10–13) läggs aldrig av TKL, varken i tågvägar eller som manöver.
+- **Linjerna** hämtar sin anslutning från TrainMeet; C har ingen i dag. Kopplingen till panelen återstår.
+- **Bildsatserna:** TKL:s mörka panel motsvarar Bennys mod59-modell, så mod59 används även för Träkvista.
+- **Skripten** sparade i `stations/trakvista/jython/`; de körs inte. TamSignaling och BlockSignaling motsvaras av
+  TrainMeet, RemoteControl av fjärrläget och Automaten av TKL:s automat.
+
+Prov: 12 prov i `test/trakvista.test.mjs`, bland annat rättelsen och givarna. 480 enhetsprov och 14 helhetsprov gröna;
+Charlottendals genererade filer oförändrade.
+
+
+## 17 oktober 2026: Träkvista som egen installation, Tk-TKL
+
+Casper: ”Att vi gör en superenkel installationsgrej, för både Träkvista och för Charlottendal, så att det är lika lätt
+att installera Träkvista som Charlottendal. Och sen lägger vi in Träkvista i ett eget GitHub-repo som heter Tk-TKL, med
+readme-fil för att med en enda kommando kunna installera hela applikationen på en Raspberry Pi. Verifiera också att det
+går att göra så med Charlottendals cda-tkl.”
+
+- **Installationen efter station.** `packaging/identity.env` (TKL_ID, TKL_NAME, TKL_STATION, TKL_REPOSITORY) säger vilken
+  installation paketet blir. Pi-installeraren skriver paketfilerna med stationens namn; Mac och Windows kopierar
+  `stations/` och skriver stationen i app.env. Uppdateringskontrollen läser installationens förråd.
+- **Tk-TKL.** `node scripts/make-station-repository.mjs trakvista` gör en klon av cda-tkl till Träkvistas förråd ur
+  `installation` i `stations/trakvista/station.json`: tk-tkl från `beahead-ab/Tk-TKL`, README ur
+  `stations/trakvista/README.md`. Förrådet kunde inte skapas från sessionen (GitHub 403); innehållet är klart att pushas.
+- **Provat i en Ubuntu 24.04-container utan systemd** (x86_64; tjänsterna startade som systemd skulle): Charlottendals
+  publicerade enradsinstallation 0.81.0, därefter branchens installerare ovanpå. Alla nio installerade filerna är byte
+  för byte desamma, och TKL svarar med 340 tågvägar. Tk-TKL:s paket, packat som GitHub packar ett förråd, installerar
+  Träkvista bredvid: `/opt/tk-tkl`, användaren och tjänsterna `tk-tkl`, `CHARLOTTENDAL_STATION=trakvista`, 57
+  tågvägar, A → Spår II lagd i panelen. En andra körning uppdaterar och lämnar `app.env` orörd. Hämtningen från
+  github.com är spärrad i containerns nät och provades därför med `CDA_TKL_SOURCE`.
+
+485 enhetsprov gröna i cda-tkl.
+
+## 17 oktober 2026: Tk-TKL helt separat från Charlottendal
+
+Casper: ”Jag tycker det är bra om vi kör helt separata, TKL med Träkvista och CDA:s, i två varsitt GitHub.” Tk-TKL
+var först en kopia av hela cda-tkl, med Charlottendals data, arbetsjournalen och historiken; det passar inte när Benny
+ska få tillgång.
+
+- **Tk-TKL publiceras ur cda-tkl** med `deploy/publish-station.sh trakvista`, som cda-tkl-install: programmet,
+  `stations/trakvista/`, dokumenten i `installation.docs`, installationerna och de prov som inte läser Charlottendals
+  filer. Charlottendals data (`profiles/`, `public/data/` med Cda60.xml), generatorer, webbdriftens uppdaterare och
+  prov (`deploy/charlottendal-only.txt`), arbetsjournalen och driftsättningen stannar i cda-tkl. Proven körs i paketet
+  före varje publicering.
+- **Historiken ersatt:** Tk-TKL har två commits, *Publicerad från cda-tkl bf2c195* (`--first`) och *a3d8ad7*.
+- **Rättelser från Tk-TKL** tas in med `git format-patch | git am -3`; publiceringen stannar om en ändring i Tk-TKL
+  saknas i cda-tkl. Provat på kopior av båda förråden.
+- **Programmet utan Charlottendal:** standardstationen kommer ur `packaging/identity.env`, och Studios källor läses
+  bara för Charlottendal. Utan det startade Träkvistas server inte i Tk-TKL; ett nytt prov startar Träkvistas server och
+  anläggning som processer och lägger A → Spår II.
+- **Dokumenten delade:** `docs/stationer.md` (bara i cda-tkl) har jämförelsen och publiceringen; `docs/trakvista.md`
+  handlar om Träkvista och följer med.
+
+Provat: 487 prov i cda-tkl och 221 i Tk-TKL:s paket gröna. Installerad från det publicerade Tk-TKL i containern, med tom
+driftdata: 57 tågvägar, A → Spår II lagd genom att klicka i panelen. Kvar i programkoden: Charlottendals handskrivna
+funktioner (Spår 6, rangerbangården, V1–V4, orterna) och versionsnoterna i `public/releases.json`.
+
+Senare samma kväll: Benny ska kunna ändra i Tk-TKL. Tk-TKL:s README har avsnittet *Göra ändringar* (pull request mot
+main, prova lokalt, vilka filer som är Träkvistas och vilka publiceringen skriver om), och publiceringen lägger in
+GitHub-kontrollen *Prov* (`packaging/github/station-tests.yml` → `.github/workflows/prov.yml`): `npm test` och
+`npm run verify:trakvista` på varje pull request och varje ändring av main. Publicerat som 0e234ab.
+
+## 17 oktober 2026: Uppdatera nu för båda stationerna, och Studio för Träkvista
+
+Casper: ”Bygg in funktion så att det är enkelt att uppdatera både cda-tkl och tk-tkl via knapptryckning inifrån admin i
+applikationen.” och ”Studio ska Träkvista ha sin variant av också.”
+
+- **Uppdatera nu** (Inställningar → Uppdatering) fungerade redan för Charlottendals Pi. Tk-TKL är privat, så Träkvistas
+  versionskontroll fick 404 och knappen visades aldrig. Nu läser kontrollen förrådet genom GitHubs API med
+  installationens token (`CHARLOTTENDAL_GITHUB_TOKEN_FILE`, `/etc/tk-tkl/github-token`, läsbar för root och tk-tkl),
+  och kunde versionen inte läsas visar en Pi **Hämta senaste versionen**. Provat i containern: installation med token,
+  knappen och bekräftelsen i panelen, och `tk-tkl-update.service` startad (systemctl ersatt, ingen systemd).
+- **Träkvistas inställningar** visar stationens namn; källregistret och Studio-länken bara där källorna finns.
+- **Studio för Träkvista:** källorna per station (`src/studio/sources.mjs`), spåravkänningen ur LogixNG, regler som
+  kompileras tillbaka identiskt (linjernas egna uppgifter och manöverreglernas härkomst följer med; tomma
+  `boundaryOverrides` utgår ur profilen), Studios texter och AI-uppmaningar med stationens namn och JMRI-fil, planen i
+  en ram ur ritningen och utan vändskiva, och Källa ur `Trakvista.xml` (`import-source.py --source --out`).
+  Införandestatus (Charlottendals Logix-migrering) visas inte för Träkvista. Charlottendals Studio är oförändrad; alla
+  Studio-flikar öppnade för båda stationerna utan fel.
+
 ## 17 oktober 2026, 0.81.1: Uppdatering visar inte gamla försök
 
 Casper 17 oktober, med en skärmbild av Inställningar → Uppdatering på Render: «uppdateringen failade». Skärmbilden

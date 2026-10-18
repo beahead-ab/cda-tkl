@@ -15,8 +15,8 @@ borta.
 - Byter server vid behov, på samma sätt som `configure`.
 - Läser träffens stationer ur den öppna `/v1/display`. TrainMeet har en kod för hela träffen och knyter inte koden till
   en station.
-- Väljer ställverkets station (`matchStation`): samma namn som profilens titel, *Charlottendal*, annars den enda
-  station vars namn innehåller den.
+- Väljer ställverkets station (`matchStation`): samma namn som installationens station (*Charlottendal*, i Tk-TKL
+  *Träkvista*), annars den enda station vars namn innehåller det namnet.
 - Parkopplar med koden.
 
 Har träffen ingen sådan station svarar `connect` med `choose` (träffens stationer och skälet) utan att använda koden.
@@ -31,6 +31,8 @@ kopplar bort webbdriften: TrainMeet släpper in ett TKL per id och station.
 | Mac | `cda-tkl-mac` |
 | PC | `cda-tkl-pc` |
 | Webbdriften och utvecklingskörningar | `cda-tkl` |
+
+En annan station tar sin signatur i stället för `cda`: Träkvista blir `tk-tkl`, `tk-tkl-pi` och så vidare.
 
 `configure` och `pair` finns kvar i API:t, för prov och äldre klienter.
 
