@@ -2097,3 +2097,6 @@ som 0.82.1.
 Alla lokala grenar i trainmeet-server, trainmeet-cloud, trainmeet-tkl, trainmeet och trainmeet-iphone hör till
 pull requests som redan är sammanslagna. Undantaget är `claude/anslut-sida` (trainmeet-server #200), som stängdes
 med avsikt. Ingenting låg opushat.
+
+Publicerad 18 oktober: cda-tkl main `bdb6601` (#78), `beahead-ab/cda-tkl-install` main `65039a0`, Tk-TKL `008d18b`
+(`deploy/publish-station.sh trakvista`, 232 prov i paketet). Render tar 0.82.2 när det bygger om main.
