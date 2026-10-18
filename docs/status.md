@@ -110,3 +110,7 @@ Stationspaketets XML-importör följer med, och källverifieringen är obligator
 ## Föreslaget, inte publicerat: 0.82.5
 
 Skapa ägare och återställ användare väljer nu stationens egen driftkatalog, med befintlig prioritet för användar-, auth- och state-variablerna. Charlottendals register flyttas inte. Se [stationsprovet](stationsprov-2026-10-18.md).
+
+## Föreslaget, inte publicerat: 0.82.6
+
+Mac och Windows väljer stationsidentitet före katalog och autostart. Charlottendals standardvägar är kvar. Mac-installation och uppdatering är provade isolerat; Windows är statiskt granskat, inte körprovat. Två stationer på samma värd kräver egna portar. Se [stationsprovet](stationsprov-2026-10-18.md).

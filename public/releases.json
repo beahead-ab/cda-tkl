@@ -1,5 +1,12 @@
 [
   {
+    "version": "0.82.6",
+    "date": "2026-10-18",
+    "notes": [
+      "Mac och Windows använder stationens eget installationsnamn, katalog och autostart så att Träkvista inte ersätter Charlottendal"
+    ]
+  },
+  {
     "version": "0.82.5",
     "date": "2026-10-18",
     "notes": [

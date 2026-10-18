@@ -2117,4 +2117,10 @@ Riktat paketprov och verify:trakvista gröna. I det byggda Tk-paketet passerade 
 
 create-owner.mjs och recover-user.mjs använde var/ också för Träkvista när state-variabeln saknades. Verktygen använder nu samma stateDirectory som servern. Befintlig CHARLOTTENDAL_USERS_FILE, CHARLOTTENDAL_AUTH_FILE och CHARLOTTENDAL_STATE_DIR har samma prioritet. Charlottendals standard är fortfarande var/.
 
-Tio processcenarier i små tillfälliga installationer provar båda stationsvalen, paketets standardstation och de tre filvalen. Återställningen återanvänder samma ägare, avslutar sessionen och lämnar övriga register byteoförändrade. Tillsammans med användarproven: 13/13 gröna. Originalskriptets fel reproducerades i separat provkopia. Inga verkliga användare eller driftdata rörda.
+Tretton processcenarier i små tillfälliga installationer provar båda stationsvalen, paketets standardstation och de tre filvalen. Återställningen återanvänder samma ägare, avslutar sessionen och lämnar övriga register byteoförändrade. Tillsammans med användarproven: 16/16 gröna. Originalskriptets fel reproducerades i separat provkopia. Inga verkliga användare eller driftdata rörda.
+
+## 18 oktober 2026, förslag 0.82.6: stationens namn vid installation på Mac och Windows
+
+Båda installerarna läser nu packaging/identity.env före val av programkatalog. Mac använder stationens appnamn och launchd-label, Windows dess katalog och genvägar. Charlottendals standardvägar och äldre datamigrering bevaras, liksom befintlig app.env. Ingen verklig installation har körts eller ändrats.
+
+15/15 riktade installationsprov gröna. Mac-installation och uppdatering körs i temporär miljö med ersatta systemkommandon; provet visar att Träkvista inte rör Charlottendals katalog eller data. Windows har endast statiska prov eftersom PowerShell saknas här. Samtidig körning på samma värd kräver skilda portar; denna PR ändrar inte standardportar eller panelgenvägarnas adresser. Slutlig inventering och förslag till steg 2 finns i [stationsprotokollet](stationsprov-2026-10-18.md). Alla PR:er väntar på Casper; main och installationsförråden har inte ändrats.

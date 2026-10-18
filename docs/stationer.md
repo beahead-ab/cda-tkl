@@ -88,3 +88,9 @@ Träkvista utan stationsspecifik kod, sedan korsningsväxeln och den lodräta ri
 - **Stationsfilen.** Knapparnas spår, linjerna, riktningen på lodrätt spår, lokala växlar och panelens stil.
 - **Charlottendals handskrivna funktioner.** Spår 6, rangerbangården, programmeringsspåret, V1–V4 och automatens
   spårordning ligger kvar i koden och gäller bara Charlottendal. De bör flyttas till stationsfilen eller egna moduler.
+
+## Verifiering 18 oktober 2026
+
+[Stationsprovet](stationsprov-2026-10-18.md) beskriver den kontrollerade grunden och förslagen till rättelser. Charlottendals filer ligger kvar i profiles/ och public/data/. En gemensam stationsbeskrivning ändrar läsvägen, inte stationsunderlagen eller driftkatalogen.
+
+Träkvistas tågvägar kan etableras med den interna återrapporten, men A/B/C är ännu inte genomförda i panelens linjemappning, tågspårningen eller automaten. Källverifiering är därför inte samma sak som godkänd TrainMeet-trafik. Riktig bana, lokal webbläsaracceptans och faktisk uppdatering av installationer ska provas separat. Inget är mergat eller publicerat i denna omgång.

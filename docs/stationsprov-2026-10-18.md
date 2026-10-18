@@ -23,7 +23,7 @@ Installationsförråden publiceras inte i detta arbete.
 | Studio, Träkvista | 57 tågvägar, 13 växlar, 25 signaler. Kompilerad profil identisk. |
 | Gemensam läsväg | Riktade prov för hela profilobjektet, legacy-profiler, state-prioritet, Studio med separat källrot samt saknade och avvikande underlag passerar. |
 | HTTP, lokal panel, Studio i webbläsaren | Inte godkänt i denna miljö: lokal lyssning stoppas av `listen EPERM`. Nya HTTP-prov kontrollerar exakta bytes och att en station aldrig lämnar ut den andras källor. |
-| Fulla enhets- och processprov | Kräver en miljö med lokala portar. GitHub-arbetsflödet i PR:n kör hela kedjan; resultaten ska granskas före merge. Inga prov hoppas över för att kringgå begränsningen. |
+| Fulla enhets- och processprov | Baseline gav 496 godkända, tre EPERM-blockerade och två root-krävande överhoppade enhetsprov av 501. Alla 14 integrationsprov blockerades av EPERM. Kräver en miljö med lokala portar. GitHub-arbetsflödet i PR:n kör hela kedjan; resultaten ska granskas före merge. Inga prov hoppas över för att kringgå begränsningen. |
 | Docker/Render-start | Inte provat: Docker-socketen är inte åtkomlig här. Ingen Render-tjänst har startats eller ändrats. |
 | Pi, LocoBuffer och riktig bana | Inte fysiskt provat. En virtuell LocoBuffer eller intern återrapport visar inte att banans givare eller MGP-kort fungerar. |
 
@@ -60,4 +60,12 @@ Den delade XML-importören behålls och verifieringen krävs. Det negativa prove
 
 ## Användarverktygen, 0.82.5
 
-Två verktyg följer serverns driftkatalog. Tio nya processcenarier och tre användarprov passerar. De körs i isolerade kopior och verifierar ägarinloggning, återställning, sessionens ogiltigförklaring och att andra register inte ändras. Originalfelet har reproducerats. Det är inte ett prov av inloggningssidan i webbläsaren.
+Två verktyg följer serverns driftkatalog. Tretton nya processcenarier och tre användarprov passerar. De körs i isolerade kopior och verifierar ägarinloggning, återställning, sessionens ogiltigförklaring och att andra register inte ändras. Originalfelet har reproducerats. Det är inte ett prov av inloggningssidan i webbläsaren.
+
+## Installationsnamn, 0.82.6
+
+15/15 riktade installationsprov passerar. Mac-installeraren och uppdateringen körs i temporär miljö med ersatta systemkommandon: Träkvistas katalog, appnamn och autostart är egna, Charlottendals data bevaras och app.env skrivs inte över. Befintlig migration från Charlottendals äldre var-katalog fungerar som förut. Windows har statiska prov; PowerShell och Windows-körning återstår. Standardportar och panelgenvägarnas adresser är oförändrade: två samtidiga installationer på samma dator är inte färdigkonfigurerade av denna ändring.
+
+Direkta lagringsprov av båda stationerna etablerade tågvägar med Field-modellens telegram, läste om Engine från temporära JSON-filer och bevarade samma växellås i läget held. Visningsinställningar och användarsession återlästes också. Detta visar diskformat och moduler, inte full processomstart eller webbläsarflöde.
+
+Slutgranskningen lade till prov som avvisar befintliga null-/skalärfiler i Studio och som tillåter uttryckliga användarsökvägar även utan stationsunderlag. 17 riktade Studio-/profilprov och 16 användarprov är gröna. GitHub-provet kör dessutom de två root-krävande uppdaterings-/rollbackproven i isolerade kataloger och PowerShells parser på Windows. Detta installerar inget på en verklig Pi, Mac eller Render-tjänst.
