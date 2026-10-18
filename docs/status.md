@@ -98,3 +98,7 @@ Vid införandet av version 0.17.0 passerade 134 enhetstester och sex processhelh
 Aktuell publicerad release och provstatus finns i [arbetsjournalen](arbetsjournal.md), [provresultaten](provresultat.md); driftuppgifterna hålls utanför förrådet.
 
 [Avstämning av samtliga 54 användningsfall och tio produktkrav](acceptans-2026-09-23.md) visar exakt vad som är provat, avsiktligt vilande eller beroende av ytterligare underlag.
+
+## Föreslaget, inte publicerat: 0.82.3
+
+Stationernas läsvägar är samlade utan filflytt. Charlottendals hela profil, källhash, granskade regler och migreringsunderlag bevaras. Driftdata ligger kvar i `var/`, med `CHARLOTTENDAL_STATE_DIR` först. Se [stationsprovet](stationsprov-2026-10-18.md). Ingen merge eller publicering ingår; main driftsätter Charlottendal på Render.

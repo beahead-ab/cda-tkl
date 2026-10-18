@@ -1,5 +1,12 @@
 [
   {
+    "version": "0.82.3",
+    "date": "2026-10-18",
+    "notes": [
+      "Stationernas profiler, Studio och källfiler läses genom samma beskrivning; Charlottendals filer och driftkatalog ligger kvar"
+    ]
+  },
+  {
     "version": "0.82.2",
     "date": "2026-10-18",
     "notes": [

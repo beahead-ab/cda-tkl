@@ -1,0 +1,25 @@
+name: Prov
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  prov:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run -s check
+      - run: npm run -s verify:operations
+      - run: npm run -s verify:layout
+      - run: npm run -s verify:xml
+      - run: npm run verify:trakvista
+      - run: npm run -s test:integration

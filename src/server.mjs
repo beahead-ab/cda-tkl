@@ -119,7 +119,7 @@ const bindings=new BindingConfiguration(baseProfile,{storage,canActivate:activat
 // Studio: reglerna ovanpå driftbindningarna. Kärnan får alltid den kompilerade profilen, aldrig utkastet.
 // Studio läser stationens egna källor: driftprofilen, panelen och JMRI-filen (Charlottendal: Cda60.xml, Träkvista:
 // Trakvista.xml). En station utan JMRI-fil har inget Studio.
-const hasStudio=station.builtIn||!!station.source;
+const hasStudio=!!station.source;
 // Källregistret (Studio → Källa): JMRI-filen post för post, ur source/index.json i stationens data.
 const hasRegister=fs.existsSync(path.join(station.dataDir,'source','index.json'));
 const studioSources=hasStudio?loadSources(undefined,station):{profile:null,panel:null,coverage:null,indications:null,migration:null,xml:null,rules:null,station:null};
@@ -140,7 +140,7 @@ const studioMeasure=new Measurements({storage,send:b=>!!client?.send(b),guard:()
 // TKL-id hos TrainMeet. TrainMeet släpper in ett TKL per id och station, och sedan 0.82.0 anges inget id vid anslutningen:
 // en ny installation på en Pi, en Mac eller en PC får ett eget (cda-tkl-pi, tk-tkl-mac …), så att den inte kopplar bort
 // webbdriften (cda-tkl). En installation som redan har ett id behåller det. TKL väljer stationen med samma namn.
-const tklName=station.builtIn?'cda-tkl':(station.signature||station.id).toLowerCase().replace(/[^a-z0-9]/g,'')+'-tkl';
+const tklName=station.tklId;
 const clientId=tklName+({'raspberry-pi':'-pi',mac:'-mac',windows:'-pc'}[process.env.CHARLOTTENDAL_INSTALL_KIND]||'');
 const trainMeet=new TrainMeet({storage,origin:process.env.CHARLOTTENDAL_TRAINMEET_ORIGIN||'',station:station.title||'Charlottendal',clientId});
 // Kom igång (src/onboarding.mjs): stegens status ur det som finns; panelen visar "N steg kvar" tills ägaren markerat klart.
@@ -266,10 +266,10 @@ const server = http.createServer(async (req, res) => {
         req.on('close', () => { streams.delete(res); clearTimeout(expiry); }); return;
       }
       if (url.pathname.startsWith('/api/')) return json(res, { error: 'Finns inte' }, 404);
-      // En annan station har sin egen data/ (panel.json, signalregister …). Charlottendals filer lämnas aldrig ut i dess ställe.
+      // Alla stationer läser /data ur sin egen datakatalog (panel.json, signalregister …), utan återfall till en annan station.
       // Originalfilen i Studio → Källa: stationens JMRI-fil ligger i stationens katalog, inte bland de genererade filerna.
-      if (!station.builtIn && station.source && url.pathname === '/data/source/' + encodeURIComponent(station.sourceName)) return staticFile(res, path.dirname(station.source), '/' + station.sourceName);
-      if (!station.builtIn && url.pathname.startsWith('/data/')) return staticFile(res, station.dataDir, decodeURIComponent(url.pathname.slice(5)));
+      if (station.source && url.pathname === '/data/source/' + encodeURIComponent(station.sourceName)) return staticFile(res, path.dirname(station.source), '/' + station.sourceName);
+      if (url.pathname.startsWith('/data/')) return staticFile(res, station.dataDir, decodeURIComponent(url.pathname.slice(5)));
       return staticFile(res, root, decodeURIComponent(url.pathname));
     }
     const data = await body(req,65536);

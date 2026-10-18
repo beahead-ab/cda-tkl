@@ -2100,3 +2100,9 @@ med avsikt. Ingenting låg opushat.
 
 Publicerad 18 oktober: cda-tkl main `bdb6601` (#78), `beahead-ab/cda-tkl-install` main `65039a0`, Tk-TKL `008d18b`
 (`deploy/publish-station.sh trakvista`, 232 prov i paketet). Render tar 0.82.2 när det bygger om main.
+
+## 18 oktober 2026, förslag 0.82.3: samma läsväg utan filflytt
+
+Casper ändrade avgränsningen: inventera och verifiera före större ombyggnad. Charlottendals filer ligger kvar i `profiles/` och `public/data/`. Stationsbeskrivningen anger profiler, Studio-underlag, XML och befintligt TKL-id; servern använder stationens datakatalog för `/data/`. Charlottendals `var/` och hela profilobjektet bevaras. Inga verkliga driftdata har lästs eller ändrats.
+
+Riktade profil- och Studio-prov passerar, inklusive 340/49/66 för Charlottendal och 57/13/25 för Träkvista. HTTP-prov finns för exakta data och stationsgränser. Miljön blockerar lyssningsportar (`EPERM`), så process- och webbläsarprov är inte godkända lokalt. Ett PR-arbetsflöde kör hela provkedjan på GitHub. Protokoll och återstående arbete: [stationsprov](stationsprov-2026-10-18.md). Bara en PR; ingen merge, publicering eller ändring av Render.
