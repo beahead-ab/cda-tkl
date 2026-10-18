@@ -102,3 +102,7 @@ Träkvistas tågvägar kan etableras med den interna återrapporten, men A/B/C �
 De redan publicerade paketen och källans installationsmetadata har kvar den äldre, fungerande URL-stavningen. Den kan normaliseras i nästa granskade installationsändring utan att stationens id, TKL-id eller driftkatalog ändras. Vid en ny Render-Blueprint väljs förrådet tk-tkl.
 
 ![Förrådet efter namnbytet](tk-tkl-namnbyte-2026-10-18.jpg)
+
+## Nästa granskade trafiksteg
+
+Casper har godkänt stationsstyrd linjetrafik, automat och därefter lokalt stationsval med kontrollerad omstart. [Protokollet](stationsstyrd-trafik-2026-10-18.md) skiljer modul-/processprov från webbläsaracceptans och riktig bana. Förrådsuppdelning och gemensam webbtjänst ligger kvar för senare beslut. Förslag 0.82.7 ersätter den tidigare beskrivningen av A/B/C-luckan först när ändringen har granskats och mergats.

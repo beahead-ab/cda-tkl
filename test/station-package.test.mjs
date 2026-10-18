@@ -31,7 +31,7 @@ test('stationspaketet behåller källimporten och publiceringen stoppar gamla ge
     // Här behövs inga npm-beroenden; stationens verkliga verifierare använder Python och Nodes standardbibliotek.
     const npm = execFileSync('/bin/sh', ['-c', 'command -v npm'], { encoding: 'utf8' }).trim();
     const quote = s => "'" + s.replaceAll("'", "'\\''") + "'";
-    fs.writeFileSync(path.join(bin, 'npm'), `#!/bin/sh\ncase "$1" in\n  ci) exit 0 ;;\n  test) printf '# pass 0\\n# fail 0\\n'; exit 0 ;;\n  *) exec ${quote(npm)} "$@" ;;\nesac\n`, { mode: 0o755 });
+    fs.writeFileSync(path.join(bin, 'npm'), `#!/bin/sh\ncase "$1" in\n  ci) exit 0 ;;\n  test) printf '# pass 0\\n# fail 0\\n'; exit 0 ;;\n  run) if [ "$3" = test:station-traffic ]; then exit 0; fi; exec ${quote(npm)} "$@" ;;\n  *) exec ${quote(npm)} "$@" ;;\nesac\n`, { mode: 0o755 });
     const publish = () => {
       const result = spawnSync('bash', ['deploy/publish-station.sh', 'trakvista'], {
         cwd: source, encoding: 'utf8', timeout: 90000,
@@ -46,7 +46,7 @@ test('stationspaketet behåller källimporten och publiceringen stoppar gamla ge
     assert.equal(fresh.status, 0, fresh.output);
     const packaged = path.join(fresh.packagePath, 'repo');
     const pkg = JSON.parse(fs.readFileSync(path.join(packaged, 'package.json'), 'utf8'));
-    assert.ok(pkg.scripts['verify:trakvista']); assert.ok(pkg.scripts['import:trakvista']);
+    assert.ok(pkg.scripts['test:station-traffic']); assert.ok(pkg.scripts['verify:trakvista']); assert.ok(pkg.scripts['import:trakvista']);
     assert.ok(fs.existsSync(path.join(packaged, 'scripts/import-source.py')));
     for (const name of ['profiles', 'public/data', 'docs/arbetsjournal.md', 'deploy/publish-station.sh']) {
       assert.equal(fs.existsSync(path.join(packaged, name)), false, name + ' ska stanna i cda-tkl');

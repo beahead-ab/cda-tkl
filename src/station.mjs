@@ -31,7 +31,7 @@ export function currentStation(env = process.env, root = ROOT) {
   const dir = `${root}stations/${id}`, station = JSON.parse(fs.readFileSync(dir + '/station.json', 'utf8'));
   // JMRI-filen som stationen är importerad ur: Studio läser den, som Charlottendals Cda60.xml.
   const source = station.source && /^[\w.-]+\.xml$/.test(station.source) && fs.existsSync(dir + '/' + station.source) ? dir + '/' + station.source : null;
-  return { id, title: station.title, signature: station.signature, dataDir: dir + '/data', profile: dir + '/profiles/network.json', field: dir + '/profiles/field.json',
+  return { id, title: station.title, signature: station.signature, definition: station, dataDir: dir + '/data', profile: dir + '/profiles/network.json', field: dir + '/profiles/field.json',
     legacyProfile: null, legacyField: null, rules: null, migration: null, optionalStudioData: true,
     source, sourceName: source ? station.source : null, tklId: (station.signature || id).toLowerCase().replace(/[^a-z0-9]/g, '') + '-tkl' };
 }

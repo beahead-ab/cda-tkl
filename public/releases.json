@@ -1,5 +1,12 @@
 [
   {
+    "version": "0.82.7",
+    "date": "2026-10-18",
+    "notes": [
+      "Panelen, orterna och trafikspelets tåg använder stationens egna linjer och spår; Träkvista har A, B och C med uttryckliga TrainMeet-kopplingar"
+    ]
+  },
+  {
     "version": "0.82.6",
     "date": "2026-10-18",
     "notes": [

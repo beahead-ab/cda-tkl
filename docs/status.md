@@ -120,3 +120,7 @@ Mac och Windows väljer stationsidentitet före katalog och autostart. Charlotte
 Förslagen 0.82.3–0.82.6 ligger i separata utkast-PR:er #80–83. Samtliga fyra kod-PR:er är gröna i GitHub. De är inte mergade eller publicerade. [Stationsprotokollet](stationsprov-2026-10-18.md) anger provade commits och återstående acceptansprov. Träkvistas linjetrafik och automat behöver egna trafikändringar före containersteget; se [nästa trafiksteg](trakvista-nasta-trafiksteg.md).
 
 GitHub-förrådet för Träkvista heter sedan 18 oktober `beahead-ab/tk-tkl`, enligt Caspers önskemål. Samma förråds-id och senaste commit; gamla URL:er fungerar. Namnbytet har inte publicerat någon ny version eller ändrat driften.
+
+## Föreslaget, inte publicerat: 0.82.7
+
+Linjer, orter, tidtabell, tågspårning och fältmodell använder samma stationsbeskrivning. Träkvistas A/B/C och fem stationsspår är uttryckligt bundna; saknad TrainMeet-koppling placerar inga tåg. Charlottendals underlag och driftvägar ligger kvar. [Protokoll och begränsningar](stationsstyrd-trafik-2026-10-18.md).

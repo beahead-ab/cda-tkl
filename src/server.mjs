@@ -20,7 +20,7 @@ import { TrainInformation } from './train-information.mjs';
 import { TrainTracker } from './train-tracking.mjs';
 import { TrafficTrains } from './traffic-trains.mjs';
 import { TrainAutomation } from './train-automation.mjs';
-import { destinationLines } from '../public/destination-data.js';
+import { stationTraffic, trafficEdgeInfo } from './station-traffic.mjs';
 import { PanelIndications } from './panel-indications.mjs';
 import { TrainMeet } from './trainmeet.mjs';
 import { ModelClock } from './model-clock.mjs';
@@ -49,6 +49,7 @@ const connectionInfo=p=>connection.target(p);
 let profile,client,engine,configuration,trainInformation,panelIndications,recorder,tracker,automation;
 // Panelens geometri, för tågspårningens spårgraf (src/train-tracking.mjs).
 const panelGeometry=stationData('panel.json',station);
+const traffic=stationTraffic(station,baseProfile,panelGeometry);
 const bindingReports=new Map();
 function activationStatus(proposed){
   const deny=reason=>({allowed:false,reason});
@@ -100,7 +101,7 @@ function createRuntime(p){
   const target=connectionInfo(p);
   const c=new LocoNetClient({host:target.host,port:target.port,silenceMs:p.staleMs});
   const e=new Engine(p,{storage,send:bytes=>c.send(bytes)});if(e.storageFault)throw Error(e.storageFault);
-  const t=new TrainTracker({profile:p,panel:panelGeometry,enabled:target.mode==='simulator',reason:'Tågspårningen följer TKL:s egna tåg när LocoNet inte är ansluten; mot banan är den avstängd tills den är provad där.',log:(kind,message)=>e.log(kind,message)});
+  const t=new TrainTracker({profile:p,panel:panelGeometry,traffic,enabled:target.mode==='simulator',reason:'Tågspårningen följer TKL:s egna tåg när LocoNet inte är ansluten; mot banan är den avstängd tills den är provad där.',log:(kind,message)=>e.log(kind,message)});
   return {profile:p,client:c,engine:e,
     configuration:new Configuration(p,{storage,canActivate:()=>!e.routes.length&&!e.controls.programming.reserved&&!e.yard.requests.length&&!e.storageFault}),
     trainInformation:new TrainInformation(stationData('train-fields.json',station),p,{storage}),
@@ -146,27 +147,16 @@ const trainMeet=new TrainMeet({storage,origin:process.env.CHARLOTTENDAL_TRAINMEE
 // Kom igång (src/onboarding.mjs): stegens status ur det som finns; panelen visar "N steg kvar" tills ägaren markerat klart.
 const onboarding=new Onboarding({storage});
 const onboardingContext=()=>({auth,ai:aiSettings.view(),connection:{mode:connectionInfo(profile).mode,state:engine?.connected?'connected':'disconnected'},trainMeet:trainMeet.view()});
-const destinations=new Destinations(storage);
+const destinations=new Destinations(storage,traffic);
 const modelClock=new ModelClock(storage);let clockPublished=0;
 let notes = storage.load('notes.json', {}); const streams = new Set(), trace = [], protocolTrace=[]; let dirty = true;
 auth.on('invalidate', () => { for (const stream of streams) stream.end(); streams.clear(); });
 // Kanterna för tågspårningen: ortsnamnet och TrainMeet-stationen per spår, och vilket spår som är linjens infart.
-function edgeInfo(){
-  const d=destinations.view(),stations=trainMeet.view().context?.stations||[],out={};
-  for(const line of destinationLines){
-    const exit=d.outgoing?.[line.id]??line.outgoing,incoming=line.tracks.find(t=>t!==exit)||exit;
-    for(const track of line.tracks){const e=d.entries.find(x=>x.id===track)||{},station=e.source==='trainmeet'?stations.find(s=>s.id===e.stationId):null;out[track]={name:station?.name||e.name||track,stationId:e.source==='trainmeet'?e.stationId:'',incoming:track===incoming};}
-  }
-  return out;
-}
+function edgeInfo(){return trafficEdgeInfo(traffic,destinations.view(),trainMeet.view().context);}
 // Trafikspelets tåg (src/traffic-trains.mjs): när LocoNet inte är ansluten kör TKL tågen från TrainMeet-servern på sin
 // egen bana, över den lokala förbindelsen. Spåren här namnges som i tidtabellen (Spår 1a → 1a).
 const trafficTrains=new TrafficTrains({available:connection.mode==='offline',send:command=>client.simulate(command),log:(kind,message)=>engine.log(kind,message)});
-function stationTracks(){
-  const out={};
-  for(const [button,b] of Object.entries(profile.buttons||{})){const m=/^Spår\s+(.+)$/.exec(b.label||'');const block=m&&profile.routes.find(r=>r.to===button)?.blocks.at(-1);if(block)out[m[1].trim().toLowerCase()]={button,block};}
-  return out;
-}
+function stationTracks(){return traffic.stationTracks;}
 let trafficTicked=0,trafficRevision=0;
 function playTraffic(){
   if(!trafficTrains.available||Date.now()-trafficTicked<1000)return;trafficTicked=Date.now();
@@ -246,7 +236,7 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(200,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Disposition':`attachment; filename="${station.id}-mgp.json"`});return res.end(req.method==='HEAD'?undefined:JSON.stringify(doc,null,2)+'\n');}
       // A preview only: the ranger's own targets are a narrower list, never a wider one.
       if(url.pathname==='/api/route-targets')return json(res,{targets:engine.routeTargets(url.searchParams.get('from'),url.searchParams.get('kind')||'main',url.searchParams.get('operator')==='ranger'?'ranger':'tkl')});
-      if (url.pathname === '/api/config') { const {routeAlternatives,...panelProfile}=profile; return json(res, { ...panelProfile,release,station:{id:station.id,title:station.title,signature:station.signature||null,studio:hasStudio,source:station.sourceName||null,register:hasRegister,migration:!!studioSources.migration},bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: auth.mode === 'external' ? '/account' : null, authMode: auth.mode, onboarding: (v => ({ done: v.done, remaining: v.remaining, steps: v.steps.map(x => ({ id: x.id, label: x.label, done: x.done, skipped: x.skipped })) }))(onboarding.view(onboardingContext())) }); }
+      if (url.pathname === '/api/config') { const {routeAlternatives,...panelProfile}=profile; return json(res, { ...panelProfile,release,traffic,station:{id:station.id,title:station.title,signature:station.signature||null,studio:hasStudio,source:station.sourceName||null,register:hasRegister,migration:!!studioSources.migration},bindingVersion:bindings.data.activeVersion, notes, trainFields:trainInformation.catalog(),panelIndications:panelIndications.catalog(), presentation:configuration.presentation(), fieldUrl: process.env.CHARLOTTENDAL_FIELD_URL || `http://127.0.0.1:${Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911)}/`, accountUrl: auth.mode === 'external' ? '/account' : null, authMode: auth.mode, onboarding: (v => ({ done: v.done, remaining: v.remaining, steps: v.steps.map(x => ({ id: x.id, label: x.label, done: x.done, skipped: x.skipped })) }))(onboarding.view(onboardingContext())) }); }
       if (url.pathname === '/api/train-information') return json(res, {...trainInformation.snapshot(),...trainInformation.catalog()});
       if(url.pathname==='/api/bindings')return json(res,bindings.view());
       if(url.pathname==='/api/bindings/export'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','Content-Disposition':`attachment; filename=${station.id}-driftprofil.json`});return res.end(req.method==='HEAD'?undefined:JSON.stringify(bindings.export(),null,2));}

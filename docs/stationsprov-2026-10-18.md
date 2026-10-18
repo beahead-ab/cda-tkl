@@ -90,3 +90,7 @@ Ingen merge, push till cda-tkl-install/Tk-TKL, ändring i trainmeet-server eller
 PR:erna är staplade för att skilja rättelser och versionssteg åt: #80 → #81 → #82 → #83. Casper granskar först. Om Casper senare väljer squash-merge till main behöver nästa PR baseras om på uppdaterad main innan den kan squashas; merga inte en följd-PR till en tidigare arbetsgren som ett sätt att publicera. Varje merge till main kan driftsätta Charlottendal. Installationsförråden publiceras först efter ett separat beslut.
 
 [Nästa trafiksteg](trakvista-nasta-trafiksteg.md) föreslår två separata PR:er för Träkvistas linjer/manuella TrainMeet-trafik och därefter automat. Render-containrar och Caspers nya Träkvista-tjänst kommer sedan. Eget tkl-förråd och gemensam tjänst ingår inte.
+
+## Godkänt fortsatt arbete
+
+Casper har nu godkänt linjetrafik, automat och lokalt stationsval med kontrollerad omstart som separata granskningssteg. Uppdaterat [trafikprotokoll](stationsstyrd-trafik-2026-10-18.md) redovisar ändringarna och vilka prov som återstår. Eget tkl-förråd, filflytt, gemensam tjänst, merge och publicering ingår fortfarande inte.

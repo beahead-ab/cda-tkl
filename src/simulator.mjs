@@ -6,11 +6,13 @@ import { hex, fromHex, LineReader } from './protocol.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
 import { createAuth } from './auth.mjs';
 import { loadProfile } from './profile.mjs';
-import { currentStation } from './station.mjs';
+import { currentStation, stationData } from './station.mjs';
+import { stationTraffic } from './station-traffic.mjs';
 
 const station = currentStation(), profile = loadProfile('field');
 const port = Number(process.env.CHARLOTTENDAL_SIM_PORT || 8911), wirePort = Number(process.env.CHARLOTTENDAL_WIRE_PORT || 8912);
-const field = new Field(profile), clients = new Set(), trace = [];
+const traffic=stationTraffic(station,loadProfile('tkl'),stationData('panel.json',station));
+const field = new Field(profile,{traffic}), clients = new Set(), trace = [];
 let link = true;
 function record(direction, bytes) { trace.unshift({ at: Date.now(), direction, hex: hex(bytes) }); trace.length = Math.min(trace.length, 80); }
 function broadcast(bytes) { record('ut', bytes); if (link) for (const s of clients) s.write(`RECEIVE ${hex(bytes)}\r\n`); }
