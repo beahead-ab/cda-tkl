@@ -93,7 +93,7 @@ Träkvista utan stationsspecifik kod, sedan korsningsväxeln och den lodräta ri
 
 [Stationsprovet](stationsprov-2026-10-18.md) beskriver den kontrollerade grunden och förslagen till rättelser. Charlottendals filer ligger kvar i profiles/ och public/data/. En gemensam stationsbeskrivning ändrar läsvägen, inte stationsunderlagen eller driftkatalogen.
 
-Träkvistas tågvägar kan etableras med den interna återrapporten, men A/B/C är ännu inte genomförda i panelens linjemappning, tågspårningen eller automaten. Källverifiering är därför inte samma sak som godkänd TrainMeet-trafik. Riktig bana, lokal webbläsaracceptans och faktisk uppdatering av installationer ska provas separat. Inget är mergat eller publicerat i denna omgång.
+Träkvistas A/B/C, manuella trafikflöden, spårning och offlineautomat ingår i 0.82.10 och har kompletta process-/paketprov mot en lokal TrainMeet-provserver. Charlottendal är uppdaterat och kontrollerat i webbläsaren på Render. Träkvistas faktiska grannar och webbläsaracceptans, riktig bana och uppdatering av native installationer återstår. Installationsförråden är inte publicerade med ändringen. [Driftprotokollet](render-release-2026-10-18.md) skiljer de provade miljöerna.
 
 ## Förrådet heter nu tk-tkl
 
@@ -103,10 +103,10 @@ De redan publicerade paketen och källans installationsmetadata har kvar den äl
 
 ![Förrådet efter namnbytet](tk-tkl-namnbyte-2026-10-18.jpg)
 
-## Nästa granskade trafiksteg
+## Stationsstyrd trafik, införd i 0.82.10
 
-Casper har godkänt stationsstyrd linjetrafik, automat och därefter lokalt stationsval med kontrollerad omstart. [Protokollet](stationsstyrd-trafik-2026-10-18.md) skiljer modul-/processprov från webbläsaracceptans och riktig bana. Förrådsuppdelning och gemensam webbtjänst ligger kvar för senare beslut. Förslag 0.82.7 ersätter den tidigare beskrivningen av A/B/C-luckan först när ändringen har granskats och mergats.
+Stationsstyrd linjetrafik, automat och lokalt stationsval med kontrollerad omstart ingår nu samlat i main `5560c2a` (#89). [Trafikprotokollet](stationsstyrd-trafik-2026-10-18.md) och [driftprotokollet](render-release-2026-10-18.md) skiljer modul-/processprov från webbläsaracceptans och riktig bana. Förrådsuppdelning och gemensam webbtjänst ligger kvar för senare beslut.
 
-## Lokalt stationsval, förslag 0.82.9
+## Lokalt stationsval, 0.82.10
 
-Ett lokalt stationsbyte med kontrollerad omstart införs för startövervakaren (npm start), skilt från en gemensam webbtjänst. Installerade paket, separata driftkataloger, inloggning och TrainMeet-paus beskrivs i [stationsvalet](stationsval.md). Native tjänstestart och Render behåller sin befintliga fasta station.
+Ett lokalt stationsbyte med kontrollerad omstart stöds genom startövervakaren (npm start), skilt från en gemensam webbtjänst. Installerade paket, separata driftkataloger, inloggning och TrainMeet-paus beskrivs i [stationsvalet](stationsval.md). Native tjänstestart och Render behåller sin befintliga fasta station.

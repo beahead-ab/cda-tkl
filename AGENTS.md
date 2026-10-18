@@ -74,7 +74,7 @@ något för just det dokumentet.
   eftersom Drift räcker.
 - Översättningskatalogen är synkad: trainmeet-cloud #83 och trainmeet-tkl #46.
 
-**Öppet:** inga issues och inga öppna PR:er i cda-tkl, trainmeet-server, trainmeet-cloud, trainmeet-tkl, trainmeet,
+**Historiskt läge före stationsarbetet:** inga issues och inga öppna PR:er i cda-tkl, trainmeet-server, trainmeet-cloud, trainmeet-tkl, trainmeet,
 trainmeet-iphone, trainmeet-tmbox eller trainmeet-hem. Alla lokala grenar hör till pull requests som redan är
 sammanslagna; undantaget är `claude/anslut-sida` (trainmeet-server #200), som stängdes med avsikt.
 
@@ -89,3 +89,11 @@ sammanslagna; undantaget är `claude/anslut-sida` (trainmeet-server #200), som s
 ## Förrådsnamn 18 oktober 2026
 
 Casper bad om gemener: GitHub-förrådet heter nu `beahead-ab/tk-tkl` (samma id 1423516520 och main-commit 008d18b). Den äldre URL-stavningen Tk-TKL fungerar också. Namnbytet ändrar inga paket, profiler eller driftdata. Källpaketets äldre URL-stavning är ett giltigt alias och kan normaliseras vid en senare granskad installationsändring; publicera inget enbart för namnbytet.
+
+## Fortsättning 18 oktober 2026: Render 0.82.10
+
+Casper godkände ett kontrollerat byte av Charlottendals befintliga Render-tjänst. PR #89 squash-mergades till main `5560c2a`; deploy `dep-dbaeca0ae00c739lu7u0` är live med 0.82.10. PR #80–88 ingår och är stängda. Charlottendals filer ligger kvar i profiles/ och public/data/, profil-id/sourceHash och driftkatalog är bevarade. Stationernas trafik, Träkvistas offlineautomat och lokalt stationsval genom npm start ingår i programmet. Befintlig native tjänstestart och Render kör fasta stationer.
+
+Slutlig CI 39139292652: 619 enhetsprov, 19 integrationer, två separata root-prov, 346 paketenhetsprov, syntax/källkontroller, Windows-parser och faktiskt Docker-/Chromium-prov gröna. Den sista kontrollen rättade ett timingfel efter verifierad tågvägspassage. Render-efterkontroll och privat backupjämförelse är gjorda; befintlig session, två användare, inställningar och TrainMeet bevarades, automaten är åter på.
+
+Installationsförråden är fortfarande 0.82.2; inget publicerades till cda-tkl-install/tk-tkl och inget ändrades i TrainMeet Server. Nästa steg är Träkvistas container och därefter godkänd publicering/Caspers nya Render-tjänst. Se docs/render-release-2026-10-18.md. Slutrapporten ligger i en egen dokumentations-PR utan ytterligare main-merge; main är fortfarande en driftsättningsgren.

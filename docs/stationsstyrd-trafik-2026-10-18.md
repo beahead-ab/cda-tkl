@@ -1,6 +1,6 @@
 # Stationsstyrd trafik, 18 oktober 2026
 
-Casper har godkänt ett gemensamt program med stationen som inställning. Det genomförs i separata granskningssteg: manuell linjetrafik, automat och därefter stationsval med kontrollerad omstart. Ett nytt programförråd och en gemensam webbtjänst ingår inte. Inget mergas eller publiceras i detta arbete; main kan driftsätta Charlottendal på Render.
+Casper godkände ett gemensamt program med stationen som inställning. Arbetet granskades i separata steg: manuell linjetrafik, automat och därefter stationsval med kontrollerad omstart. Förslagen nedan ingår nu samlat i 0.82.10, main `5560c2a` (#89), efter Caspers uttryckliga godkännande av driftbytet. Charlottendal på Render är uppdaterat; installationsförråden är inte publicerade. Ett nytt programförråd och en gemensam webbtjänst ingår inte. Aktuellt slutresultat och kvarstående begränsningar finns i [driftprotokollet](render-release-2026-10-18.md).
 
 ## Linjer och manuell trafik, förslag 0.82.7
 

@@ -1,5 +1,7 @@
 # Förslag: Träkvistas linjer och trafikspelets tåg
 
+Uppdatering efter genomförandet: trafikstegen och lokalt stationsval nedan ingår nu i 0.82.10, main `5560c2a` (#89). Charlottendal är uppdaterat på Render. Nästa steg är Träkvistas container, godkänd publicering och dess egen Render-tjänst med Casper; se [driftprotokollet](render-release-2026-10-18.md). Ursprungliga förslaget nedan bevarar underlaget till beslutet.
+
 18 oktober 2026. Underlag till Caspers nästa beslut. Ingen av dessa trafikändringar ingår i PR #80–83.
 En ny container löser inte de återstående trafikfunktionerna.
 
