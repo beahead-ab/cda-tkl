@@ -97,3 +97,11 @@ Casper godkände ett kontrollerat byte av Charlottendals befintliga Render-tjän
 Slutlig CI 39139292652: 619 enhetsprov, 19 integrationer, två separata root-prov, 346 paketenhetsprov, syntax/källkontroller, Windows-parser och faktiskt Docker-/Chromium-prov gröna. Den sista kontrollen rättade ett timingfel efter verifierad tågvägspassage. Render-efterkontroll och privat backupjämförelse är gjorda; befintlig session, två användare, inställningar och TrainMeet bevarades, automaten är åter på.
 
 Installationsförråden är fortfarande 0.82.2; inget publicerades till cda-tkl-install/tk-tkl och inget ändrades i TrainMeet Server. Nästa steg är Träkvistas container och därefter godkänd publicering/Caspers nya Render-tjänst. Se docs/render-release-2026-10-18.md. Slutrapporten ligger i en egen dokumentations-PR utan ytterligare main-merge; main är fortfarande en driftsättningsgren.
+
+## Fortsättning 18 oktober 2026: 0.82.10 publicerat till installationerna
+
+**Publicerad: 0.82.10 (18 oktober 2026; cda-tkl main `88942ef`, #90; programrelease #89; `beahead-ab/cda-tkl-install` main `e5b89e6`; `beahead-ab/tk-tkl` main `4dac44b`).**
+
+Båda målförråden är verifierade mot publiceringsskriptens resultat: 35 respektive 57 ändrade filer och inga borttagningar. Installationsförrådets tagg `v0.82.10` pekar på `e5b89e6`. Tk-TKL saknade rättelser efter sin senaste publiceringsmarkör. Charlottendals Render-tjänst, källans main och TrainMeet Server ändrades inte i publiceringsomgången. Träkvistas faktiska Render-tjänst och fysisk bana återstår.
+
+#91 är fortfarande ett separat utkast med grön CI på `5f53405`. Använd dess rättade `deploy/publish-install.sh` tills den ändringen har mergats: den äldre main-versionen skulle annars ta bort `scripts/create-owner.mjs`, `scripts/recover-user.mjs`, `docs/anvandare.md` och `docs/loconet-anslutning.md`. Publiceringsrapporten ligger i dokumentations-PR; main är en driftsättningsgren och ska inte uppdateras enbart för rapportens skull utan ett planerat driftbyte.

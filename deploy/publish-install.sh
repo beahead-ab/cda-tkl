@@ -19,9 +19,11 @@ cd "$WORK/repo"
 find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 (cd "$SOURCE" && git archive "$FULL" install.sh install.ps1 package.json package-lock.json src public profiles packaging \
   scripts/start.mjs scripts/install-raspberry-pi.sh scripts/install-mac.sh scripts/locobuffer-gateway.mjs scripts/serial-port.py \
-  docs/installation.md docs/raspberry-pi.md) | tar -x -C .
-# The installation overview is the front page; its link to the Pi guide moves with it.
-sed 's|](raspberry-pi.md)|](docs/raspberry-pi.md)|g' docs/installation.md > README.md && rm docs/installation.md
+  scripts/create-owner.mjs scripts/recover-user.mjs \
+  docs/installation.md docs/raspberry-pi.md docs/anvandare.md docs/loconet-anslutning.md) | tar -x -C .
+# The installation overview is the front page; its links to the guides that move with it follow along.
+sed -e 's|](raspberry-pi.md)|](docs/raspberry-pi.md)|g' -e 's|](loconet-anslutning.md)|](docs/loconet-anslutning.md)|g' \
+  docs/installation.md > README.md && rm docs/installation.md
 git add -A
 if git diff --cached --quiet; then echo "cda-tkl-install har redan innehållet i $VERSION."; exit 0; fi
 git commit -q -m "Charlottendal TKL $VERSION"
