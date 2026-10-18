@@ -2051,3 +2051,14 @@ Skärmprov i Chromium mot en låtsad TrainMeet:
 Publicerad 18 oktober: cda-tkl main `3b1dcc9` (#70), `beahead-ab/cda-tkl-install` main `ac687ff`. Render tar den när
 den bygger om main. Tk-TKL publiceras för sig med `deploy/publish-station.sh trakvista`. Serverns sida `/anslut`
 (trainmeet-server #200) väntar på Caspers klartecken.
+
+## 18 oktober 2026, 0.82.1: koden finns under Drift → Anslut en box
+
+Casper skickade en skärmbild av Drift → Anslut en box på server.trainmeet.app, där adressen och koden redan står med
+Kopiera: «Vänta. Här verkar det funka!!», och sedan: «Jag hade missat». Sidan `/anslut` (trainmeet-server #200)
+behövs alltså inte och är stängd utan merge. I stället får rutan en rad om CDA-TKL (trainmeet-server #201, väntar på
+klartecken), eftersom stegen där ("Tryck Fortsätt", "Välj station") gäller TrainMeet TKL och inte CDA-TKL efter 0.82.0.
+
+0.82.0 hänvisade till sidan *Anslut ett ställverk* i felbeskedet vid en nekad kod, i hjälptexten vid formuläret och i
+installationsdokumenten. 0.82.1 hänvisar i stället till Drift → Anslut en box och Inställningar → Anslutningskod.
+Prov: `test/trainmeet.test.mjs` med det nya felbeskedet.
