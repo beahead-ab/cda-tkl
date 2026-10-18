@@ -14,7 +14,7 @@ Installationsförråden publiceras inte i detta arbete.
 - Träkvista publiceras med `deploy/publish-station.sh trakvista`. Bennys rättelser ska tas in i cda-tkl före nästa publicering.
 - Charlottendals befintliga Render-Dockerfile och Träkvistas paketmall är två befintliga körsätt. Render-inställningarna ändras inte.
 
-## Provresultat
+## Lokala provresultat och begränsningar
 
 | Kontroll | Resultat |
 |---|---|
@@ -69,3 +69,24 @@ Två verktyg följer serverns driftkatalog. Tretton nya processcenarier och tre 
 Direkta lagringsprov av båda stationerna etablerade tågvägar med Field-modellens telegram, läste om Engine från temporära JSON-filer och bevarade samma växellås i läget held. Visningsinställningar och användarsession återlästes också. Detta visar diskformat och moduler, inte full processomstart eller webbläsarflöde.
 
 Slutgranskningen lade till prov som avvisar befintliga null-/skalärfiler i Studio och som tillåter uttryckliga användarsökvägar även utan stationsunderlag. 17 riktade Studio-/profilprov och 16 användarprov är gröna. GitHub-provet kör dessutom de två root-krävande uppdaterings-/rollbackproven i isolerade kataloger och PowerShells parser på Windows. Detta installerar inget på en verklig Pi, Mac eller Render-tjänst.
+
+## Slutlig kontroll i GitHub
+
+Kodrevisionerna i PR #80–83 provas i GitHub eftersom den lokala miljön blockerar lyssningsportar. Resultaten nedan avser respektive angiven commit, inte bara baslinjen eller ett tidigare förslag.
+
+| PR / kodcommit | Enhetsprov | Integration | Övrigt |
+|---|---|---|---|
+| [#80 / 6d428e3](https://github.com/beahead-ab/cda-tkl/pull/80) | 518 godkända, två root-prov överhoppade | 14/14 | Alla fem syntax-/källkontroller gröna. [Körning](https://github.com/beahead-ab/cda-tkl/actions/runs/39130874878). |
+| [#81 / 2687572](https://github.com/beahead-ab/cda-tkl/pull/81) | 519 godkända, två root-prov överhoppade | 14/14 | Alla kontroller gröna. Tk-paket: 249 godkända, källverifiering grön, ingen push. [Körning](https://github.com/beahead-ab/cda-tkl/actions/runs/39130941059). |
+| [#82 / 82d85dd](https://github.com/beahead-ab/cda-tkl/pull/82) | 532 godkända, två root-prov överhoppade | 14/14 | Alla kontroller gröna. Tk-paket: 262 godkända, källverifiering grön, ingen push. [Körning](https://github.com/beahead-ab/cda-tkl/actions/runs/39130975945). |
+| [#83 / 47de9a1](https://github.com/beahead-ab/cda-tkl/pull/83) | 533 godkända, tre överhoppade (två root, ett Mac) | 14/14 | Alla kontroller gröna, två root-krävande uppdaterings-/rollbackprov körda separat, Tk-paket: 263 godkända, källverifiering grön, ingen push och Windows-parser grön. [Körning](https://github.com/beahead-ab/cda-tkl/actions/runs/39131020255). |
+
+Proven visar bland annat exakt HTTP-data per station, Studio, ägarinloggning i Träkvistas nya Render-gateway, Charlottendals processomstart med sparade inställningar/lås och trafikspelets tåg mot lokal TrainMeet-provserver. De visar inte att Träkvistas A/B/C eller automat fungerar; den luckan kvarstår. Visuell webbläsaracceptans, riktig Windows-installation, faktisk Pi-uppgradering och fysisk LocoBuffer/MGP återstår.
+
+Ingen merge, push till cda-tkl-install/Tk-TKL, ändring i trainmeet-server eller ändring av Render har gjorts. Alla Charlottendals profiler och public/data samt Träkvistas genererade stationsdata är byteoförändrade mot main 904d564.
+
+## Granskning och nästa beslut
+
+PR:erna är staplade för att skilja rättelser och versionssteg åt: #80 → #81 → #82 → #83. Casper granskar först. Om Casper senare väljer squash-merge till main behöver nästa PR baseras om på uppdaterad main innan den kan squashas; merga inte en följd-PR till en tidigare arbetsgren som ett sätt att publicera. Varje merge till main kan driftsätta Charlottendal. Installationsförråden publiceras först efter ett separat beslut.
+
+[Nästa trafiksteg](trakvista-nasta-trafiksteg.md) föreslår två separata PR:er för Träkvistas linjer/manuella TrainMeet-trafik och därefter automat. Render-containrar och Caspers nya Träkvista-tjänst kommer sedan. Eget tkl-förråd och gemensam tjänst ingår inte.

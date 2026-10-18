@@ -114,3 +114,7 @@ Skapa ägare och återställ användare väljer nu stationens egen driftkatalog,
 ## Föreslaget, inte publicerat: 0.82.6
 
 Mac och Windows väljer stationsidentitet före katalog och autostart. Charlottendals standardvägar är kvar. Mac-installation och uppdatering är provade isolerat; Windows är statiskt granskat, inte körprovat. Två stationer på samma värd kräver egna portar. Se [stationsprovet](stationsprov-2026-10-18.md).
+
+## Granskningsläge 18 oktober 2026
+
+Förslagen 0.82.3–0.82.6 ligger i separata utkast-PR:er #80–83. Samtliga fyra kod-PR:er är gröna i GitHub. De är inte mergade eller publicerade. [Stationsprotokollet](stationsprov-2026-10-18.md) anger provade commits och återstående acceptansprov. Träkvistas linjetrafik och automat behöver egna trafikändringar före containersteget; se [nästa trafiksteg](trakvista-nasta-trafiksteg.md).
