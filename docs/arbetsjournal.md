@@ -2006,3 +2006,10 @@ Prov: `test/update-check.test.mjs` (nytt prov med Renders rad från 6 oktober: b
 
 Publicerad 17 oktober: cda-tkl main `8a404ba` (#67), `beahead-ab/cda-tkl-install` main `ab46183`. Render tar den när
 den bygger om main.
+
+## 18 oktober 2026, 0.82.0: flera stationer
+
+Casper: ”Gör 0.82.0 och publicera till cda-tkl-install.” Versionen samlar det som kom in med #69: stationsvalet och
+Träkvista, installationen efter `packaging/identity.env`, Uppdatera nu med token och Hämta senaste versionen, och Studio
+per station. För Charlottendal är driften oförändrad; Uppdatering kan visa Hämta senaste versionen när versionen inte
+gick att läsa. Versionsnoteringarna i `public/releases.json`.

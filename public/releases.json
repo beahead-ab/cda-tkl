@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.82.0",
+    "date": "2026-10-18",
+    "notes": [
+      "Flera stationer: samma program kör Charlottendal eller en annan station, till exempel Träkvista, med stationens egen spårplan, tågvägar och Studio",
+      "Installationen på Raspberry Pi, Mac och PC följer stationen, med egna tjänster, kataloger och uppdateringar; för Charlottendal blir allt som förut",
+      "Uppdatering på en Pi visar Hämta senaste versionen när den senaste versionen inte gick att läsa, och läser ett privat förråd med installationens token"
+    ]
+  },
+  {
     "version": "0.81.1",
     "date": "2026-10-17",
     "notes": [
