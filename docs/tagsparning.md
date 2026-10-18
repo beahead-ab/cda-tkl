@@ -14,9 +14,11 @@ vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0 (cda-tkl `45ec00a`,
 *Simulerad trafik* är borta. I 0.80.0 kan tidtabellen visa tågen på linjen och tågen som står inne som en linjebild
 eller med tecken (se nedan). I 0.81.0 visar eller döljer ett tryck på träffklockan sekunderna, och 0.81.1 visar
 inte längre ett gammalt försök under Uppdatering. I 0.82.0 tas tåg som trafikspelet inte har här bort från banan, och
-spårningen glömmer dem (se nedan). På ställverket ligger
-*Automat* bland driftknapparna under Drift, listan *Spårade tåg* under Drift → Tågnummer, och den egna
-återrapportens sida nås från Studio → Driftsättning → *Egen återrapport ↗*.
+spårningen glömmer dem (se nedan). TrainMeet, som trafikspelets tåg kommer ifrån, ansluts samtidigt med bara serverns
+adress och anslutningskoden ([TrainMeet-anslutningen](trainmeet-adapter.md#anslut-med-adress-och-kod--0820)). I 0.82.1
+säger TKL var adressen och koden finns i TrainMeet Server: Drift → Anslut en box. Spårningen är oförändrad i 0.82.1.
+På ställverket ligger *Automat* bland driftknapparna under Drift, listan *Spårade tåg* under Drift → Tågnummer, och
+den egna återrapportens sida nås från Studio → Driftsättning → *Egen återrapport ↗*.
 
 ## Vad som syns
 
