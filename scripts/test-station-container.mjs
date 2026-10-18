@@ -17,8 +17,11 @@ import { containerProv } from './container-prov.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const id = process.argv[2] || 'trakvista';
+// Källregistret hämtar Charlottendals signalregister och införandestatus som valfria filer; en annan station har dem
+// inte, och sidan hanterar det själv. 404 på just dem är alltså väntat och inget fel i provet.
+const optional404 = ['/data/signal-catalog.json', '/data/migration.json'];
 const prov = containerProv({ root, artifacts: process.env.TKL_STATION_ARTIFACTS || path.join(os.tmpdir(), 'tkl-station-container'),
-  hostname: 'tk-render.example.test' });
+  hostname: 'tk-render.example.test', optional404 });
 const { artifacts, command, mark, request, json } = prov;
 const station = JSON.parse(fs.readFileSync(path.join(root, `stations/${id}/station.json`), 'utf8'));
 const profile = JSON.parse(fs.readFileSync(path.join(root, `stations/${id}/profiles/network.json`), 'utf8'));
@@ -97,6 +100,9 @@ async function browserSmoke(password) {
   await page.screenshot({ path: path.join(artifacts, '03-fast-station.png'), fullPage: true });
   mark(`Stationsinställningarna visar ${station.title} som fast Render-installation`);
   await prov.closeBrowser();
+  assert.deepEqual([...prov.optionalMissing].sort(), [...optional404].sort(),
+    'Stationen ska sakna just Charlottendals valfria registerfiler, varken fler eller färre');
+  mark('Sidorna hanterar att stationen saknar Charlottendals signalregister och införandestatus');
 }
 
 let rollback = null;
@@ -178,6 +184,7 @@ try {
   mark(`Åter till ${release} efter återgången, med samma data`);
 
   prov.result({ ok: true, station: id, release, rollback, profileId: profile.id, sourceHash: profile.sourceHash,
+    optionalMissing: prov.optionalMissing,
     scope: 'Isolerad avbildning ur stationspaketet med syntetiska data. Ingen verklig bana, TrainMeet-parkoppling, publicering eller Render-tjänst.' });
 } catch (error) {
   await prov.saveFailure(error, { station: id, release, rollback });

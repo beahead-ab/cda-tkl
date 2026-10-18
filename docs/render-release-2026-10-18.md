@@ -98,6 +98,8 @@ Provet kontrollerar, allt med syntetiska data på ett internt Docker-nät:
   listan, inget lagringsfel och ansluten intern simulator.
 - Webbläsaren: inloggning, renderad spårplan, stationens namn i panelens rubrik och sidhuvud, Studio utan fel med
   stationens plan, och stationsinställningarna med Träkvista som fast installation. Tre skärmbilder sparas.
+- Källregistrets valfria filer: stationen saknar Charlottendals signalregister och införandestatus, sidorna hanterar
+  det själva, och provet kräver att det är just de två och inga andra uteblivna svar.
 - Riktig containeromstart på samma volym bevarar ägare, session, ortsinställning och modellklocka.
 - Återgång: föregående publicerade version (den senaste i cda-tkl:s historik med ett annat versionsnummer) byggs som
   egen avbildning, startas på samma volym och ska logga in med det bytta lösenordet och visa samma ortsinställning och

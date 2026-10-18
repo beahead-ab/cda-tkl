@@ -11,14 +11,16 @@ import { isIP } from 'node:net';
 import { randomBytes } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 
-export function containerProv({ root, artifacts: directory, hostname = 'cda-render.example.test' }) {
+// optional404: adresser som får svara 404 därför att stationen saknar filen, till exempel Charlottendals
+// signalregister och införandestatus i en annan stations installation. De räknas som sedda, inte som fel.
+export function containerProv({ root, artifacts: directory, hostname = 'cda-render.example.test', optional404 = [] }) {
   const artifacts = path.resolve(directory);
   fs.mkdirSync(artifacts, { recursive: true });
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'tkl-render-cert-'));
   const id = 'tkl-render-prov-' + randomBytes(6).toString('hex');
   const prov = {
     artifacts, temporary, id, network: id + '-nat', volume: id + '-data',
-    checks: [], browserErrors: [], responseErrors: [],
+    checks: [], browserErrors: [], responseErrors: [], optionalMissing: [],
     upstreamHost: null, port: null, origin: null, host: null,
     proxy: null, browser: null, context: null,
     images: [], volumeCreated: false, networkCreated: false, containerCreated: false,
@@ -134,7 +136,9 @@ export function containerProv({ root, artifacts: directory, hostname = 'cda-rend
     page.on('response', response => {
       const resource = new URL(response.url()).pathname;
       // Chromium kan själv fråga efter en favicon som programmet inte tillhandahåller.
-      if (response.status() >= 400 && resource !== '/favicon.ico') prov.responseErrors.push(`${response.status()} ${resource}`);
+      if (response.status() < 400 || resource === '/favicon.ico') return;
+      if (response.status() === 404 && optional404.includes(resource)) { if (!prov.optionalMissing.includes(resource)) prov.optionalMissing.push(resource); return; }
+      prov.responseErrors.push(`${response.status()} ${resource}`);
     });
     return page;
   };
