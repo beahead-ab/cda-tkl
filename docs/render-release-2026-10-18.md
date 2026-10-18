@@ -29,7 +29,49 @@ Behåll den fungerande Render-deployen ovan och en aktuell skyddad säkerhetskop
 
 ## Resultat
 
-Förberedelse pågår. Ingen merge eller driftsättning är utförd när denna kandidat skrivs. Provresultat, säkerhetskopia, release-PR, faktisk deploy och efterkontroll kompletteras i samma protokoll.
+**Genomfört:** Charlottendal kör nu 0.82.10 på sin befintliga Render-tjänst. PR #89 squash-mergades som `5560c2a9c8b7fedcd2116c9d17213d950dfeab36`; deploy `dep-dbaeca0ae00c739lu7u0` är live. Merge-trädet `b907e010a79c2bd7bef409440b5c8e9cb19ca9be` är exakt det provade release-trädet. Del-PR #80–88 stängdes som ingående i releasen, utan fler driftsättningar.
+
+### Slutlig kontroll före merge
+
+[CI 39139292652](https://github.com/beahead-ab/cda-tkl/actions/runs/39139292652) är helt grön på `1ac7ff4007d28efd17c73ed856ff64c2be2ad0ef`:
+
+| Kontroll | Resultat |
+|---|---|
+| npm test | 619 godkända av 622, tre avsiktligt överhoppade: två root-prov och ett Mac-specifikt |
+| Syntax, operations-, layout-, XML- och Träkvistakontroller | Alla gröna |
+| Processintegration | 19/19, inklusive båda stationerna och komplett automatflöde |
+| Root-krävande uppdatering/återgång | Körda separat, 2/2 i isolerade kataloger |
+| Träkvistas verkliga stationspaket | 346 godkända enhetsprov; käll-, trafik- och omstartsprov gröna; ingen push |
+| Windows | PowerShell-parser grön; ingen verklig installation |
+| Render-avbildning och Chromium | Bygge, ägare/inloggning, panel, Studio, Uppdatering, fast station och riktig containeromstart med bevarade inställningar gröna |
+
+### Byte och verklig efterkontroll
+
+Automaten pausades genom panelen. API-kontrollen visade inga tågvägar, programmeringslås, rangerbegäran, nödläge eller lagringsfel. Därefter togs en ny backup: `/data/release-backups/before-0.82.10-20261018T153015Z.tar.gz`, kl. 17:30:15 svensk tid, 19 filer, 12 validerade JSON-filer, 1 722 994 byte och behörighet 0600. SHA-256: `4086a10913901320c16ff800180db673d2868fe6e48f13fe1e57db8d3660f5a6`.
+
+Render byggde automatiskt efter den enda main-mergen. Under själva omstarten syntes ett kort 502-svar; därefter svarar den nya tjänsten normalt. Följande är kontrollerat i faktisk drift:
+
+- `/healthz`: running. Config och state: 0.82.10, Charlottendal, profil `charlottendal-network-v1` och samma sourceHash `c69a865ae9a85cdb842d70c34d2573dde4b11c50f601a561d5b941136ac6fa87`.
+- Befintlig session fungerar. Panelen visar träffen, Studio visar 340 tågvägar/49 växlar/66 signaler, Uppdatering visar installerad 0.82.10 och anläggningsvyn visar en ansluten LocoNet-klient.
+- Intern förbindelse connected, LocoNet ej ansluten, storageFault null, samma kontroll-/spärrläge och bindnings-/visningsversion 0. Stationsvalet är låst till Charlottendal som avsett på Render.
+- TrainMeet är anslutet och inte stale, med samma parkoppling, serveradress, TKL-id, station, publikation, trafikdag och grannförbindelser. Ingen ny parkoppling eller manuell TrainMeet-manöver gjordes under efterkontrollen.
+- Privat jämförelse mot den färska backupen: 13 statiska filer är byteoförändrade, inklusive controls, onboarding, tågtabellsimport, trainmeet, växelgrupper och tidigare auth-/konfigurationsfiler. Samma två användare, med identiska användarposter, lösenordsuppgifter och roller. Inga hemligheter skrivs ut. Loggar, spårning och klockcheckpoint skiljs från statiska inställningar.
+- Automaten återställdes till på som före bytet. Efterkontrollen visar enabled true, fortsatt anslutning och inga lagringsfel. Inget nytt trafikförlopp tvingades fram i drift; fulla trafikförlopp verifieras av processproven ovan.
+
+Driftbilden från Uppdatering visar installerad 0.82.10 och anslutet TrainMeet. Bilden lämnas utanför GitHub; protokollet innehåller endast kontrollresultaten.
+
+Installationsförråden publicerades inte och TrainMeet Server ändrades inte. Pi, Mac och Windows har inte uppdaterats. Fysisk LocoBuffer/MGP och Träkvistas riktiga grannar omfattas inte av denna driftkontroll. Dokumentationen färdigställs i en egen PR utan ytterligare main-merge, så att rapporteringen inte startar om driften en gång till.
+
+## Förslag till steg 2
+
+1. Prova Träkvistas egen Docker-avbildning med syntetisk tom disk, första ägare, omstart och återgång. Charlottendals containerprov är klart; Träkvistas avbildning och nya Render-start ska fortfarande provas separat.
+2. Före publicering: jämför tk-tkl med senaste publiceringsmarkören, ta in eventuella Benny-rättelser och kör hela publiceringsprovet. Själva publiceringen görs först i en uttryckligen godkänd omgång.
+3. Casper skapar Träkvistas Render-tjänst med egen beständig disk och ägare. Prova rätt station, inloggning, uppdatering/återgång och verkliga, uttryckligt valda TrainMeet-grannar tillsammans med Casper/Benny. Varje station kör och uppdateras separat.
+4. Pi och Mac behåller vanliga installationer med USB, helskärm och Stream Deck. Önskas stationsval i deras befintliga tjänster krävs en separat integration av startövervakaren per plattform, med bevarade driftkataloger och verkliga installationsprov.
+
+Ett eget tkl-förråd och en gemensam webbtjänst med inloggning/stationsval kommer senare efter Caspers beslut.
+
+## Tidigare förberedelser
 
 Förberedelse verifierad 18 oktober:
 

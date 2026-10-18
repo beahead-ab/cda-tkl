@@ -1,6 +1,6 @@
 # Välj station på en dator
 
-Förslag 0.82.9, inte publicerat. Inställningar → Den här datorn → Station visar bara stationer vars data redan finns i installationen. Programmet kör en station åt gången. Ägaren kan välja en annan station när inga tågvägar, kvarhållna lås, programmeringslås, rangerbegäran, inspelningar eller automatiska/pågående manövrer finns och LocoNet är frånkopplad.
+Ingår i 0.82.10 på cda-tkl main (#89). Charlottendal på Render är uppdaterat; installationsförråden är inte publicerade med ändringen. Inställningar → Den här datorn → Station visar bara stationer vars data redan finns i installationen. Programmet kör en station åt gången. Ägaren kan välja en annan station när inga tågvägar, kvarhållna lås, programmeringslås, rangerbegäran, inspelningar eller automatiska/pågående manövrer finns och LocoNet är frånkopplad.
 
 ## Start som stöder byte
 

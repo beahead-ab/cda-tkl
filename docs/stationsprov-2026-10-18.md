@@ -1,8 +1,10 @@
 # Stationsprov: Charlottendal och Träkvista
 
+Historiskt inventeringsprotokoll före trafikstegen och driftbytet. Förslagen ingår nu i 0.82.10, main `5560c2a` (#89), och Charlottendal på Render är uppdaterat efter Caspers godkännande. [Driftprotokollet](render-release-2026-10-18.md) är aktuellt slutläge; begränsningarna nedan avser respektive provtillfälle.
+
 18 oktober 2026. Utgångspunkt: cda-tkl main `904d5643219e87cfe14e95ec9c46056d90d64aa9`, version 0.82.2.
 Tk-TKL är ett publicerat paket; inga ändringar görs direkt där. Inga verkliga driftdata eller hemligheter används.
-Alla ändringar här är förslag på egna grenar. **Merge till cda-tkl main driftsätter Charlottendal på Render och väntar på Casper.**
+Vid inventeringen var ändringarna förslag på egna grenar. **Merge till cda-tkl main driftsätter Charlottendal på Render; vid det provtillfället väntade den på Casper.**
 Installationsförråden publiceras inte i detta arbete.
 
 ## Inventering

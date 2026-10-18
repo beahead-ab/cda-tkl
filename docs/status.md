@@ -1,10 +1,12 @@
 # Charlottendal TKL – lägesbild 18 oktober 2026
 
-## Förberedd Render-release 0.82.10
+## Charlottendal kör 0.82.10 på Render
 
-Casper godkände den 18 oktober ett kontrollerat byte av Charlottendals befintliga Render-tjänst. Ändringarna från PR #80–88 samlas i en release-PR för att undvika upprepade driftsättningar under versionskedjan. Installationsförråden och TrainMeet Server ingår inte. Före merge krävs gröna kod-, paket- och containerprov samt säkerhetskopia och identifierad återgång till fungerande Render-deploy. Resultat förs in i [driftprotokollet](render-release-2026-10-18.md).
+18 oktober: Casper godkände driftbytet. [PR #89](https://github.com/beahead-ab/cda-tkl/pull/89) squash-mergades som main `5560c2a`; Render-deploy `dep-dbaeca0ae00c739lu7u0` är live med 0.82.10. Del-PR #80–88 ingår och är stängda utan egna main-merger. Panel, Studio, Uppdatering, skyddad anläggningsvy, befintlig session och TrainMeet har kontrollerats i faktisk drift. Automaten är åter på som före bytet. [Driftprotokoll och nästa steg](render-release-2026-10-18.md).
 
-En senare kontrollkörning av dokumentationsgrenen (#88, 39136533075) hittade ett intermittent överlämnande i Träkvistas automat under normal tågvägsupplösning. Felet rättas före releasen; tidigare gröna körningar ersätter inte den nya kontrollen. Charlottendals profil, sourceHash, stationsunderlag och driftkatalog är oförändrade.
+Slutlig CI `39139292652`, releasehuvud `1ac7ff4`: 619 godkända enhetsprov, 19/19 integrationer, 2/2 separata återställningsprov, 346 godkända paketenhetsprov, obligatoriska käll-/syntaxkontroller, Windows-parser och Docker-/Chromium-prov. Den sista kontrollen rättade ett intermittent överlämnande i Träkvistas automat efter verifierad passage. Charlottendals profil, sourceHash, stationsunderlag och driftkatalog är bevarade; privat filjämförelse efter uppstart bekräftar 13 oförändrade statiska filer och samma två användare.
+
+En färsk verifierad backup togs i lugnt läge före merge, och föregående fungerande Render-deploy finns kvar för återgång. Installationsförråden är fortfarande publicerade som 0.82.2; ingen publicering till cda-tkl-install/tk-tkl eller ändring i TrainMeet Server gjordes. Befintliga native tjänster och Render kör fortsatt fasta stationer; lokalt stationsval stöds genom npm start. Träkvistas faktiska Render-tjänst och fysisk bana återstår.
 
 Grunden är körbar med LocoNet ansluten eller ej ansluten; trafiken kommer från trafikspelet på en TrainMeet-server, och TKL har inget simuleringsläge (0.79.0, [LocoNet ansluten eller ej ansluten](loconet-anslutning.md)). Den ersätter ännu inte den fysiska JMRI-installationen fullt ut: LocoNet är provat mot en virtuell LocoBuffer, inte vid banan. Att information finns importerad betyder inte att motsvarande funktion är implementerad eller verifierad mot banan.
 
@@ -28,7 +30,9 @@ Grunden är körbar med LocoNet ansluten eller ej ansluten; trafiken kommer frå
 - Gemensam modellklocka med paus/start, trafikdygn och hastighet samt valbar lokal felsignal. Programmeringsspåret har beständigt lås och separat återrapport; reläet får normalläge vid varje anslutning (0.77.0). Fysisk funktion återstår att verifiera.
 - Inloggning, befintlig webbdrift och kontrollerade versionsbyten med backup. Visningsnamn och beskrivningar kan ändras med utkast och versionshistorik.
 
-## Publicerat på webbadressen
+## Installationsförrådens senaste publicering och tidigare webbdrift
+
+Webbdriften är nu 0.82.10 enligt avsnittet ovan. Följande publiceringsrad avser installationsförråden och tidigare etapper.
 
 **Publicerad: 0.82.2 (18 oktober; cda-tkl main `bdb6601`, #78; `beahead-ab/cda-tkl-install` main `65039a0`; Tk-TKL `008d18b`). Webbdriften kör på Render sedan 6 oktober: Render bygger om när main ändras om automatisk driftsättning är på, och med tjänstens Deploy Hook i miljövariabeln `RENDER_DEPLOY_HOOK_URL` startar Uppdatera nu ett nytt bygge.** Sedan 0.82.2: ändringarna från #75 och #76 (Uppdatering säger vilket förråd Render bygger ur, och en annan station kan köras som ny webbdrift på Render) finns i installationerna. Sedan 0.82.1: TKL säger att adressen och koden finns i TrainMeet Server under Drift → Anslut en box. Sedan 0.82.0: TrainMeet ansluts med serverns adress och anslutningskoden, och TKL väljer stationen själv; med LocoNet ej ansluten tas tåg som trafikspelet inte har här bort från banan. Sedan 0.81.1: Uppdatering visar inte ett gammalt försök mellan två äldre versioner som senaste uppdatering. Sedan 0.81.0: ett tryck på träffklockan visar eller döljer sekunderna. Sedan 0.80.0: tidtabellens stil väljs under Utseende och ljud, som i TrainMeet-appen för iPhone (Ord, Symboler, Linjebild, Linjebild + symboler), med förhandsvisning, teckenförklaring och spåret i en ram när tåget står inne. Sedan 0.79.0: inget simuleringsläge; trafiken kommer från trafikspelet på en TrainMeet-server, och [LocoNet är ansluten eller ej ansluten](loconet-anslutning.md). Ej ansluten svarar TKL själv och kör trafikspelets tåg längs tågvägarna; *Anslut till LocoNet* i lägesknappen ger återrapporterna från banan, och valet gäller efter omstart. Simulerad trafik är borta. Sedan 0.78.0: lägesknappen i statusraden och LocoBuffern under Inställningar → Banan (LocoNet), med gatewayen som TKL startar själv. Sedan 0.77.0: återrapporterna följer MGP-korten, som inte upprepar något: växel- och signalrapporter gäller tills förbindelsen bryts, TKL frågar av spårledningarnas ingångar vid anslutning och var 15:e sekund, en ingång som inte svarat på 40 sekunder blir okänd, och en växel är okänd tills den får en order ([arkitekturen](arkitektur.md)); simulatorn rapporterar som korten. Sedan 0.76.1: JMRI:s avfrågning visas som avfrågning, Studio och simulatorn känner MGP-korten på deras riktiga identitet (Signal10 SE = produkt 6), och [genomgången](genomgang-mgp-2026-10-06.md#bennys-andra-trace-10-oktober-0761) är rättad efter Bennys andra trace; den visar också att korten inte upprepar sina rapporter, så sju-sekundersregeln måste ändras före drift mot riktig bana. Sedan 0.76.0: avkodaren läser B1 i ingångsformatet, som MGP-korten sänder enligt Bennys monitorering den 9 oktober (förut *unsupported*: ingen växel- eller signalrapport hade lästs mot riktig bana), signalrapporten är B1 som standard, och växelorder pulsar ON/OFF. Sedan 0.75.0: [automaten](tagsparning.md#automaten-0750) under Drift lägger tågvägarna i simulering (genomgående tåg in och ut), Simulera tåg heter Simulerad trafik och simulatorns sida nås från Studio. Sedan 0.74.0: simulerade tåg (knappen Simulera tåg under Drift) kommer in från linjerna med nummer och står kvar på spåret, och kärnan löser upp tågvägen när tåget står helt på målspåret (utom på spår 6 och 10, där målspårets detektor också täcker en växel). Sedan 0.73.0: [tågspårning](tagsparning.md) i simulering, med tågens nummer och riktning på ställverket och tåg på linjen vid kanterna; mot riktig bana är den avstängd. Sedan 0.72.2: S100a läser LS60 (regeln går via den interna sensorn slS100), och genomgången har AI-analysen av XML:en. Sedan 0.72.1: Klarering är en egen flik först i nederraden (Klarering, Spårbeläggning, Drift, Händelser), med antalet väntande förfrågningar. Sedan 0.72.0: grannstationens klareringsförfrågan står i statusraden med Godkänn och Neka, skylten vid linjens kant blinkar och det ringer med Ljud på; Uppdatering känner Render; Studios flyttade sidor är kompakta. Tidigare publicerat: 0.71.1 (cda-tkl main `96461c9`, `beahead-ab/cda-tkl-install` main `018de42`, 7 oktober). Sedan 0.71.1: användarnamnet är e-postadressen när ett konto skapas (Skapa ägaren, inbjudan); äldre konton med vanligt namn loggar in som förut, lösenordet är fortfarande 6–128 tecken. Sedan 0.71.0: allt om anläggningen bor i Studio (Källa, Visning, Orter och telefon, Driftbindningar, Införandestatus); Inställningar → Anläggningen är en länk till Studio och gamla adresser leder dit. Sedan 0.70.0: hjälp i Studio (?-knappen, en text per flik). Sedan 0.69.0: Studio på bärbar dator, stationsplanen fyller höjden med panel till höger. Sedan 0.68.0: signalernas rapportform (SE-telegram E4 eller växelrapport B1) väljs per profil och per signal under Driftbindningar → Signalrapport. Sedan 0.67.0–0.67.1: signalerna beställs på sin huvudutgång och spårledningarna läser LS-ingångarna ur Cda60.xml, tretton panelsignaler bekräftas av kärnan själv, och [genomgången](genomgang-mgp-2026-10-06.md) bedömer varje konstighet i källan. Sedan 0.62.0–0.66.2: [rangerarläget](rangerlage.md) med begäran, växelgator, rangerarens station och Stream Deck. Tidigare webbdrift: 0.59.1, release `v0.59.1-406e5f8`, installerad 5 oktober med `charlottendal-update` på servern (från 0.53.0 `4f0ebcc`; den tidigare noteringen om 0.57.1 stämde inte). Sedan 0.57.0: Inställningar har i varje avsnitt en räckviddsrad, rader med etikett · värde · konsekvens, status som text och form och en fotnot; Händelser visar hela serverns journal med sök. 0.57.1 skriver LocoNet frånkopplad en gång i journalen i stället för varje sekund. Sedan 0.56.0: den lokala tidtabellen är borttagen, TrainMeet är enda källan. Sedan 0.55.0: adminfönstret heter Inställningar, i tre grupper. Sedan 0.54.0: nederraden har fliken Drift med klareringen och driftknapparna; ställverkets övre högra hörn är tomt. Sedan 0.53.0: varje sträckruta visar vem som svarar i andra änden, och ett tåg som inte syns komma kan flyttas hit; kräver TrainMeet Server med #115. Sedan 0.52.0: en parkopplad station är i tjänst utan trafikpass. Sedan 0.51.2: en upprepad tågvägsbegäran kan inte längre återta tågvägen, och bara ett fönster per webbläsare styr Stream Deck. Sedan 0.51.1: sidfoten visar rätt version. Sedan 0.51.0: Stream Deck-layout per deck, känd på serienumret, flera deck samtidigt och en ny redigerare med dra och släpp, egen text och bild på knapparna och tåg på tur. Sedan 0.50.1 (bara installationen): Mac-installationen sparar driftdata i state och registrerar om launchd vid uppdatering. Sedan 0.50.0: CHARLOTTENDAL i en egen rad över planen, ingen zoom. Sedan 0.49.0: Installation på Raspberry Pi, Mac och PC med en rad, notis om ny version att installera. Sedan 0.47.0: Installation på Raspberry Pi med en rad, glidande NU-streck, Stream Deck utan klick. Sedan 0.46.0: dragbar gräns mellan ställverket och nederraden. Sedan 0.45.3: Träffklockan följer TrainMeet (daterad avläsning och ändringsflödet), försenade tåg ovanför NU-strecket. Sedan 0.45.2: chip för ny version, fokusring bara efter Tab; webbdriften parkopplad med Charlottendal på server.trainmeet.app. Sedan 0.45.1: kortare statusrad (SIMULERING, Återställ, Styra RBG, Zoom). Sedan 0.45.0: spårbeläggning som flik bredvid Händelser, Återställ panel och Lämna över rangerbangården som chips i statusraden, inget toast på ställverket. Innehåller också sex menyingångar, TrainMeet-klarering som TMBox, träffnätsstöd, Stream Deck samt parkopplingsdialog med klartextkod och läsbara avslag genom Cloudflare; se arbetsjournalen. Tidigare: Webbdriften kör uttryckligen i simuleringsläge. Anläggningsöversikt och kommunikationsdiagnostik är införda; fysisk MGP tas senare enligt användarens beslut. Se [handhavande](anlaggningsoversikt-kommunikation.md); driftjournalen för webbdriften hålls utanför förrådet. Följande avsnitt beskriver tidigare etapper.
 
@@ -95,7 +99,7 @@ Tolv externa Jython-skript saknas fortfarande. Vissa beteenden har fått dokumen
 
 **Avsiktligt vilande:** Friställa spår och den extra lilla växellåsindikator som Casper bad oss avvakta med.
 
-## Nästa praktiska steg
+## Historik: tidigare praktiska steg
 
 [Steg 1 är genomfört](provkorning-2026-09-24.md): två samtidiga tåg, nummerföljning, växellås, återtagning och avbrott provades i webbläsaren. Signalinformation finns via högerklick och anslutningsstatus i menyn; återtagning nås via Meny → Driftverktyg → Tågvägar och stödfunktionerna via menyn. Casper kan nu provköra version 0.32.0 på den befintliga webbadressen. [Kompisväxlarna har kontrollerats särskilt](kompisvaxlar.md), och ett fel som tillät omläggning på belagt sidospår har rättats. Manuell manövrering visar nu berörda kompisväxlar, deras återrapporterade lägen, spårstatus och spärrorsak. Växlar utanför vyn kan visas utan manöver.
 
@@ -105,40 +109,42 @@ Aktuell publicerad release och provstatus finns i [arbetsjournalen](arbetsjourna
 
 [Avstämning av samtliga 54 användningsfall och tio produktkrav](acceptans-2026-09-23.md) visar exakt vad som är provat, avsiktligt vilande eller beroende av ytterligare underlag.
 
-## Föreslaget, inte publicerat: 0.82.3
+## Historik före driftbytet: förslag 0.82.3
+
+Avsnitten nedan dokumenterar de separata förslagen och deras dåvarande provstatus. De ingår nu i 0.82.10 genom #89; del-PR #80–88 är stängda och main är `5560c2a`. Installationsförråden är fortfarande 0.82.2. Aktuellt driftresultat finns överst och i [slutprotokollet](render-release-2026-10-18.md).
 
 Stationernas läsvägar är samlade utan filflytt. Charlottendals hela profil, källhash, granskade regler och migreringsunderlag bevaras. Driftdata ligger kvar i `var/`, med `CHARLOTTENDAL_STATE_DIR` först. Se [stationsprovet](stationsprov-2026-10-18.md). Ingen merge eller publicering ingår; main driftsätter Charlottendal på Render.
 
-## Föreslaget, inte publicerat: 0.82.4
+## Historik före driftbytet: förslag 0.82.4
 
 Stationspaketets XML-importör följer med, och källverifieringen är obligatorisk både vid paketbygge och i stationens GitHub-prov. Ett lokalt paket har verifierats utan push. Se [stationsprovet](stationsprov-2026-10-18.md).
 
-## Föreslaget, inte publicerat: 0.82.5
+## Historik före driftbytet: förslag 0.82.5
 
 Skapa ägare och återställ användare väljer nu stationens egen driftkatalog, med befintlig prioritet för användar-, auth- och state-variablerna. Charlottendals register flyttas inte. Se [stationsprovet](stationsprov-2026-10-18.md).
 
-## Föreslaget, inte publicerat: 0.82.6
+## Historik före driftbytet: förslag 0.82.6
 
 Mac och Windows väljer stationsidentitet före katalog och autostart. Charlottendals standardvägar är kvar. Mac-installation och uppdatering är provade isolerat; Windows är statiskt granskat, inte körprovat. Två stationer på samma värd kräver egna portar. Se [stationsprovet](stationsprov-2026-10-18.md).
 
-## Granskningsläge 18 oktober 2026
+## Historik före driftbytet: granskningsläge 18 oktober 2026
 
 Förslagen 0.82.3–0.82.6 ligger i separata utkast-PR:er #80–83. Samtliga fyra kod-PR:er är gröna i GitHub. De är inte mergade eller publicerade. [Stationsprotokollet](stationsprov-2026-10-18.md) anger provade commits och återstående acceptansprov. Träkvistas linjetrafik och automat behöver egna trafikändringar före containersteget; se [nästa trafiksteg](trakvista-nasta-trafiksteg.md).
 
 GitHub-förrådet för Träkvista heter sedan 18 oktober `beahead-ab/tk-tkl`, enligt Caspers önskemål. Samma förråds-id och senaste commit; gamla URL:er fungerar. Namnbytet har inte publicerat någon ny version eller ändrat driften.
 
-## Föreslaget, inte publicerat: 0.82.7
+## Historik före driftbytet: förslag 0.82.7
 
 Linjer, orter, tidtabell, tågspårning och fältmodell använder samma stationsbeskrivning. Träkvistas A/B/C och fem stationsspår är uttryckligt bundna; saknad TrainMeet-koppling placerar inga tåg. Charlottendals underlag och driftvägar ligger kvar. [Protokoll och begränsningar](stationsstyrd-trafik-2026-10-18.md).
 
-## Föreslaget, inte publicerat: 0.82.8
+## Historik före driftbytet: förslag 0.82.8
 
 Träkvistas automat väljer tidtabellens stationsspår och nästa verkliga granne, accepterar först efter aktiv infart och inväntar utgående enkelspårsklarering. Färskt trafikläge och oförändrad tågväg kontrolleras även efter väntande nätverksläsning. Charlottendals automat behåller sin prioritering och väntetid. [Trafikprotokoll](stationsstyrd-trafik-2026-10-18.md).
 
-## Föreslaget, inte publicerat: 0.82.9
+## Historik före driftbytet: förslag 0.82.9
 
 Inställningar → Station väljer bland installerade stationer med kontrollerad omstart genom npm start. Separata driftkataloger och användare behålls; nya stationens TrainMeet ansluts uttryckligen. Befintliga fasta Pi/Mac-tjänster och Render behåller sin station. [Anvisning och avgränsning](stationsval.md), [protokoll](stationsstyrd-trafik-2026-10-18.md).
 
-## Verifierade utkast 0.82.7–0.82.9
+## Historik före driftbytet: verifierade utkast 0.82.7–0.82.9
 
 Kod-PR:erna #85–87 är gröna i GitHub: den senaste kodrevisionen a824c55 har 617 godkända enhetsprov och 19 helhetsprov samt 344 enhetsprov och gröna trafik-/omstartsprov i det riktiga Tk-paketet utan push. Obligatoriska kontroller, separat root-uppdatering och Windows-parser är gröna. [Slutprotokoll](stationsstyrd-trafik-2026-10-18.md#fullständig-kontroll-i-github) förklarar överhopp och återstående acceptans. Detta är verifierade förslag, inte publicerad drift. Main är kvar på 904d564; inga installationsförråd eller Render-tjänster har ändrats.
