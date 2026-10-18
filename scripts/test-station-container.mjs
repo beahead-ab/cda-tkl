@@ -174,6 +174,7 @@ try {
     '--mount', `type=volume,source=${prov.volume},target=/data`,
     '--env', 'CHARLOTTENDAL_STATION=' + id, '--env', 'CHARLOTTENDAL_STATE_DIR=/data/state',
     '--env', 'CHARLOTTENDAL_AUTH_MODE=password', '--env', 'CHARLOTTENDAL_AUTH_FILE=/data/auth/auth.json',
+    '--env', 'CHARLOTTENDAL_PUBLIC_ORIGIN=' + prov.origin,
     previousImage, 'src/server.mjs'], { optional: true, combined: true });
   assert.match(direct, /Ogiltiga sparade ortsuppgifter/, `Väntade fel om ortsuppgifterna, fick:\n${direct.slice(-2000)}`);
   rollback = { version: previous.version, commit: previous.commit, starts: false, reason: 'Ogiltiga sparade ortsuppgifter', exit };
