@@ -60,6 +60,39 @@ jobs:
           path: ${{ runner.temp }}/render-container
           if-no-files-found: error
           retention-days: 7
+  station-container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Återgångsprovet bygger föregående publicerade version ur historiken.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Installera webbläsarprovet utanför programmet
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/tkl-browser" --no-save --ignore-scripts --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/tkl-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Prova Träkvistas egen avbildning med tom disk, omstart och återgång
+        shell: bash
+        env:
+          TKL_PLAYWRIGHT_MODULE: ${{ runner.temp }}/tkl-browser/node_modules/playwright/index.mjs
+          TKL_STATION_ARTIFACTS: ${{ runner.temp }}/station-container
+        run: |
+          git config user.name 'TKL containerprov'
+          git config user.email 'containerprov@example.test'
+          node scripts/test-station-container.mjs trakvista
+      - name: Spara protokoll, containerlogg och webbläsarbilder
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: station-container-${{ github.sha }}
+          path: ${{ runner.temp }}/station-container
+          if-no-files-found: error
+          retention-days: 7
   windows-syntax:
     runs-on: windows-latest
     timeout-minutes: 5
