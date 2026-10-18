@@ -77,7 +77,9 @@ async function browserSmoke(password) {
   assert.equal((await page.locator('.plan-head-title').innerText()).toUpperCase(), station.title.toUpperCase());
   // Sidfoten är fortfarande produktens statiska text i public/index.html: den säger Charlottendal TKL också här.
   // Rättas i en egen versionshöjning, eftersom public/ då måste publiceras. Versionen i sidfoten ska stämma.
-  assert.match(await page.locator('body > footer').innerText(), new RegExp('version ' + release.replaceAll('.', '\\.')));
+  // Sidomenyn flyttar in sidfoten i sin egen panel, så den söks på sin text och inte på sin plats i dokumentet.
+  assert.match(await page.locator('footer').filter({ hasText: 'TKL · version ' + release }).innerText(),
+    new RegExp('TKL · version ' + release.replaceAll('.', '\\.')));
   await page.screenshot({ path: path.join(artifacts, '01-panel.png'), fullPage: true });
   mark(`Webbläsarinloggning och ${station.title}s panel med renderad spårplan och stationens namn`);
 
