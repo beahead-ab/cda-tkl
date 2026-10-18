@@ -6,7 +6,7 @@ rättelser därifrån kommer tillbaka. Träkvistas eget läge står i [Träkvist
 
 ## Två förråd, ett program
 
-| | cda-tkl (privat) | Tk-TKL (privat) |
+| | cda-tkl (privat) | tk-tkl (privat) |
 |---|---|---|
 | Innehåll | Programmet, Charlottendal och Träkvista, arbetsjournalen, driftsättningen, hela historiken | Programmet och Träkvista, inget mer |
 | Utvecklas | Här: programmet och båda stationernas källor | Publiceras härifrån, en commit per publicering |
@@ -94,3 +94,11 @@ Träkvista utan stationsspecifik kod, sedan korsningsväxeln och den lodräta ri
 [Stationsprovet](stationsprov-2026-10-18.md) beskriver den kontrollerade grunden och förslagen till rättelser. Charlottendals filer ligger kvar i profiles/ och public/data/. En gemensam stationsbeskrivning ändrar läsvägen, inte stationsunderlagen eller driftkatalogen.
 
 Träkvistas tågvägar kan etableras med den interna återrapporten, men A/B/C är ännu inte genomförda i panelens linjemappning, tågspårningen eller automaten. Källverifiering är därför inte samma sak som godkänd TrainMeet-trafik. Riktig bana, lokal webbläsaracceptans och faktisk uppdatering av installationer ska provas separat. Inget är mergat eller publicerat i denna omgång.
+
+## Förrådet heter nu tk-tkl
+
+18 oktober: Casper bad om namnbytet från Tk-TKL till [tk-tkl](https://github.com/beahead-ab/tk-tkl). GitHubs förråds-id är fortfarande 1423516520 och senaste main-commit är fortfarande 008d18b. Historik, filer och rättigheter är samma. Gamla URL:er med Tk-TKL leder till samma förråd. Inget har publicerats och ingen Render-inställning har ändrats.
+
+De redan publicerade paketen och källans installationsmetadata har kvar den äldre, fungerande URL-stavningen. Den kan normaliseras i nästa granskade installationsändring utan att stationens id, TKL-id eller driftkatalog ändras. Vid en ny Render-Blueprint väljs förrådet tk-tkl.
+
+![Förrådet efter namnbytet](tk-tkl-namnbyte-2026-10-18.jpg)

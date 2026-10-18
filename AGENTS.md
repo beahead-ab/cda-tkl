@@ -10,7 +10,7 @@ Träkvista) beskrivs i `docs/stationer.md`.
 |---|---|---|
 | `beahead-ab/cda-tkl` | Det här: programmet, Charlottendals data, dokumenten och arbetsjournalen | Squash-merge av PR till main |
 | `beahead-ab/cda-tkl-install` | Det publicerade installationsförrådet som Pi, Mac och PC installerar och uppdaterar från | Publiceras efter varje release, se nedan |
-| `beahead-ab/Tk-TKL` | Träkvista | Publiceras ur cda-tkl med `deploy/publish-station.sh trakvista` (`docs/stationer.md`) |
+| `beahead-ab/tk-tkl` | Träkvista | Publiceras ur cda-tkl med `deploy/publish-station.sh trakvista` (`docs/stationer.md`) |
 | `beahead-ab/trainmeet-server` | TrainMeet Server | **En merge startar om server.trainmeet.app: merga bara med Caspers OK.** PR-titeln märks `[patch]` eller `[minor]`, och versionsboten sätter numret. CHANGELOG "## Nästa version". |
 | `beahead-ab/trainmeet-cloud`, `beahead-ab/trainmeet-tkl` | Cloud och TrainMeet TKL | Bär serverns översättningskatalog. Efter en ny sträng i servern: `node tools/sync-i18n.mjs --siblings` i servern och en PR i varje. |
 
@@ -85,3 +85,7 @@ sammanslagna; undantaget är `claude/anslut-sida` (trainmeet-server #200), som s
 - Tk-TKL publiceras med `deploy/publish-station.sh trakvista` efter varje release, som cda-tkl-install. Skriptet kör
   paketets prov och stannar om Tk-TKL har ändringar som saknas i cda-tkl.
 - Borttagningen av tåg gäller bara med LocoNet ej ansluten. Med LocoNet ansluten rör TKL aldrig tågen.
+
+## Förrådsnamn 18 oktober 2026
+
+Casper bad om gemener: GitHub-förrådet heter nu `beahead-ab/tk-tkl` (samma id 1423516520 och main-commit 008d18b). Den äldre URL-stavningen Tk-TKL fungerar också. Namnbytet ändrar inga paket, profiler eller driftdata. Källpaketets äldre URL-stavning är ett giltigt alias och kan normaliseras vid en senare granskad installationsändring; publicera inget enbart för namnbytet.
