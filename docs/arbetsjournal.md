@@ -2086,3 +2086,14 @@ befintliga driftdata och en befintlig inloggningsfil.
   tar med gatewayen. Uppdatering säger vilket förråd Render bygger ur.
 - Prov: gatewayen startad som ny Träkvista-installation (ägare, inloggning, lösenordsbyte, 57 tågvägar) och i flyttläge
   (väntar). Ingen Docker-tjänst i containern, så avbildningen är inte byggd här.
+
+## 18 oktober 2026, 0.82.2: #75 och #76 publicerade
+
+Casper, inför överlämningen till Codex: «ska du publicera det som inte är det, pusha det som går osv?» #75
+(versionsnoteringarna för flera stationer) och #76 (Tk-TKL på Render) ändrade `public/` och `packaging/` efter 0.82.1 men
+höjde inte versionen. Installationerna såg därför ingen ny version. 0.82.2 tar med dem; programmet är i övrigt detsamma
+som 0.82.1.
+
+Alla lokala grenar i trainmeet-server, trainmeet-cloud, trainmeet-tkl, trainmeet och trainmeet-iphone hör till
+pull requests som redan är sammanslagna. Undantaget är `claude/anslut-sida` (trainmeet-server #200), som stängdes
+med avsikt. Ingenting låg opushat.
