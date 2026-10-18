@@ -6,6 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
 import https from 'node:https';
+import { isIP } from 'node:net';
 import { randomBytes, createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -22,7 +23,7 @@ const profile = JSON.parse(fs.readFileSync(path.join(root, 'profiles/charlottend
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 const sourceHash = digest(fs.readFileSync(path.join(root, 'public/data/source/Cda60.xml')));
 const checks = [], browserErrors = [], responseErrors = [];
-let port, origin, host, proxy, browser, context;
+let upstreamHost, port, origin, host, proxy, browser, context;
 let imageCreated = false, volumeCreated = false, networkCreated = false, containerCreated = false;
 let commandNumber = 0;
 
@@ -36,10 +37,19 @@ function command(program, args, { input, timeout = 60000, optional = false } = {
 const docker = (args, options) => command('docker', args, options);
 const mark = text => { checks.push(text); console.log('OK: ' + text); };
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+function containerAddress() {
+  // En intern Docker-brygga publicerar inga portar. Linux-värden når dess IP direkt,
+  // medan avbildningen fortfarande saknar väg ut till internet eller TrainMeet.
+  const networks = JSON.parse(docker(['inspect', '--format', '{{json .NetworkSettings.Networks}}', id]));
+  const address = networks[network]?.IPAddress;
+  assert.equal(isIP(address || ''), 4, `Containern saknar IPv4 på provnätet ${network}: ${JSON.stringify(networks)}`);
+  upstreamHost = address; port = 10000;
+  console.log(`Provets interna gateway: ${upstreamHost}:${port}`);
+}
 
 function request(resource, { data, cookie, headers = {}, method = data === undefined ? 'GET' : 'POST' } = {}) {
   return new Promise((resolve, reject) => {
-    const req = http.request({ hostname: '127.0.0.1', port, path: resource, method,
+    const req = http.request({ hostname: upstreamHost, port, path: resource, method,
       headers: { Host: host, ...(cookie ? { Cookie: cookie } : {}),
         ...(data === undefined ? {} : { 'Content-Type': 'application/json', Origin: origin }), ...headers } }, res => {
       const chunks = [];
@@ -69,7 +79,7 @@ async function startProxy() {
     '-days', '1', '-keyout', path.join(temporary, 'key.pem'), '-out', path.join(temporary, 'cert.pem')]);
   proxy = https.createServer({ key: fs.readFileSync(path.join(temporary, 'key.pem')), cert: fs.readFileSync(path.join(temporary, 'cert.pem')) }, (req, res) => {
     if (!port) { res.writeHead(503); res.end(); return; }
-    const upstream = http.request({ hostname: '127.0.0.1', port, method: req.method, path: req.url, headers: req.headers }, response => {
+    const upstream = http.request({ hostname: upstreamHost, port, method: req.method, path: req.url, headers: req.headers }, response => {
       res.writeHead(response.statusCode, response.headers); response.pipe(res);
     });
     upstream.on('error', () => { if (!res.headersSent) res.writeHead(502); res.end(); });
@@ -151,10 +161,9 @@ try {
   mark('Dockerfile.render bygger den riktiga avbildningen');
   docker(['volume', 'create', volume]); volumeCreated = true;
   docker(['network', 'create', '--internal', network]); networkCreated = true;
-  docker(['run', '--detach', '--name', id, '--network', network, '--publish', '127.0.0.1::10000',
+  docker(['run', '--detach', '--name', id, '--network', network,
     '--mount', `type=volume,source=${volume},target=/data`, '--env', 'CHARLOTTENDAL_PUBLIC_ORIGIN=' + origin, image]); containerCreated = true;
-  const published = JSON.parse(docker(['inspect', '--format', '{{json .NetworkSettings.Ports}}', id]));
-  port = Number(published['10000/tcp'][0].HostPort);
+  containerAddress();
   await until('Återställningsspärren', async () => (await json('/healthz')).status === 'waiting-for-restore');
   assert.equal((await request('/login')).status, 503);
   assert.equal((await request('/api/state')).status, 503);
@@ -171,7 +180,7 @@ try {
     '--env', 'PROV_USER=' + username, '--env', 'PROV_PASSWORD=' + password, image, '--input-type=module', '-e', seed]);
   // entrypoint.sh ändrar ägaren till node; även innehållet måste ha samma provägare.
   docker(['run', '--rm', '--network', network, '--entrypoint', 'chown', '--mount', `type=volume,source=${volume},target=/data`, image, '-R', 'node:node', '/data']);
-  docker(['start', id]); await applicationReady();
+  docker(['start', id]); containerAddress(); await applicationReady();
   assert.equal((await request('/')).headers.location, '/login');
   assert.equal((await request('/studio.html')).headers.location, '/login?next=%2Fstudio.html');
   assert.equal((await request('/data/source/Cda60.xml')).headers.location, '/login');
@@ -196,7 +205,7 @@ try {
   const clock = await json('/api/clock', { cookie, data: { sessionId: state.clock.sessionId, revision: state.clock.revision, rate: 3, running: false, timeMs: 46800000 } });
   await json('/api/onboarding/finish', { cookie, data: { skipped: ['ai', 'trainmeet'] } });
   await browserSmoke();
-  docker(['restart', '--time', '10', id]); await applicationReady();
+  docker(['restart', '--time', '10', id]); containerAddress(); await applicationReady();
   const after = await authenticatedState(cookie), afterConfig = await json('/api/config', { cookie }); assertIdentity(afterConfig, after);
   const session = await json('/api/auth/session', { cookie }); assert.equal(session.authenticated, true); assert.equal(session.user.id, user.id);
   assert.deepEqual(after.destinations, destinations); assert.equal(after.clock.rate, clock.rate); assert.equal(after.clock.timeMs, clock.timeMs); assert.equal(after.clock.running, false);
