@@ -43,7 +43,7 @@ fi
 
 find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 (cd "$SOURCE" && git archive "$FULL" install.sh install.ps1 package.json package-lock.json .gitignore var/.gitkeep \
-  src public scripts packaging test "stations/$ID" $DOCS) | tar -x -C .
+  src public scripts packaging test deploy/render/start.mjs deploy/render/entrypoint.sh "stations/$ID" $DOCS) | tar -x -C .
 rm -rf public/data $CHARLOTTENDAL_ONLY
 node scripts/make-station-repository.mjs "$ID" >/dev/null
 # The tests run on GitHub for every pull request in the station's repository.

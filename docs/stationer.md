@@ -33,6 +33,15 @@ Paketet får också `.github/workflows/prov.yml` (ur `packaging/github/station-t
 `npm run verify:trakvista` på varje pull request i Tk-TKL. Skyddas main så att ändringar måste gå via pull request
 (Settings → Branches), behöver ägaren och Claudes GitHub-app stå som undantag, annars stoppas publiceringens push.
 
+## Webbdrift för en station på Render
+
+Paketet får också `render.yaml` och `Dockerfile.render` (ur `packaging/render/`), så att stationen kan köras på Render
+som en ny installation: Render → New → Blueprint och förrådet. Gatewayen (`deploy/render/start.mjs`) skapar ägaren ur
+`TKL_OWNER_EMAIL` och `TKL_OWNER_PASSWORD` första gången (`TKL_RENDER_NEW=1` i stationens Dockerfile), med byte av
+lösenordet vid första inloggningen. Charlottendals webbdrift, som flyttades hit med sina driftdata, väntar på
+återställningen som förut; den byggs med `Dockerfile.render` i cda-tkl. Render bygger om stationens tjänst vid varje
+publicering.
+
 ## Rättelser från Tk-TKL
 
 Rättar Benny något i Tk-TKL, i programmet eller i `stations/trakvista/`, tas det in i cda-tkl innan nästa publicering.
