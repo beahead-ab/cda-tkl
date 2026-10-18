@@ -132,12 +132,12 @@ async function browserSmoke() {
   await page.locator('#username').fill(username); await page.locator('#password').fill(password);
   await page.locator('#login button[type="submit"]').click();
   await page.waitForFunction(() => document.querySelector('#track-plan')?.querySelectorAll('*').length > 100);
-  assert.match(await page.locator('body > footer').innerText(), new RegExp(release.replaceAll('.', '\\.')));
+  assert.match(await page.locator('footer').filter({ hasText: 'Charlottendal TKL · version ' + release }).textContent(), new RegExp(release.replaceAll('.', '\\.')));
   await page.screenshot({ path: path.join(artifacts, '01-panel.png'), fullPage: true });
   mark('Webbläsarinloggning och panel med renderad spårplan');
 
   await page.goto(origin + '/studio.html#konfigurera', { waitUntil: 'domcontentloaded' });
-  await page.locator('#st-plan-host svg').waitFor();
+  await page.locator('#st-plan-host .st-plan-scroll > svg').waitFor();
   assert.equal(await page.locator('.st-error').count(), 0);
   assert.match(await page.locator('.st-brand').innerText(), /CHARLOTTENDAL/);
   await page.screenshot({ path: path.join(artifacts, '02-studio.png'), fullPage: true });
@@ -220,7 +220,13 @@ try {
   fs.writeFileSync(path.join(artifacts, 'resultat.json'), JSON.stringify({ ok: true, release, profileId: profile.id, sourceHash: profile.sourceHash, checks,
     scope: 'Isolerad Render-avbildning med syntetiska data. Ingen verklig bana, TrainMeet-parkoppling, driftsbackup eller Render-driftsättning.' }, null, 2) + '\n');
 } catch (error) {
-  if (context) { for (const page of context.pages()) await page.screenshot({ path: path.join(artifacts, 'fel.png'), fullPage: true }).catch(() => {}); }
+  if (context) {
+    for (const [index, page] of context.pages().entries()) {
+      await page.screenshot({ path: path.join(artifacts, `fel-${index}.png`), fullPage: true }).catch(() => {});
+      await page.content().then(html => fs.writeFileSync(path.join(artifacts, `fel-${index}.html`), html)).catch(() => {});
+      await page.locator('body').ariaSnapshot().then(dom => fs.writeFileSync(path.join(artifacts, `fel-${index}-dom.txt`), page.url() + '\n' + dom)).catch(() => {});
+    }
+  }
   fs.writeFileSync(path.join(artifacts, 'resultat.json'), JSON.stringify({ ok: false, release, checks, error: error.stack, browserErrors, responseErrors }, null, 2) + '\n');
   process.exitCode = 1; console.error(error.stack);
 } finally {
