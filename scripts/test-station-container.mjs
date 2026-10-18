@@ -47,13 +47,15 @@ function previousRelease() {
   return null;
 }
 
-function assertIdentity(config, state, version = release) {
+// stationLock: stationsvalet finns från 0.82.9. En äldre version i återgångsprovet har inte installationStation.
+function assertIdentity(config, state, { version = release, stationLock = true } = {}) {
   assert.equal(config.station.id, id); assert.equal(config.station.title, station.title);
   assert.equal(config.release, version); assert.equal(state.release, version);
   assert.equal(config.id, profile.id); assert.equal(state.profile.id, profile.id);
   assert.equal(config.sourceHash, profile.sourceHash); assert.equal(config.authMode, 'external');
   assert.equal(state.storageFault, null); assert.equal(state.connectionInfo.mode, 'simulator');
   assert.equal(state.connectionMode.mode, 'offline');
+  if (!stationLock) return;
   assert.equal(state.installationStation.current, id); assert.equal(state.installationStation.locked, true);
   assert.deepEqual(state.installationStation.stations.map(s => s.id), [id]);
 }
@@ -70,8 +72,9 @@ async function browserSmoke(password) {
   await page.locator('#username').fill(username); await page.locator('#password').fill(password);
   await page.locator('#login button[type="submit"]').click();
   await page.waitForFunction(() => document.querySelector('#track-plan')?.querySelectorAll('*').length > 100);
-  assert.equal(await page.locator('.brand span').innerText(), station.title.toUpperCase());
-  assert.equal(await page.locator('.plan-head-title').innerText(), station.title);
+  // Sidhuvudet skrivs med versaler och planens rubrik formas av CSS; jämför därför utan skillnad på gemener och versaler.
+  assert.equal((await page.locator('.brand span').innerText()).toUpperCase(), station.title.toUpperCase());
+  assert.equal((await page.locator('.plan-head-title').innerText()).toUpperCase(), station.title.toUpperCase());
   // Sidfoten är fortfarande produktens statiska text i public/index.html: den säger Charlottendal TKL också här.
   // Rättas i en egen versionshöjning, eftersom public/ då måste publiceras. Versionen i sidfoten ska stämma.
   assert.match(await page.locator('body > footer').innerText(), new RegExp('version ' + release.replaceAll('.', '\\.')));
@@ -159,7 +162,7 @@ try {
   await prov.applicationReady();
   const back = await login(chosen); assert.equal(back.status, 200, back.text);
   const backState = await prov.authenticatedState(back.cookie), backConfig = await json('/api/config', { cookie: back.cookie });
-  assertIdentity(backConfig, backState, previous.version);
+  assertIdentity(backConfig, backState, { version: previous.version, stationLock: false });
   assert.deepEqual(backState.destinations.entries, destinations.entries);
   assert.equal(backState.clock.timeMs, clock.timeMs);
   rollback = { version: previous.version, commit: previous.commit };
