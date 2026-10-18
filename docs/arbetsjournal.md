@@ -2072,3 +2072,17 @@ Casper bad om 0.82.0 och publicering till cda-tkl-install. Det var redan gjort i
 main efter sammanslagningen. Versionsnoteringarna för 0.82.0 nämnde inte flera stationer; de har nu två rader om det, och
 lägesbilden en. Pull requesten för ett eget 0.82.0 (#74) stängdes utan sammanslagning. Tk-TKL publicerades från main
 (0.82.1). TrainMeet-valet i 0.82.0 är stationsberoende: Träkvista väljer stationen Träkvista och TKL-id `tk-tkl`.
+
+## 18 oktober 2026: Träkvista klart att dela, och webbdrift på Render
+
+Casper: ”… att Benny är helt klar för att jag ska kunna dela den med honom, alternativt hissa upp en renderinstans åt
+honom.” Tk-TKL kunde inte köras på Render: Render-filerna fanns bara i cda-tkl, och gatewayen väntar på en flytt av
+befintliga driftdata och en befintlig inloggningsfil.
+
+- `deploy/render/start.mjs` har ett läge för en ny installation (`TKL_RENDER_NEW=1`): ägaren skapas ur
+  `TKL_OWNER_EMAIL` och `TKL_OWNER_PASSWORD` första gången, med lösenordsbyte vid första inloggningen. Utan variabeln
+  väntar gatewayen på återställningen som förut, så Charlottendals webbdrift är oförändrad.
+- `packaging/render/Dockerfile` och `render.yaml` blir `Dockerfile.render` och en Blueprint i stationens förråd; publiceringen
+  tar med gatewayen. Uppdatering säger vilket förråd Render bygger ur.
+- Prov: gatewayen startad som ny Träkvista-installation (ägare, inloggning, lösenordsbyte, 57 tågvägar) och i flyttläge
+  (väntar). Ingen Docker-tjänst i containern, så avbildningen är inte byggd här.
