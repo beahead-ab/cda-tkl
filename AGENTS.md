@@ -104,4 +104,14 @@ Installationsförråden är fortfarande 0.82.2; inget publicerades till cda-tkl-
 
 Båda målförråden är verifierade mot publiceringsskriptens resultat: 35 respektive 57 ändrade filer och inga borttagningar. Installationsförrådets tagg `v0.82.10` pekar på `e5b89e6`. Tk-TKL saknade rättelser efter sin senaste publiceringsmarkör. Charlottendals Render-tjänst, källans main och TrainMeet Server ändrades inte i publiceringsomgången. Träkvistas faktiska Render-tjänst och fysisk bana återstår.
 
-#91 är fortfarande ett separat utkast med grön CI på `5f53405`. Använd dess rättade `deploy/publish-install.sh` tills den ändringen har mergats: den äldre main-versionen skulle annars ta bort `scripts/create-owner.mjs`, `scripts/recover-user.mjs`, `docs/anvandare.md` och `docs/loconet-anslutning.md`. Publiceringsrapporten ligger i dokumentations-PR; main är en driftsättningsgren och ska inte uppdateras enbart för rapportens skull utan ett planerat driftbyte.
+Vid publiceringen av 0.82.10 var #91 fortfarande utkast med grön CI på `5f53405`, och dess rättade installationsskript användes för att bevara `scripts/create-owner.mjs`, `scripts/recover-user.mjs`, `docs/anvandare.md` och `docs/loconet-anslutning.md`. Rättelsen ingår nu i main genom #93. Rena dokumentationsrapporter använder `[skip render]` enligt avsnittet nedan.
+
+## Fortsättning 18 oktober 2026: 0.82.11 slutförd
+
+**Publicerad: 0.82.11 (18 oktober 2026; cda-tkl main `24da68c`, #93; cda-tkl-install `4ffd4c8`; tk-tkl `33312ac`; tagg `v0.82.11`).**
+
+#93 squash-mergades efter helt grön CI `39162680842`; #91 och #92 ingår och är stängda. Main har det rättade installationsskriptet som bevarar användarskripten och guiderna. Båda paketen är verifierade mot skriptens resultat, med fem respektive sju ändrade filer och inga borttagningar.
+
+Charlottendal kör 0.82.11 på Render (`dep-dbaisa942hec73dm7qp0`); befintlig session, profil/källhash, TrainMeet och tio stabila filer är bevarade. Automaten var redan avstängd och är fortsatt avstängd. Det redan hållna tågvägslåset bevarades. Färsk skyddad och validerad backup togs före merge, se driftprotokollet. Träkvistas tjänst är förberedd i Render men väntar på att Casper anger ägaruppgifter och godkänner aktiveringen. Verkliga grannar och fysisk bana återstår.
+
+Renders dokumenterade `[skip render]` i commit-meddelandet används för denna slutrapport och andra rena dokumentationsuppdateringar som inte behöver en ny deploy. Ändras programmet ska en vanlig granskad och provad release göras. Ingen Render-inställning ändras av markeringen.

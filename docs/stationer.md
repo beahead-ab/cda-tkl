@@ -110,3 +110,7 @@ Stationsstyrd linjetrafik, automat och lokalt stationsval med kontrollerad omsta
 ## Lokalt stationsval, 0.82.10
 
 Ett lokalt stationsbyte med kontrollerad omstart stöds genom startövervakaren (npm start), skilt från en gemensam webbtjänst. Installerade paket, separata driftkataloger, inloggning och TrainMeet-paus beskrivs i [stationsvalet](stationsval.md). Native tjänstestart och Render behåller sin befintliga fasta station.
+
+## Publicering 0.82.11
+
+18 oktober: cda-tkl `24da68c` (#93) är publicerat som cda-tkl-install `4ffd4c8` och tk-tkl `33312ac`. Sidfoten följer stationens eget namn. Träkvistas container är provad med tom disk, första ägare, omstart och fungerande återgång till 0.82.10. Den faktiska Render-tjänsten är förberedd men väntar på Caspers ägaruppgifter och aktivering. Verkliga TrainMeet-grannar och fysisk bana är fortsatt separata acceptansprov.
