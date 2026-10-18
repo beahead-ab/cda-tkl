@@ -2006,3 +2006,44 @@ Prov: `test/update-check.test.mjs` (nytt prov med Renders rad från 6 oktober: b
 
 Publicerad 17 oktober: cda-tkl main `8a404ba` (#67), `beahead-ab/cda-tkl-install` main `ab46183`. Render tar den när
 den bygger om main.
+
+## 17 oktober 2026, 0.82.0: anslut med adress och kod, banan följer trafikspelet
+
+Casper 17 oktober skickade en skärmbild från cda-tkl.trainmeet.app, där han just hade anslutit till en server. Planen
+visade sju tåg (8372, 8861, 312, 95, 7101, 7152, 8623), men tidtabellen hade två uppställda: 92 på 1a och 8101 på 13.
+«Asnlutningen till server ska vara mycket enklare. Det ska bara behlvas mata in adress + kod i tkl - inget merZ nu kan
+man göra mer och fet funkar dessutom dåligt i tkl.» Om servern: koden ska synas enklare för den som är inloggad som
+administratör, på en sida direkt ansluten till deltagarvyn.
+
+**Tågen.** Simulatorn behöll tågen från ett tidigare trafikläge. TKL ställde bara ut tåg och tog aldrig bort några, så
+de gamla spärrade spåren för 92 och 8101. Sedan 0.82.0:
+- Ett stående tåg som trafikspelet inte har här (på linjen, ankommet, på väg in, uppställt eller förare på plats, och
+  inte avgånget) tas bort efter tio sekunder (`TrafficTrains.stale`, `Field.removeTrain`). Spårningen glömmer det
+  (`TrainTracker.forget`).
+- Ett tåg som TKL just ställt ut väcker inte det gamla tåget som stod kvar som "senast sett" på spåret. Det var det andra
+  felet som provet visade: 92 fick annars numret 8372.
+- Ett tåg som kör och en provkörning lämnas, och utan färskt trafikläge rörs inget.
+
+**Anslutningen.** Inställningar → TrainMeet är ett formulär med adress, kod och Anslut (`TrainMeet.connect`,
+`/api/trainmeet/connect`). TKL väljer stationen ur träffens stationer efter profilens namn och frågar bara när träffen
+saknar den. Redigera anslutning, Parkoppla med stationslista, TKL-id, Hämta senaste och Visa tidtabell är borta. En ny
+installation får ett TKL-id efter typ (`cda-tkl-pi`, `cda-tkl-mac`, `cda-tkl-pc`), eftersom TrainMeet släpper in ett
+TKL per id och station och fältet för att byta id är borta. Ett sparat id står kvar. Felbeskedet vid en nekad kod säger
+var koden finns.
+
+**Servern** (trainmeet-server #200, väntar på Caspers klartecken eftersom en merge startar om server.trainmeet.app):
+sidan `/anslut` med adressen och koden, Kopiera, giltighet och Ny kod. Deltagarvyn har knappen *Anslut ett ställverk*;
+utan inloggning visas inloggningen och sedan sidan. Koden syns aldrig i deltagarvyn.
+
+Prov:
+- `test/simulated-trains.test.mjs`: borttagning efter tio sekunder, i ordning; ett tåg som kör och en provkörning;
+  utan färskt läge; simulatorns `remove` frigör spåret.
+- `test/train-tracking.test.mjs`: det utställda tåget väcker inte spöket; `forget`.
+- `test/trainmeet.test.mjs`: Anslut med adress och kod, stationsvalet, en fast adress, `matchStation`, TKL-id per
+  installation.
+
+Skärmprov i Chromium mot en låtsad TrainMeet:
+- Formuläret säger till om en för kort kod och om en nekad kod.
+- Med rätt kod ansluter TKL till Charlottendal, och formuläret ger plats för Koppla från.
+- Med fyra uppställda tåg ute och träffen sedan återställd till 92 på 1a och 8101 på 13 visar planen just 92 och 8101,
+  efter 17 sekunder.

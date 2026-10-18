@@ -115,3 +115,13 @@ test('en anmälan som kommer efter tåget ger det okända tåget numret',()=>{
   const train=t.tracker.view().trains[0];
   assert.deepEqual([train.number,train.certain,train.source],['401',true,'inkommande fält']);
 });
+
+// 0.82.0: ett tåg som TKL tagit bort från banan (trafikspelet har det inte längre) glöms, och ett tåg som TKL ställer
+// på samma spår får sitt eget nummer, inte numret som stod där förut.
+test('ett tåg som TKL ställt på ett spår väcker inte spöket som stod där, och ett borttaget tåg glöms',()=>{
+  const t=rig();t.f.set('S131',true);t.tick();t.tracker.name(t.tracker.view().trains[0].id,'8372');
+  t.f.set('S131',false);t.tick();t.tick(GRACE_MS+10);assert.equal(t.tracker.view().trains[0].state,'ghost');
+  t.tracker.expect('S131','92');t.f.set('S131',true);t.tick();
+  assert.deepEqual(t.tracker.view().trains.filter(x=>x.state==='station').map(x=>x.number),['92'],'det nya tåget har sitt nummer');
+  t.tracker.forget('8372');t.tracker.forget('92');assert.deepEqual(t.tracker.view().trains,[]);
+});

@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { Engine } from '../src/engine.mjs';
 import { Field } from '../src/field.mjs';
-import { TrafficTrains } from '../src/traffic-trains.mjs';
+import { ABSENT_MS, TrafficTrains } from '../src/traffic-trains.mjs';
+const RETRY_MS_TEST=5000;
 const read=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url)));
 const profile=read('profiles/charlottendal-network.json'), fieldProfile=read('profiles/simulator-network.json');
 // Kärnan och simulatorn kopplade direkt, som i network.test.mjs.
@@ -105,4 +106,49 @@ test('simulatorn ställer ett uppställt tåg på ett spår på stationen, och d
   const route=r.engine.request(out.from,out.to);r.advance(7000);assert.ok(['active','traversing'].includes(route.state),route.reason);
   r.advance((route.passage.length+3)*900);
   assert.equal(r.field.trains.length,0,'tåget lämnade anläggningen på linjen');
+});
+
+// Casper 17 oktober, efter en parkoppling: planen visade sju tåg men tidtabellen två uppställda. Tågen från förut stod
+// kvar på banan och spärrade spåren. Sedan 0.82.0 tas ett stående tåg som trafikspelet inte har här bort.
+test('ett stående tåg som trafikspelet inte har här tas bort efter en stund, och bara då',async()=>{
+  let now=0;const sent=[],log=[],forgotten=[];let answer=async()=>({});
+  const tt=new TrafficTrains({available:true,now:()=>now,send:async c=>{sent.push(c);return answer(c);},log:(k,m)=>log.push(m)});
+  const tracks={'1a':{button:'htvSpIA',block:'SIA'},'13':{button:'htvSp13',block:'S13'}};
+  const blocks={SIA:{occupied:true},S13:{occupied:false}};
+  const context={lines:[{id:'cda-kfs',neighborId:'kfs',state:'occupied',direction:'out',trainNumber:'318'}],
+    trains:[{id:'m92',train_number:'92'},{id:'m93',train_number:'93'},{id:'m95',train_number:'95'},{id:'m41',train_number:'41'}],tracks:[{id:'t1',label:'1a'}],
+    movements:[{id:'m92',departure:'positioned',track:'t1'},{id:'m93',arrival:'arrived'},{id:'m95',departure:'departed'},{id:'m41',crewReady:true}]};
+  assert.deepEqual([...tt.present(context)].sort(),['318','41','92','93'],'på linjen, uppställt, ankommet eller förare på plats; avgånget räknas inte');
+  const tracked=[{number:'8372'},{number:'95'},{number:'93'},{number:'318'}];
+  const tick=(more={})=>tt.tick({context,edges:{},tracks,blocks,tracked,forget:n=>forgotten.push(n),...more});
+  await tick();now+=9000;await tick();assert.deepEqual(sent,[],'92 väntar på det belagda spåret, och inget tas bort före tio sekunder');
+  now+=1000;await tick();assert.deepEqual(sent,[{kind:'remove',number:'8372'}],'det som saknats längst tas bort först');
+  assert.match(log.at(-1),/Tåg 8372 är borttaget från banan/);assert.deepEqual(forgotten,['8372'],'spårningen glömmer det');
+  tracked.splice(0,1);blocks.SIA.occupied=false;
+  await tick();assert.deepEqual(sent.at(-1),{kind:'remove',number:'95'},'ett avgånget tåg som står kvar');
+  tracked.splice(0,1);await tick();assert.deepEqual(sent.at(-1),{kind:'spawn',number:'92',at:'htvSpIA'},'sedan ställs det uppställda tåget ut');
+  // Ett tåg som kör försöks igen; en provkörning får stå.
+  tracked.push({number:'7101'},{number:'P1'});await tick();now+=ABSENT_MS;
+  answer=async c=>{if(c.kind==='remove')throw Error(c.number==='P1'?'Tåg P1 är inte ett av trafikspelets tåg.':`Tåg ${c.number} kör.`);return {};};
+  await tick();await tick();assert.deepEqual(sent.slice(-2).map(c=>c.number),['7101','P1']);
+  await tick();assert.equal(sent.length,5,'väntar en stund med tåget som kör, och P1 lämnas');
+  now+=RETRY_MS_TEST;await tick();assert.deepEqual(sent.at(-1),{kind:'remove',number:'7101'});
+  // Ett nummer som bara spårningen minns (tåget finns inte på banan) glöms där.
+  tracked.push({number:'4711'});await tick();now+=ABSENT_MS;answer=async c=>{throw Error(`Tåg ${c.number} finns inte på banan.`);};
+  await tick();await tick();assert.equal(sent.at(-1).number,'4711');assert.equal(forgotten.at(-1),'4711');
+  // Utan färskt trafikläge rörs inget, och klockan för frånvaron börjar om.
+  const quiet=new TrafficTrains({available:true,now:()=>now,send:async c=>{sent.push(c);return {};}});const before=sent.length;
+  await quiet.tick({context,edges:{},tracks,blocks:{SIA:{occupied:true}},tracked:[{number:'9999'}],fresh:false});now+=ABSENT_MS;
+  await quiet.tick({context,edges:{},tracks,blocks:{SIA:{occupied:true}},tracked:[{number:'9999'}],fresh:false});
+  await quiet.tick({context:null,edges:{},tracks,blocks:{SIA:{occupied:true}},tracked:[{number:'9999'}]});assert.equal(sent.length,before);
+});
+
+test('simulatorn tar bort ett stående tåg från trafikspelet och frigör spåret, men inte ett som kör',()=>{
+  const r=rig();r.field.spawnTrain({number:'8623',at:'htvSpIA'});r.advance(2000);assert.equal(r.engine.blocks.SIA.occupied,true);
+  assert.deepEqual(r.field.simulate({kind:'remove',number:'8623'}),{number:'8623'});r.advance(1000);
+  assert.equal(r.engine.blocks.SIA.occupied,false,'spåret är fritt');assert.equal(r.field.trains.length,0);
+  assert.throws(()=>r.field.simulate({kind:'remove',number:'8623'}),/finns inte på banan/);
+  r.field.spawnTrain({number:'3581',at:'htvSpIA'});r.advance(2000);
+  const out=profile.routes.find(x=>x.from==='htvSpIA'&&/^htv(Bu|Bn)$/.test(x.to));r.engine.request(out.from,out.to);r.advance(4000);
+  assert.equal(r.field.trains[0].standing,false,'tåget kör');assert.throws(()=>r.field.simulate({kind:'remove',number:'3581'}),/Tåg 3581 kör\./);
 });
