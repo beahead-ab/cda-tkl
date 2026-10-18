@@ -19,3 +19,4 @@ jobs:
       # Stationens genererade filer ska stämma med källan (Trakvista.xml, CSV-tabellerna, station.json).
       - run: npm run "verify:$(sed -n 's/^TKL_STATION=//p' packaging/identity.env)"
       - run: npm run -s test:station-traffic
+      - run: npm run -s test:station-selection

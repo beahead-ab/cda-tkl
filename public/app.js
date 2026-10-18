@@ -35,6 +35,7 @@ import {rangerScope} from './ranger-scope.js';
 import {createPanelSplit} from './panel-split.js';
 import {openUpdateNotice} from './update-notice.js';
 import {modeChip,openConnectionMode,createConnectionSettings} from './connection-mode.js';
+import {createStationSettings} from './admin-station.js';
 import {createUpdatePage} from './update-page.js';
 import {createAiPage} from './ai-page.js';
 import {createUsersPage} from './users-page.js';
@@ -59,7 +60,7 @@ try{setCrossingDisplay(localStorage.getItem('charlottendal-crossing-display'),{s
 $('crossing-display').onchange=()=>{setCrossingDisplay($('crossing-display').value);paint();};
 
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
-let manualFeedback, sourceRegister, trainInformation, telegramRecorder, connectionSettings, operatingControls, modelClock, trainMeet, feedback, layout;
+let manualFeedback, sourceRegister, trainInformation, telegramRecorder, connectionSettings, stationSettings, operatingControls, modelClock, trainMeet, feedback, layout;
 let routeConfirmation,signalEndpoints;
 const routeTargets=createRouteTargets({load:async(from,kind)=>{
   const response=await fetch('/api/route-targets?'+new URLSearchParams({from,kind,...(rangerMode?{operator:'ranger'}:{})}),{cache:'no-store'});
@@ -660,6 +661,7 @@ function renderPanel() {
   trainInformation?.update(state,online);
   telegramRecorder?.update(state,online);
   connectionSettings?.update(state);
+  stationSettings?.update(state);
   operatingControls?.update(state,online);
   if(state.clock)modelClock?.update(state.clock,online);
   trainMeet?.update(state.trainMeet,online,{routes:state.routes||[],destinations:state.destinations});
@@ -829,7 +831,8 @@ async function start() {
   createAdminAppearance();
   for(const id of ['appearance','journal','streamdeck'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   $('journal-filter').oninput=paintJournal;
-  for(const id of ['xml','migration','protocol','update','ai','users','start'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
+  for(const id of ['xml','migration','protocol','update','ai','users','start','station'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
+  stationSettings=createStationSettings($('station-settings'),{api,message,session:()=>authSession});
   updatePage=createUpdatePage({root:$('advanced-update-content'),api,message});
   const aiPage=createAiPage({root:$('advanced-ai-content'),api,message});
   const usersPage=createUsersPage({root:$('advanced-users-content'),api,message,session:()=>authSession});
@@ -838,7 +841,7 @@ async function start() {
   panelHead?.startNotice(config.onboarding);startStatus();
   // First start: tell the owner once per browser session that Kom igång is waiting; the chip stays until it is done.
   if(config.onboarding&&!config.onboarding.done&&!(()=>{try{return sessionStorage.getItem('start-seen');}catch{return false;}})()){try{sessionStorage.setItem('start-seen','1');}catch{}openStartNotice(config.onboarding);}
-  const loadSettingsPages=()=>{if(location.hash.startsWith('#advanced/ai'))aiPage?.load();if(location.hash.startsWith('#advanced/users'))usersPage?.load();if(location.hash.startsWith('#advanced/start'))startPage?.load();};window.addEventListener('hashchange',loadSettingsPages);loadSettingsPages();
+  const loadSettingsPages=()=>{if(location.hash.startsWith('#advanced/ai'))aiPage?.load();if(location.hash.startsWith('#advanced/users'))usersPage?.load();if(location.hash.startsWith('#advanced/start'))startPage?.load();if(location.hash.startsWith('#advanced/station'))stationSettings?.load();};window.addEventListener('hashchange',loadSettingsPages);loadSettingsPages();
   document.addEventListener('click',e=>{
     const section=e.target.closest('[data-tools-section]');
     if(section){e.preventDefault();openTools(section.dataset.toolsSection);return;}

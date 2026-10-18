@@ -128,3 +128,7 @@ Linjer, orter, tidtabell, tågspårning och fältmodell använder samma stations
 ## Föreslaget, inte publicerat: 0.82.8
 
 Träkvistas automat väljer tidtabellens stationsspår och nästa verkliga granne, accepterar först efter aktiv infart och inväntar utgående enkelspårsklarering. Färskt trafikläge och oförändrad tågväg kontrolleras även efter väntande nätverksläsning. Charlottendals automat behåller sin prioritering och väntetid. [Trafikprotokoll](stationsstyrd-trafik-2026-10-18.md).
+
+## Föreslaget, inte publicerat: 0.82.9
+
+Inställningar → Station väljer bland installerade stationer med kontrollerad omstart genom npm start. Separata driftkataloger och användare behålls; nya stationens TrainMeet ansluts uttryckligen. Befintliga fasta Pi/Mac-tjänster och Render behåller sin station. [Anvisning och avgränsning](stationsval.md), [protokoll](stationsstyrd-trafik-2026-10-18.md).

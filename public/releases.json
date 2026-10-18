@@ -1,5 +1,12 @@
 [
   {
+    "version": "0.82.9",
+    "date": "2026-10-18",
+    "notes": [
+      "Inställningar visar installerade stationer och kan byta station med kontrollerad omstart genom npm start; användare och driftdata hålls isär och TrainMeet ansluts uttryckligen efter bytet"
+    ]
+  },
+  {
     "version": "0.82.8",
     "date": "2026-10-18",
     "notes": [

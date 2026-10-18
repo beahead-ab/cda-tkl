@@ -499,3 +499,7 @@ Panel, Orter och tidtabell använder den valda stationens linjer. Träkvista har
 ## Träkvistas automat, förslag 0.82.8
 
 Med LocoNet ej ansluten kan Automatrutinen följa trafikspelets tåg via stationens tidtabellsspår och nästa granne. Koppla först linjerna till verkliga TrainMeet-stationer under Orter. Automaten inväntar klarering på enkelspåret; vid okänd riktning, ändrat tåg, saknad koppling, belagt tidtabellsspår eller avslag lämnar den över med en orsak. Efter omstart behöver befintliga tåg kontrolleras; automaten gissar ingen tidigare infart. Charlottendal behåller sin tidigare automatik.
+
+## Station, förslag 0.82.9
+
+Inställningar → Den här datorn → Station visar installerade stationer. Ägaren kan byta när installationen körs via npm start och driftläget tillåter det. Programmet startar om kontrollerat, och varje station behåller sina egna användare och inställningar. Anslut till den stationens TrainMeet uttryckligen efter bytet. Fasta installationer visar varför stationsbyte är låst. [Detaljer och befintliga installationer](stationsval.md).

@@ -106,3 +106,7 @@ De redan publicerade paketen och källans installationsmetadata har kvar den äl
 ## Nästa granskade trafiksteg
 
 Casper har godkänt stationsstyrd linjetrafik, automat och därefter lokalt stationsval med kontrollerad omstart. [Protokollet](stationsstyrd-trafik-2026-10-18.md) skiljer modul-/processprov från webbläsaracceptans och riktig bana. Förrådsuppdelning och gemensam webbtjänst ligger kvar för senare beslut. Förslag 0.82.7 ersätter den tidigare beskrivningen av A/B/C-luckan först när ändringen har granskats och mergats.
+
+## Lokalt stationsval, förslag 0.82.9
+
+Ett lokalt stationsbyte med kontrollerad omstart införs för startövervakaren (npm start), skilt från en gemensam webbtjänst. Installerade paket, separata driftkataloger, inloggning och TrainMeet-paus beskrivs i [stationsvalet](stationsval.md). Native tjänstestart och Render behåller sin befintliga fasta station.

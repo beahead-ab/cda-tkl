@@ -6,7 +6,7 @@ import { hex, fromHex, LineReader } from './protocol.mjs';
 import { json, guard, body, staticFile } from './http.mjs';
 import { createAuth } from './auth.mjs';
 import { loadProfile } from './profile.mjs';
-import { currentStation, stationData } from './station.mjs';
+import { currentStation, stationData, stateDirectory } from './station.mjs';
 import { stationTraffic } from './station-traffic.mjs';
 
 const station = currentStation(), profile = loadProfile('field');
@@ -41,7 +41,7 @@ const wire = net.createServer(socket => {
 });
 wire.listen(wirePort, '127.0.0.1');
 const root = fileURLToPath(new URL('../public', import.meta.url));
-const auth = createAuth(root);
+const auth = createAuth(root, false, process.env, {stateDir:stateDirectory(process.env,station)});
 const server = http.createServer(async (req, res) => {
   try {
     guard(req, port); const url = new URL(req.url, `http://127.0.0.1:${port}`);
