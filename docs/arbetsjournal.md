@@ -2062,3 +2062,5 @@ klartecken), eftersom stegen där ("Tryck Fortsätt", "Välj station") gäller T
 0.82.0 hänvisade till sidan *Anslut ett ställverk* i felbeskedet vid en nekad kod, i hjälptexten vid formuläret och i
 installationsdokumenten. 0.82.1 hänvisar i stället till Drift → Anslut en box och Inställningar → Anslutningskod.
 Prov: `test/trainmeet.test.mjs` med det nya felbeskedet.
+
+Publicerad 18 oktober: cda-tkl main `a5d2add` (#72), `beahead-ab/cda-tkl-install` main `a4e4ed0`.
