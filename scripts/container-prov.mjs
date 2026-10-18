@@ -109,13 +109,16 @@ export function containerProv({ root, artifacts: directory, hostname = 'cda-rend
     prov.docker(['volume', 'create', prov.volume]); prov.volumeCreated = true;
     prov.docker(['network', 'create', '--internal', prov.network]); prov.networkCreated = true;
   };
-  prov.run = function (image, { env = {} } = {}) {
+  // address: false när containern inte väntas svara, till exempel en version som vägrar läsa den sparade driften.
+  prov.run = function (image, { env = {}, address = true } = {}) {
     const variables = Object.entries({ CHARLOTTENDAL_PUBLIC_ORIGIN: prov.origin, ...env }).flatMap(([key, value]) => ['--env', `${key}=${value}`]);
     prov.docker(['run', '--detach', '--name', prov.id, '--network', prov.network,
       '--mount', `type=volume,source=${prov.volume},target=/data`, ...variables, image]);
     prov.containerCreated = true;
-    prov.containerAddress();
+    if (address) prov.containerAddress();
   };
+  prov.containerLogs = (lines = 80) => prov.docker(['logs', '--tail', String(lines), prov.id], { optional: true });
+  prov.waitForExit = (timeout = 120000) => Number(prov.docker(['wait', prov.id], { timeout }));
   // Återgång och omstart använder samma volym: containern tas bort och ersätts av den valda avbildningen.
   prov.replaceContainer = function (image, options) {
     prov.docker(['logs', prov.id], { optional: true });
@@ -153,7 +156,7 @@ export function containerProv({ root, artifacts: directory, hostname = 'cda-rend
   prov.containerReport = function () {
     if (!prov.containerCreated) return '';
     const state = prov.docker(['inspect', '--format', '{{json .State}}', prov.id], { optional: true });
-    const logs = prov.docker(['logs', '--tail', '80', prov.id], { optional: true });
+    const logs = prov.containerLogs();
     const report = `Containerns läge: ${state}\n\nContainerns logg (sista 80 raderna):\n${logs}\n`;
     fs.writeFileSync(path.join(artifacts, 'container-vid-fel.txt'), report);
     return report;

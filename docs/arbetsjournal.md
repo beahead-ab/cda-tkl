@@ -2175,3 +2175,9 @@ Lokalt finns ingen Docker-tjänst, så själva körningen sker i GitHub-jobbet `
 
 Provet hittade att panelens sidfot är statisk text i `public/index.html` och säger *Charlottendal TKL* också i en annan stations installation; rubriken, sidhuvudet och fliknamnet följer stationen. Rättelsen rör `public/` och tas i en egen versionshöjning med publicering. Ingen merge, ingen publicering och ingen ändring på Render ingår; versionen är oförändrad eftersom stationspaketet inte ändras.
 
+## 18 oktober 2026 – containerprovets fynd om återgång
+
+Träkvistas containerprov går igenom i GitHub fram till återgången: ny installation med ägare ur miljön, lösenordsbyte vid första inloggningen, rätt station och profil, panel, Studio och stationsinställningar i webbläsaren, och riktig containeromstart med ägare, session, ort och klocka kvar. Sidorna hanterar att stationen saknar Charlottendals signalregister och införandestatus; provet kräver att det är just de två filerna som saknas.
+
+Återgången till föregående publicerade version startar inte. Felet är reproducerat lokalt: 0.82.2 läser `destinations.json` mot Charlottendals sju linjer (`src/destinations.mjs`), medan stationens egna linjer kom med 0.82.7, så containern avslutas med `Ogiltiga sparade ortsuppgifter`. Provet kräver nu just det utfallet och att 0.82.10 startar igen på samma volym med allt kvar. Följden för drift står i [driftprotokollet](render-release-2026-10-18.md): en rollback av Träkvistas framtida tjänst till en version före 0.82.7 kräver att diskens säkerhetskopia läggs tillbaka. Charlottendal berörs inte, eftersom dess linjer är desamma i båda versionerna.
+

@@ -102,10 +102,28 @@ Provet kontrollerar, allt med syntetiska data på ett internt Docker-nät:
   det själva, och provet kräver att det är just de två och inga andra uteblivna svar.
 - Riktig containeromstart på samma volym bevarar ägare, session, ortsinställning och modellklocka.
 - Återgång: föregående publicerade version (den senaste i cda-tkl:s historik med ett annat versionsnummer) byggs som
-  egen avbildning, startas på samma volym och ska logga in med det bytta lösenordet och visa samma ortsinställning och
-  klocka. Därefter startas den nya versionen igen.
+  egen avbildning och startas på samma volym. **Den startar inte**, se nedan; provet kräver just det och att den nya
+  versionen sedan startar igen på samma volym med ägare, ort och klocka kvar.
 
 Kvar att notera: panelens sidfot är statisk text i `public/index.html` och säger *Charlottendal TKL · version X* också i
 en annan stations installation. Versionen stämmer, och rubriken, sidhuvudet och fliknamnet följer stationen. Rättelsen
 rör `public/` och kräver därför en egen versionshöjning med publicering; den ingår inte här. Provet är syntetiskt: ingen
 verklig bana, ingen TrainMeet-parkoppling, ingen publicering och ingen Render-tjänst.
+
+## Återgång till en version före stationens egna linjer
+
+Containerprovet visar att en rollback av Träkvistas tjänst till **0.82.2** inte startar på en disk som 0.82.10 har
+skrivit. Containern avslutas med kod 1 och `Ogiltiga sparade ortsuppgifter`: 0.82.2 läser `destinations.json` mot
+Charlottendals sju linjer, medan stationens egna linjer (A, B, C) kom med 0.82.7. Felet ligger alltså i den gamla
+versionen, inte i den nya, och disken tar ingen skada — 0.82.10 startar igen på samma volym med ägare, ortsinställning
+och klocka kvar, vilket provet också kontrollerar.
+
+Vad det betyder för drift:
+
+- Träkvistas kommande Render-tjänst kan inte rullas tillbaka till en version före 0.82.7 genom att bara välja en äldre
+  deploy. En sådan återgång kräver att diskens säkerhetskopia från före bytet läggs tillbaka först.
+- Charlottendal berörs inte på samma sätt: dess sju linjer är desamma i båda versionerna. Vid varje framtida
+  driftbyte gäller ändå samma ordning som den 18 oktober: färsk skyddad säkerhetskopia före merge, och känd
+  fungerande deploy att gå tillbaka till.
+- Att gå framåt igen är ofarligt. Den väg som provet visar är: återgången stoppas av den gamla versionen, tjänsten
+  startas på nytt med den nya versionen, och driften är oförändrad.

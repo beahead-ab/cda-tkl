@@ -50,15 +50,13 @@ function previousRelease() {
   return null;
 }
 
-// stationLock: stationsvalet finns från 0.82.9. En äldre version i återgångsprovet har inte installationStation.
-function assertIdentity(config, state, { version = release, stationLock = true } = {}) {
+function assertIdentity(config, state, version = release) {
   assert.equal(config.station.id, id); assert.equal(config.station.title, station.title);
   assert.equal(config.release, version); assert.equal(state.release, version);
   assert.equal(config.id, profile.id); assert.equal(state.profile.id, profile.id);
   assert.equal(config.sourceHash, profile.sourceHash); assert.equal(config.authMode, 'external');
   assert.equal(state.storageFault, null); assert.equal(state.connectionInfo.mode, 'simulator');
   assert.equal(state.connectionMode.mode, 'offline');
-  if (!stationLock) return;
   assert.equal(state.installationStation.current, id); assert.equal(state.installationStation.locked, true);
   assert.deepEqual(state.installationStation.stations.map(s => s.id), [id]);
 }
@@ -162,26 +160,27 @@ try {
   mark('Samma volym bevarar ägaren, sessionen, ortsinställningen och modellklockan efter riktig containeromstart');
 
   // Återgång: föregående publicerade version startas på samma volym, som en rollback av en Render-deploy.
+  // 0.82.2 saknar stationens egna linjer och läser ortsuppgifterna mot Charlottendals sju poster, så den vägrar
+  // starta på data som stationens egen version har skrivit. Provet håller fast vid vad som faktiskt händer.
   const previous = previousRelease();
   assert.ok(previous, 'Hittade ingen föregående version i historiken; hämta hela historiken (fetch-depth: 0).');
   prov.buildImage(previousImage, { context: buildPackage('forra', previous.commit) });
-  prov.replaceContainer(previousImage, { env: { CHARLOTTENDAL_STATION: id, TKL_OWNER_EMAIL: username, TKL_OWNER_PASSWORD: temporary } });
-  await prov.until('Starten av föregående version', async () => (await json('/healthz')).status === 'running');
-  await prov.applicationReady();
-  const back = await login(chosen); assert.equal(back.status, 200, back.text);
-  const backState = await prov.authenticatedState(back.cookie), backConfig = await json('/api/config', { cookie: back.cookie });
-  assertIdentity(backConfig, backState, { version: previous.version, stationLock: false });
-  assert.deepEqual(backState.destinations.entries, destinations.entries);
-  assert.equal(backState.clock.timeMs, clock.timeMs);
-  rollback = { version: previous.version, commit: previous.commit };
-  mark(`Återgång till ${previous.version} startar på samma volym med ägare, ortsinställning och klocka kvar`);
+  prov.replaceContainer(previousImage, { env: { CHARLOTTENDAL_STATION: id, TKL_OWNER_EMAIL: username, TKL_OWNER_PASSWORD: temporary }, address: false });
+  const exit = prov.waitForExit(), log = prov.containerLogs();
+  assert.equal(exit, 1, `Föregående version stannade inte som väntat (slutkod ${exit}):\n${log}`);
+  assert.match(log, /Ogiltiga sparade ortsuppgifter/);
+  rollback = { version: previous.version, commit: previous.commit, starts: false, reason: 'Ogiltiga sparade ortsuppgifter' };
+  mark(`Återgång till ${previous.version} startar inte på data från ${release}: den versionen läser ortsuppgifterna mot Charlottendals linjer`);
 
-  // Och tillbaka till den nya versionen igen, som efter en återgång som inte behövdes.
+  // Disken tar ingen skada av det: den nya versionen startar igen på samma volym med ägaren och inställningarna kvar.
   prov.replaceContainer(image, { env: { CHARLOTTENDAL_STATION: id, TKL_OWNER_EMAIL: username, TKL_OWNER_PASSWORD: temporary } });
   await prov.applicationReady();
   const forward = await login(chosen); assert.equal(forward.status, 200, forward.text);
-  assertIdentity(await json('/api/config', { cookie: forward.cookie }), await prov.authenticatedState(forward.cookie));
-  mark(`Åter till ${release} efter återgången, med samma data`);
+  const forwardState = await prov.authenticatedState(forward.cookie);
+  assertIdentity(await json('/api/config', { cookie: forward.cookie }), forwardState);
+  assert.deepEqual(forwardState.destinations.entries, destinations.entries);
+  assert.equal(forwardState.clock.timeMs, clock.timeMs);
+  mark(`${release} startar igen på samma volym efter den avbrutna återgången, med ort och klocka kvar`);
 
   prov.result({ ok: true, station: id, release, rollback, profileId: profile.id, sourceHash: profile.sourceHash,
     optionalMissing: prov.optionalMissing,
