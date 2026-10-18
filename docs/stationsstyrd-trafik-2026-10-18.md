@@ -42,3 +42,27 @@ Slutgranskningen rättade tre avbrottsfall: av/på kan inte återuppta ett köat
 Ägar-API och Inställningar → Station använder startövervakaren. Varje gammal process måste avslutas felfritt före nästa start. Befintlig driftkatalog bevaras exakt vid explicit karta; olika fysiska kataloger krävs också över symboliska länkar. Pågående HTTP-kropp, tågväg, inspelning, automat eller bakgrundstrafik spärrar byte. Simulatorns användarkatalog följer samma station som serverns. TrainMeet-pausen är beständig tills connect/pair lyckas; refresh eller sparad token kan inte återuppta trafiken.
 
 Start-/lagrings-/behörighetsprov är gröna lokalt. Tre HTTP-fall tillförs: fast instans (även i paket), byte med explicit karta och byte med standardkataloger i en temporär installation. Ingen original-var-katalog används. GitHub-resultat kompletteras efter körningen; localhost EPERM blockerar lokal processkörning. [Stationsvalets anvisning](stationsval.md) anger att befintliga Pi/Mac-tjänster och Render ännu är fasta. Native tjänstestart blir ett separat steg.
+
+## Fullständig kontroll i GitHub
+
+Resultaten avser de angivna kodcommitterna. Källproven kör npm test, npm run -s check, npm run -s verify:operations, npm run -s test:integration och npm run verify:trakvista, samt verify:layout och verify:xml. Paketprovet kör ett riktigt publish-station-bygge mot ett temporärt provförråd, med STATION_NO_PUSH=1, fulla enhetsprov, källverifiering och de nya processkommandona. Inget skickas till installationsförråden.
+
+| PR / kodcommit | Enhetsprov i källan | Integration i källan | Tk-paket och övrigt |
+|---|---|---|---|
+| [#85 / 7e45904](https://github.com/beahead-ab/cda-tkl/pull/85) | 550 godkända, tre överhoppade | 15/15 | 277 enhetsprov; manuell trafik och källverifiering gröna, två root-uppdateringsprov och Windows-parser gröna. [Körning](https://github.com/beahead-ab/cda-tkl/actions/runs/39134765852). |
+| [#86 / e472c3b](https://github.com/beahead-ab/cda-tkl/pull/86) | 603 godkända, tre överhoppade | 16/16 | 330 enhetsprov; manuell trafik, full automatsekvens och källverifiering gröna, två root-uppdateringsprov och Windows-parser gröna. [Körning](https://github.com/beahead-ab/cda-tkl/actions/runs/39134804189). |
+| [#87 / a824c55](https://github.com/beahead-ab/cda-tkl/pull/87) | 617 godkända, tre överhoppade | 19/19 | 344 enhetsprov; manuell trafik, full automatsekvens, fast stationsspärr/omstart och källverifiering gröna, två root-uppdateringsprov och Windows-parser gröna. [Körning](https://github.com/beahead-ab/cda-tkl/actions/runs/39134975028). |
+
+De tre överhoppade enhetsproven är två root-krävande uppdateringsprov, som körs separat i isolerade kataloger, samt ett Mac-specifikt prov som inte körs på Linux. Windows-jobbet använder PowerShells parser; det installerar inte programmet på Windows.
+
+Charlottendals profiler, public/data och Träkvistas stationsunderlag är byteoförändrade mot main 904d564. Main är fortfarande 904d564 och installationsförråden har kvar sina tidigare commits 65039a0 respektive 008d18b. Det är inte en driftsättning.
+
+## Granskning och förslag till steg 2
+
+Casper granskar först #85 → #86 → #87 efter grundens #80–84. De är staplade för att hålla rättelserna åtskilda. Vid senare squash till main behöver följande PR baseras om på den nya main; varje merge dit kan driftsätta Charlottendal. Inget publiceras som del av granskningsarbetet.
+
+Casper behöver prova panel, Studio, inloggning, Orter/TrainMeet och stationsbytet i webbläsaren. Modellbilderna och HTTP-proven ersätter inte visuell acceptans eller LocoBuffer/MGP vid banan. Flera C-skyltar behöver särskild visuell kontroll mot originalpanelens TAM-dekoration.
+
+Steg 2 är som tidigare föreslaget containerprov för Render och lokal körning: bygg befintliga avbildningar, prova separata beständiga volymer, ägarstart, uppdatering och återställning. Casper skapar sedan Träkvistas egen Render-tjänst och deltar i acceptansen. Pi och Mac behåller vanliga installationer. Om stationsval ska införas i deras befintliga tjänster görs en egen PR per plattform för startövervakaren, med bevarade kataloger och stopp-/omstartsprov före faktisk installation.
+
+Eget tkl-förråd, filflytt av Charlottendal och gemensam webbtjänst med inloggning/stationsval kräver senare beslut.

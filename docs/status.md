@@ -132,3 +132,7 @@ Träkvistas automat väljer tidtabellens stationsspår och nästa verkliga grann
 ## Föreslaget, inte publicerat: 0.82.9
 
 Inställningar → Station väljer bland installerade stationer med kontrollerad omstart genom npm start. Separata driftkataloger och användare behålls; nya stationens TrainMeet ansluts uttryckligen. Befintliga fasta Pi/Mac-tjänster och Render behåller sin station. [Anvisning och avgränsning](stationsval.md), [protokoll](stationsstyrd-trafik-2026-10-18.md).
+
+## Verifierade utkast 0.82.7–0.82.9
+
+Kod-PR:erna #85–87 är gröna i GitHub: den senaste kodrevisionen a824c55 har 617 godkända enhetsprov och 19 helhetsprov samt 344 enhetsprov och gröna trafik-/omstartsprov i det riktiga Tk-paketet utan push. Obligatoriska kontroller, separat root-uppdatering och Windows-parser är gröna. [Slutprotokoll](stationsstyrd-trafik-2026-10-18.md#fullständig-kontroll-i-github) förklarar överhopp och återstående acceptans. Detta är verifierade förslag, inte publicerad drift. Main är kvar på 904d564; inga installationsförråd eller Render-tjänster har ändrats.
