@@ -149,7 +149,18 @@ export function containerProv({ root, artifacts: directory, hostname = 'cda-rend
     if (prov.browser) { await prov.browser.close(); prov.browser = null; }
   };
 
+  // Vad containern själv säger när något går fel: läget och slutet av loggen, i jobbets utskrift och bland artefakterna.
+  prov.containerReport = function () {
+    if (!prov.containerCreated) return '';
+    const state = prov.docker(['inspect', '--format', '{{json .State}}', prov.id], { optional: true });
+    const logs = prov.docker(['logs', '--tail', '80', prov.id], { optional: true });
+    const report = `Containerns läge: ${state}\n\nContainerns logg (sista 80 raderna):\n${logs}\n`;
+    fs.writeFileSync(path.join(artifacts, 'container-vid-fel.txt'), report);
+    return report;
+  };
   prov.saveFailure = async function (error, extra = {}) {
+    const report = prov.containerReport();
+    if (report) console.error(report);
     if (prov.context) {
       for (const [index, page] of prov.context.pages().entries()) {
         await page.screenshot({ path: path.join(artifacts, `fel-${index}.png`), fullPage: true }).catch(() => {});
