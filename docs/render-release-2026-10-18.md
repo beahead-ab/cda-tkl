@@ -113,7 +113,8 @@ verklig bana, ingen TrainMeet-parkoppling, ingen publicering och ingen Render-tj
 ## Återgång till en version före stationens egna linjer
 
 Containerprovet visar att en rollback av Träkvistas tjänst till **0.82.2** inte startar på en disk som 0.82.10 har
-skrivit. Containern avslutas med kod 1 och `Ogiltiga sparade ortsuppgifter`: 0.82.2 läser `destinations.json` mot
+skrivit. Containern avslutas med kod 1, och samma avbildning körd en gång till med servern direkt svarar
+`Ogiltiga sparade ortsuppgifter`: 0.82.2 läser `destinations.json` mot
 Charlottendals sju linjer, medan stationens egna linjer (A, B, C) kom med 0.82.7. Felet ligger alltså i den gamla
 versionen, inte i den nya, och disken tar ingen skada — 0.82.10 startar igen på samma volym med ägare, ortsinställning
 och klocka kvar, vilket provet också kontrollerar.

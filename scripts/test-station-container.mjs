@@ -168,8 +168,15 @@ try {
   prov.replaceContainer(previousImage, { env: { CHARLOTTENDAL_STATION: id, TKL_OWNER_EMAIL: username, TKL_OWNER_PASSWORD: temporary }, address: false });
   const exit = prov.waitForExit(), log = prov.containerLogs();
   assert.equal(exit, 1, `Föregående version stannade inte som väntat (slutkod ${exit}):\n${log}`);
-  assert.match(log, /Ogiltiga sparade ortsuppgifter/);
-  rollback = { version: previous.version, commit: previous.commit, starts: false, reason: 'Ogiltiga sparade ortsuppgifter' };
+  // Gatewayens barnprocesser skriver till containerns logg, som kan hinna gå förlorad när den avslutas så snabbt.
+  // Samma version körs därför en gång till med servern direkt, så att själva felet syns i klartext.
+  const direct = prov.docker(['run', '--rm', '--network', prov.network, '--entrypoint', 'node',
+    '--mount', `type=volume,source=${prov.volume},target=/data`,
+    '--env', 'CHARLOTTENDAL_STATION=' + id, '--env', 'CHARLOTTENDAL_STATE_DIR=/data/state',
+    '--env', 'CHARLOTTENDAL_AUTH_MODE=password', '--env', 'CHARLOTTENDAL_AUTH_FILE=/data/auth/auth.json',
+    previousImage, 'src/server.mjs'], { optional: true, combined: true });
+  assert.match(direct, /Ogiltiga sparade ortsuppgifter/, `Väntade fel om ortsuppgifterna, fick:\n${direct.slice(-2000)}`);
+  rollback = { version: previous.version, commit: previous.commit, starts: false, reason: 'Ogiltiga sparade ortsuppgifter', exit };
   mark(`Återgång till ${previous.version} startar inte på data från ${release}: den versionen läser ortsuppgifterna mot Charlottendals linjer`);
 
   // Disken tar ingen skada av det: den nya versionen startar igen på samma volym med ägaren och inställningarna kvar.

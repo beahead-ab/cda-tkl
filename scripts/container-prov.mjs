@@ -27,12 +27,13 @@ export function containerProv({ root, artifacts: directory, hostname = 'cda-rend
   };
   let commandNumber = 0;
 
-  prov.command = function (program, args, { input, timeout = 60000, optional = false, cwd = root, env } = {}) {
+  // combined: både ut- och felström, för ett kommando vars fel är det intressanta.
+  prov.command = function (program, args, { input, timeout = 60000, optional = false, cwd = root, env, combined = false } = {}) {
     const result = spawnSync(program, args, { cwd, env, encoding: 'utf8', input, timeout, maxBuffer: 32 * 1024 * 1024 });
     const output = (result.stdout || '') + (result.stderr || '');
     fs.writeFileSync(path.join(artifacts, `${String(++commandNumber).padStart(2, '0')}-${program}.log`), output);
     if (!optional && (result.error || result.status !== 0)) throw Error(`${program} misslyckades: ${result.error?.message || output.slice(-6000)}`);
-    return (result.stdout || '').trim();
+    return (combined ? output : result.stdout || '').trim();
   };
   prov.docker = (args, options) => prov.command('docker', args, options);
   prov.mark = text => { prov.checks.push(text); console.log('OK: ' + text); };
