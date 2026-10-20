@@ -2228,3 +2228,17 @@ Casper slutförde formuläret och aktiverade den nya tjänsten. `tk-tkl` (`srv-d
 Slutrapportens CI `39164669517` är helt grön. Render hoppade över dokumentationsmergen `4e0c6b0` enligt `[skip render]`, och Charlottendals drift ändrades inte. Denna uppföljning ändrar endast dokumentationen och använder samma markering.
 
 Privat startbackup på Träkvistas disk: `/data/release-backups/trakvista-initial-0.82.11-2026-10-18T21-06-14-590Z.tar.gz`, fyra filer/två validerade JSON-filer, 2 073 byte, 0600. SHA-256 `4a4b3c264310296d9bd9df808b2fab9b65ac1bf003e0b452318a509a483c7f2f`. Manifestet stannar också på disken.
+
+## 20 oktober 2026 – Träkvistas blinkande spårplan
+
+Casper kom in efter kontoåterställningen och rapporterade frenetiskt blinkande spårplan. Anslutningen var stabil.
+Åtta täta DOM-avläsningar av den faktiska panelen visade två återkommande lägen: exakt 39 knappgrupper fick och
+förlorade klassen `locked`; resten av ritningen var samma. Inga nya tågvägslås låg bakom ändringen.
+
+Träkvistas `operating.programming` är `null`. Låsvillkorets sista led blev därför `undefined`, vilket gör att
+`classList.toggle` växlar klassen i stället för att sätta ett bestämt läge. Hela villkoret görs nu booleskt innan
+det lämnas till DOM. Kärnans tågvägslås, programmeringsspärrar, manövervillkor och driftdata ändras inte.
+
+Releasekandidat 0.82.12 har rättelsen och ett regressionsprov i stationens riktiga Docker-/Chromium-panel:
+låsmarkeringen följs över bildrutor och flera återrapporter utan nya manövrer. Tio fokuserade panel-/versionsprov
+och syntaxkontrollen är gröna lokalt. Full CI, publicering och faktisk efterkontroll redovisas när de är genomförda.

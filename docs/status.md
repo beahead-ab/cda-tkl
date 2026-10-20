@@ -1,4 +1,12 @@
-# Charlottendal TKL – lägesbild 18 oktober 2026
+# Charlottendal TKL – lägesbild 20 oktober 2026
+
+## Rättelse av Träkvistas blinkande knappar, 0.82.12
+
+Casper kunde logga in efter kontoåterställningen och rapporterade blinkande spårplan. I faktisk drift växlade
+39 knappar mellan låst och olåst markering trots stillastående stationsläge. Träkvista saknar programmeringsspår,
+så uttrycket till `classList.toggle` blev `undefined` och växlade klassen i stället för att sätta ett bestämt läge.
+Rättelsen tvingar hela låsvillkoret till ett booleskt värde. Containerprovet följer nu knapparnas låsmarkering
+över flera återrapporter i den riktiga webbläsarpanelen. Releasekontroller och publicering bokförs efter genomförandet.
 
 ## 0.82.11 i drift och publicerad
 
