@@ -6,7 +6,13 @@ Casper kunde logga in efter kontoåterställningen och rapporterade blinkande sp
 39 knappar mellan låst och olåst markering trots stillastående stationsläge. Träkvista saknar programmeringsspår,
 så uttrycket till `classList.toggle` blev `undefined` och växlade klassen i stället för att sätta ett bestämt läge.
 Rättelsen tvingar hela låsvillkoret till ett booleskt värde. Containerprovet följer nu knapparnas låsmarkering
-över flera återrapporter i den riktiga webbläsarpanelen. Releasekontroller och publicering bokförs efter genomförandet.
+över flera återrapporter i den riktiga webbläsarpanelen.
+
+**Publicerad: 0.82.12 (20 oktober 2026; cda-tkl main `5cd6e64`, #96; cda-tkl-install `8760f3e`; tk-tkl `3d0fbf8`; tagg `v0.82.12`).**
+
+Hela CI `39427935970` är grön: 619 enhetsprov (tre avsiktligt överhoppade), 19 integrationer, två separata återställningsprov, 346 paketprov, båda containerproven och Windows-parsern. Träkvistas 56 knappar var stabila över 133 bildrutor i containerprovet. Containerjobben använder nu samma Ubuntu 24.04-bas som förra godkända releasen.
+
+Träkvista kör nu Render-deploy `dep-dbbmpuei0phs738n3io0` med 0.82.12. Efter omladdning var alla 56 knappmarkeringar identiska i 24 täta avläsningar; inget felaktigt låsblinkande fanns kvar. Samma ägarsession, profil/källhash och tre stabila drift-/autentiseringsfiler är bevarade. Inga tågvägslås, ingen lagringsspärr, automaten fortsatt av och TrainMeet ännu inte parkopplad. Färsk privat backup togs före bytet. Charlottendals webbdrift är kvar på 0.82.11 genom `[skip render]`; båda installationsförråden har 0.82.12. Verkliga grannar och fysisk bana återstår.
 
 ## 0.82.11 i drift och publicerad
 
