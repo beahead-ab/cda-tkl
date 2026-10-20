@@ -116,3 +116,10 @@ Ett lokalt stationsbyte med kontrollerad omstart stöds genom startövervakaren 
 18 oktober: cda-tkl `24da68c` (#93) är publicerat som cda-tkl-install `4ffd4c8` och tk-tkl `33312ac`. Sidfoten följer stationens eget namn. Träkvistas container är provad med tom disk, första ägare, omstart och fungerande återgång till 0.82.10.
 
 Den faktiska tjänsten är nu live på [tk-tkl.onrender.com](https://tk-tkl.onrender.com), deploy `dep-dbaj7oqjnfac73fu8510`, med egen beständig disk 1 GB på `/data`. Rätt station, profil, version, skapad ägare och hälsokontroll är verifierade på servern. Caspers första inloggning och obligatoriska lösenordsbyte återstår; ingen ägarsession finns ännu. Panelacceptans i faktisk drift, verkliga TrainMeet-grannar och fysisk bana är fortsatt separata acceptansprov. Se [driftprotokollet](render-release-2026-10-18.md).
+
+
+## Stabil spårplan, 0.82.12
+
+20 oktober: **Publicerad: 0.82.12 (20 oktober 2026; cda-tkl main `5cd6e64`, #96; cda-tkl-install `8760f3e`; tk-tkl `3d0fbf8`; tagg `v0.82.12`).**
+
+Träkvistas Render-tjänst kör nu 0.82.12 på `dep-dbbmpuei0phs738n3io0`. Låsmarkeringen är stabil även utan programmeringsspår, både i containerprovet (133 bildrutor) och i den faktiska inloggade panelen (24 avläsningar av 56 knappar). Ägarkontot, sessionen, stationsprofilen och stabila driftfiler är bevarade. Charlottendals befintliga webbdrift är kvar på 0.82.11. Verkliga grannar och fysisk bana återstår; se driftprotokollet.

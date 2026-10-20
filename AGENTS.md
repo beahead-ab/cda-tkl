@@ -117,3 +117,12 @@ Charlottendal kör 0.82.11 på Render (`dep-dbaisa942hec73dm7qp0`); befintlig se
 Träkvistas egen Render-tjänst är nu live på https://tk-tkl.onrender.com, från tk-tkl `33312ac`, deploy `dep-dbaj7oqjnfac73fu8510`. Egen beständig disk 1 GB på `/data`, station `trakvista`, profil `trakvista-network-v1`, hälsokontroll `running` och skapad ägare är verifierade. Första inloggningen och det obligatoriska lösenordsbytet återstår hos Casper; ingen ägarsession finns ännu. Den inbyggda webbläsaren blockerade `/auth.js` med `ERR_BLOCKED_BY_CLIENT`, medan servern levererade skriptet med HTTP 200. Faktisk panelacceptans, verkliga grannar och fysisk bana återstår. Slutrapportens CI `39164669517` är också helt grön.
 
 Renders dokumenterade `[skip render]` i commit-meddelandet används för denna slutrapport och andra rena dokumentationsuppdateringar som inte behöver en ny deploy. Ändras programmet ska en vanlig granskad och provad release göras. Ingen Render-inställning ändras av markeringen.
+
+
+## Fortsättning 20 oktober 2026: Träkvistas spårplan stabil i 0.82.12
+
+**Publicerad: 0.82.12 (20 oktober 2026; cda-tkl main `5cd6e64`, #96; cda-tkl-install `8760f3e`; tk-tkl `3d0fbf8`; tagg `v0.82.12`).**
+
+Hela CI `39427935970` är grön. Hela låsvillkoret till `classList.toggle` är nu booleskt även utan programmeringsspår. Träkvistas containerprov kräver stabila knappar över flera rapporter, och containerjobben är fästa vid den tidigare fungerande Ubuntu 24.04-basen. Träkvista kör `dep-dbbmpuei0phs738n3io0` med bevarad ägarsession och tre byteoförändrade stabila filer. 24 avläsningar av den riktiga panelens 56 knappar var identiska. Första inloggning och lösenordsval är genomförda.
+
+Charlottendals webbdrift är kvar på 0.82.11 genom `[skip render]`; båda installationspaketen har 0.82.12. Färsk skyddad backup och exakta publiceringsträd står i driftprotokollet. Verkliga TrainMeet-grannar och fysisk bana återstår.

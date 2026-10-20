@@ -2246,3 +2246,18 @@ och syntaxkontrollen är gröna lokalt. Full CI, publicering och faktisk efterko
 Första CI-körningen `39427373486` stoppade båda containerjobben före programprovet: `ubuntu-latest` hade bytt till
 Ubuntu 26.04, som Playwright 1.56.1 inte stöder. Containerjobben fästs vid Ubuntu 24.04, samma bas som den lyckade
 körningen för 0.82.11. Windows-parsern var grön. Denna miljörättelse ändrar inget i de publicerade programfilerna.
+
+
+## 20 oktober 2026 – 0.82.12 publicerad och efterkontrollerad
+
+**Publicerad: 0.82.12 (20 oktober 2026; cda-tkl main `5cd6e64`, #96; cda-tkl-install `8760f3e`; tk-tkl `3d0fbf8`; tagg `v0.82.12`).**
+
+Releasehuvud `4aa30b6cb1910a9ff054e41e15aa9a6a42c59f01` passerade hela CI `39427935970`: 619 av 622 enhetsprov godkända, tre avsiktliga överhoppningar, 19/19 integrationer, 2/2 separata återställningsprov, 346 godkända paketprov, båda containerproven och Windows-parsern. Träkvistas regressionsprov följde 56 knappar över 133 bildrutor utan växlande låsmarkering. Omstart och återgång till föregående 0.82.11 bevarade ägare, session, ort och modellklocka.
+
+#96 squash-mergades med exakt det provade trädet `54577d0ddc4f80a00f50c94860f94acbcc3e5c28`. `[skip render]` i merge-meddelandet lämnar Charlottendals webbdrift på dess fungerande 0.82.11. Installationspaketen byggdes därefter med de riktiga publiceringsskripten ur main `5cd6e64`. API-publiceringarnas hela träd är exakt lika skriptbyggena: cda-tkl-install `350f034e885de4d006cdb5e1623cbe0919f4b591`, tk-tkl `01448a6899c31713eeac4d58b3108f897c6c6003`. Fem ändrade filer per paket, inga borttagningar. Taggen `v0.82.12` pekar på `8760f3e`.
+
+Omedelbart före publiceringen: noll tågvägslås, automaten av, TrainMeet inte parkopplad och inget lagringsfel. Privat backup på Träkvistas beständiga disk: `/data/release-backups/before-0.82.12-2026-10-20T13-28-55-318Z.tar.gz`, 2 160 byte, fyra filer varav två validerade JSON-filer, behörighet 0600. SHA-256 `1c83b6436ea8a81f22a95b4e79645c0b51cd33715ec5078cf6237643edd16281`. Manifestet och autentiseringen stannar på disken.
+
+Träkvistas Render-deploy `dep-dbbmpuei0phs738n3io0` är live från tk-tkl `3d0fbf8`. Faktisk efterkontroll: 0.82.12, ansluten intern återrapport, samma `trakvista-network-v1` och källhash `3e7b63c95d05e7c152304dd24b27cc3286cb66e9b6e89e9932aba73edff97e79`, inget lagringsfel, inga tågvägslås, automaten fortsatt av och klockan pausad med takt 1. Den befintliga ägarsessionen fungerade utan nytt lösenord. `auth/users.json`, `state/routes.json` och `.restored` är byteoförändrade mot backupen; flyktiga händelser och klockcheckpoint jämförs inte som statiska filer.
+
+Efter omladdning av Caspers riktiga panel gav 24 täta DOM-avläsningar av alla 56 knappar ett enda identiskt klasstillstånd, utan den tidigare växlingen av `locked`. Första inloggningen och lösenordsvalet är alltså genomförda och panelen är kontrollerad i faktisk drift. Verklig TrainMeet-parkoppling, uttryckligt valda grannar och fysisk bana återstår. Slutrapporten ändrar bara dokumentation och använder `[skip render]`.
