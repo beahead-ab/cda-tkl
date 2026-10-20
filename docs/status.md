@@ -5,7 +5,13 @@
 Användardialogens **Kopiera hela inbjudan** tar med installationens inloggningslänk, stationens namn, e-post,
 engångskod, roll, giltighetstid och instruktioner för eget lösenord. Samma dialog används för Ny kod. Texten
 visas i ett skrivskyddat fält och markeras för manuell kopiering om webbläsaren spärrar urklipp. Inga koder
-läggs i länkar och ingen e-post skickas. Publicering och full CI återstår.
+läggs i länkar och ingen e-post skickas.
+
+**Publicerad: 0.82.13 (20 oktober 2026; cda-tkl main `8150903`, #98; cda-tkl-install `7bc488f`; tk-tkl `aea08a6`; tagg `v0.82.13`).**
+
+Hela CI `39457531166` är grön: 619 enhetsprov (tre avsiktliga överhoppningar), 19 integrationer, två separata återställningsprov, 346 paketprov, båda containerproven och Windows-parsern. Webbläsarprovet verifierar hela texten i urklipp, Ny kod, manuell kopiering och återgång till 0.82.12.
+
+Träkvista kör Render-deploy `dep-dbbpm8tg1s2s73b5dj50` från `aea08a6`. Faktisk driftkontroll visar 0.82.13, ansluten intern återrapport, noll tågvägslås, ingen lagringsspärr och automaten av. Samma ägarsession fungerar. `auth/users.json`, `state/routes.json` och `.restored` är byteoförändrade mot säkerhetskopian före bytet. Charlottendals webbdrift lämnas på 0.82.11 med `[skip render]`.
 
 ## Rättelse av Träkvistas blinkande knappar, 0.82.12
 
