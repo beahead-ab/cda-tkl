@@ -1,5 +1,12 @@
 # Charlottendal TKL – lägesbild 20 oktober 2026
 
+## Komplett inbjudningstext, 0.82.13
+
+Användardialogens **Kopiera hela inbjudan** tar med installationens inloggningslänk, stationens namn, e-post,
+engångskod, roll, giltighetstid och instruktioner för eget lösenord. Samma dialog används för Ny kod. Texten
+visas i ett skrivskyddat fält och markeras för manuell kopiering om webbläsaren spärrar urklipp. Inga koder
+läggs i länkar och ingen e-post skickas. Publicering och full CI återstår.
+
 ## Rättelse av Träkvistas blinkande knappar, 0.82.12
 
 Casper kunde logga in efter kontoåterställningen och rapporterade blinkande spårplan. I faktisk drift växlade

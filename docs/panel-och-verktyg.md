@@ -514,3 +514,10 @@ Inställningar → Den här datorn → Station visar installerade stationer. Äg
 ## Sidfot per station (0.82.11)
 
 Panelens sidfot visar stationens namn ur samma konfiguration som rubriken, följt av TKL och versionsnumret. Träkvista visar Träkvista TKL och Charlottendal visar Charlottendal TKL. Stationsvalet och versionsnumret ändras inte av rättelsen.
+
+## Kopiera hela inbjudan (0.82.13)
+
+Inställningar → Den här datorn → Användare visar en färdig inbjudningstext när ägaren bjuder in eller väljer
+Ny kod. **Kopiera hela inbjudan** tar med installationens inloggningsadress, stationens namn, e-postadress,
+engångskod, roll, giltighetstid och instruktioner för eget lösenord. Texten går också att markera och kopiera
+manuellt. Ingen e-post skickas automatiskt. Koden visas bara i den öppna dialogen.

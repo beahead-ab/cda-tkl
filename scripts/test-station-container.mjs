@@ -115,6 +115,45 @@ async function browserSmoke(password) {
     !document.querySelector('#station-settings')?.textContent.includes('Läser stationerna'), station.title);
   await page.screenshot({ path: path.join(artifacts, '03-fast-station.png'), fullPage: true });
   mark(`Stationsinställningarna visar ${station.title} som fast Render-installation`);
+
+  // Ägaren ska kunna lämna över en hel inbjudan från den riktiga dialogen, även efter Ny kod.
+  // Bara provkonton på den isolerade volymen berörs; ingen inbjudan skickas.
+  await page.goto(prov.origin + '/#advanced/users', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Bjud in användare', exact: true }).click();
+  await page.getByRole('dialog').getByLabel('E-post', { exact: true }).fill('inbjudan@example.test');
+  await page.getByRole('button', { name: 'Skapa inbjudningskod', exact: true }).click();
+  const invitation = page.getByRole('dialog').getByLabel('Inbjudningstext', { exact: true });
+  await invitation.waitFor();
+  const text = await invitation.inputValue();
+  assert.ok(text.includes(`${station.title} TKL`));
+  assert.ok(text.includes(`Adress: ${prov.origin}/login`), 'Länken ska använda installationens adress');
+  assert.ok(text.includes('E-post: inbjudan@example.test'));
+  assert.ok(text.includes('Roll: administratör'));
+  assert.match(text, /Koden gäller till: \d{4}-\d{2}-\d{2}/);
+  assert.ok(text.includes('Jag har en inbjudningskod') && text.includes('Skapa lösenord och logga in'));
+  const code = text.match(/Engångskod: ([A-Z2-9]{4}-[A-Z2-9]{4})/)?.[1];
+  assert.ok(code, 'Engångskoden ska finnas i samma text som länken och instruktionerna');
+  await prov.context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: prov.origin });
+  await page.getByRole('button', { name: 'Kopiera hela inbjudan', exact: true }).click();
+  await page.getByRole('status').filter({ hasText: 'Hela inbjudan är kopierad.' }).waitFor();
+  assert.equal(await page.evaluate(() => navigator.clipboard.readText()), text);
+  await page.screenshot({ path: path.join(artifacts, '04-inbjudan.png'), fullPage: true });
+  await page.getByRole('button', { name: 'Klart', exact: true }).click();
+  await page.locator('dialog .users-invitation').waitFor({ state: 'detached' });
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('tr').filter({ hasText: 'inbjudan@example.test' }).getByRole('button', { name: 'Ny kod', exact: true }).click();
+  await invitation.waitFor();
+  const reissued = await invitation.inputValue();
+  assert.ok(reissued.includes(`Adress: ${prov.origin}/login`) && !reissued.includes(code));
+  await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true,
+    value: { writeText: async () => { throw Error('Urklipp spärrat i provet'); } } }));
+  await page.getByRole('button', { name: 'Kopiera hela inbjudan', exact: true }).click();
+  await page.getByRole('status').filter({ hasText: 'Texten är markerad.' }).waitFor();
+  const selection = await invitation.evaluate(field => ({ start: field.selectionStart, end: field.selectionEnd,
+    focused: document.activeElement === field, readOnly: field.readOnly }));
+  assert.deepEqual(selection, { start: 0, end: reissued.length, focused: true, readOnly: true });
+  await page.getByRole('button', { name: 'Klart', exact: true }).click();
+  mark('Hel inbjudan med rätt stationsadress kopieras; Ny kod och manuell kopiering vid spärrat urklipp fungerar');
   await prov.closeBrowser();
   assert.deepEqual([...prov.optionalMissing].sort(), [...optional404].sort(),
     'Stationen ska sakna just Charlottendals valfria registerfiler, varken fler eller färre');
