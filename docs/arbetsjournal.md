@@ -2242,3 +2242,7 @@ det lämnas till DOM. Kärnans tågvägslås, programmeringsspärrar, manövervi
 Releasekandidat 0.82.12 har rättelsen och ett regressionsprov i stationens riktiga Docker-/Chromium-panel:
 låsmarkeringen följs över bildrutor och flera återrapporter utan nya manövrer. Tio fokuserade panel-/versionsprov
 och syntaxkontrollen är gröna lokalt. Full CI, publicering och faktisk efterkontroll redovisas när de är genomförda.
+
+Första CI-körningen `39427373486` stoppade båda containerjobben före programprovet: `ubuntu-latest` hade bytt till
+Ubuntu 26.04, som Playwright 1.56.1 inte stöder. Containerjobben fästs vid Ubuntu 24.04, samma bas som den lyckade
+körningen för 0.82.11. Windows-parsern var grön. Denna miljörättelse ändrar inget i de publicerade programfilerna.

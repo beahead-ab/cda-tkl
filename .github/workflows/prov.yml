@@ -34,7 +34,8 @@ jobs:
           git init --bare -q -b main "$remote"
           STATION_REMOTE="$remote" STATION_NO_PUSH=1 deploy/publish-station.sh trakvista
   render-container:
-    runs-on: ubuntu-latest
+    # Playwright 1.56.1 stöder denna bas; ubuntu-latest kan byta till en ännu ej stödd version.
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
@@ -61,7 +62,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
   station-container:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
