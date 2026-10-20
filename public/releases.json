@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.83.0",
+    "date": "2026-10-20",
+    "notes": [
+      "LocoNet kan anslutas med en BTLocoBridge över Bluetooth (Möllehems smartphoninterface) i stället för en LocoBuffer på USB; valet görs under Inställningar → Banan (LocoNet) och gäller båda stationerna",
+      "Träkvista installeras på Mac och PC med en rad, som på Raspberry Pi; stationens läsanvisning beskriver båda",
+      "Installationen på Mac och PC sparar sin GitHub-token, så att Uppdatering ser nya versioner medan stationens förråd är privat"
+    ]
+  },
+  {
     "version": "0.82.13",
     "date": "2026-10-20",
     "notes": [

@@ -2284,3 +2284,24 @@ Hela CI `39457531166` på releasehuvudet `b36a50d46c72ff221a36e4eafb5009be3b6a62
 Färsk privat backup före bytet: `/data/release-backups/before-0.82.13-2026-10-20T16-39-57-048Z.tar.gz`, 3 441 byte, fem filer varav tre validerade JSON-filer, behörighet 0600. SHA-256 `7c1fe7941f88af71f267731b8fcd99eb0a879e646720f43eb77bbaf187f94c0c`. Manifest och autentisering stannar på tjänstens disk.
 
 Träkvista är live i Render-deploy `dep-dbbpm8tg1s2s73b5dj50` från tk-tkl `aea08a6`. Efterkontrollen bekräftar 0.82.13, samma `trakvista-network-v1`, ansluten intern återrapport, offline, inga tågvägslås, ingen lagringsspärr, automaten av och pausad modellklocka med takt 1. Ägarsessionen fungerar och `.restored`, `auth/users.json` och `state/routes.json` är byteoförändrade mot backupen. Inga verkliga inbjudningar skapades eller återställdes i verifieringen och ingen inbjudan skickades. `[skip render]` skyddar Charlottendals befintliga webbdrift på 0.82.11; dokumentationsrapporten använder samma markering.
+
+## 20 oktober 2026, 0.82.14: Träkvista installeras på Mac och PC
+
+Casper: «kan du göra så att tk-tkl kan installeras på en mac och pc». Mekaniken fanns sedan 0.82.6 — `install.sh` väljer `scripts/install-mac.sh` på Darwin, `install.ps1` läser `packaging/identity.env` och båda använder stationens namn för mapp, launchd-agent och genvägar — men stationens egen läsanvisning beskrev bara Raspberry Pi, så vägen fanns utan att vara känd.
+
+`stations/trakvista/README.md` har nu avsnitt för Mac och PC med den rad som ska köras, var allt hamnar (`~/Library/Application Support/Träkvista TKL/` respektive `%LOCALAPPDATA%\Träkvista TKL\`), hur uppdatering går till och vad installationen heter hos TrainMeet (`tk-tkl-mac`, `tk-tkl-pc`). Ett eget stycke beskriver vad som krävs för att köra Träkvista och Charlottendal på samma dator: egna mappar och driftdata finns redan, men portarna 8910–8912 delas och måste ändras i den ena installationens `app.env`.
+
+Två verkliga luckor rättades på vägen. `install.ps1` läste bara `CDA_TKL_TOKEN`, medan Pi- och Mac-vägen tar emot `TKL_TOKEN`; nu läser Windows båda namnen. Och bara Pi-installationen sparade sin token, så Uppdatering i panelen kunde inte läsa nya versioner på Mac och PC medan stationens förråd är privat — nu skriver båda installationerna `github-token` i installationens egen mapp och pekar `CHARLOTTENDAL_GITHUB_TOKEN_FILE` dit, med 0600 på Mac.
+
+Prov: paketproven, installationsproven och Träkvistas prov gröna lokalt, inklusive två nya kontroller — att båda installationerna sparar sin token och att stationens läsanvisning beskriver alla tre plattformarna. Ingen verklig installation har körts på Mac eller Windows här.
+
+## 20 oktober 2026, 0.83.0: BTLocoBridge som andra anslutning till LocoNet
+
+Casper: Träkvista kör ett Bluetooth-kort från Möllehems gårdsproduktion, och båda stationerna ska kunna välja mellan det och LocoBuffern på USB. Kortet heter *Smartphone interface* hos Möllehem och är samma kort som JMRI stöder under namnet **BT LocoBridge**; JMRI pratar med det genom BlueCove, alltså klassisk Bluetooth med serieprofil (SPP/RFCOMM), och kortet behöver ingen egen strömförsörjning. Profilen, enhetsnamnet och en eventuell PIN står inte i någon publik dokumentation; de läses av kortet när det paras.
+
+`connection.json` har därför ett adaptval (`schema: 2`): `locobuffer` med enhet, hastighet och flödeskontroll som förut, eller `btlocobridge` med kortets adress och kanal. En sparad fil från före det läses som USB-anslutning och skrivs om först när något ändras. Den valda anslutningen avgör vad gatewayen startar: `scripts/serial-port.py` som förut, eller nya `scripts/bluetooth-port.py`, som öppnar en RFCOMM-förbindelse till kortets serieprofil med Pythons eget `AF_BLUETOOTH` — inga nya beroenden. Anges adressen som en `/dev`-enhet går den över serievägen i stället; så ser ett parat kort ut på Mac, där Pythons Bluetooth-socket inte finns. Telegramgränsen, gatewayens port 8913, omstarten vid tappad förbindelse och villkoren för lägesbytet är oförändrade.
+
+Inställningar → Banan (LocoNet) har nu ett val överst och fälten för den valda anslutningen; den andras inställning ligger kvar. Lägesknappens text säger inte längre att LocoNet alltid går över USB.
+
+Prov: nio prov i `test/connection-mode.test.mjs`, varav tre nya — valet och dess kontroller, kortet som parad serieport på Mac, och att en fil från före 0.83.0 läses som USB. Hela enhetsprovet och syntaxkontrollerna är gröna lokalt. Ingenting är provat mot det verkliga kortet: adressen, kanalen och själva Bluetooth-förbindelsen återstår att prova vid banan, liksom parkopplingen på Pi:n.
+

@@ -174,8 +174,10 @@ Den sista raden tar även bort driftdata och inställningar.
 ## Gemensamt
 
 - **LocoNet.** En ny installation har LocoNet ej ansluten: TKL svarar själv och kör trafikspelets tåg från
-  TrainMeet-servern. *Anslut till LocoNet*, med en LocoBuffer på USB, görs med lägesknappen i statusraden, på
-  Raspberry Pi och Mac men inte på Windows än. Se [LocoNet ansluten eller ej ansluten](loconet-anslutning.md).
+  TrainMeet-servern. *Anslut till LocoNet* görs med lägesknappen i statusraden, på Raspberry Pi och Mac men inte
+  på Windows än. Banan nås på två sätt, valt under Inställningar → Banan (LocoNet): en **LocoBuffer på USB** eller
+  en **BTLocoBridge över Bluetooth** (Möllehems smartphoninterface), som paras i datorn först. Se
+  [LocoNet ansluten eller ej ansluten](loconet-anslutning.md).
 - **Inloggning.** TKL svarar bara på datorn själv. Operatören behöver ingen inloggning; Inställningar och
   Objekt och regler kräver en inloggad ägare eller administratör så snart ägaren är skapad (se
   `docs/anvandare.md`). Ägaren skapas i Kom igång vid första starten.

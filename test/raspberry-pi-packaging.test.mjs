@@ -76,6 +76,16 @@ test('installed copies turn on the update notice, and only the Pi service may st
   assert.match(read('scripts/install-raspberry-pi.sh'),/50-cda-tkl-update\.rules/);
 });
 
+test('Mac och PC sparar installationens token, så att Uppdatering ser nya versioner i ett privat förråd',()=>{
+  const mac=read('scripts/install-mac.sh'),ps=read('install.ps1');
+  assert.match(mac,/printf '%s\\n' "\$CDA_TKL_TOKEN" > "\$APP\/github-token"/);
+  assert.match(mac,/chmod 0600 "\$APP\/github-token"/,'bara den egna användaren läser token');
+  assert.match(mac,/CHARLOTTENDAL_GITHUB_TOKEN_FILE="%s"/,'vägen har mellanslag och måste citeras i app.env');
+  assert.match(ps,/\$Token = if \(\$env:TKL_TOKEN\) \{ \$env:TKL_TOKEN \} else \{ \$env:CDA_TKL_TOKEN \}/,'samma två namn som install.sh');
+  assert.match(ps,/Set-Content -Path \$TokenFile/);
+  assert.match(ps,/CHARLOTTENDAL_GITHUB_TOKEN_FILE/);
+});
+
 test('the Mac app goes in Program when it can, else Program in the home folder',()=>{
   const mac=read('scripts/install-mac.sh');
   assert.match(mac,/APPS=\/Applications\n\[ -w "\$APPS" \] \|\| \{ APPS="\$HOME\/Applications"/);

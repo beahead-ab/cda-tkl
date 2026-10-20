@@ -8,6 +8,15 @@ Kör på datorn vid anläggningen med Node22+ och Python3. Ange den faktiska enh
 node scripts/locobuffer-gateway.mjs --device /dev/VERIFIERAD-PORT --baud 57600 --flow rtscts --port 8912
 ```
 
+Samma gateway når också en BTLocoBridge över Bluetooth (0.83.0). Kortet paras i datorn först; gatewayen öppnar en
+RFCOMM-förbindelse till dess serieprofil med `scripts/bluetooth-port.py`, eller läser den parade serieporten direkt
+om adressen anges som en `/dev`-enhet (Mac). Hastighet och flödeskontroll saknar betydelse över Bluetooth.
+
+```
+node scripts/locobuffer-gateway.mjs --adapter btlocobridge --address AA:BB:CC:DD:EE:FF --channel 1 --port 8912
+node scripts/locobuffer-gateway.mjs --adapter btlocobridge --address /dev/cu.BTLocoBridge-SPP --port 8912
+```
+
 8 databitar, ingen paritet,1 stoppbit. Hastigheter9600/19200/38400/57600/115200 och flöde none/rtscts stöds. `--help` visar argument. Porten öppnas exklusivt; avsluta JMRI/andra serieprogram före anslutning. Gatewayn och simulatorn får inte använda samma TCP-port samtidigt. TKL körs med backend-kommandot, inte startkommandot som också startar simulatorn. Mellan banan och molnservern behövs en skyddad tunnel som skapar samma lokala TCP-anslutning. Ingen publik bussport öppnas av gatewayn.
 
 ## Transportgarantier
