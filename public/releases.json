@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.82.14",
+    "date": "2026-10-20",
+    "notes": [
+      "Träkvista installeras på Mac och PC med en rad, som på Raspberry Pi; stationens läsanvisning beskriver båda",
+      "Installationen på Mac och PC sparar sin GitHub-token, så att Uppdatering ser nya versioner medan stationens förråd är privat"
+    ]
+  },
+  {
     "version": "0.82.13",
     "date": "2026-10-20",
     "notes": [

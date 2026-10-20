@@ -57,6 +57,13 @@ grep -q '^CHARLOTTENDAL_INSTALL_KIND=' "$APP/app.env" || printf '\nCHARLOTTENDAL
 # En annan station än Charlottendal: stationen och förrådet för uppdateringar.
 [ "$TKL_STATION" = charlottendal ] || grep -q '^CHARLOTTENDAL_STATION=' "$APP/app.env" || printf 'CHARLOTTENDAL_STATION=%s\n' "$TKL_STATION" >> "$APP/app.env"
 [ "$TKL_REPOSITORY" = beahead-ab/cda-tkl-install ] || grep -q '^CHARLOTTENDAL_INSTALL_REPOSITORY=' "$APP/app.env" || printf 'CHARLOTTENDAL_INSTALL_REPOSITORY=%s\n' "$TKL_REPOSITORY" >> "$APP/app.env"
+# Privat förråd: spara samma token som installationen fick, så att Uppdatering i panelen ser nya versioner.
+# Som på Pi:n (scripts/install-raspberry-pi.sh), fast i installationens egen mapp och bara för den egna användaren.
+if [ -n "${CDA_TKL_TOKEN:-}" ]; then umask 077 && printf '%s\n' "$CDA_TKL_TOKEN" > "$APP/github-token" && umask 022; fi
+if [ -f "$APP/github-token" ]; then
+  chmod 0600 "$APP/github-token"
+  grep -q '^CHARLOTTENDAL_GITHUB_TOKEN_FILE=' "$APP/app.env" || printf 'CHARLOTTENDAL_GITHUB_TOKEN_FILE="%s"\n' "$APP/github-token" >> "$APP/app.env"
+fi
 # "Application Support" has a space: run.sh sources app.env, so the value must be quoted.
 # Installations from before 0.50.1 wrote it unquoted, and TKL then kept its data in the
 # release's own var folder. Quote it, and bring that data into state once.

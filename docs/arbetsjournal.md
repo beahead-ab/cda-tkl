@@ -2284,3 +2284,14 @@ Hela CI `39457531166` på releasehuvudet `b36a50d46c72ff221a36e4eafb5009be3b6a62
 Färsk privat backup före bytet: `/data/release-backups/before-0.82.13-2026-10-20T16-39-57-048Z.tar.gz`, 3 441 byte, fem filer varav tre validerade JSON-filer, behörighet 0600. SHA-256 `7c1fe7941f88af71f267731b8fcd99eb0a879e646720f43eb77bbaf187f94c0c`. Manifest och autentisering stannar på tjänstens disk.
 
 Träkvista är live i Render-deploy `dep-dbbpm8tg1s2s73b5dj50` från tk-tkl `aea08a6`. Efterkontrollen bekräftar 0.82.13, samma `trakvista-network-v1`, ansluten intern återrapport, offline, inga tågvägslås, ingen lagringsspärr, automaten av och pausad modellklocka med takt 1. Ägarsessionen fungerar och `.restored`, `auth/users.json` och `state/routes.json` är byteoförändrade mot backupen. Inga verkliga inbjudningar skapades eller återställdes i verifieringen och ingen inbjudan skickades. `[skip render]` skyddar Charlottendals befintliga webbdrift på 0.82.11; dokumentationsrapporten använder samma markering.
+
+## 20 oktober 2026, 0.82.14: Träkvista installeras på Mac och PC
+
+Casper: «kan du göra så att tk-tkl kan installeras på en mac och pc». Mekaniken fanns sedan 0.82.6 — `install.sh` väljer `scripts/install-mac.sh` på Darwin, `install.ps1` läser `packaging/identity.env` och båda använder stationens namn för mapp, launchd-agent och genvägar — men stationens egen läsanvisning beskrev bara Raspberry Pi, så vägen fanns utan att vara känd.
+
+`stations/trakvista/README.md` har nu avsnitt för Mac och PC med den rad som ska köras, var allt hamnar (`~/Library/Application Support/Träkvista TKL/` respektive `%LOCALAPPDATA%\Träkvista TKL\`), hur uppdatering går till och vad installationen heter hos TrainMeet (`tk-tkl-mac`, `tk-tkl-pc`). Ett eget stycke beskriver vad som krävs för att köra Träkvista och Charlottendal på samma dator: egna mappar och driftdata finns redan, men portarna 8910–8912 delas och måste ändras i den ena installationens `app.env`.
+
+Två verkliga luckor rättades på vägen. `install.ps1` läste bara `CDA_TKL_TOKEN`, medan Pi- och Mac-vägen tar emot `TKL_TOKEN`; nu läser Windows båda namnen. Och bara Pi-installationen sparade sin token, så Uppdatering i panelen kunde inte läsa nya versioner på Mac och PC medan stationens förråd är privat — nu skriver båda installationerna `github-token` i installationens egen mapp och pekar `CHARLOTTENDAL_GITHUB_TOKEN_FILE` dit, med 0600 på Mac.
+
+Prov: paketproven, installationsproven och Träkvistas prov gröna lokalt, inklusive två nya kontroller — att båda installationerna sparar sin token och att stationens läsanvisning beskriver alla tre plattformarna. Ingen verklig installation har körts på Mac eller Windows här.
+
