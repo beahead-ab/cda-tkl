@@ -2,6 +2,13 @@
 
 Ställverket öppnas på `/#panel`. Överkanten innehåller namn, anslutningsstatus och meny. Från version 0.29.0 är den stora knappraden borttagen enligt Caspers godkända förenkling.
 
+## Stabil låsmarkering utan programmeringsspår (0.82.12)
+
+Spårplanens knappar behåller låsmarkeringen mellan återrapporterna. På en station utan programmeringsspår,
+som Träkvista, ska avsaknaden av programmeringsspärr ge olåst markering. Den ska inte växla mellan låst och
+olåst vid varje rapport. Verkliga tågvägslås och Charlottendals programmeringsspärr visas som förut; ändringen
+rör bara visningen och ändrar inga manöver- eller skyddsvillkor i kärnan.
+
 ## Träffklockans sekunder (0.81.0)
 
 Ett tryck på träffklockan visar eller döljer sekunderna, som i TrainMeet Server och iPhone-appen (Casper 16

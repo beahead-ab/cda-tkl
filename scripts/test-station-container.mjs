@@ -79,6 +79,26 @@ async function browserSmoke(password) {
   // Sidomenyn flyttar in sidfoten i sin egen panel, så den söks på sin text och inte på sin plats i dokumentet.
   assert.equal(await page.locator('footer').filter({ hasText: 'TKL · version ' + release }).innerText(),
     `${station.title} TKL · version ${release}`);
+  // En station utan programmeringsspår ger programming:null. En oavsiktlig toggle utan booleskt tvångsvärde
+  // blinkade då alla knappar som låsta/olåsta vid varje stillastående rapport. Prova den riktiga panelen över flera rapporter.
+  const idle = await page.evaluate(async () => {
+    const nodes = [...document.querySelectorAll('#track-plan [data-button]')];
+    const previous = new Map(nodes.map(node => [node, node.classList.contains('locked')])), changes = [];
+    const until = performance.now() + 2200;
+    let frames = 0;
+    do {
+      await new Promise(requestAnimationFrame); frames++;
+      for (const node of nodes) {
+        const locked = node.classList.contains('locked');
+        if (locked !== previous.get(node)) changes.push(node.dataset.button);
+        previous.set(node, locked);
+      }
+    } while (performance.now() < until);
+    return { frames, buttons: nodes.length, changes };
+  });
+  assert.ok(idle.frames > 10 && idle.buttons > 0, 'Spårplanens knappar ska ha följts över flera bildrutor');
+  assert.deepEqual(idle.changes, [], 'Knapparnas låsmarkering ska vara stilla utan nya tågvägslås eller programmeringsspärr');
+  mark(`Spårplanens ${idle.buttons} knappar behåller låsmarkeringen över ${idle.frames} bildrutor och flera rapporter`);
   await page.screenshot({ path: path.join(artifacts, '01-panel.png'), fullPage: true });
   mark(`Webbläsarinloggning och ${station.title}s panel med renderad spårplan och stationens namn`);
 
