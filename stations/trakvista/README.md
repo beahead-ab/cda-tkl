@@ -93,8 +93,10 @@ sudo tk-tkl-update
 Inställningar och driftdata ligger kvar, och svarar den nya versionen inte återställs den föregående. Att köra
 installationsraden igen gör detsamma.
 
-På Mac och PC uppdaterar du genom att köra installationsraden igen i Terminal respektive PowerShell; statusraden
-visar raden och har en knapp som kopierar den. Inställningarna och driftdata ligger kvar på samma sätt.
+På Mac och PC uppdaterar panelen sig själv på samma sätt sedan 0.84.0: **Uppdatera nu** hämtar versionen, installerar
+den bredvid den nuvarande och startar om TKL, med den sparade token om förrådet är privat. Går det fel återställs den
+föregående versionen, och loggen ligger i `logs/update.log` i installationens mapp. Att köra installationsraden igen
+i Terminal eller PowerShell fungerar lika bra.
 
 ## Webbdrift på Render
 

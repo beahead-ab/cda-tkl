@@ -72,6 +72,9 @@ if [ -z "$(ls -A "$APP/state" 2>/dev/null)" ] && [ -n "$PREVIOUS" ] && [ -n "$(l
   cp -Rp "$PREVIOUS/var"/. "$APP/state"/ && rm -f "$APP/state/.gitkeep" && echo "Driftdata flyttade till $APP/state"
 fi
 cp "$SOURCE_DIR/packaging/mac/run.sh" "$APP/run.sh" && chmod +x "$APP/run.sh"
+# Uppdateringen härifrån: panelens Uppdatera nu startar det här skriptet, som kör installationsraden igen.
+cp "$SOURCE_DIR/packaging/mac/update.sh" "$APP/update.sh" && chmod +x "$APP/update.sh"
+grep -q '^CHARLOTTENDAL_UPDATE_COMMAND=' "$APP/app.env" || printf 'CHARLOTTENDAL_UPDATE_COMMAND="%s"\n' "$APP/update.sh" >> "$APP/app.env"
 
 # The app that opens the panel: Chrome (WebHID for the Stream Deck), else the default browser.
 # It goes in Program (/Applications), which an administrator can write without sudo;

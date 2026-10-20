@@ -106,6 +106,10 @@ try {
   $TokenFile = Join-Path $App 'github-token'
   if ($Token) { Set-Content -Path $TokenFile -Value $Token -Encoding ASCII }
   if ((Test-Path $TokenFile) -and -not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_GITHUB_TOKEN_FILE=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_GITHUB_TOKEN_FILE=' + $TokenFile) -Encoding UTF8 }
+  # Uppdateringen härifrån: panelens Uppdatera nu startar det här skriptet, som kör installationsraden igen.
+  $UpdateScript = Join-Path $App 'update.ps1'
+  Copy-Item (Join-Path $Source 'packaging\windows\update.ps1') $UpdateScript -Force
+  if (-not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_UPDATE_COMMAND=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_UPDATE_COMMAND=' + $UpdateScript) -Encoding UTF8 }
   if ($Identity['TKL_REPOSITORY'] -and $Identity['TKL_REPOSITORY'] -ne 'beahead-ab/cda-tkl-install' -and -not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_INSTALL_REPOSITORY=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_INSTALL_REPOSITORY=' + $Identity['TKL_REPOSITORY']) -Encoding UTF8 }
   Copy-Item -Force (Join-Path $Source 'packaging\windows\run.ps1') (Join-Path $App 'run.ps1')
 
