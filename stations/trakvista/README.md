@@ -115,8 +115,11 @@ LocoNet: TKL svarar själv och kör trafikspelets tåg, och TrainMeet parkopplas
 
 ## Koppla till anläggningen och grannarna
 
-- **LocoNet.** Installationen startar mot simulatorn. *Anslut till LocoNet* i panelen kopplar till en LocoBuffer på
-  USB; se [LocoNet ansluten eller ej ansluten](docs/loconet-anslutning.md).
+- **LocoNet.** Installationen startar mot simulatorn. *Anslut till LocoNet* i panelen kopplar till banan, antingen
+  över en LocoBuffer på USB eller över Träkvistas **BTLocoBridge** (Möllehems Bluetooth-kort). Välj anslutning under
+  Inställningar → Banan (LocoNet): para kortet i datorn först och ange dess adress `AA:BB:CC:DD:EE:FF` på en
+  Raspberry Pi, eller dess parade serieport `/dev/cu.…` på en Mac. Se
+  [LocoNet ansluten eller ej ansluten](docs/loconet-anslutning.md).
 - **TrainMeet.** Parkoppla stationen i panelen, som för Charlottendal. Linjerna A (Bilbo), B (Charlottendal) och C
   är ännu inte kopplade till TrainMeet i panelen; se [Kvar för Träkvista](docs/trakvista.md#kvar-för-träkvista).
 - **Från en annan dator eller en iPad:** se [docs/raspberry-pi.md](docs/raspberry-pi.md), avsnitt 10.
