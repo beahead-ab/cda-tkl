@@ -2272,3 +2272,15 @@ konton eller behörigheter ändras av gränssnittsrättelsen.
 
 Stationscontainerprovet använder ett syntetiskt konto och kontrollerar hela texten i riktigt urklipp, Ny kod
 och markerad reservkopiering vid nekad urklippsåtkomst. Publicering väntar på hela CI-kedjan.
+
+## 20 oktober 2026 – 0.82.13 publicerad och efterkontrollerad
+
+**Publicerad: 0.82.13 (20 oktober 2026; cda-tkl main `8150903`, #98; cda-tkl-install `7bc488f`; tk-tkl `aea08a6`; tagg `v0.82.13`).**
+
+Hela CI `39457531166` på releasehuvudet `b36a50d46c72ff221a36e4eafb5009be3b6a626f` är grön: 619 av 622 enhetsprov godkända, tre avsiktliga överhoppningar, 19/19 integrationer, 2/2 separata återställningsprov, 346 paketprov, båda containerproven och Windows-parsern. Det nya webbläsarprovet verifierar kopierad heltext, Ny kod, markerad reservkopiering vid spärrat urklipp och omstart/återgång till 0.82.12 på samma volym. Dialogens provbild är visuellt granskad. Första körningen stoppade på en kontroll som läste före dialogens asynkrona close-händelse; provet väntar nu på att kodfältet verkligen tas bort.
+
+#98 squash-mergades med exakt det provade trädet `2b8f06449958fd333cb673e0493ddcc90fe899f6`. Publicerade paketträd är identiska med de riktiga skriptens resultat ur main `8150903`: cda-tkl-install `08a9c22870a090cc27faecb41e391bc5cf61fddd`, tk-tkl `9c9dda4e2b6adea8170dacc71821b966591a23b9`. Åtta respektive sju ändrade filer, inga borttagningar. Taggen `v0.82.13` pekar på install-commit `7bc488f`. Träkvistas paket har dessutom grön egen CI efter push (`39460533071`).
+
+Färsk privat backup före bytet: `/data/release-backups/before-0.82.13-2026-10-20T16-39-57-048Z.tar.gz`, 3 441 byte, fem filer varav tre validerade JSON-filer, behörighet 0600. SHA-256 `7c1fe7941f88af71f267731b8fcd99eb0a879e646720f43eb77bbaf187f94c0c`. Manifest och autentisering stannar på tjänstens disk.
+
+Träkvista är live i Render-deploy `dep-dbbpm8tg1s2s73b5dj50` från tk-tkl `aea08a6`. Efterkontrollen bekräftar 0.82.13, samma `trakvista-network-v1`, ansluten intern återrapport, offline, inga tågvägslås, ingen lagringsspärr, automaten av och pausad modellklocka med takt 1. Ägarsessionen fungerar och `.restored`, `auth/users.json` och `state/routes.json` är byteoförändrade mot backupen. Inga verkliga inbjudningar skapades eller återställdes i verifieringen och ingen inbjudan skickades. `[skip render]` skyddar Charlottendals befintliga webbdrift på 0.82.11; dokumentationsrapporten använder samma markering.
