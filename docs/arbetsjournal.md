@@ -2295,3 +2295,13 @@ Två verkliga luckor rättades på vägen. `install.ps1` läste bara `CDA_TKL_TO
 
 Prov: paketproven, installationsproven och Träkvistas prov gröna lokalt, inklusive två nya kontroller — att båda installationerna sparar sin token och att stationens läsanvisning beskriver alla tre plattformarna. Ingen verklig installation har körts på Mac eller Windows här.
 
+## 20 oktober 2026, 0.83.0: BTLocoBridge som andra anslutning till LocoNet
+
+Casper: Träkvista kör ett Bluetooth-kort från Möllehems gårdsproduktion, och båda stationerna ska kunna välja mellan det och LocoBuffern på USB. Kortet heter *Smartphone interface* hos Möllehem och är samma kort som JMRI stöder under namnet **BT LocoBridge**; JMRI pratar med det genom BlueCove, alltså klassisk Bluetooth med serieprofil (SPP/RFCOMM), och kortet behöver ingen egen strömförsörjning. Profilen, enhetsnamnet och en eventuell PIN står inte i någon publik dokumentation; de läses av kortet när det paras.
+
+`connection.json` har därför ett adaptval (`schema: 2`): `locobuffer` med enhet, hastighet och flödeskontroll som förut, eller `btlocobridge` med kortets adress och kanal. En sparad fil från före det läses som USB-anslutning och skrivs om först när något ändras. Den valda anslutningen avgör vad gatewayen startar: `scripts/serial-port.py` som förut, eller nya `scripts/bluetooth-port.py`, som öppnar en RFCOMM-förbindelse till kortets serieprofil med Pythons eget `AF_BLUETOOTH` — inga nya beroenden. Anges adressen som en `/dev`-enhet går den över serievägen i stället; så ser ett parat kort ut på Mac, där Pythons Bluetooth-socket inte finns. Telegramgränsen, gatewayens port 8913, omstarten vid tappad förbindelse och villkoren för lägesbytet är oförändrade.
+
+Inställningar → Banan (LocoNet) har nu ett val överst och fälten för den valda anslutningen; den andras inställning ligger kvar. Lägesknappens text säger inte längre att LocoNet alltid går över USB.
+
+Prov: nio prov i `test/connection-mode.test.mjs`, varav tre nya — valet och dess kontroller, kortet som parad serieport på Mac, och att en fil från före 0.83.0 läses som USB. Hela enhetsprovet och syntaxkontrollerna är gröna lokalt. Ingenting är provat mot det verkliga kortet: adressen, kanalen och själva Bluetooth-förbindelsen återstår att prova vid banan, liksom parkopplingen på Pi:n.
+

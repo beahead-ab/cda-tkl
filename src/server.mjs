@@ -330,6 +330,14 @@ const server = http.createServer(async (req, res) => {
     // Anslut till eller koppla från LocoNet: vem som helst vid panelen (samma villkor för alla); LocoBuffern ställer ägaren eller en administratör in.
     if(url.pathname==='/api/connection/mode'){switchConnection(data?.mode);dirty=true;return json(res,{connection:connectionView(),state:snapshot()});}
     if(url.pathname==='/api/connection/locobuffer'){connection.setLocobuffer(data);engine.log('connection-mode',`LocoBuffer inställd: ${data.device||'ingen'} · ${data.baud} baud · ${data.flow==='rtscts'?'RTS/CTS':'ingen flödeskontroll'}.`);dirty=true;return json(res,connectionView({devices:true}));}
+    // Vilken anslutning banan nås genom: LocoBuffern på USB eller BTLocoBridge över Bluetooth.
+    if(url.pathname==='/api/connection/adapter'){
+      const view=connection.setAdapter(data);
+      engine.log('connection-mode',view.adapter==='btlocobridge'
+        ?`BTLocoBridge inställd: ${view.btlocobridge.target||'ingen'}${view.btlocobridge.target&&!view.btlocobridge.target.startsWith('/dev/')?' · kanal '+view.btlocobridge.channel:''}.`
+        :`LocoBuffer inställd: ${view.locobuffer.device||'ingen'} · ${view.locobuffer.baud} baud · ${view.locobuffer.flow==='rtscts'?'RTS/CTS':'ingen flödeskontroll'}.`);
+      dirty=true;return json(res,connectionView({devices:true}));
+    }
     if(url.pathname==='/api/destinations'){const result=destinations.save(data,trainMeet.context?.stations||[]);dirty=true;return json(res,result);}
     if(url.pathname.startsWith('/api/trainmeet/')){
       const command={connect:'connect',configure:'configure',pair:'pair',refresh:'refresh',disconnect:'disconnect',stations:'stations',clearance:'clearance',movement:'movement'}[url.pathname.slice('/api/trainmeet/'.length)];
