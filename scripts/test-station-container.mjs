@@ -139,7 +139,7 @@ async function browserSmoke(password) {
   assert.equal(await page.evaluate(() => navigator.clipboard.readText()), text);
   await page.screenshot({ path: path.join(artifacts, '04-inbjudan.png'), fullPage: true });
   await page.getByRole('button', { name: 'Klart', exact: true }).click();
-  assert.equal(await page.getByRole('dialog').count(), 0, 'Koden ska inte ligga kvar i en dold dialog');
+  await page.locator('dialog .users-invitation').waitFor({ state: 'detached' });
   page.once('dialog', dialog => dialog.accept());
   await page.locator('tr').filter({ hasText: 'inbjudan@example.test' }).getByRole('button', { name: 'Ny kod', exact: true }).click();
   await invitation.waitFor();
