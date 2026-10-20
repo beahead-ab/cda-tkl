@@ -2261,3 +2261,14 @@ Omedelbart före publiceringen: noll tågvägslås, automaten av, TrainMeet inte
 Träkvistas Render-deploy `dep-dbbmpuei0phs738n3io0` är live från tk-tkl `3d0fbf8`. Faktisk efterkontroll: 0.82.12, ansluten intern återrapport, samma `trakvista-network-v1` och källhash `3e7b63c95d05e7c152304dd24b27cc3286cb66e9b6e89e9932aba73edff97e79`, inget lagringsfel, inga tågvägslås, automaten fortsatt av och klockan pausad med takt 1. Den befintliga ägarsessionen fungerade utan nytt lösenord. `auth/users.json`, `state/routes.json` och `.restored` är byteoförändrade mot backupen; flyktiga händelser och klockcheckpoint jämförs inte som statiska filer.
 
 Efter omladdning av Caspers riktiga panel gav 24 täta DOM-avläsningar av alla 56 knappar ett enda identiskt klasstillstånd, utan den tidigare växlingen av `locked`. Första inloggningen och lösenordsvalet är alltså genomförda och panelen är kontrollerad i faktisk drift. Verklig TrainMeet-parkoppling, uttryckligt valda grannar och fysisk bana återstår. Slutrapporten ändrar bara dokumentation och använder `[skip render]`.
+
+## 20 oktober 2026 – komplett inbjudan, 0.82.13
+
+Casper bad om URL och all nödvändig information i en enda kopierbar inbjudningstext. Dialogen för nya inbjudningar
+och Ny kod innehåller nu installationens /login-adress, rätt stationsnamn, e-post, engångskod, roll, giltighetstid
+och steg för att välja lösenord. Knappen kopierar hela texten. Ett skrivskyddat textfält ger manuell kopiering
+vid spärrat urklipp; stängda koddialoger tas bort ur dokumentet. Ingen inbjudan skickas automatiskt och inga
+konton eller behörigheter ändras av gränssnittsrättelsen.
+
+Stationscontainerprovet använder ett syntetiskt konto och kontrollerar hela texten i riktigt urklipp, Ny kod
+och markerad reservkopiering vid nekad urklippsåtkomst. Publicering väntar på hela CI-kedjan.
