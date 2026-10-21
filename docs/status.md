@@ -2,7 +2,7 @@
 
 ## Installationsförråden publicerade som 0.84.0
 
-**Publicerad: 0.84.0 (21 oktober 2026; cda-tkl program `7c2834b`, #101; publiceringsskript i main `eadc0c0`, #102; cda-tkl-install `61bef06`; tk-tkl `e2240af`; tagg `v0.84.0`).**
+**Publicerad: 0.84.0 (21 oktober 2026; cda-tkl program `7c2834b`, #101; publiceringsskript i main `eadc0c0`, #102; cda-tkl-install `61bef06`, återställd som `efb1084`; tk-tkl `e2240af`; tagg `v0.84.0`).**
 
 0.84.0 ger Uppdatera nu på Mac och Windows efter att installationen fått sitt eget uppdateringsskript. Versionerna 0.82.14 och 0.83.0 ingår, med Träkvistas Mac-/PC-anvisningar, sparad installationstoken och val av BT LocoBridge.
 
@@ -11,6 +11,10 @@ Installationsförrådet fick 18 ändrade filer, varav tre nya, och inga borttagn
 Programmets CI `39503108001` är grön: 626 godkända enhetsprov av 629 (tre överhoppningar), 19 integrationer, två separata återställningsprov, 353 paketprov, båda containerproven och Windows-parsern. Träkvistas egen CI `39546158939` är också grön. Den avgränsade publiceringsrättelsen verifierades genom verkligt paketbygge, bash-syntax och kontroll av hjälparnas filrätt, innehåll och Python-syntax.
 
 Båda Render-tjänsterna kör redan 0.84.0: Charlottendal från `7c2834b` i `dep-dbc3v8g473hc73a0a060`, Träkvista från `e2240af` i `dep-dbc48pbncjis73elq7ig`. Publicering och rapportering startar inte om dem; rena källändringar använder `[skip render]`. Fysisk Bluetooth-anslutning och en verklig Mac-/Windows-uppdatering återstår att prova.
+
+Kl. 22.14 publicerades cda-tkl-install en gång till med den äldre fillistan ur AGENTS.md (`77618f7`), och
+`scripts/bluetooth-port.py` försvann ur paketet. Publiceringsskriptet återställde det som `efb1084`, med samma träd som
+taggade `61bef06` (`1cc04f75`). AGENTS.md hänvisar nu till skripten i stället för en egen lista.
 
 
 ## Komplett inbjudningstext, 0.82.13

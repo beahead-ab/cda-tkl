@@ -35,18 +35,17 @@ npm run -s test:integration   # startar servrar; live-offline har en gång tagit
 3. Skriv ett avsnitt i `docs/arbetsjournal.md` och en rad i `docs/status.md`. Ändras gränssnittet, skriv också i
    `docs/panel-och-verktyg.md`.
 4. Gör en PR och squash-merga den.
-5. Publicera installationsförrådet. `$INSTALL` är en klon av `cda-tkl-install`, och kommandot körs från cda-tkl:
+5. Publicera installationsförråden från main med skripten, aldrig med en egen fillista:
    ```sh
-   cd $INSTALL && git pull -q && find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} + && \
-   (cd <cda-tkl> && git archive HEAD install.sh install.ps1 package.json package-lock.json src public profiles packaging \
-     scripts/start.mjs scripts/install-raspberry-pi.sh scripts/install-mac.sh scripts/locobuffer-gateway.mjs \
-     scripts/serial-port.py scripts/create-owner.mjs scripts/recover-user.mjs docs/installation.md docs/raspberry-pi.md \
-     docs/anvandare.md docs/loconet-anslutning.md) | tar -x -C $INSTALL && mv docs/installation.md README.md && \
-   sed -i 's/](raspberry-pi\.md)/](docs\/raspberry-pi.md)/g; s/](loconet-anslutning\.md)/](docs\/loconet-anslutning.md)/g' README.md && \
-   git add -A && git commit -q -m "Charlottendal TKL X.Y.Z" && git push -q origin main
+   deploy/publish-install.sh              # cda-tkl-install; taggas vX.Y.Z första gången versionen publiceras
+   deploy/publish-station.sh trakvista    # tk-tkl; kör paketets prov först och stannar på ändringar som saknas här
    ```
+   Skripten bestämmer vilka filer som följer med. En egen lista blir inaktuell när ett skript tillkommer: 0.84.0
+   publicerades en gång med den lista som stod här tidigare och tappade `scripts/bluetooth-port.py` (`77618f7`,
+   återställt som `efb1084`).
 6. Gör en dokumentations-PR som för in publiceringen: raden **Publicerad: X.Y.Z** (main-commit, PR-nummer,
-   install-commit, datum) i `docs/status.md` och `docs/tagsparning.md`, och en publiceringsrad i arbetsjournalen.
+   install-commit, tk-tkl-commit, datum) i `docs/status.md` och `docs/tagsparning.md`, och en publiceringsrad i
+   arbetsjournalen.
 
 En ändring som bara rör dokumentationen behöver ingen publicering, utom när filen finns i installationsförrådet:
 `installation.md`, `raspberry-pi.md`, `anvandare.md` och `loconet-anslutning.md`.
