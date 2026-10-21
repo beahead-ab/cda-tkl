@@ -76,6 +76,19 @@ test('installed copies turn on the update notice, and only the Pi service may st
   assert.match(read('scripts/install-raspberry-pi.sh'),/50-cda-tkl-update\.rules/);
 });
 
+test('Mac och PC får installationens update-skript, som panelens Uppdatera nu startar',()=>{
+  const mac=read('scripts/install-mac.sh'),ps=read('install.ps1');
+  assert.match(mac,/cp "\$SOURCE_DIR\/packaging\/mac\/update\.sh" "\$APP\/update\.sh" && chmod \+x/);
+  assert.match(mac,/CHARLOTTENDAL_UPDATE_COMMAND="%s"/,'vägen har mellanslag och måste citeras i app.env');
+  assert.match(ps,/Copy-Item \(Join-Path \$Source 'packaging\\windows\\update\.ps1'\)/);
+  assert.match(ps,/CHARLOTTENDAL_UPDATE_COMMAND/);
+  // Skripten kör installationsraden igen; de installerar inte något eget.
+  const update=read('packaging/mac/update.sh'),updatePs=read('packaging/windows/update.ps1');
+  assert.match(update,/install\.sh/);assert.match(update,/github-token/);assert.match(update,/CHARLOTTENDAL_INSTALL_REPOSITORY/);
+  assert.match(updatePs,/install\.ps1/);assert.match(updatePs,/Invoke-Expression \$Script/,'installeraren körs i samma process, annars stoppar dess uppstädning uppdateringen');
+  assert.match(updatePs,/github-token/);
+});
+
 test('Mac och PC sparar installationens token, så att Uppdatering ser nya versioner i ett privat förråd',()=>{
   const mac=read('scripts/install-mac.sh'),ps=read('install.ps1');
   assert.match(mac,/printf '%s\\n' "\$CDA_TKL_TOKEN" > "\$APP\/github-token"/);

@@ -2305,3 +2305,13 @@ Inställningar → Banan (LocoNet) har nu ett val överst och fälten för den v
 
 Prov: nio prov i `test/connection-mode.test.mjs`, varav tre nya — valet och dess kontroller, kortet som parad serieport på Mac, och att en fil från före 0.83.0 läses som USB. Hela enhetsprovet och syntaxkontrollerna är gröna lokalt. Ingenting är provat mot det verkliga kortet: adressen, kanalen och själva Bluetooth-förbindelsen återstår att prova vid banan, liksom parkopplingen på Pi:n.
 
+## 20 oktober 2026, 0.84.0: Uppdatera nu på Mac och PC
+
+Casper frågade om knappen i panelen uppdaterar också på Mac och PC. Det gjorde den inte: `canStart` var sann bara för de kindar som har en uppdateringstjänst (`raspberry-pi`, `web`) eller en Deploy Hook (Render), och en användarinstallation fick i stället raden att köra i Terminal eller PowerShell.
+
+På Mac och PC är installationen användarens egen, utan `sudo`, så TKL kan köra installeraren själv. Installationen får därför ett eget `update.sh` respektive `update.ps1` i sin mapp, och installeraren skriver vägen i `app.env` (`CHARLOTTENDAL_UPDATE_COMMAND`). Skriptet kör samma installationsrad som första gången, med den sparade token om förrådet är privat, och lämnar resten åt installeraren: ny version bredvid den gamla, omstart genom launchd eller autostart-genvägen, och återställning av föregående version om den nya inte svarar inom 40 sekunder. Panelen startar skriptet fristående, så att det överlever att TKL stoppas; på Windows körs installeraren i samma process som skriptet, eftersom installerarens uppstädning annars skulle stoppa uppdateringen mitt i.
+
+Anteckningarna förs som på Render: TKL skriver `fetching` när knappen trycks, och nästa process som läser filen med ett annat versionsnummer skriver `done`. Har versionen inte bytts på tjugo minuter blir det `failed`, med hänvisning till `logs/update.log` i installationens mapp. Utan update-skript är knappen borta och raden står kvar, så en installation från före 0.84.0 fungerar precis som förut tills den uppdaterats en gång.
+
+Prov: fyra nya kontroller — valet och statusen för en Mac och en PC, tjugominutersgränsen, att en installation utan skript varken får knapp eller kan starta något, och att båda installerarna lägger ut skriptet och skriver vägen i app.env. Hela enhetsprovet är grönt lokalt. Ingen verklig uppdatering har körts på Mac eller Windows här; det återstår vid en riktig installation.
+

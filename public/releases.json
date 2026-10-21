@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.84.0",
+    "date": "2026-10-20",
+    "notes": [
+      "Uppdatera nu i ställverket gör hela uppdateringen också på Mac och PC: hämtar versionen, installerar den bredvid den nuvarande och startar om TKL, med den sparade token om förrådet är privat",
+      "Inställningar → Uppdatering visar hur den senaste uppdateringen gick på Mac och PC, som på Pi:n och webbdriften"
+    ]
+  },
+  {
     "version": "0.83.0",
     "date": "2026-10-20",
     "notes": [
