@@ -18,7 +18,7 @@ git clone -q "$PUBLIC" "$WORK/repo" 2>/dev/null || { mkdir -p "$WORK/repo" && gi
 cd "$WORK/repo"
 find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 (cd "$SOURCE" && git archive "$FULL" install.sh install.ps1 package.json package-lock.json src public profiles packaging \
-  scripts/start.mjs scripts/install-raspberry-pi.sh scripts/install-mac.sh scripts/locobuffer-gateway.mjs scripts/serial-port.py \
+  scripts/start.mjs scripts/install-raspberry-pi.sh scripts/install-mac.sh scripts/locobuffer-gateway.mjs scripts/serial-port.py scripts/bluetooth-port.py \
   scripts/create-owner.mjs scripts/recover-user.mjs \
   docs/installation.md docs/raspberry-pi.md docs/anvandare.md docs/loconet-anslutning.md) | tar -x -C .
 # The installation overview is the front page; its links to the guides that move with it follow along.
