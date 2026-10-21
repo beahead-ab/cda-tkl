@@ -2329,3 +2329,18 @@ Cda-tkl-install publicerades som `61bef0611896ca2b77e29f892be05bb621426c68`. Hel
 Programhuvudet `ac8ebf7fa648cb726441c4b516782a15a3176f8c` passerade hela CI `39503108001`: 626/629 enhetsprov med tre avsiktliga överhoppningar, 19/19 integrationer, 2/2 separata återställningsprov, 353 godkända paketenhetsprov, båda containerproven och Windows-parsern. Publiceringsrättelsen ändrar bara installationsarkivets innehåll; ingen programlogik ändras. Ingen verklig Bluetooth-anslutning eller uppdatering av en verklig Mac-/Windows-installation påstås vara provad.
 
 Render visar befintlig live-deploy `dep-dbc3v8g473hc73a0a060` från `7c2834b` för Charlottendal och `dep-dbc48pbncjis73elq7ig` från `e2240af` för Träkvista, båda 0.84.0. Publiceringsrättelsen `eadc0c0` hoppades över av Render med `[skip render]`. Tjänster, användare och driftdata ändrades inte av denna publiceringsomgång. Dokumentationsrapporten använder också `[skip render]`.
+
+## 21 oktober 2026 – cda-tkl-install återställt till hela 0.84.0
+
+Kl. 22.14 kom ännu en publicering av 0.84.0 till cda-tkl-install, `77618f7`. Den saknade `scripts/bluetooth-port.py` men
+var i övrigt lika `61bef06`, alltså precis den fillista som AGENTS.md hade i steg 5. En Pi, Mac eller PC som
+installerade eller uppdaterade därefter skulle inte kunna nå en BTLocoBridge med kortets adress.
+
+`deploy/publish-install.sh 7c2834b` från main (med #102) publicerade `efb1084`, vars träd `1cc04f75` är detsamma som i
+taggade `61bef06`. Taggen `v0.84.0` är orörd. tk-tkl `e2240af` har båda Python-hjälparna och ändrades inte.
+
+AGENTS.md steg 5 hänvisar nu till `deploy/publish-install.sh` och `deploy/publish-station.sh trakvista` i stället för
+en egen fillista. Ett nytt prov i `test/station-package.test.mjs` kräver att varje skript som gatewayen och servern
+startar står i publiceringsskriptets lista; det underkänner skriptet från före #102. En installation som fick
+`77618f7` har redan versionen 0.84.0 och erbjuds inte uppdateringen igen. Den får hjälparen med nästa version, eller
+genom att installationsraden körs en gång till.
