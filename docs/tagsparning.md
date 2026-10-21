@@ -6,7 +6,7 @@ när **LocoNet inte är ansluten** och TKL själv kör trafikspelets tåg (sedan
 ansluten](loconet-anslutning.md); före det i simuleringsläget, som i webbdriften). Med LocoNet ansluten är den
 avstängd tills den är provad mot riktig bana.
 
-**Publicerad: 0.82.13** (cda-tkl main `8150903`, #98; `beahead-ab/cda-tkl-install` main `7bc488f`; tk-tkl `aea08a6`, 20 oktober). Webbdriften
+**Publicerad: 0.84.0** (cda-tkl program `7c2834b`, #101; publiceringsskript i main `eadc0c0`, #102; `beahead-ab/cda-tkl-install` main `61bef06`; tk-tkl `e2240af`, 21 oktober). Webbdriften
 på Render tar den när Render bygger om main, eller med Uppdatera nu när Deploy Hook är inlagd; datorer som installerats
 med installationsraden kör den igen eller väljer Uppdatering. Tågspårningen kom i 0.73.0, simulerade tåg och upplösning
 vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0 (cda-tkl `45ec00a`, #46). I 0.77.0 rapporterar den egna
@@ -20,7 +20,7 @@ säger TKL var adressen och koden finns i TrainMeet Server: Drift → Anslut en 
 Renders ändringar för andra stationer. Spårningen är oförändrad i 0.82.1 och 0.82.2.
 0.82.10 publicerar stationernas egna linjer och trafik, Träkvistas offlineautomat och spårning samt lokalt stationsval genom `npm start`. Återgång av Träkvistas disk till en version före 0.82.7 kräver återställning av säkerhetskopian, se [driftprotokollet](render-release-2026-10-18.md).
 
-0.82.11 rättar stationens namn i sidfoten. 0.82.12 rättar blinkande låsmarkeringar på stationer utan programmeringsspår. Tågspårning och automatens programkod är oförändrade mot 0.82.10. 0.82.13 lägger till en kopierbar hel inbjudan med installationens inloggningslänk och instruktioner för eget lösenord. Tågspårningen är oförändrad. Träkvistas Render-tjänst kör 0.82.13; Charlottendals webbdrift är kvar på 0.82.11.
+0.82.11 rättar stationens namn i sidfoten. 0.82.12 rättar blinkande låsmarkeringar på stationer utan programmeringsspår. Tågspårning och automatens programkod är oförändrade mot 0.82.10. 0.82.13 lägger till en kopierbar hel inbjudan med installationens inloggningslänk och instruktioner för eget lösenord. Tågspårningen är oförändrad. 0.83.0 lägger till BT LocoBridge och 0.84.0 ger Uppdatera nu även på Mac och Windows. Tågspårningen är oförändrad. Båda Render-tjänsterna kör 0.84.0.
 
 På ställverket ligger *Automat* bland driftknapparna under Drift, listan *Spårade tåg* under Drift → Tågnummer, och
 den egna återrapportens sida nås från Studio → Driftsättning → *Egen återrapport ↗*.

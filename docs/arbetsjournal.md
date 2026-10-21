@@ -2315,3 +2315,17 @@ Anteckningarna förs som på Render: TKL skriver `fetching` när knappen trycks,
 
 Prov: fyra nya kontroller — valet och statusen för en Mac och en PC, tjugominutersgränsen, att en installation utan skript varken får knapp eller kan starta något, och att båda installerarna lägger ut skriptet och skriver vägen i app.env. Hela enhetsprovet är grönt lokalt. Ingen verklig uppdatering har körts på Mac eller Windows här; det återstår vid en riktig installation.
 
+
+## 21 oktober 2026 – 0.84.0 publicerad till installationsförråden
+
+**Publicerad: 0.84.0 (21 oktober 2026; cda-tkl program `7c2834b`, #101; publiceringsskript i main `eadc0c0`, #102; cda-tkl-install `61bef06`; tk-tkl `e2240af`; tagg `v0.84.0`).**
+
+Casper bad om att slutföra publiceringen efter HTTP 403 i den andra sessionen. Vid kontrollen hade Träkvista redan publicerats som `e2240af224d332b6e9abb18bc058e77de75ff07f` från `7c2834b02927c7d4aeee9f4e9a30785b6b2ef568`, med grön egen CI `39546158939`. Ny paketbyggnad bekräftade att hela trädet `53bec142af6688911318e3860b9051951551cf2a` är identiskt; ingen ny push behövdes där.
+
+Genomgången hittade en verklig publiceringsmiss: `scripts/locobuffer-gateway.mjs` kan sedan 0.83.0 starta `scripts/bluetooth-port.py`, men publiceringsskriptets uttryckliga fillista tog inte med hjälparen i cda-tkl-install. #102 rättar enbart den listan; programmet och versionsnumret ändras inte. Det färdiga paketet kontrollerades genom riktig publicering till ett isolerat lokalt Git-förråd. Både `serial-port.py` och `bluetooth-port.py` finns med exakt källinnehåll och filrätt samt godkänd Python-syntax. Bash-syntax och ren diff är kontrollerade.
+
+Cda-tkl-install publicerades som `61bef0611896ca2b77e29f892be05bb621426c68`. Hela API-publiceringens träd `1cc04f750cf5aab01db5f4adffb54aa94c0cee93` är identiskt med publiceringsskriptets färdiga paket. Det innebär 18 ändrade filer (tre nya), mot de 17 (två nya) i förhandsrapporten; skillnaden är den nödvändiga Bluetooth-hjälparen. Inga borttagningar. Taggen `v0.84.0` pekar på `61bef06` och versionsnoteringen är publicerad.
+
+Programhuvudet `ac8ebf7fa648cb726441c4b516782a15a3176f8c` passerade hela CI `39503108001`: 626/629 enhetsprov med tre avsiktliga överhoppningar, 19/19 integrationer, 2/2 separata återställningsprov, 353 godkända paketenhetsprov, båda containerproven och Windows-parsern. Publiceringsrättelsen ändrar bara installationsarkivets innehåll; ingen programlogik ändras. Ingen verklig Bluetooth-anslutning eller uppdatering av en verklig Mac-/Windows-installation påstås vara provad.
+
+Render visar befintlig live-deploy `dep-dbc3v8g473hc73a0a060` från `7c2834b` för Charlottendal och `dep-dbc48pbncjis73elq7ig` från `e2240af` för Träkvista, båda 0.84.0. Publiceringsrättelsen `eadc0c0` hoppades över av Render med `[skip render]`. Tjänster, användare och driftdata ändrades inte av denna publiceringsomgång. Dokumentationsrapporten använder också `[skip render]`.

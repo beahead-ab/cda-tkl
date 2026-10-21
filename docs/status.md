@@ -1,4 +1,17 @@
-# Charlottendal TKL – lägesbild 20 oktober 2026
+# Charlottendal TKL – lägesbild 21 oktober 2026
+
+## Installationsförråden publicerade som 0.84.0
+
+**Publicerad: 0.84.0 (21 oktober 2026; cda-tkl program `7c2834b`, #101; publiceringsskript i main `eadc0c0`, #102; cda-tkl-install `61bef06`; tk-tkl `e2240af`; tagg `v0.84.0`).**
+
+0.84.0 ger Uppdatera nu på Mac och Windows efter att installationen fått sitt eget uppdateringsskript. Versionerna 0.82.14 och 0.83.0 ingår, med Träkvistas Mac-/PC-anvisningar, sparad installationstoken och val av BT LocoBridge.
+
+Installationsförrådet fick 18 ändrade filer, varav tre nya, och inga borttagningar. Publiceringsskriptet rättades först i #102: den nya Bluetooth-hjälparen måste följa med även i detta paket. Paketets båda Python-hjälpare är kontrollerade mot källan. Träkvista hade redan 0.84.0 från `7c2834b`; dess hela träd är exakt lika det nybyggda paketet och behövde ingen ny push.
+
+Programmets CI `39503108001` är grön: 626 godkända enhetsprov av 629 (tre överhoppningar), 19 integrationer, två separata återställningsprov, 353 paketprov, båda containerproven och Windows-parsern. Träkvistas egen CI `39546158939` är också grön. Den avgränsade publiceringsrättelsen verifierades genom verkligt paketbygge, bash-syntax och kontroll av hjälparnas filrätt, innehåll och Python-syntax.
+
+Båda Render-tjänsterna kör redan 0.84.0: Charlottendal från `7c2834b` i `dep-dbc3v8g473hc73a0a060`, Träkvista från `e2240af` i `dep-dbc48pbncjis73elq7ig`. Publicering och rapportering startar inte om dem; rena källändringar använder `[skip render]`. Fysisk Bluetooth-anslutning och en verklig Mac-/Windows-uppdatering återstår att prova.
+
 
 ## Komplett inbjudningstext, 0.82.13
 
