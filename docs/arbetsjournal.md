@@ -2352,3 +2352,16 @@ På Caspers begäran kontrollerade Codex båda tjänsterna i Renders dashboard o
 I Web Shell på respektive körande instans gav `node -p 'require("/app/package.json").version'` svaret **0.84.0** för båda stationerna. De publika adresserna `https://cda-tkl.trainmeet.app/healthz` och `https://tk-tkl.onrender.com/healthz` svarade båda `{"status":"running"}`. Slutavläsningen gjordes 21 oktober kl. 23.56 svensk tid (Europe/Stockholm, 21.56 UTC); resultatet dokumenterades 22 oktober.
 
 Detta var en kontroll av befintlig drift. Ingen omstart, ny deploy, publicering, ändring av inställningar eller skrivning till driftdata gjordes. Kontrollens omfattning var aktiv Render-deploy, containerns programversion och hälsosvar; fysisk Bluetooth-anslutning och verklig Mac-/Windows-uppdatering ingick inte. Dokumentationsändringen använder `[skip render]`.
+
+## 23 oktober 2026 – efterkontroll av PR #105 på Render
+
+PR [#105](https://github.com/beahead-ab/cda-tkl/pull/105) squash-mergades till main som `8921bafe87a68abfca25312d7e4f7089f0e98da1` den 22 oktober kl. 19.30.58 (Europe/Stockholm, 17.30.58 UTC), efter att alla fyra CI-jobb blivit gröna. Dokumentationscommiten innehåller `[skip render]`.
+
+Efter mergningen kontrollerade Codex båda tjänsternas deployhistorik och händelseloggar i Render. **PR #105 startade ingen ny driftsättning**: ingen nyare deploy fanns registrerad, och båda tjänsterna hade kvar samma aktiva driftsättning som före mergningen.
+
+| Station | Körande version | Commit | Aktiv Render-deploy |
+|---|---|---|---|
+| Charlottendal | **0.84.0** | `7c2834b` | [`dep-dbc3v8g473hc73a0a060`](https://dashboard.render.com/web/srv-db2m51ei0phs7393n0g0/deploys/dep-dbc3v8g473hc73a0a060) |
+| Träkvista | **0.84.0** | `e2240af` | [`dep-dbc48pbncjis73elq7ig`](https://dashboard.render.com/web/srv-dbaj7oajnfac73fu81vg/deploys/dep-dbc48pbncjis73elq7ig) |
+
+Versionerna lästes på nytt direkt ur `/app/package.json` i respektive körande container via Renders Web Shell med `node -p 'require("/app/package.json").version'`; båda svarade `0.84.0`. Båda aktiva driftsättningarna var **Live**, och de publika `/healthz`-adresserna svarade `{"status":"running"}`. Efterkontrollen var enbart avläsning och startade inte om eller driftsatte någon tjänst. Även denna journalanteckning använder `[skip render]`.
