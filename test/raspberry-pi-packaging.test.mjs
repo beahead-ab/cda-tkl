@@ -76,6 +76,18 @@ test('installed copies turn on the update notice, and only the Pi service may st
   assert.match(read('scripts/install-raspberry-pi.sh'),/50-cda-tkl-update\.rules/);
 });
 
+test('publiceringen tar med varje hjälpskript gatewayen startar, annars saknas de i installationen',()=>{
+  const gateway=read('scripts/locobuffer-gateway.mjs'),publish=read('deploy/publish-install.sh');
+  const helpers=[...gateway.matchAll(/'([\w.-]+\.py)'/g)].map(m=>m[1]);
+  assert.ok(helpers.includes('serial-port.py')&&helpers.includes('bluetooth-port.py'),'gatewayen startar både serie- och Bluetooth-vägen: '+helpers.join(', '));
+  for(const helper of new Set(helpers)){
+    assert.ok(fs.existsSync(new URL('../scripts/'+helper,import.meta.url)),'scripts/'+helper+' finns');
+    assert.match(publish,new RegExp('scripts/'+helper.replace('.','\\.')),'scripts/'+helper+' följer med till installationsförrådet');
+  }
+  // Stationens paket tar med hela scripts/, så där räcker det att filen finns.
+  assert.doesNotMatch(read('deploy/charlottendal-only.txt'),/bluetooth-port\.py/,'Bluetooth-vägen behövs också på en station');
+});
+
 test('Mac och PC får installationens update-skript, som panelens Uppdatera nu startar',()=>{
   const mac=read('scripts/install-mac.sh'),ps=read('install.ps1');
   assert.match(mac,/cp "\$SOURCE_DIR\/packaging\/mac\/update\.sh" "\$APP\/update\.sh" && chmod \+x/);
