@@ -1,4 +1,4 @@
-# Charlottendal TKL – lägesbild 21 oktober 2026
+# Charlottendal TKL – lägesbild 22 oktober 2026
 
 ## Installationsförråden publicerade som 0.84.0
 
@@ -10,7 +10,14 @@ Installationsförrådet fick 18 ändrade filer, varav tre nya, och inga borttagn
 
 Programmets CI `39503108001` är grön: 626 godkända enhetsprov av 629 (tre överhoppningar), 19 integrationer, två separata återställningsprov, 353 paketprov, båda containerproven och Windows-parsern. Träkvistas egen CI `39546158939` är också grön. Den avgränsade publiceringsrättelsen verifierades genom verkligt paketbygge, bash-syntax och kontroll av hjälparnas filrätt, innehåll och Python-syntax.
 
-Båda Render-tjänsterna kör redan 0.84.0: Charlottendal från `7c2834b` i `dep-dbc3v8g473hc73a0a060`, Träkvista från `e2240af` i `dep-dbc48pbncjis73elq7ig`. Publicering och rapportering startar inte om dem; rena källändringar använder `[skip render]`. Fysisk Bluetooth-anslutning och en verklig Mac-/Windows-uppdatering återstår att prova.
+**Render verifierat 21 oktober 2026 kl. 23.56 (Europe/Stockholm, 21.56 UTC):** Codex läste versionen direkt ur `/app/package.json` i båda körande containrarna via Renders Web Shell. Båda svarade `0.84.0`. Render markerade båda driftsättningarna som **Live**, och båda tjänsternas publika `/healthz` svarade `{"status":"running"}`.
+
+| Station | Körande version | Commit | Aktiv Render-deploy |
+|---|---|---|---|
+| [Charlottendal](https://cda-tkl.trainmeet.app/) | 0.84.0 | `7c2834b` | [`dep-dbc3v8g473hc73a0a060`](https://dashboard.render.com/web/srv-db2m51ei0phs7393n0g0/deploys/dep-dbc3v8g473hc73a0a060) |
+| [Träkvista](https://tk-tkl.onrender.com/) | 0.84.0 | `e2240af` | [`dep-dbc48pbncjis73elq7ig`](https://dashboard.render.com/web/srv-dbaj7oajnfac73fu81vg/deploys/dep-dbc48pbncjis73elq7ig) |
+
+Kontrollen var enbart avläsning: ingen omstart, driftsättning eller ändring av inställningar eller driftdata gjordes. Rena dokumentationsändringar använder `[skip render]`. Fysisk Bluetooth-anslutning och en verklig Mac-/Windows-uppdatering återstår att prova.
 
 Kl. 22.14 publicerades cda-tkl-install en gång till med den äldre fillistan ur AGENTS.md (`77618f7`), och
 `scripts/bluetooth-port.py` försvann ur paketet. Publiceringsskriptet återställde det som `efb1084`, med samma träd som

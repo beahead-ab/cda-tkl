@@ -6,6 +6,8 @@ när **LocoNet inte är ansluten** och TKL själv kör trafikspelets tåg (sedan
 ansluten](loconet-anslutning.md); före det i simuleringsläget, som i webbdriften). Med LocoNet ansluten är den
 avstängd tills den är provad mot riktig bana.
 
+**Render verifierat 21 oktober 2026 kl. 23.56 (Europe/Stockholm):** Codex läste `0.84.0` direkt ur `/app/package.json` i både Charlottendals och Träkvistas körande Render-container. Båda driftsättningarna var **Live** (Charlottendal `7c2834b`, Träkvista `e2240af`), och båda publika `/healthz` svarade `{"status":"running"}`. Kontrollen ändrade inget och startade inte om tjänsterna. Exakta deploy-id:n finns i [lägesbilden](status.md#installationsförråden-publicerade-som-0840).
+
 **Publicerad: 0.84.0** (cda-tkl program `7c2834b`, #101; publiceringsskript i main `eadc0c0`, #102; `beahead-ab/cda-tkl-install` main `61bef06`, återställd som `efb1084`; tk-tkl `e2240af`, 21 oktober). Webbdriften
 på Render tar den när Render bygger om main, eller med Uppdatera nu när Deploy Hook är inlagd; datorer som installerats
 med installationsraden kör den igen eller väljer Uppdatering. Tågspårningen kom i 0.73.0, simulerade tåg och upplösning

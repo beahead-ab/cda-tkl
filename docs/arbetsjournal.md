@@ -2344,3 +2344,11 @@ en egen fillista. Ett nytt prov i `test/station-package.test.mjs` kräver att va
 startar står i publiceringsskriptets lista; det underkänner skriptet från före #102. En installation som fick
 `77618f7` har redan versionen 0.84.0 och erbjuds inte uppdateringen igen. Den får hjälparen med nästa version, eller
 genom att installationsraden körs en gång till.
+
+## 21 oktober 2026 kl. 23.56 – direkt verifiering av 0.84.0 på Render
+
+På Caspers begäran kontrollerade Codex båda tjänsterna i Renders dashboard och deras körande containrar. Charlottendals aktiva driftsättning var **Live**, `dep-dbc3v8g473hc73a0a060`, från cda-tkl `7c2834b02927c7d4aeee9f4e9a30785b6b2ef568`. Träkvistas var **Live**, `dep-dbc48pbncjis73elq7ig`, från tk-tkl `e2240af224d332b6e9abb18bc058e77de75ff07f`.
+
+I Web Shell på respektive körande instans gav `node -p 'require("/app/package.json").version'` svaret **0.84.0** för båda stationerna. De publika adresserna `https://cda-tkl.trainmeet.app/healthz` och `https://tk-tkl.onrender.com/healthz` svarade båda `{"status":"running"}`. Slutavläsningen gjordes 21 oktober kl. 23.56 svensk tid (Europe/Stockholm, 21.56 UTC); resultatet dokumenterades 22 oktober.
+
+Detta var en kontroll av befintlig drift. Ingen omstart, ny deploy, publicering, ändring av inställningar eller skrivning till driftdata gjordes. Kontrollens omfattning var aktiv Render-deploy, containerns programversion och hälsosvar; fysisk Bluetooth-anslutning och verklig Mac-/Windows-uppdatering ingick inte. Dokumentationsändringen använder `[skip render]`.
