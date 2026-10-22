@@ -2315,3 +2315,13 @@ Anteckningarna förs som på Render: TKL skriver `fetching` när knappen trycks,
 
 Prov: fyra nya kontroller — valet och statusen för en Mac och en PC, tjugominutersgränsen, att en installation utan skript varken får knapp eller kan starta något, och att båda installerarna lägger ut skriptet och skriver vägen i app.env. Hela enhetsprovet är grönt lokalt. Ingen verklig uppdatering har körts på Mac eller Windows här; det återstår vid en riktig installation.
 
+## 21 oktober 2026: 0.83.0 och 0.84.0 publicerade till installationerna
+
+**Publicerad: 0.84.0 (21 oktober 2026; cda-tkl main `7c2834b`, #101; programreleaser #100 och #101; `beahead-ab/cda-tkl-install` main `efb1084`; `beahead-ab/tk-tkl` main `e2240af`).**
+
+Casper körde publiceringen själv; den här sessionen får läsa installationsförråden men inte skriva till dem (GitHub svarar 403 på pushen). Båda förråden är efteråt kontrollerade mot vad publiceringsskripten bygger: `deploy/publish-install.sh` svarar att cda-tkl-install redan har innehållet i 0.84.0, och Tk-TKL-paketet är identiskt med `e2240af` så när som på provet som lades till i dag. Inga borttagningar i något av förråden.
+
+Publiceringen visade ett verkligt fel i skriptet. `scripts/bluetooth-port.py`, som gatewayen startar för BTLocoBridge, kom i 0.83.0 men lades aldrig till i fillistan i `deploy/publish-install.sh`. Den första körningen hade filen, den andra tog bort den igen, och den tredje lade tillbaka den för hand; utan den går Bluetooth-anslutningen inte att använda på en Pi, Mac eller PC. Listan är nu rättad, och ett prov kräver att varje hjälpskript gatewayen startar både finns och följer med till installationsförrådet. Stationens paket tar med hela `scripts/` och berördes inte.
+
+Kvar att veta om: taggen `v0.84.0` i installationsförrådet pekar på den första körningen (`61bef06`), alltså ett träd utan Bluetooth-skriptet, medan förrådets main är fullständig. Verklig driftkontroll av 0.84.0 på Charlottendals Render-tjänst och på en riktig Mac- eller PC-installation återstår, liksom BTLocoBridge mot banan.
+

@@ -7,6 +7,12 @@ engångskod, roll, giltighetstid och instruktioner för eget lösenord. Samma di
 visas i ett skrivskyddat fält och markeras för manuell kopiering om webbläsaren spärrar urklipp. Inga koder
 läggs i länkar och ingen e-post skickas.
 
+**Publicerad: 0.84.0 (21 oktober 2026; cda-tkl main `7c2834b`, #101; programreleaser #100 och #101; `beahead-ab/cda-tkl-install` main `efb1084`; `beahead-ab/tk-tkl` main `e2240af`.)**
+
+0.83.0 och 0.84.0 publicerades i samma omgång: BTLocoBridge över Bluetooth som andra anslutning till LocoNet, Träkvista installerad på Mac och PC med en rad, och Uppdatera nu som gör hela uppdateringen också på de två. Båda förråden är kontrollerade mot publiceringsskriptens resultat, utan borttagningar: installationsförrådet har tre nya filer (`scripts/bluetooth-port.py`, `packaging/mac/update.sh`, `packaging/windows/update.ps1`) och femton ändrade, Tk-TKL samma tre nya och 21 ändrade med 353 gröna paketprov.
+
+Vid publiceringen visade sig `scripts/bluetooth-port.py` saknas i `deploy/publish-install.sh`, så en körning av skriptet tog bort filen ur installationsförrådet igen; den lades tillbaka och skriptet är rättat, med ett prov som kräver att varje hjälpskript gatewayen startar följer med. Taggen `v0.84.0` sattes på den första av körningarna (`61bef06`) och pekar därför på ett träd utan den filen; förrådets main är fullständig. Charlottendals webbdrift bygger om ur main som vanligt; verklig driftkontroll av 0.84.0 på Render återstår.
+
 **Publicerad: 0.82.13 (20 oktober 2026; cda-tkl main `8150903`, #98; cda-tkl-install `7bc488f`; tk-tkl `aea08a6`; tagg `v0.82.13`).**
 
 Hela CI `39457531166` är grön: 619 enhetsprov (tre avsiktliga överhoppningar), 19 integrationer, två separata återställningsprov, 346 paketprov, båda containerproven och Windows-parsern. Webbläsarprovet verifierar hela texten i urklipp, Ny kod, manuell kopiering och återgång till 0.82.12.

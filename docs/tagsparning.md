@@ -6,7 +6,7 @@ när **LocoNet inte är ansluten** och TKL själv kör trafikspelets tåg (sedan
 ansluten](loconet-anslutning.md); före det i simuleringsläget, som i webbdriften). Med LocoNet ansluten är den
 avstängd tills den är provad mot riktig bana.
 
-**Publicerad: 0.82.13** (cda-tkl main `8150903`, #98; `beahead-ab/cda-tkl-install` main `7bc488f`; tk-tkl `aea08a6`, 20 oktober). Webbdriften
+**Publicerad: 0.84.0** (cda-tkl main `7c2834b`, #101; `beahead-ab/cda-tkl-install` main `efb1084`; tk-tkl `e2240af`, 21 oktober). Tågspårningen är oförändrad i 0.83.0 och 0.84.0, som gäller anslutningen till banan (BTLocoBridge över Bluetooth) och installationen på Mac och PC. Webbdriften
 på Render tar den när Render bygger om main, eller med Uppdatera nu när Deploy Hook är inlagd; datorer som installerats
 med installationsraden kör den igen eller väljer Uppdatering. Tågspårningen kom i 0.73.0, simulerade tåg och upplösning
 vid ankomst i 0.74.0, automaten och de tre rollerna i 0.75.0 (cda-tkl `45ec00a`, #46). I 0.77.0 rapporterar den egna
