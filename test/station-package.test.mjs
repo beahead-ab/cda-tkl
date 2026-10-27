@@ -48,6 +48,8 @@ test('stationspaketet behåller källimporten och publiceringen stoppar gamla ge
     const pkg = JSON.parse(fs.readFileSync(path.join(packaged, 'package.json'), 'utf8'));
     assert.ok(pkg.scripts['test:station-traffic']); assert.ok(pkg.scripts['test:station-selection']); assert.ok(pkg.scripts['verify:trakvista']); assert.ok(pkg.scripts['import:trakvista']);
     assert.ok(fs.existsSync(path.join(packaged, 'scripts/import-source.py')));
+    for (const name of ['src/windows-serial.mjs','test/windows-bluetooth.test.mjs','test/connection-ui.mjs','test/windows-install.ps1','docs/benny-windows-bluetooth-prov.md']) assert.ok(fs.existsSync(path.join(packaged, name)), name);
+    assert.equal(pkg.optionalDependencies.serialport, '13.0.0');
     for (const name of ['profiles', 'public/data', 'docs/arbetsjournal.md', 'deploy/publish-station.sh', 'scripts/test-render-container.mjs', 'scripts/test-station-container.mjs', 'scripts/container-prov.mjs']) {
       assert.equal(fs.existsSync(path.join(packaged, name)), false, name + ' ska stanna i cda-tkl');
     }

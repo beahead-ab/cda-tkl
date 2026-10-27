@@ -184,8 +184,8 @@ Den sista raden tar även bort driftdata och inställningar.
 ## Gemensamt
 
 - **LocoNet.** En ny installation har LocoNet ej ansluten: TKL svarar själv och kör trafikspelets tåg från
-  TrainMeet-servern. *Anslut till LocoNet* görs med lägesknappen i statusraden, på Raspberry Pi och Mac men inte
-  på Windows än. Banan nås på två sätt, valt under Inställningar → Banan (LocoNet): en **LocoBuffer på USB** eller
+  TrainMeet-servern. *Anslut till LocoNet* görs med lägesknappen i statusraden. På Raspberry Pi och Mac finns båda anslutningarna;
+  på Windows stöds BTLocoBridge via kortets utgående COM-port från 0.85.0 (fysiskt prov återstår). Banan nås på två sätt, valt under Inställningar → Banan (LocoNet): en **LocoBuffer på USB** eller
   en **BTLocoBridge över Bluetooth** (Möllehems smartphoninterface), som paras i datorn först. Se
   [LocoNet ansluten eller ej ansluten](loconet-anslutning.md).
 - **Inloggning.** TKL svarar bara på datorn själv. Operatören behöver ingen inloggning; Inställningar och

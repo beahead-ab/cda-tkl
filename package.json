@@ -1,6 +1,6 @@
 {
   "name": "charlottendal-tkl",
-  "version": "0.84.0",
+  "version": "0.85.0",
   "private": true,
   "type": "module",
   "description": "Charlottendal TKL och en separat LocoNet-anläggningssimulator",
@@ -30,5 +30,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "0.131.0",
     "jose": "6.2.12"
+  },
+  "optionalDependencies": {
+    "serialport": "13.0.0"
   }
 }

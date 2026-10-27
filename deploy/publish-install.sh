@@ -20,7 +20,7 @@ find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 (cd "$SOURCE" && git archive "$FULL" install.sh install.ps1 package.json package-lock.json src public profiles packaging \
   scripts/start.mjs scripts/install-raspberry-pi.sh scripts/install-mac.sh scripts/locobuffer-gateway.mjs scripts/serial-port.py scripts/bluetooth-port.py \
   scripts/create-owner.mjs scripts/recover-user.mjs \
-  docs/installation.md docs/raspberry-pi.md docs/anvandare.md docs/loconet-anslutning.md) | tar -x -C .
+  docs/installation.md docs/raspberry-pi.md docs/anvandare.md docs/loconet-anslutning.md docs/benny-windows-bluetooth-prov.md) | tar -x -C .
 # The installation overview is the front page; its links to the guides that move with it follow along.
 sed -e 's|](raspberry-pi.md)|](docs/raspberry-pi.md)|g' -e 's|](loconet-anslutning.md)|](docs/loconet-anslutning.md)|g' \
   docs/installation.md > README.md && rm docs/installation.md

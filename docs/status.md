@@ -1,5 +1,9 @@
 # Charlottendal TKL – lägesbild 22 oktober 2026
 
+## Förberett i PR: 0.85.0 – BTLocoBridge på Windows
+
+Windows kan välja kortets utgående COM-port. Gatewayen kör i Node med låst SerialPort 13.0.0; Pi/Mac använder befintliga hjälpare. Automatiska prov använder syntetiska portar, inklusive fel, fragmenterat eko och återanslutning. Fysisk acceptans återstår enligt [Bennys provguide](benny-windows-bluetooth-prov.md). PR-förberedelsen ändrar ingen main eller körande installation.
+
 ## Installationsförråden publicerade som 0.84.0
 
 **Publicerad: 0.84.0 (21 oktober 2026; cda-tkl program `7c2834b`, #101; publiceringsskript i main `eadc0c0`, #102; cda-tkl-install `61bef06`, återställd som `efb1084`; tk-tkl `e2240af`; tagg `v0.84.0`).**
