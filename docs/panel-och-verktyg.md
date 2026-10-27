@@ -521,3 +521,12 @@ Inställningar → Den här datorn → Användare visar en färdig inbjudningste
 Ny kod. **Kopiera hela inbjudan** tar med installationens inloggningsadress, stationens namn, e-postadress,
 engångskod, roll, giltighetstid och instruktioner för eget lösenord. Texten går också att markera och kopiera
 manuellt. Ingen e-post skickas automatiskt. Koden visas bara i den öppna dialogen.
+
+
+### BTLocoBridge på Windows (0.85.0, provversion)
+
+Under Inställningar → Banan (LocoNet) väljs BTLocoBridge och kortets **utgående Bluetooth-COM-port**,
+till exempel COM7. Sök enheter igen läser Windows serieportlista; den kan innehålla andra portar och anger inte
+säkert inkommande/utgående. Porten kan också skrivas för hand. Kanal döljs och MAC-adress behövs inte.
+Stäng JMRI före anslutning. Senaste portfel visas vid gatewayen; frånkoppling stoppar återanslutningsförsöken.
+Se [Bennys provguide](benny-windows-bluetooth-prov.md) för fysisk acceptans och återgång.

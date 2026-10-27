@@ -2365,3 +2365,21 @@ Efter mergningen kontrollerade Codex båda tjänsternas deployhistorik och händ
 | Träkvista | **0.84.0** | `e2240af` | [`dep-dbc48pbncjis73elq7ig`](https://dashboard.render.com/web/srv-dbaj7oajnfac73fu81vg/deploys/dep-dbc48pbncjis73elq7ig) |
 
 Versionerna lästes på nytt direkt ur `/app/package.json` i respektive körande container via Renders Web Shell med `node -p 'require("/app/package.json").version'`; båda svarade `0.84.0`. Båda aktiva driftsättningarna var **Live**, och de publika `/healthz`-adresserna svarade `{"status":"running"}`. Efterkontrollen var enbart avläsning och startade inte om eller driftsatte någon tjänst. Även denna journalanteckning använder `[skip render]`.
+
+
+## 27 oktober 2026 – BTLocoBridge via Windows-COM-port, förberett i PR
+
+Tk-TKL #2 visade att Windows uttryckligen spärrades och att gatewayen bara hade POSIX-hjälpare.
+0.85.0 lägger till en Windows-väg via kortets utgående Bluetooth-COM-port (SerialPort 13.0.0, valfritt
+beroende för övriga plattformar). Installatören kontrollerar att Windows-modulen laddas före versionsbytet.
+Den tidigare föreslagna citeringsrättelsen i Start-Tkl ingår, så att standardmappen med blanksteg kan provstartas.
+
+COM-portar listas på begäran, manuellt portval tillåts även vid sökfel, och kanal/MAC ersätts av portfält på Windows.
+Ingen orderkvittens syntetiseras: gatewayen kräver hela orderns eko. Portfel, avbrott och försenad öppning stänger
+anslutningen; befintlig återanslutning startar en ny gateway utan att upprepa förlorade order.
+Byte till ett otillgängligt anslutningssätt under live kräver först uttrycklig frånkoppling.
+
+Båda stationernas gemensamma program får ändringen. Windows-CI använder Node 22, native-modulen och syntetisk
+SerialPort-mock över riktig lokal TCP. [Bennys provguide](benny-windows-bluetooth-prov.md) beskriver installation
+av provgrenen, utgående COM-port, banprov, avbrott, omstart, resultat och återgång till main.
+Fysisk Windows-/Bluetooth-verifiering återstår; inget är publicerat till main eller driftsatt i den här PR-fasen.
