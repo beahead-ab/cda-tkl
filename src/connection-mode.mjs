@@ -42,7 +42,7 @@ export const MODE_LABEL = { live: 'LocoNet ansluten', offline: 'LocoNet ej anslu
 // USB-serieportar som en LocoBuffer kan sitta på: stabila namn under /dev/serial/by-id först (Linux), annars
 // ttyACM/ttyUSB, och cu.usb* på Mac.
 export function listSerialDevices(readdir = d => fs.readdirSync(d)) {
-  const out = [], list = (dir, test, label = n => n) => { try { for (const n of readdir(dir).sort()) if (test(n)) out.push({ path: path.join(dir, n), label: label(n) }); } catch {} };
+  const out = [], list = (dir, test, label = n => n) => { try { for (const n of readdir(dir).sort()) if (test(n)) out.push({ path: path.posix.join(dir, n), label: label(n) }); } catch {} };
   list('/dev/serial/by-id', () => true);
   list('/dev', n => /^tty(ACM|USB)\d+$/.test(n) || /^cu\.usb(serial|modem)/.test(n));
   return out;
