@@ -2390,3 +2390,10 @@ Fysisk Windows-/Bluetooth-verifiering återstår; inget är publicerat till main
 Casper har gjort cda-tkl publikt och vill avveckla cda-tkl-install och cda-tkl-drift. README skrivs om till en stegvis installationsguide för Pi, Mac och Windows: Imager, användare/värdnamn, SSH med lösenord och IP-alternativ, installationskommandon, lokal panel, SSH-tunnel, första ägare, TrainMeet, Stream Deck, uppdatering och felsökning. Utvecklingshistoriken ligger kvar i projektdokumenten.
 
 Installation och uppdatering hämtar direkt från cda-tkl. En gammal uttrycklig standardadress flyttas, medan egna stationsförråd, inställningar och driftdata bevaras. Äldre uppdateringsskript behöver ersättas genom en manuell körning från den nya adressen; detta beskrivs i README. Den separata publiceringslistan och publish-install.sh avvecklas. Träkvistas publiceringsflöde behålls. Ingen fysisk installation eller webbdrift uppdateras automatiskt av arbetet.
+
+
+## 28 oktober 2026 – automatisk omstart efter förstagångsinstallation på Pi, 0.85.2
+
+Casper vill att installationskommandot också startar om Pi:n när allt är klart. Installeraren beställer därför omstart om en minut efter en lyckad förstagångsinstallation på en fysisk Raspberry Pi med systemd, även för rangerarstationen. Omstarten ligger efter tjänsternas startkontroll. Slutmeddelandet förklarar att SSH bryts. Befintliga versioner, uppdateringstjänsten, andra Linux-datorer och miljöer utan systemd startas inte om. `CDA_TKL_REBOOT=0` väljer bort omstarten. Båda guiderna uppdateras.
+
+Automatiska prov skuggar shutdown med en skalfunktion och provar både beställd omstart, fel, uppdatering, annan dator och att installeraren aldrig når omstarten efter misslyckad startkontroll. Ingen riktig dator startas om i proven.

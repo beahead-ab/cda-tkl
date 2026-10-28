@@ -13,7 +13,7 @@ Den aktuella nybörjarguiden med minneskort, SSH, installation och första start
 2. [Förbered minneskortet](#2-förbered-minneskortet)
 3. [Första start](#3-första-start)
 4. [Installera TKL](#4-installera-tkl)
-5. [Starta om och kontrollera](#5-starta-om-och-kontrollera)
+5. [Vänta på automatisk omstart och kontrollera](#5-vänta-på-automatisk-omstart-och-kontrollera)
 6. [Koppla till TrainMeet](#6-koppla-till-trainmeet)
 7. [Stream Deck](#7-stream-deck)
 8. [Använda ställverket](#8-använda-ställverket)
@@ -84,17 +84,20 @@ Ange ditt lösenord när `sudo` frågar. Installationen skriver vad den gör och
 Charlottendal TKL X.Y.Z är installerad och startar automatiskt.
 Ställverket:  http://127.0.0.1:8910  (på den här datorn)
 Anläggningssimulatorn:  http://127.0.0.1:8911
-Chromium öppnar ställverket i helskärm efter nästa omstart:  sudo reboot
+Chromium öppnar ställverket i helskärm efter omstart.
 Genvägen 'Charlottendal TKL' finns på skrivbordet. Stream Deck kopplas upp av sig själv.
 Uppdatera senare med:  sudo cda-tkl-update
+Installationen är klar. Pi:n startar om automatiskt om en minut.
+SSH-förbindelsen bryts vid omstarten. Vänta tills Pi:n har startat igen.
+Avbryt den planerade omstarten vid behov med: sudo shutdown -c
 ```
 
 
-## 5. Starta om och kontrollera
+## 5. Vänta på automatisk omstart och kontrollera
 
-```sh
-sudo reboot
-```
+Efter en lyckad förstagångsinstallation startar Pi:n om automatiskt om en minut. SSH-förbindelsen bryts då; det är väntat. Du behöver inte köra `sudo reboot`. Vid installationsfel beställs ingen omstart. Vanliga uppdateringar startar om TKL-programmet.
+
+Vill du installera utan automatisk omstart, använd `sudo CDA_TKL_REBOOT=0 sh /tmp/cda-tkl-install.sh` enligt [README](../README.md#raspberry-pi-5). Då kan du starta om manuellt med `sudo reboot` när det passar.
 
 Efter omstarten loggar Pi:n in på skrivbordet av sig själv och Chromium öppnar ställverket i
 helskärm, med CHARLOTTENDAL överst till vänster. LocoNet är ej ansluten från början: TKL svarar själv genom

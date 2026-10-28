@@ -200,17 +200,24 @@ fi
 
 echo
 if [ -n "$KIOSK_URL" ]; then
-  echo "Rangerarens station är installerad. Chromium öppnar $KIOSK_URL i helskärm efter omstart:  sudo reboot"
+  echo "Rangerarens station är installerad. Chromium öppnar $KIOSK_URL i helskärm efter omstart."
   echo "Logga in med en användare som har rollen rangerare. Stream Deck kopplas upp av sig själv."
-  exit 0
-fi
-echo "$TKL_NAME TKL $VERSION är installerad och startar automatiskt."
-echo "Ställverket:  http://127.0.0.1:8910  (på den här datorn)"
-echo "Anläggningssimulatorn:  http://127.0.0.1:8911"
-if [ "$BROWSER_ENABLED" = true ]; then
-  echo "Chromium öppnar ställverket i helskärm efter nästa omstart:  sudo reboot"
-  echo "Genvägen '$TKL_NAME TKL' finns på skrivbordet. Stream Deck kopplas upp av sig själv."
 else
-  echo "Inget skrivbord hittades; TKL körs utan lokal webbläsare."
+  echo "$TKL_NAME TKL $VERSION är installerad och startar automatiskt."
+  echo "Ställverket:  http://127.0.0.1:8910  (på den här datorn)"
+  echo "Anläggningssimulatorn:  http://127.0.0.1:8911"
+  if [ "$BROWSER_ENABLED" = true ]; then
+    echo "Chromium öppnar ställverket i helskärm efter omstart."
+    echo "Genvägen '$TKL_NAME TKL' finns på skrivbordet. Stream Deck kopplas upp av sig själv."
+  else
+    echo "Inget skrivbord hittades; TKL körs utan lokal webbläsare."
+  fi
+  echo "Uppdatera senare med:  sudo $TKL_ID-update"
 fi
-echo "Uppdatera senare med:  sudo $TKL_ID-update"
+
+# Första installationen på en fysisk Pi: låt slutmeddelandet visas och yttersta install.sh städa upp
+# innan systemd startar om datorn. Uppdateringar och andra Debian/Ubuntu-datorer startas inte om.
+PI_MODEL=""
+[ ! -r /proc/device-tree/model ] || PI_MODEL=$(tr -d '\000' < /proc/device-tree/model)
+. "$SOURCE_DIR/scripts/raspberry-pi-reboot.sh"
+schedule_pi_reboot "$SYSTEMD" "$PI_MODEL" "$PREVIOUS"

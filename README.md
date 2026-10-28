@@ -118,7 +118,7 @@ sudo sh /tmp/cda-tkl-install.sh
 
 Om `sudo` frågar efter lösenord använder du Pi-användarens lösenord. Installationen hämtar programmet och Node.js, installerar beroenden och skapar tjänsterna. Räkna med flera minuter. Låt terminalen vara öppen. Om en rad ger ett fel: lös felet innan du fortsätter, se [felsökning](#felsökning).
 
-Till slut ska det stå att **Charlottendal TKL … är installerad och startar automatiskt**. Kontrollera tjänsterna:
+Till slut ska det stå att **Charlottendal TKL … är installerad och startar automatiskt**, följt av beskedet om automatisk omstart. Efter omstarten kan du vid behov ansluta med SSH igen och kontrollera tjänsterna:
 
 ```sh
 systemctl is-active cda-tkl cda-tkl-simulator
@@ -127,15 +127,13 @@ curl -fsS http://127.0.0.1:8910/api/config > /dev/null && echo "TKL svarar"
 
 Det ska komma två rader med `active` och därefter `TKL svarar`.
 
-### 6. Starta om och öppna ställverket
+### 6. Vänta på automatisk omstart och öppna ställverket
 
-Kör på Pi:n:
+Efter en lyckad **förstagångsinstallation** startar Pi:n om automatiskt efter en minut. Du behöver inte skriva `sudo reboot`. Slutmeddelandet talar om när omstarten är beställd.
 
-```sh
-sudo reboot
-```
+SSH-förbindelsen bryts när Pi:n startar om. Det är väntat och betyder inte att installationen misslyckats. Vänta tills Pi:n har startat igen. En installation som avbryts med fel beställer ingen omstart.
 
-SSH-förbindelsen bryts när Pi:n startar om. Det är väntat. Vänta tills Pi:n har startat igen.
+Har du valt bort omstarten med `sudo CDA_TKL_REBOOT=0 sh /tmp/cda-tkl-install.sh` kan du starta om senare med `sudo reboot`. Vanliga uppdateringar startar om TKL-programmet utan att starta om hela Pi:n.
 
 På Raspberry Pi OS med skrivbord och **labwc** ställer installationen in automatisk skrivbordsinloggning och Chromium i helskärm. Ställverket ska därför öppnas på Pi:ns skärm efter omstarten. Om det inte öppnas, öppna Chromium på Pi:n och skriv följande i adressfältet:
 

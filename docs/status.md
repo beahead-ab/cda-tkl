@@ -1,5 +1,10 @@
 # Charlottendal TKL – lägesbild 28 oktober 2026
 
+## 0.85.2 – automatisk omstart efter Pi-installation
+
+En fysisk Raspberry Pi med systemd startar om automatiskt en minut efter godkänd förstagångsinstallation. Startkontrollen måste lyckas först. Befintliga installationer, uppdateringstjänsten, andra datorer och miljöer utan systemd beställer ingen omstart. `CDA_TKL_REBOOT=0` väljer bort omstarten. README och Pi-guiden beskriver SSH-avbrottet och nästa start. Inget ändras på en fysisk Pi eller i Render under detta arbete.
+
+
 ## 0.85.1 – installation från det publika huvudförrådet
 
 README är nu installationsguiden för Raspberry Pi, Mac och Windows, inklusive SSH och byte från tidigare installation. Installerare, uppdaterare och versionskontroll använder `beahead-ab/cda-tkl`. Sparade standardadresser migreras; egna stationsförråd och driftdata bevaras. Den separata publiceringen till cda-tkl-install tas bort. Äldre installationer måste köra den nya installationsraden manuellt en gång. Ingen fysisk installation eller Render-tjänst uppdateras av detta arbete.
