@@ -319,9 +319,35 @@ WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
 Host key verification failed.
 ```
 
-Din Mac eller PC har sparat en annan SSH-värdnyckel för adressen i filen `known_hosts`. Det kan hända när du har skrivit om Pi:ns minneskort eller när en annan dator har fått samma IP-adress. Varningen kan också betyda att du ansluter till fel dator. **Kontrollera därför Pi:ns adress och nya nyckel innan du ersätter den sparade.**
+Din Mac eller PC har sparat en annan SSH-värdnyckel för adressen i filen `known_hosts`. Det kan hända när du har skrivit om Pi:ns minneskort eller när en annan dator har fått samma IP-adress. Varningen kan också betyda att du ansluter till fel dator. **Kontrollera vilken Pi adressen tillhör och om nyckelbytet är väntat. Vid ett oväntat byte ska du verifiera det nya fingeravtrycket innan du ersätter den sparade nyckeln.**
 
 Exemplet nedan gäller `ssh admin@192.168.0.160`. Byt adress och användarnamn mot dina egna; guiden i övrigt använder `pi@cda-tkl.local`.
+
+**Rättelsen görs på datorn du ansluter från.** Du kan alltså ta bort den gamla posten och ansluta igen helt från Macens Terminal eller PC:ns PowerShell. Filen `known_hosts` i varningen ligger på den datorn, inte på Pi:n.
+
+#### Utan skärm på Pi:n
+
+**Har du själv just installerat om Pi:n?** Kontrollera i routerns lista över anslutna enheter att `192.168.0.160` verkligen tillhör just den Pi:n, till exempel genom dess tidigare kända MAC-adress. När du vet att du når din ominstallerade Pi kan du godkänna dess nya nyckel som vid en första anslutning. Kör en rad i taget på **Macen eller PC:n**:
+
+```sh
+ssh-keygen -R 192.168.0.160
+ssh admin@192.168.0.160
+```
+
+Vid frågan om den nya nyckeln skriver du `yes` och trycker **Retur**. Ange därefter lösenordet du valde när du installerade Pi:n. Detta är ett nytt godkännande av värdnyckeln; det är inte en oberoende kontroll av fingeravtrycket. Om nyckelbytet är oväntat eller du är osäker på datorns identitet, använd kontrollen nedan innan du godkänner något.
+
+**Har du en redan öppen, betrodd SSH-session till samma Pi?** Behåll den öppen och kör följande där:
+
+```sh
+hostname -I
+ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+```
+
+Du kan också använda ett annat tidigare verifierat värdnamn för samma Pi, till exempel `ssh admin@cda-tkl.local`, om dess sparade värdnyckel fortfarande godtas utan nyckelvarning eller fråga om en okänd nyckel. Jämför fingeravtrycket med varningen. När det stämmer öppnar du ett **nytt lokalt terminalfönster på Macen eller PC:n** och kör de två rättningsraderna ovan. Skriv `yes` först när det nya fingeravtrycket stämmer.
+
+Om ingen betrodd SSH-väg finns kan den blockerade anslutningen inte själv bevisa Pi:ns identitet. Använd då en betrodd konsol eller den lokala kontrollen nedan. Att bara hämta nyckeln med `ssh-keyscan` ger ingen sådan verifiering, se [OpenSSH:s manual](https://man.openbsd.org/ssh-keyscan.1).
+
+#### Kontrollera med skärm och tangentbord på Pi:n
 
 1. Anslut skärm och tangentbord till **Pi:n** och öppna Terminal på dess skrivbord. Kör:
 
