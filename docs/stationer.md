@@ -10,7 +10,7 @@ rättelser därifrån kommer tillbaka. Träkvistas eget läge står i [Träkvist
 |---|---|---|
 | Innehåll | Programmet, Charlottendal och Träkvista, arbetsjournalen, driftsättningen, hela historiken | Programmet och Träkvista, inget mer |
 | Utvecklas | Här: programmet och båda stationernas källor | Publiceras härifrån, en commit per publicering |
-| Installeras från | `beahead-ab/cda-tkl-install` (publikt, `deploy/publish-install.sh`) | `beahead-ab/Tk-TKL` själv |
+| Installeras från | `beahead-ab/cda-tkl` (publikt) | `beahead-ab/Tk-TKL` själv |
 | Benny | Har inte tillgång | Kan få tillgång |
 
 Programmet är detsamma i båda. En rättelse i kärnan görs i cda-tkl och provas där mot båda stationerna

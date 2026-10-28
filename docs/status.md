@@ -1,4 +1,8 @@
-# Charlottendal TKL – lägesbild 22 oktober 2026
+# Charlottendal TKL – lägesbild 28 oktober 2026
+
+## 0.85.1 – installation från det publika huvudförrådet
+
+README är nu installationsguiden för Raspberry Pi, Mac och Windows, inklusive SSH och byte från tidigare installation. Installerare, uppdaterare och versionskontroll använder `beahead-ab/cda-tkl`. Sparade standardadresser migreras; egna stationsförråd och driftdata bevaras. Den separata publiceringen till cda-tkl-install tas bort. Äldre installationer måste köra den nya installationsraden manuellt en gång. Ingen fysisk installation eller Render-tjänst uppdateras av detta arbete.
 
 ## Förberett i PR: 0.85.0 – BTLocoBridge på Windows
 

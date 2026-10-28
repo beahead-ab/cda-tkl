@@ -1,6 +1,6 @@
 # Installs Charlottendal TKL on a Windows 10/11 PC for the logged-in user. In PowerShell:
 #
-#   irm https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.ps1 | iex
 #
 # Its own Node 22 from nodejs.org (checksum verified), the signal box and the LocoNet
 # simulator started hidden at login and restarted if they stop, and a desktop shortcut
@@ -15,7 +15,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$Repository = 'beahead-ab/cda-tkl-install'
+$Repository = 'beahead-ab/cda-tkl'
 $Branch = if ($env:CDA_TKL_BRANCH) { $env:CDA_TKL_BRANCH } else { 'main' }
 # Samma två namn som install.sh läser, så Pi, Mac och PC tar emot samma token.
 $Token = if ($env:TKL_TOKEN) { $env:TKL_TOKEN } else { $env:CDA_TKL_TOKEN }
@@ -45,7 +45,7 @@ try {
   }
   if (-not (Test-Path (Join-Path $Source 'src\server.mjs'))) { throw 'Installationspaketet är ofullständigt.' }
   # Läs identiteten före kataloger och genvägar, så en annan station inte ersätter Charlottendal.
-  $Identity = @{ TKL_ID = 'cda-tkl'; TKL_NAME = 'Charlottendal'; TKL_STATION = 'charlottendal'; TKL_REPOSITORY = 'beahead-ab/cda-tkl-install' }
+  $Identity = @{ TKL_ID = 'cda-tkl'; TKL_NAME = 'Charlottendal'; TKL_STATION = 'charlottendal'; TKL_REPOSITORY = 'beahead-ab/cda-tkl' }
   $IdentityFile = Join-Path $Source 'packaging\identity.env'
   if (Test-Path $IdentityFile) { foreach ($Line in Get-Content $IdentityFile) { if ($Line -match '^(TKL_[A-Z_]+)=(.*)$') { $Identity[$Matches[1]] = $Matches[2].Trim() } } }
   if ($Identity['TKL_ID'] -notmatch '^[a-z0-9-]+$') { throw 'Ogiltigt TKL_ID i packaging\identity.env.' }
@@ -108,6 +108,10 @@ try {
       Set-Content -Path $EnvFile -Encoding UTF8
   }
   if (-not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_INSTALL_KIND=' -Quiet)) { Add-Content -Path $EnvFile -Value 'CHARLOTTENDAL_INSTALL_KIND=windows' -Encoding UTF8 }
+  # Byt den gamla standardadressen, men bevara ett uttryckligt eget förråd och all driftdata.
+  $Config = Get-Content $EnvFile -Raw
+  $Migrated = $Config -replace '(?m)^CHARLOTTENDAL_INSTALL_REPOSITORY="?beahead-ab/cda-tkl-install"?\r?$', 'CHARLOTTENDAL_INSTALL_REPOSITORY=beahead-ab/cda-tkl'
+  if ($Migrated -ne $Config) { Set-Content -Path $EnvFile -Value $Migrated -NoNewline -Encoding UTF8 }
   if ($Identity['TKL_STATION'] -and $Identity['TKL_STATION'] -ne 'charlottendal' -and -not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_STATION=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_STATION=' + $Identity['TKL_STATION']) -Encoding UTF8 }
   # Privat förråd: spara samma token som installationen fick, så att Uppdatering i panelen ser nya versioner.
   $TokenFile = Join-Path $App 'github-token'
@@ -117,7 +121,7 @@ try {
   $UpdateScript = Join-Path $App 'update.ps1'
   Copy-Item (Join-Path $Source 'packaging\windows\update.ps1') $UpdateScript -Force
   if (-not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_UPDATE_COMMAND=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_UPDATE_COMMAND=' + $UpdateScript) -Encoding UTF8 }
-  if ($Identity['TKL_REPOSITORY'] -and $Identity['TKL_REPOSITORY'] -ne 'beahead-ab/cda-tkl-install' -and -not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_INSTALL_REPOSITORY=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_INSTALL_REPOSITORY=' + $Identity['TKL_REPOSITORY']) -Encoding UTF8 }
+  if ($Identity['TKL_REPOSITORY'] -and $Identity['TKL_REPOSITORY'] -ne 'beahead-ab/cda-tkl' -and -not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_INSTALL_REPOSITORY=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_INSTALL_REPOSITORY=' + $Identity['TKL_REPOSITORY']) -Encoding UTF8 }
   Copy-Item -Force (Join-Path $Source 'packaging\windows\run.ps1') (Join-Path $App 'run.ps1')
 
   # Started hidden at login (Startup folder; no administrator rights needed).

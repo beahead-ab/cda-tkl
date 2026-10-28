@@ -1,5 +1,5 @@
 [Unit]
-Description=Update Charlottendal TKL (web deployment) from cda-tkl-install
+Description=Update Charlottendal TKL (web deployment) from cda-tkl
 Wants=network-online.target
 After=network-online.target
 

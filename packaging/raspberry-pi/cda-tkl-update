@@ -6,7 +6,7 @@ set -eu
 [ "$(id -u)" -eq 0 ] || { echo "Kör med sudo: sudo cda-tkl-update"; exit 1; }
 TOKEN=""
 [ -r /etc/cda-tkl/github-token ] && TOKEN=$(cat /etc/cda-tkl/github-token)
-URL="https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/${CDA_TKL_BRANCH:-main}/install.sh"
+URL="https://raw.githubusercontent.com/beahead-ab/cda-tkl/${CDA_TKL_BRANCH:-main}/install.sh"
 if [ -n "$TOKEN" ]; then
   curl -fsSL -H "Authorization: Bearer $TOKEN" "$URL" | CDA_TKL_TOKEN="$TOKEN" sh
 else

@@ -2,8 +2,8 @@
 # Public installer for Charlottendal TKL on a Raspberry Pi 5 (Raspberry Pi OS 64-bit),
 # another Debian/Ubuntu machine, or a Mac:
 #
-#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh | sudo sh   (Linux)
-#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh | sh        (Mac)
+#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sudo sh   (Linux)
+#   curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh | sh        (Mac)
 #
 # It fetches the whole package from GitHub and runs the installer for this system.
 # Run it again, or `sudo cda-tkl-update`, to update; settings and operating data stay.
@@ -11,9 +11,9 @@
 # CDA_TKL_SOURCE=/path/to/package.tar.gz or a directory installs from there instead (tests).
 set -eu
 
-# Förrådet och namnet för den här installationen. Charlottendal: cda-tkl-install. En annan station har sitt eget
+# Förrådet och namnet för den här installationen. Charlottendal: cda-tkl. En annan station har sitt eget
 # förråd med samma skript (Träkvista: beahead-ab/Tk-TKL); packaging/identity.env i paketet säger resten.
-REPOSITORY="beahead-ab/cda-tkl-install"
+REPOSITORY="beahead-ab/cda-tkl"
 NAME="Charlottendal TKL"
 BRANCH="${CDA_TKL_BRANCH:-main}"
 # Ett privat förråd läses med en token: TKL_TOKEN eller CDA_TKL_TOKEN.
