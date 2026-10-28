@@ -79,6 +79,8 @@ ssh pi@cda-tkl.local
 
 Första gången frågar SSH om du vill ansluta till den nya datorn. Kontrollera att adressen är din Pi, skriv `yes` och tryck **Retur**. Skriv därefter lösenordet som du valde i Imager och tryck **Retur**. **Inga tecken eller stjärnor visas medan du skriver lösenordet.** Det är normalt.
 
+Visas i stället **WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!**, följ [stegen för ändrad SSH-värdnyckel](#pi-ssh-varnar-att-värdnyckeln-har-ändrats) innan du fortsätter.
+
 När inloggningen har lyckats visas en kommandorad ungefär så här:
 
 ```text
@@ -307,6 +309,48 @@ En uppdatering startar om TKL. Sparade tågvägslås behålls, men körmedgivand
 - **Connection refused:** kontrollera att SSH är aktiverat. På Pi:ns lokala terminal kan du köra `sudo raspi-config` och aktivera SSH under **Interface Options → SSH**.
 - **Permission denied:** kontrollera användarnamnet och lösenordet från Imager. Användaren behöver inte heta `pi`.
 - Om Windows säger att `ssh` inte finns: öppna Inställningar, sök efter **Valfria funktioner**, välj att lägga till **OpenSSH-klient** och öppna sedan ett nytt PowerShell-fönster.
+
+### Pi: SSH varnar att värdnyckeln har ändrats
+
+Om SSH visar följande och avbryter inloggningen:
+
+```text
+WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+Host key verification failed.
+```
+
+Din Mac eller PC har sparat en annan SSH-värdnyckel för adressen i filen `known_hosts`. Det kan hända när du har skrivit om Pi:ns minneskort eller när en annan dator har fått samma IP-adress. Varningen kan också betyda att du ansluter till fel dator. **Kontrollera därför Pi:ns adress och nya nyckel innan du ersätter den sparade.**
+
+Exemplet nedan gäller `ssh admin@192.168.0.160`. Byt adress och användarnamn mot dina egna; guiden i övrigt använder `pi@cda-tkl.local`.
+
+1. Anslut skärm och tangentbord till **Pi:n** och öppna Terminal på dess skrivbord. Kör:
+
+   ```sh
+   hostname -I
+   ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+   ```
+
+   Kontrollera att IP-adressen är den du försöker nå. Jämför hela fingeravtrycket som börjar med `SHA256:` med det som visas i SSH-varningen på din Mac eller PC. Det här gäller varningens **ED25519**-nyckel. Om fingeravtrycken skiljer sig, eller om du inte kan kontrollera dem, avbryt och ta reda på vilken dator du ansluter till.
+
+2. **När adressen och fingeravtrycket är bekräftade:** gå tillbaka till Terminal på **Macen**, eller PowerShell på **PC:n**, och kör:
+
+   ```sh
+   ssh-keygen -R 192.168.0.160
+   ```
+
+   Kommandot tar bort sparade värdnycklar för just den adressen, även om adressen är dold i `known_hosts`. Övriga värdar behålls. Originalfilen sparas som `known_hosts.old`. Du behöver inte redigera den angivna raden, till exempel rad 20, för hand eller radera hela filen.
+
+3. Anslut igen från **Macen eller PC:n**:
+
+   ```sh
+   ssh admin@192.168.0.160
+   ```
+
+4. SSH frågar nu om den nya nyckeln ska godkännas. Kontrollera åter att fingeravtrycket stämmer med det du läste direkt på Pi:n. Skriv `yes`, tryck **Retur**, ange Pi-användarens lösenord och tryck **Retur** igen. Inga tecken visas när lösenordet skrivs.
+
+Om varningen gäller värdnamnet `cda-tkl.local`, använd i steg 2 i stället `ssh-keygen -R cda-tkl.local` och anslut sedan med `ssh pi@cda-tkl.local`. Använder du både IP-adress och värdnamn kan båda ha gamla sparade nycklar; ta bara bort posterna för den Pi vars nya nyckel du har kontrollerat.
+
+Låt SSH:s kontroll av värdnyckeln vara påslagen. Kommandona beskrivs i [OpenSSH:s manual för ssh-keygen](https://man.openbsd.org/ssh-keygen.1).
 
 ### Pi: panelen öppnas inte
 
