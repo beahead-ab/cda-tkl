@@ -2397,3 +2397,8 @@ Installation och uppdatering hämtar direkt från cda-tkl. En gammal uttrycklig 
 Casper vill att installationskommandot också startar om Pi:n när allt är klart. Installeraren beställer därför omstart om en minut efter en lyckad förstagångsinstallation på en fysisk Raspberry Pi med systemd, även för rangerarstationen. Omstarten ligger efter tjänsternas startkontroll. Slutmeddelandet förklarar att SSH bryts. Befintliga versioner, uppdateringstjänsten, andra Linux-datorer och miljöer utan systemd startas inte om. `CDA_TKL_REBOOT=0` väljer bort omstarten. Båda guiderna uppdateras.
 
 Automatiska prov skuggar shutdown med en skalfunktion och provar både beställd omstart, fel, uppdatering, annan dator och att installeraren aldrig når omstarten efter misslyckad startkontroll. Ingen riktig dator startas om i proven.
+
+
+**Publicerad: 0.85.2 (28 oktober 2026; cda-tkl main `111948f`, #113; samtliga kontroller godkända i CI `40675022627`).**
+
+Provningen omfattar enhetsprov, integrationer, återställning, stationspaket, båda containerproven och Windows-installation. Omstartsproven använder skuggat shutdown; fysisk omstart på Pi återstår att prova. Merge-meddelandets [skip render] lämnar webbdriften orörd.

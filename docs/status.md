@@ -2,6 +2,8 @@
 
 ## 0.85.2 – automatisk omstart efter Pi-installation
 
+**Publicerad: 0.85.2 (28 oktober 2026; cda-tkl main `111948f`, #113; samtliga kontroller godkända i CI `40675022627`).**
+
 En fysisk Raspberry Pi med systemd startar om automatiskt en minut efter godkänd förstagångsinstallation. Startkontrollen måste lyckas först. Befintliga installationer, uppdateringstjänsten, andra datorer och miljöer utan systemd beställer ingen omstart. `CDA_TKL_REBOOT=0` väljer bort omstarten. README och Pi-guiden beskriver SSH-avbrottet och nästa start. Inget ändras på en fysisk Pi eller i Render under detta arbete.
 
 
