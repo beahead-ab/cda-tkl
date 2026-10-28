@@ -2383,3 +2383,10 @@ Båda stationernas gemensamma program får ändringen. Windows-CI använder Node
 SerialPort-mock över riktig lokal TCP. [Bennys provguide](benny-windows-bluetooth-prov.md) beskriver installation
 av provgrenen, utgående COM-port, banprov, avbrott, omstart, resultat och återgång till main.
 Fysisk Windows-/Bluetooth-verifiering återstår; inget är publicerat till main eller driftsatt i den här PR-fasen.
+
+
+## 28 oktober 2026 – publikt huvudförråd och samlad installationsguide, 0.85.1
+
+Casper har gjort cda-tkl publikt och vill avveckla cda-tkl-install och cda-tkl-drift. README skrivs om till en stegvis installationsguide för Pi, Mac och Windows: Imager, användare/värdnamn, SSH med lösenord och IP-alternativ, installationskommandon, lokal panel, SSH-tunnel, första ägare, TrainMeet, Stream Deck, uppdatering och felsökning. Utvecklingshistoriken ligger kvar i projektdokumenten.
+
+Installation och uppdatering hämtar direkt från cda-tkl. En gammal uttrycklig standardadress flyttas, medan egna stationsförråd, inställningar och driftdata bevaras. Äldre uppdateringsskript behöver ersättas genom en manuell körning från den nya adressen; detta beskrivs i README. Den separata publiceringslistan och publish-install.sh avvecklas. Träkvistas publiceringsflöde behålls. Ingen fysisk installation eller webbdrift uppdateras automatiskt av arbetet.

@@ -219,7 +219,7 @@ const streamDeckLayouts=new StreamDeckLayouts(storage,{pluppIds:()=>Object.keys(
 const release=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version;
 // Installed copies look for a newer release in the public install repository.
 // The web deployment on its own server sets no install kind; its own updater (installed by publish-release)
-// makes it one, so Inställningar → Uppdatering can update it from cda-tkl-install. On Render, deploy/render
+// makes it one, so Inställningar → Uppdatering can update it from cda-tkl. On Render, deploy/render
 // sets the kind and RENDER_DEPLOY_HOOK_URL (a secret set in Render) lets the panel start a new build.
 const installKind=process.env.CHARLOTTENDAL_INSTALL_KIND||(fs.existsSync('/usr/local/sbin/charlottendal-update')?'web':'');
 const updateCheck=installKind?new UpdateCheck({current:release,kind:installKind,repository:installRepository(),product:station.title+' TKL',token:()=>readToken(),command:process.env.CHARLOTTENDAL_UPDATE_COMMAND||'',statusFile:path.join(storage.directory,'update.json'),readFile:file=>fs.readFileSync(file,'utf8'),
@@ -351,7 +351,7 @@ const server = http.createServer(async (req, res) => {
     // On a Raspberry Pi the panel can start cda-tkl-update.service (allowed for the cda-tkl
     // user by the installer's polkit rule). It reinstalls and restarts TKL; the panel then
     // offers a reload. Elsewhere the update is started from Terminal or PowerShell.
-    // Uppdatering → Sök efter ny version: ask cda-tkl-install now rather than at the next hourly check.
+    // Uppdatering → Sök efter ny version: ask cda-tkl now rather than at the next hourly check.
     if(url.pathname==='/api/update/check'){
       if(!updateCheck)return json(res,{error:'Den här installationen söker inte efter nya versioner.'},409);
       const view=await updateCheck.check();dirty=true;return json(res,view);

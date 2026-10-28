@@ -1,119 +1,377 @@
-# Charlottendal TKL · version 0.42.1
+# Installera CDA-TKL · Charlottendal TKL
 
-En första körbar lokal applikation med egen TKL-kärna och en separat anläggningssimulator. Den använder Charlottendals exporterade geometri och JMRI mod59-signalbilder. Claude Design behövs inte för att köra den.
+CDA-TKL är ett ställverk för modelljärnvägen Charlottendal, med anslutning till TrainMeet och möjlighet att ansluta banans LocoNet. Här går vi från en tom dator till ett installerat ställverk.
 
-Webbversionen finns på [cda-tkl.trainmeet.app](https://cda-tkl.trainmeet.app/), med [separat anläggningssimulator](https://cda-tkl.trainmeet.app/anlaggning/). Logga in med lösenord. Vid första inloggningen väljer du ett eget; därefter finns **Byt lösenord** i panelen. Serverversionen har egna driftdata och är oberoende av den lokala installationen.
+Programmet, installationsskripten och uppdateringarna finns i det publika förrådet **[beahead-ab/cda-tkl](https://github.com/beahead-ab/cda-tkl)**. Du behöver inget GitHub-konto, ingen GitHub-token och ingen separat installation av Git eller Node.js. Installationen hämtar sin egen Node.js 22 och programmets beroenden.
 
-Källkoden finns i [beahead-ab/cda-tkl](https://github.com/beahead-ab/cda-tkl). Serveruppgifter och driftjournalen för webbdriften hålls utanför förrådet.
+## Välj din dator
 
-Anläggningsöversikt och diagnostik: [anläggningsöversikt, utvecklingsläge och kommunikationsdiagnostik](docs/anlaggningsoversikt-kommunikation.md).
+- **[Raspberry Pi 5 – från minneskort till ställverk](#raspberry-pi-5)**
+- **[Mac – installera via Terminal](#mac)**
+- **[PC med Windows – installera via PowerShell](#pc-med-windows)**
+- **[Första gången i ställverket](#första-gången-i-ställverket)**
+- **[Uppdatera en befintlig installation](#uppdatera-en-befintlig-installation)**
+- **[Felsökning](#felsökning)**
+- **[Var program och driftdata sparas](#var-program-och-driftdata-sparas)**
 
-## Starta och prova
+**Redan installerat från det tidigare installationsförrådet?** Kör den nya installationsraden för din dator en gång enligt [uppdateringsavsnittet](#uppdatera-en-befintlig-installation). Det flyttar uppdateringarna till huvudförrådet och behåller dina inställningar och driftdata.
 
-Dubbelklicka **Starta Charlottendal.command** i den här mappen. Låt terminalfönstret vara öppet medan appen körs. Node.js 22 eller senare behövs. Första starten installerar det låsta beroendet `jose`, som verifierar Cloudflare-inloggning vid webbdrift. Lokal körning behöver inget Cloudflare-konto.
+## Raspberry Pi 5
 
-- [TKL-panelen](http://127.0.0.1:8910)
-- [Den separata anläggningen](http://127.0.0.1:8911)
+### 1. Ta fram det här
 
-Om appen redan är igång öppnar du länkarna direkt. Avsluta med Ctrl+C i dess terminal. Tågvägslåsen sparas mellan starter; simulatorns anläggningstillstånd börjar däremot om. Återstående lås måste återtas efter att nya rapporter har kommit.
+- Raspberry Pi 5, strömförsörjning för Pi 5 och kylning.
+- microSD-kort på minst 32 GB och en kortläsare till din Mac eller PC. Kortet kommer att raderas.
+- En Mac eller Windows-dator med internet, för att skriva minneskortet och ansluta med SSH.
+- Nätverkskabel till routern eller uppgifter till ditt Wi-Fi.
+- HDMI-skärm och rätt micro-HDMI-kabel om ställverket ska visas på Pi:n. Tangentbord och mus behövs om du vill arbeta direkt på Pi:ns skrivbord.
+- Valfritt: Stream Deck, USB-LocoBuffer eller BTLocoBridge. De behövs inte för att installera och komma igång utan ansluten LocoNet.
 
-1. Välj **Spår 2b → Spår 2c** i TKL, eller klicka motsvarande två pluppar. Följ växellägena, tändningen och det rapporterade körbeskedet.
-2. Klicka växel **121**. Manöverknapparna är spärrade medan tågvägen låser den.
-3. Öppna anläggningen och välj samma färd under **Kör ett tåg**. Detektorerna rapporterar belagt och fritt. TKL visar händelserna och behåller låsen.
-4. Klicka **Återta** eller samma start- och slutpluppar igen. Låsen frigörs först när alla frigivningsvillkor är uppfyllda.
-5. Prova **Cu → Spår 2b** för tre signaler: 2/7 klarsätts först, därefter 1/5 och sist 1/3. Du kan också välja **Spår 12 → Spår 5b** för en avvikande växel.
-6. Prova uteblivet växelsvar, signal som hålls i stopp, tyst detektor eller bruten LocoNet i anläggningsfönstret. Åtgärda felet, återta vägen och lägg den på nytt.
+Datorn och Pi:n ska vara anslutna till samma lokala nätverk. Internet behövs under installation och uppdatering.
 
-**Original**, **Reläpanel** och **Trafikskärm** delar samma funktioner. Utseendena är kodade tolkningar av designen; den kompletta Claude-exporten finns separat i designarkivet. Zoom underlättar manövrering på mindre skärmar. Ikoner laddas och avkodas före första visningen och bildnoderna ligger kvar vid tillståndsbyte.
+### 2. Skriv operativsystemet på minneskortet
 
-## Det som fungerar
+1. På din **Mac eller PC**, öppna [Raspberry Pi Imager](https://www.raspberrypi.com/software/).
+2. Ladda ned versionen för din dator, installera den och öppna **Raspberry Pi Imager**.
+3. Sätt minneskortet i datorns kortläsare.
+4. Välj **Raspberry Pi 5** som enhet.
+5. Välj **Raspberry Pi OS (64-bit)** med skrivbord. Välj inte **Lite** om Pi:ns egen skärm ska visa ställverket. Välj inte ett 32-bitars system.
+6. Välj ditt minneskort under lagring. Kontrollera att det är rätt kort: allt på det raderas när du skriver det.
+7. Öppna anpassningen av operativsystemet, **Customisation/Anpassning**. I äldre Imager heter det **Edit settings/Redigera inställningar**.
+8. Ange följande värden. Exemplen nedan används i resten av guiden:
 
-- Lågt tidtabellsfält direkt under spårplanen med TrainMeets tidtabell, med flera kolumner, bläddring och fullständiga tåguppgifter vid klick eller högerklick. Utseendet följer valt panelskin.
-- Tågklarering mot grannstationerna genom TrainMeet som TKL-terminal, med samma flöde som en TMBox: begär, godkänn, neka, återta, avgått och mottaget per sträcka samt uppställt, förare på plats, närmar sig och ankommit per tåg. Stationen är i tjänst hos TrainMeet så länge den är parkopplad, precis som en tilldelad box; TKL startar aldrig något trafikpass. Kräver TrainMeet Server med passfritt TKL-kontrakt. Fungerar både över internet och mot en Raspberry Pi på träffens nät, med en sparad parkoppling per server. Klarering är skild från tågvägar och signaler. Parkopplad mot server.trainmeet.app från den lokala installationen; klareringsprov i skarp träff återstår.
-- Stream Deck som manöverenhet via WebHID i panelsidan (Chrome, Edge eller Chromium, egen sida i menyn): driftknappar, en avgångs- och en ankomstknapp per sträcka som går igenom TMBox-stegen med kort och långt tryck, tåg på tur i tidtabellsordning, och alla pluppar över flera sidor med tågvägsfärg. Flera deck kan vara anslutna samtidigt; varje deck känns igen på serienumret och har sin egen layout. Layouterna redigeras i TKL under Stream Deck → Layout med dra och släpp, egen text och bild på knapparna, utkast och aktivering, och kan exporteras till Pi:n.
-- Lokal kärna som ensam avgör tågvägar, lås, växelorder och signalmedgivanden.
-- 210 huvudtågvägar och 130 växeltågvägar, 49 växlar, 197 körbara layoutblock och 66 signaler. Spår 6 väljs i tågvägslistan; källan saknar en panelikon för dess huvudtågvägsknapp.
-- Reserverade block och korsningar; kopplade växlar kan delas i samma läge. Manuell omläggning av låsta växlar vägras. Profilerna innehåller ännu inga godkända automatiska alternativa tågvägar.
-- Okända eller gamla återrapporter behandlas som okända. Eko och transportkvittens räknas aldrig som bekräftat växelläge eller signalbesked.
-- Körbegäran i omvänd signalordning efter bekräftade växellägen. Kör visas först efter signalrapport. Oväntat kör från en motriktad signal stoppar den berörda provtågvägen.
-- Lokala villkor för 20 manuella växelknappar, AIS, nödåtertagning och beständiga spårspärrar. Lokal-/fjärrläge finns; fjärrsystem är ännu inte anslutet.
-- Sju beständiga linjespärrar och programmeringsspår med lås över avbrott/omstart, separat relä- och sensorrapport samt felprov i simulatorn. [Handhavande och fysisk begränsning](docs/linjer-programmering-klocka.md).
-- Gemensam modellklocka med trafikdygn, hastighet och paus/start; valbar kort felsignal och synlig felindikering.
-- Serverlagrade visningsinställningar med utkast, jämförelse och versionshistorik. Manuell tåginformation för alla 197 block samt sju inkommande fält; ändrad beläggning och omstart kräver kontroll.
-- Beständiga lås och händelsejournal. Omstart eller återanslutning återupptar aldrig körmedgivanden automatiskt.
-- Komplett sökbart XML-register med 25 kategorier, bland annat 66 signaler, 727 växelobjekt, 604 sensorer, 404 block, 174 minnen, 1 377 conditionals, signalmastlogik och 153 start-/målpar. Samtliga fält och referenser kan granskas, med paginering och nedladdning av oförändrad originalfil. Anteckningar sparas separat och kan exporteras.
-- Signalöversikt med alla 329 källbindningar, 117 relationer och exakt verifierade referensbilder. Fysiskt rapporterat läge visas separat från källans bild.
-- Beräknade panelindikeringar V1–V4 med klickbart underlag. Saknade villkor visas som okända; ingen fysisk bomstyrning eller bomkvittens.
-- Inspelning och nedladdning av telegram i båda riktningarna, med separat markering av order, eko, transportkvittens och återrapport. Se [telegraminspelning](docs/telegraminspelning.md).
-- Oberoende simulator som skickar bytekorrekta meddelanden genom LocoNet-over-TCP och tar emot order samma väg.
+   | Inställning | Ange |
+   |---|---|
+   | Värdnamn / Hostname | `cda-tkl` |
+   | Användarnamn / Username | `pi` |
+   | Lösenord | Ett eget lösenord som du sparar |
+   | Tidszon | `Europe/Stockholm` |
+   | Tangentbord | Svenskt / `se` |
+   | Wi-Fi | Ditt nätverksnamn och lösenord, land Sverige / `SE`; hoppa över vid nätverkskabel |
 
-Spårbeteckningarna i gränssnittet följer **den tryckta spårplanen**. Exempelvis heter knappen vid tryckt **2c** internt `htvSpIIA`. Dessa två beteckningar får inte blandas ihop.
+9. Under **Remote Access/Fjärråtkomst** (i äldre Imager **Services/Tjänster**): slå på **Enable SSH/Aktivera SSH** och välj **Use password authentication/Lösenordsautentisering**.
+10. Spara inställningarna och fortsätt till skrivningen. Godkänn att inställningarna används och att kortet raderas.
+11. Vänta tills både skrivning och verifiering är färdiga.
+12. Mata ut minneskortet säkert från datorn och ta ur det.
 
-Aktuell [lägesbild med vad som fungerar och vad som återstår](docs/status.md) sammanfattar hela projektet.
+`pi` är användaren du själv skapar i steg 8. Den finns inte automatiskt och har inget förinställt lösenord. Väljer du ett annat namn måste du använda det i SSH-kommandona nedan. Har du flera Pi-datorer ska varje Pi ha ett eget värdnamn.
 
-## Det som återstår före fysisk användning
+### 3. Starta Pi:n
 
-Detta är en utvecklingsprofil för modelljärnvägen. Simulatorn är en uttrycklig provmodell av delar av MGP-beteendet; den är ännu inte verifierad mot din utrustning eller en inspelad trafiklogg.
+1. Sätt minneskortet i Pi:n när strömmen är urkopplad.
+2. Anslut nätverkskabel om du använder kabel.
+3. Anslut eventuell skärm, tangentbord och mus.
+4. Anslut strömmen sist.
+5. Vänta några minuter. Första starten kan göra en automatisk omstart.
 
-- Prova anslutningen vid banan. TKL ansluter till LocoNet på två sätt sedan 0.78.0 respektive 0.83.0: en LocoBuffer på USB och en BTLocoBridge över Bluetooth (Möllehems smartphoninterface), valda under Inställningar → Banan (LocoNet). Båda är provade mot en virtuell förbindelse, inte mot bufferten eller kortet vid banan, och MGP-modulernas firmware är ännu inte identifierad. Se [LocoNet ansluten eller ej ansluten](docs/loconet-anslutning.md).
-- Ersätt provadresserna för detektorer (från 3001) och signaler (från 1501) med uppmätta bindningar. Växeladresserna kommer från LT-objekten i JMRI, inklusive inverteringen av Vx131. Elektriskt beteende och återrapport måste ändå kontrolleras.
-- Verifiera svenska Signal10-besked. Kod 0, 8 och 18 kommer från ett dokumenterat CZ-exempel och används endast som preliminär stopp/kör-mappning. Gränssnittet återger inte ännu fullständiga svenska huvud- och försignalbesked eller skillnaden mellan 8 och 18.
-- Fastställ alla signalriktningar, tågvägsregler, flankskydd, skyddsavstånd, tidsvillkor, automatisk upplåsning och lokala växlingsregler. De importerade 1 377 JMRI-conditionals finns i appens register med samtliga variabler, åtgärdsvärden, tidsparametrar och införandestatus per regel. Utvalda huvud-/växeltågvägsregler och manuella villkor har översatts till kärnan; den kör inte JMRI eller de saknade externa Jython-skripten.
-- Granska de 15 undantagna växeltågvägarna, rangerområdets överlämning och återstående funktioner. Okonfigurerade eller motsägande fall manövreras inte.
-- Prova klareringsflödet i skarp träff mot server.trainmeet.app (1.16.5) och parkoppla webbdriften med serverns anslutningskod. Trafikpass, klarering och tågrörelser via TKL-kontraktet är byggda; linjen klar återstår. TMBox v2 över MQTT är inte nåbart utifrån.
+### 4. Öppna rätt terminal på din Mac eller PC
 
-Vid avbrott kan kärnan begära stopp endast när förbindelsen fungerar. Den kan inte garantera ett fysiskt stoppbesked över en bruten förbindelse. Provmodellens återrapport av växelläge är heller inte en verifiering av mekaniska ändlägen.
+Du använder din vanliga dator för att logga in på Pi:n:
 
-## För utveckling
+- **Mac:** tryck **⌘ + mellanslag**, skriv `Terminal` och tryck **Retur**.
+- **Windows:** öppna Start, skriv `Windows PowerShell` och öppna programmet. Du behöver inte välja ”Kör som administratör”.
+
+Skriv eller klistra in följande rad och tryck **Retur**:
 
 ```sh
-npm ci --ignore-scripts    # installera låsta beroenden första gången
-npm start                 # startar TKL och simulator som två processer
-npm run backend           # endast TKL
-npm run simulator         # endast anläggningen
-npm test                  # protokoll-, kärn- och inloggningstester
-npm run test:integration  # helhetstest med separata processer och tillfälliga portar
-npm run check             # syntaxkontroll
-npm run verify:xml        # jämför varje källfält med original-XML
-npm run import:xml        # återskapa källregistret (Python 3 behövs)
+ssh pi@cda-tkl.local
 ```
 
-Allt lyssnar på datorns loopback-adress. Portar: 8910 TKL, 8911 simulatorns egen manöverpanel, 8912 LocoNet-over-TCP. Ingen molntjänst eller databasinstallation krävs. Lagring finns i `var/`: `routes.json`, `controls.json`, `configuration.json`, `train-information.json`, `notes.json` och roterande `events.ndjson`. Ta kopia av hela mappen för att säkerhetskopiera lokalt arbete; radera inte låsfilen för att kringgå kvarstående lås.
+Första gången frågar SSH om du vill ansluta till den nya datorn. Kontrollera att adressen är din Pi, skriv `yes` och tryck **Retur**. Skriv därefter lösenordet som du valde i Imager och tryck **Retur**. **Inga tecken eller stjärnor visas medan du skriver lösenordet.** Det är normalt.
 
-Profilerna ligger i `profiles/`. Byt inte profil medan sparade tågvägslås finns. Standardprofilen är `network`; den genereras av `npm run import:operations` och verifieras av `npm run verify:operations`. Den äldre fyrvägsprofilen finns endast som separat regressionsunderlag (`CHARLOTTENDAL_PROFILE=legacy`).
+När inloggningen har lyckats visas en kommandorad ungefär så här:
 
-Se [arkitektur och gränser](docs/arkitektur.md), [provresultat](docs/provresultat.md) och [protokollunderlag](docs/protokollunderlag.md).
+```text
+pi@cda-tkl:~ $
+```
 
-Se även [genomgång mot Claude Design och XML](docs/design-xml-granskning.md).
+Nu körs kommandona du skriver **på Pi:n**. Fönstret är fortfarande öppet på din Mac eller PC, men installationen hamnar på Pi:n.
 
-## Underlag och rättigheter
+**Om `cda-tkl.local` inte hittas:** öppna Terminal direkt på Pi:ns skrivbord och kör:
 
-Geometri och register kommer från den exporterade Charlottendal-designen och dess JMRI-underlag. Signalbilderna ligger i `public/assets/mod59`; originalets licenstext och proveniens har bevarats där. Ikonerna omfattas av angivna JMRI/GPL-villkor. Den nya källkoden levereras i denna projektmapp för fortsatt arbete. Runtime-data, lokala anteckningar och hemligheter ska inte läggas i Git.
+```sh
+hostname -I
+```
 
-[Visningsinställningar, utkast och versionshistorik](docs/admin.md).
+Använd Pi:ns lokala IPv4-adress i stället. Om den till exempel är `192.168.1.42`, kör på din Mac eller PC:
 
-[Spår 6](docs/spar6.md) · [Manövrer](docs/manoverlage-och-nodatertagning.md) · [Tåginformation](docs/taginformation.md)
+```sh
+ssh pi@192.168.1.42
+```
 
-[Utökade växeltågvägar och återstående gränsfall](docs/vaxeltagvagar.md)
+`192.168.1.42` är bara ett exempel, inte en fast adress för CDA-TKL. Utan skärm kan du hitta Pi:ns adress i routerns lista över anslutna enheter under namnet `cda-tkl`.
 
-[Signalbesked och källbilder](docs/signalregister.md) · [Beräknade V1–V4-indikeringar](docs/vagindikeringar.md)
+**Alternativ utan SSH:** öppna Terminal på Pi:ns eget skrivbord och fortsätt med steg 5 där.
 
-[Seriell LocoBuffer-gateway](docs/locobuffer-gateway.md) · [Läsande TrainMeet-anslutning](docs/trainmeet-adapter.md)
+### 5. Installera CDA-TKL på Pi:n
 
-[Driftbindningar, manöverbegränsningar och granskade profilbyten](docs/driftbindningar.md)
+Kör följande i terminalen där du är inloggad på Pi:n. Kör en rad i taget och vänta tills den är klar innan du fortsätter:
 
-[Flera stationer · Tk-TKL och jämförelse](docs/stationer.md) · [Träkvista TKL](docs/trakvista.md) · [Träkvista och flera stationer · förstudie](docs/trakvista-forstudie.md)
+```sh
+sudo apt-get update
+sudo apt-get install -y curl ca-certificates
+curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh -o /tmp/cda-tkl-install.sh
+sudo sh /tmp/cda-tkl-install.sh
+```
 
-Senaste leveransavstämning: [samtliga användningsfall](docs/acceptans-2026-09-23.md), [aktuell status](docs/status.md) och [testresultat](docs/provresultat.md).
+Om `sudo` frågar efter lösenord använder du Pi-användarens lösenord. Installationen hämtar programmet och Node.js, installerar beroenden och skapar tjänsterna. Räkna med flera minuter. Låt terminalen vara öppen. Om en rad ger ett fel: lös felet innan du fortsätter, se [felsökning](#felsökning).
 
-## Installera
+Till slut ska det stå att **Charlottendal TKL … är installerad och startar automatiskt**. Kontrollera tjänsterna:
 
-En rad installerar TKL med egen Node.js, autostart och anläggningssimulatorn:
+```sh
+systemctl is-active cda-tkl cda-tkl-simulator
+curl -fsS http://127.0.0.1:8910/api/config > /dev/null && echo "TKL svarar"
+```
 
-| Plattform | Rad |
-|---|---|
-| Raspberry Pi 5 | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh \| sudo sh` |
-| Mac | `curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.sh \| sh` |
-| PC (Windows) | `irm https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.ps1 \| iex` |
+Det ska komma två rader med `active` och därefter `TKL svarar`.
 
-Se [docs/installation.md](docs/installation.md) och, för Raspberry Pi, [docs/raspberry-pi.md](docs/raspberry-pi.md).
+### 6. Starta om och öppna ställverket
+
+Kör på Pi:n:
+
+```sh
+sudo reboot
+```
+
+SSH-förbindelsen bryts när Pi:n startar om. Det är väntat. Vänta tills Pi:n har startat igen.
+
+På Raspberry Pi OS med skrivbord och **labwc** ställer installationen in automatisk skrivbordsinloggning och Chromium i helskärm. Ställverket ska därför öppnas på Pi:ns skärm efter omstarten. Om det inte öppnas, öppna Chromium på Pi:n och skriv följande i adressfältet:
+
+```text
+http://127.0.0.1:8910
+```
+
+Fortsätt med [Första gången i ställverket](#första-gången-i-ställverket).
+
+### 7. Öppna Pi:ns ställverk från din Mac eller PC
+
+TKL lyssnar som standard bara på Pi:n. För att komma åt det via din vanliga dator använder du en SSH-tunnel. Öppna ett terminalfönster på **din Mac eller PC** och kör:
+
+```sh
+ssh -o ExitOnForwardFailure=yes -L 127.0.0.1:8910:127.0.0.1:8910 pi@cda-tkl.local
+```
+
+Ange Pi:ns lösenord och låt terminalfönstret vara öppet. Om du behövde en IP-adress i steg 4 använder du samma adress här i stället för `cda-tkl.local`.
+
+Öppna sedan webbläsaren på **din Mac eller PC** och skriv:
+
+```text
+http://127.0.0.1:8910
+```
+
+Nu visas **Pi:ns** ställverk på din dator. Port 8910 på din Mac eller PC måste vara ledig; kör du redan TKL lokalt där måste du stoppa den kopian först, eller använda Pi:ns egen skärm. Om SSH skriver att porten redan används ska du inte fortsätta till webbläsaren, eftersom du då kan hamna i den lokala kopian. Stänger du SSH-fönstret försvinner tunneln, men TKL fortsätter köra på Pi:n. Avsluta tunneln genom att skriva `exit` i SSH-fönstret och trycka Retur.
+
+Adressen `http://cda-tkl.local:8910` fungerar inte direkt med standardinstallationen. För en separat rangerarstation eller åtkomst direkt över nätverket finns [avancerade Pi-anvisningar](docs/raspberry-pi.md#10-nå-pin-från-en-annan-dator).
+
+## Mac
+
+### 1. Kontrollera förutsättningarna
+
+- macOS 13 Ventura eller senare, med Apple Silicon eller Intel.
+- Internetanslutning under installation och uppdatering.
+- Google Chrome rekommenderas om du vill använda den skapade appens eget fönster. För Stream Deck använder du Chrome eller Microsoft Edge; Safari saknar den enhetsanslutning som behövs.
+
+Om du vill ha Chrome: öppna [Google Chrome](https://www.google.com/chrome/), ladda ned Mac-versionen, öppna den hämtade `.dmg`-filen och dra Chrome till **Program**. Starta Chrome en gång och slutför dess första start.
+
+### 2. Öppna Terminal
+
+1. Tryck **⌘ + mellanslag**.
+2. Skriv `Terminal`.
+3. Tryck **Retur**.
+
+Du behöver inte ansluta med SSH för att installera på den Mac du sitter vid.
+
+### 3. Installera
+
+Klistra in följande i Terminal, en rad i taget, och tryck **Retur** efter varje rad:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh -o /tmp/cda-tkl-install.sh
+sh /tmp/cda-tkl-install.sh
+```
+
+**Kör utan `sudo`.** Installationen ska tillhöra ditt vanliga användarkonto. Om du fortfarande är SSH-inloggad på en Pi: skriv `exit` först eller öppna ett nytt Terminal-fönster på Macen.
+
+Vänta tills det står att **Charlottendal TKL … är installerad och startar när du loggar in**. Installationen skapar en app och öppnar panelen. Du behöver inte installera Node.js eller några utvecklingsverktyg separat.
+
+### 4. Öppna och kontrollera
+
+1. Om panelen inte öppnades automatiskt: öppna webbläsaren och gå till [http://127.0.0.1:8910](http://127.0.0.1:8910).
+2. Följ [Första gången i ställverket](#första-gången-i-ställverket).
+3. Öppna Finder → **Program** och leta efter **Charlottendal TKL**. Om appen inte finns där: välj **Gå → Gå till mapp**, skriv `~/Applications` och tryck Retur.
+4. Dra gärna appen till Dock. Den öppnar panelen igen nästa gång.
+
+TKL startar automatiskt när du loggar in på Macen och fortsätter köra när du stänger Terminal eller panelens fönster. Datorn måste vara vaken för att ställverket ska vara tillgängligt.
+
+## PC med Windows
+
+### 1. Kontrollera förutsättningarna
+
+- Windows 10 eller 11, 64-bitars (x64 eller ARM64).
+- Microsoft Edge eller Google Chrome. Edge följer normalt med Windows och fungerar med Stream Deck.
+- Internetanslutning under installation och uppdatering.
+- Du ska vara inloggad på det Windows-konto som ska använda TKL. Administratörsrättigheter behövs inte.
+
+### 2. Öppna Windows PowerShell
+
+1. Klicka på **Start**.
+2. Skriv `Windows PowerShell`.
+3. Klicka på **Windows PowerShell**. Välj vanlig start.
+
+Använd Windows PowerShell, inte Kommandotolken (`cmd`). Om fönstret är SSH-inloggat på en Pi ska du öppna ett nytt PowerShell-fönster på PC:n.
+
+### 3. Installera
+
+Klistra in följande i PowerShell, en rad i taget, och tryck **Retur** efter varje rad:
+
+```powershell
+$TklInstaller = Join-Path $env:TEMP 'cda-tkl-install.ps1'
+Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.ps1' -OutFile $TklInstaller
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $TklInstaller
+```
+
+Den sista raden tillåter det hämtade skriptet i just den PowerShell-processen. Den ändrar inte datorns permanenta skriptpolicy. Vänta medan programmet, en egen Node.js 22 och beroendena hämtas och installeras. Låt fönstret vara öppet.
+
+Till slut ska det stå att **Charlottendal TKL … är installerad och startar när du loggar in**. Panelen öppnas och genvägen **Charlottendal TKL** skapas på skrivbordet. Om texten **Installationen avbröts** visas, se [felsökning](#felsökning).
+
+### 4. Öppna och kontrollera
+
+1. Om panelen inte öppnades automatiskt: öppna Edge och gå till [http://127.0.0.1:8910](http://127.0.0.1:8910).
+2. Följ [Första gången i ställverket](#första-gången-i-ställverket).
+3. Använd skrivbordsgenvägen **Charlottendal TKL** när du vill öppna panelen igen.
+
+TKL startar dolt när du loggar in på Windows. Du kan stänga PowerShell och panelen efter en lyckad installation; tjänsten fortsätter köra i din användarsession. Datorn måste vara vaken.
+
+## Första gången i ställverket
+
+Dessa steg gäller alla tre plattformarna:
+
+1. Öppna **Kom igång** i ställverket. Om guiden inte redan visas: klicka på dess chip eller välj **⋯ → Kom igång**.
+2. Skapa ägaren med din e-postadress och ett eget lösenord. Pi-användarens eller datorns lösenord är separat från TKL-kontot. Spara uppgifterna; ägaren används för skyddade inställningar.
+3. Börja med **LocoNet ej ansluten**. Då kan du kontrollera panelen och programmets egen återrapport utan att ansluta banan.
+4. Ska du ansluta till TrainMeet? Öppna din TrainMeet Server i webbläsaren, logga in som administratör och välj **Drift → Anslut en box**. Kopiera serveradressen och anslutningskoden. I TKL väljer du **⋯ → TrainMeet**, fyller i adressen och koden och klickar **Anslut**. TKL väljer stationen själv. För en första lokal kontroll kan du hoppa över TrainMeet i Kom igång.
+5. AI-funktionerna är valfria. Har du en Anthropic-nyckel kan du lägga in den under **Inställningar → Den här datorn → AI-tjänst**. Annars hoppar du över det steget. Ingen AI-nyckel behövs för själva installationen eller ställverkets grundfunktioner.
+6. Med Stream Deck: anslut USB-kabeln och stäng Elgatos egen app om den körs. Öppna **⋯ → Stream Deck** i TKL. På Mac och PC klickar du **Anslut** och väljer enheten i webbläsarens dialog. På Pi:ns lokala Chromium ställer installationen in automatisk anslutning. Om den uteblir, anslut via samma meny.
+7. När du ska använda fysisk LocoNet: följ [LocoNet-anvisningen](docs/loconet-anslutning.md) för LocoBuffer eller BTLocoBridge och välj anslutningen under **Inställningar → Banan (LocoNet)**. Windows använder BTLocoBridges utgående COM-port. Verklig utrustning och driftbindningar behöver kontrolleras vid banan innan fysisk körning.
+
+För installation på den egna datorn öppnar du `http://127.0.0.1:8910`. Adressen betyder alltid **datorn där webbläsaren körs**. För Pi via SSH-tunneln använder du i stället `http://127.0.0.1:8910` på din Mac eller PC.
+
+## Uppdatera en befintlig installation
+
+### Flytta från det tidigare installationsförrådet
+
+Kör detta en gång även om den gamla panelen inte kan hitta en uppdatering. Använd samma dator och samma användarkonto som vid installationen. Avinstallera ingenting och ta inte bort driftdata.
+
+**Raspberry Pi:** logga in med `ssh pi@cda-tkl.local` och kör på Pi:n:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh -o /tmp/cda-tkl-install.sh
+sudo sh /tmp/cda-tkl-install.sh
+```
+
+**Mac:** kör i Macens Terminal, utan `sudo`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.sh -o /tmp/cda-tkl-install.sh
+sh /tmp/cda-tkl-install.sh
+```
+
+**Windows:** kör i Windows PowerShell på PC:n:
+
+```powershell
+$TklInstaller = Join-Path $env:TEMP 'cda-tkl-install.ps1'
+Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.ps1' -OutFile $TklInstaller
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $TklInstaller
+```
+
+Installationen ersätter programversionen och uppdateringsskripten. Inställningar, konton och driftdata behålls. En uttryckligt sparad adress till det tidigare standardförrådet flyttas till `beahead-ab/cda-tkl`; ett eget stationsförråd behålls. Äldre installationer kan inte automatiskt upptäcka flytten när det gamla repot har tagits bort: därför behövs den här manuella körningen.
+
+### Senare uppdateringar
+
+1. Välj en tid när ställverket kan startas om.
+2. Klicka på uppdateringsnotisen i panelen eller öppna **Inställningar → Uppdatering**.
+3. Sök efter en ny version och välj **Uppdatera nu**.
+4. Vänta tills uppdateringen är klar och ladda om panelen om det behövs.
+5. Kontrollera versionsnumret och anslutningarna.
+
+Du kan också alltid köra installationsraderna ovan igen. På Pi går det efter flytten även att köra `sudo cda-tkl-update`. Om en ny version inte svarar under installationens startkontroll försöker installeraren återställa föregående version.
+
+En uppdatering startar om TKL. Sparade tågvägslås behålls, men körmedgivanden återupptas inte automatiskt. Kontrollera läget efter omstarten.
+
+## Felsökning
+
+### Pi: SSH hittar inte datorn
+
+- Kontrollera ström, att första starten är klar och att datorn och Pi:n är på samma nät. Gästnät kan hindra kontakt mellan enheter.
+- Prova Pi:ns riktiga IP-adress enligt Pi-avsnittets steg 4.
+- **Connection refused:** kontrollera att SSH är aktiverat. På Pi:ns lokala terminal kan du köra `sudo raspi-config` och aktivera SSH under **Interface Options → SSH**.
+- **Permission denied:** kontrollera användarnamnet och lösenordet från Imager. Användaren behöver inte heta `pi`.
+- Om Windows säger att `ssh` inte finns: öppna Inställningar, sök efter **Valfria funktioner**, välj att lägga till **OpenSSH-klient** och öppna sedan ett nytt PowerShell-fönster.
+
+### Pi: panelen öppnas inte
+
+Logga in på Pi:n och kör:
+
+```sh
+systemctl status cda-tkl cda-tkl-simulator --no-pager
+sudo journalctl -u cda-tkl -u cda-tkl-simulator -n 60 --no-pager
+```
+
+Starta om tjänsterna vid behov:
+
+```sh
+sudo systemctl restart cda-tkl-simulator cda-tkl
+```
+
+Om tjänsterna är aktiva men ingen panel syns på den anslutna skärmen: kontrollera att du installerade Raspberry Pi OS med skrivbord. Öppna Chromium och `http://127.0.0.1:8910` för hand. Automatisk helskärm förutsätter skrivbordsmiljön labwc.
+
+### Mac: panelen öppnas inte
+
+Öppna Terminal och kör:
+
+```sh
+launchctl print "gui/$(id -u)/se.beahead.cda-tkl"
+tail -n 60 "$HOME/Library/Application Support/Charlottendal TKL/logs/tkl.log"
+```
+
+Starta om vid behov:
+
+```sh
+launchctl kickstart -k "gui/$(id -u)/se.beahead.cda-tkl"
+```
+
+Öppna sedan `http://127.0.0.1:8910` i webbläsaren. Om autostarten inte kunde registreras: logga ut från macOS, logga in igen och kör installationsraderna en gång till om felet kvarstår.
+
+### Windows: panelen öppnas inte
+
+1. Tryck **Windows + R**.
+2. Klistra in `%LOCALAPPDATA%\Charlottendal TKL\logs` och tryck **Retur**.
+3. Öppna `tkl.log`. Vid uppdateringsfel finns även `update.log`.
+4. Logga ut från Windows och logga in igen för att starta om TKL. Öppna sedan `http://127.0.0.1:8910` i Edge.
+5. Om installationen avbröts: kör installationsraderna igen och spara feltexten om felet återkommer. Om datorn förvaltas av en organisation och blockerar skript eller nedladdningar behöver dess IT-ansvariga hjälpa till.
+
+### Hämtningen eller starten misslyckas
+
+Kontrollera internetanslutningen och att hela kommandot kopierats. Alla adresser i den här guiden går till det publika huvudförrådet. Du ska inte behöva ange GitHub-inloggning. Kör inte nästa rad om hämtningen misslyckas.
+
+Om port 8910 redan används: stäng den andra TKL-kopian, exempelvis en utvecklingskopia som körs i en annan terminal. Kör sedan installationen igen. Standardinstallationen lyssnar bara lokalt och behöver ingen öppning av port 8910 i routern.
+
+## Var program och driftdata sparas
+
+| Plattform | Program och versioner | Inställningar | Driftdata |
+|---|---|---|---|
+| Raspberry Pi | `/opt/cda-tkl/` | `/etc/cda-tkl/app.env` | `/var/lib/cda-tkl/` |
+| Mac | `~/Library/Application Support/Charlottendal TKL/` | `app.env` i samma mapp | `state/` i samma mapp |
+| Windows | `%LOCALAPPDATA%\Charlottendal TKL\` | `app.env` i samma mapp | `state\` i samma mapp |
+
+Ta en säkerhetskopia av både inställningarna och driftkatalogen medan TKL är stoppat. Konton och eventuella sparade tjänstenycklar finns i driftdatan; förvara kopian privat. På Pi finns [steg för säkerhetskopiering](docs/raspberry-pi.md#11-säkerhetskopiera).
+
+## Mer hjälp
+
+- [Användare och inloggning](docs/anvandare.md)
+- [LocoNet: USB och Bluetooth](docs/loconet-anslutning.md)
+- [Avancerad Pi-installation, nätverksåtkomst och säkerhetskopiering](docs/raspberry-pi.md)
+- [Handhavande](docs/panel-och-verktyg.md)
+- [Projektets läge och verifiering](docs/status.md)
+
+Imager och SSH-stegen bygger på Raspberry Pis officiella anvisningar för [installation](https://www.raspberrypi.com/documentation/computers/getting-started.html) och [fjärråtkomst](https://www.raspberrypi.com/documentation/computers/remote-access.html). Menynamnen kan skilja sig mellan Imager-versioner; använd värdena i tabellen ovan.

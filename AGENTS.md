@@ -9,7 +9,7 @@ Träkvista) beskrivs i `docs/stationer.md`.
 | Förråd | Vad | Att tänka på |
 |---|---|---|
 | `beahead-ab/cda-tkl` | Det här: programmet, Charlottendals data, dokumenten och arbetsjournalen | Squash-merge av PR till main |
-| `beahead-ab/cda-tkl-install` | Det publicerade installationsförrådet som Pi, Mac och PC installerar och uppdaterar från | Publiceras efter varje release, se nedan |
+| `beahead-ab/cda-tkl` (publikt) | Pi, Mac och PC installerar och uppdaterar direkt härifrån | README är den gemensamma installationsguiden |
 | `beahead-ab/tk-tkl` | Träkvista | Publiceras ur cda-tkl med `deploy/publish-station.sh trakvista` (`docs/stationer.md`) |
 | `beahead-ab/trainmeet-server` | TrainMeet Server | **En merge startar om server.trainmeet.app: merga bara med Caspers OK.** PR-titeln märks `[patch]` eller `[minor]`, och versionsboten sätter numret. CHANGELOG "## Nästa version". |
 | `beahead-ab/trainmeet-cloud`, `beahead-ab/trainmeet-tkl` | Cloud och TrainMeet TKL | Bär serverns översättningskatalog. Efter en ny sträng i servern: `node tools/sync-i18n.mjs --siblings` i servern och en PR i varje. |
@@ -35,20 +35,17 @@ npm run -s test:integration   # startar servrar; live-offline har en gång tagit
 3. Skriv ett avsnitt i `docs/arbetsjournal.md` och en rad i `docs/status.md`. Ändras gränssnittet, skriv också i
    `docs/panel-och-verktyg.md`.
 4. Gör en PR och squash-merga den.
-5. Publicera installationsförråden från main med skripten, aldrig med en egen fillista:
+5. CDA-TKL installeras och uppdateras direkt från det publika `beahead-ab/cda-tkl`. Publicera inget till
+   de avvecklade `cda-tkl-install` och `cda-tkl-drift`. Äldre installationer flyttas genom en manuell körning
+   av den nya installationsraden i README; de gamla uppdateringsskripten kan inte upptäcka flytten.
+6. Träkvistas eget förråd är separat och publiceras när det ingår i uppdraget:
    ```sh
-   deploy/publish-install.sh              # cda-tkl-install; taggas vX.Y.Z första gången versionen publiceras
-   deploy/publish-station.sh trakvista    # tk-tkl; kör paketets prov först och stannar på ändringar som saknas här
+   deploy/publish-station.sh trakvista
    ```
-   Skripten bestämmer vilka filer som följer med. En egen lista blir inaktuell när ett skript tillkommer: 0.84.0
-   publicerades en gång med den lista som stod här tidigare och tappade `scripts/bluetooth-port.py` (`77618f7`,
-   återställt som `efb1084`).
-6. Gör en dokumentations-PR som för in publiceringen: raden **Publicerad: X.Y.Z** (main-commit, PR-nummer,
-   install-commit, tk-tkl-commit, datum) i `docs/status.md` och `docs/tagsparning.md`, och en publiceringsrad i
-   arbetsjournalen.
+7. Dokumentera den publicerade main-commiten och eventuell stationspublicering i `docs/status.md` och arbetsjournalen.
 
-En ändring som bara rör dokumentationen behöver ingen publicering, utom när filen finns i installationsförrådet:
-`installation.md`, `raspberry-pi.md`, `anvandare.md` och `loconet-anslutning.md`.
+README är den aktuella installationsguiden för alla tre plattformarna. `docs/installation.md` leder dit.
+Historiska publiceringsnoteringar nedan beskriver det tidigare arbetssättet.
 
 Efter varje release brukar Casper be om "uppdatera tagsparning.md (loconet-anslutning.md, raspberry-pi.md) med X.Y.Z".
 Det betyder: uppdatera publiceringsraden och lägg till en mening om vad versionen ändrar, eller om den inte ändrar

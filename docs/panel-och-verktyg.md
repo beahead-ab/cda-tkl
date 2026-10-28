@@ -376,7 +376,7 @@ Chromium-policyn Elgatos enheter, så ingen behöver klicka; se raspberry-pi.md.
 ## Notis om ny version att installera (0.49.0)
 
 Installerade kopior (Raspberry Pi, Mac, PC; `CHARLOTTENDAL_INSTALL_KIND` i app.env) frågar
-`beahead-ab/cda-tkl-install` efter senaste versionen 30 sekunder efter start och sedan var sjätte
+`beahead-ab/cda-tkl` efter senaste versionen 30 sekunder efter start och sedan var sjätte
 timme (`src/update-check.mjs`; läser bara package.json, skickar inget). Finns en nyare visar
 statusraden `● Uppdatering X` i blått. På Raspberry Pi öppnar chipet en bekräftelse med **Uppdatera
 nu**, som via `POST /api/update/start` startar `cda-tkl-update.service`; polkit-regeln
