@@ -7,6 +7,8 @@
 #
 # It fetches the whole package from GitHub and runs the installer for this system.
 # Run it again, or `sudo cda-tkl-update`, to update; settings and operating data stay.
+# Första lyckade installationen på Raspberry Pi startar om Pi:n efter en minut.
+# CDA_TKL_REBOOT=0 väljer bort omstarten. Uppdateringar startar om TKL-programmet.
 # CDA_TKL_TOKEN=<token> reads the package from a private repository instead (forks).
 # CDA_TKL_SOURCE=/path/to/package.tar.gz or a directory installs from there instead (tests).
 set -eu

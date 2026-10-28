@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.85.2",
+    "date": "2026-10-28",
+    "notes": [
+      "Raspberry Pi startar om automatiskt en minut efter en lyckad förstagångsinstallation. Ställverket öppnas efter omstarten på Pi OS med skrivbord.",
+      "Vanliga uppdateringar startar om TKL-programmet. Vid installationsfel beställs ingen omstart av Pi:n."
+    ]
+  },
+  {
     "version": "0.85.1",
     "date": "2026-10-28",
     "notes": [
