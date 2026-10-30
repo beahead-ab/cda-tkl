@@ -150,8 +150,8 @@ export class TrainMeet extends EventEmitter {
   }
   async read(token=this.data.token,station=this.data.stationId,allowReset=false,reloadTimetable=false) {
     const context=await this.request('/v1/tkl/context?station_id='+encodeURIComponent(station),{token});
-    // TrainMeet binds operational commands to this generation after a meet/config change.
-    // Older servers omit it (or return null); never invent a generation for them.
+    // TrainMeet knyter driftkommandon till denna generation efter byte av träff/config.
+    // Äldre servrar utelämnar den (eller skickar null); hitta inte på en generation åt dem.
     const meetGeneration=context?.meet_generation??null;
     if(meetGeneration!==null&&(!Number.isSafeInteger(meetGeneration)||meetGeneration<0))fail('Ogiltig träffgeneration från TrainMeet.',503);
     // The clock in the answer was read somewhere during the request; the middle is the best guess.
@@ -265,7 +265,7 @@ export class TrainMeet extends EventEmitter {
     if(Object.hasOwn(data,'meetGeneration')&&data.meetGeneration!==(this.context?.meetGeneration??null))fail('Träffen har ändrats. Kontrollera senaste läget och välj åtgärden igen.',409);
     const expected=this.context;
     return this.exclusive(async()=>{
-      // A queued click must not follow a poll into a new meet or traffic day.
+      // Ett köat knapptryck får inte följa med en poll till en ny träff eller trafikdag.
       if(data.sessionId!==this.sessionId||data.revision!==this.revision||expected?.meetGeneration!==this.context?.meetGeneration||expected?.publicationId!==this.context?.publicationId||expected?.day!==this.context?.day)
         fail('Träffen har ändrats. Kontrollera senaste läget och välj åtgärden igen.',409);
       // Validate against the freshest context, after any poll in flight has finished.
