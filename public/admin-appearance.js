@@ -1,7 +1,7 @@
 import {createAdminDialog,settingsRows,settingsNote} from './admin-ui.js';
 import {STYLES,STYLE_KEY,legendHTML,previewHTML,readStyle,saveStyle,styleTitle} from './timetable-style.js';
 import {PANEL_STYLES,panelStyleTitle} from './panel-style.js';
-export function createAdminAppearance({panelStyle}){
+export function createAdminAppearance({panelStyle,appTheme}){
   const $=id=>document.getElementById(id),original=document.querySelector('.appearance-controls');
   $('appearance-heading').after(settingsNote('settings-scope','Gäller den här webbläsaren · sparas inte i TKL-servern'));
   const overview=document.createElement('section');overview.className='card';overview.innerHTML='<div class="card-heading"><h3>Panelen här</h3><button id="appearance-edit" class="primary">Redigera</button></div><dl id="appearance-summary"></dl>';original.before(overview);original.hidden=true;
@@ -10,12 +10,14 @@ export function createAdminAppearance({panelStyle}){
     // Tidtabellens stil (0.80.0): the same trains in each style, to compare before choosing.
     '<fieldset class="tt-style-choice"><legend>Tidtabellens stil</legend>'+STYLES.map(s=>'<label class="tt-style-option"><input type="radio" name="tt-style" value="'+s.id+'"><span><b>'+s.title+'</b><small>'+s.detail+'</small></span>'+previewHTML(s.id)+'</label>').join('')+
     '<p class="muted">Spåret står i Spår-kolumnen, med ram när tåget står inne. Tecknen förklaras under Teckenförklaring.</p></fieldset><button type="submit">Spara</button>';
+  form.insertAdjacentHTML('afterbegin','<label>Färgtema<select id="pref-theme"><option value="dark">Mörkt · svart bakgrund</option><option value="light">Ljust</option></select></label>');
   const chosenStyle=()=>form.querySelector('input[name=tt-style]:checked')?.value||readStyle();
   const chosenPanelStyle=()=>form.querySelector('input[name=panel-style]:checked')?.value||panelStyle.current;
-  const values=()=>JSON.stringify([...['crossing','sound'].map(k=>$('pref-'+k).value),chosenStyle(),chosenPanelStyle()]);let baseline;
+  const values=()=>JSON.stringify([...['crossing','sound','theme'].map(k=>$('pref-'+k).value),chosenStyle(),chosenPanelStyle()]);let baseline;
   const modal=createAdminDialog({title:'Utseende och ljud',body:form,saveButton:form.querySelector('button[type=submit]'),dirty:()=>values()!==baseline,unchanged:'Inget ändrat'});
   const sound=()=>$('sound-toggle').getAttribute('aria-pressed')==='true';
   function render(){settingsRows($('appearance-summary'),[
+    ['Färgtema',appTheme.current==='light'?'Ljust':'Mörkt · svart bakgrund','Samma färgtema i ställverket och Studio. Sparas för den här webbläsaren.'],
     ['Ställverkets utseende',panelStyleTitle(panelStyle.current),'Originalpanel eller 85-inspirerad skärmvy. Samma station, tågvägar och manövrering.'],
     ['Övergångslampor',$('crossing-display').selectedOptions[0].textContent,'Hur plankorsningarnas lampor visas på panelen. Korsningens läge påverkas inte.'],
     ['Ljud vid fel',sound()?'På':'Av','Ett kort pip när ett felmeddelande visas, till exempel en nekad order. Meddelandet visas alltid, med eller utan ljud.'],
@@ -23,7 +25,8 @@ export function createAdminAppearance({panelStyle}){
     const legend=$('timetable-legend');if(legend)legend.innerHTML=legendHTML(readStyle());
     $('panel-style-legend').hidden=panelStyle.current!=='modern85';}
   window.addEventListener('panel-style-change',render);
+  window.addEventListener('app-theme-change',render);
   window.addEventListener('storage',e=>{if(e.key===STYLE_KEY)render();});
-  $('appearance-edit').onclick=()=>{$('pref-crossing').value=$('crossing-display').value;$('pref-sound').value=sound()?'yes':'no';const style=readStyle();for(const r of form.querySelectorAll('input[name=tt-style]'))r.checked=r.value===style;for(const r of form.querySelectorAll('input[name=panel-style]'))r.checked=r.value===panelStyle.current;baseline=values();modal.open();};
-  form.onsubmit=e=>{e.preventDefault();try{if(chosenPanelStyle()!==panelStyle.current)panelStyle.save(chosenPanelStyle());$('crossing-display').value=$('pref-crossing').value;$('crossing-display').dispatchEvent(new Event('change'));if(sound()!==($('pref-sound').value==='yes'))$('sound-toggle').click();const style=saveStyle(chosenStyle());window.dispatchEvent(new CustomEvent('timetable-style',{detail:style}));modal.close(true);render();}catch(e){modal.message(e.message);}};render();
+  $('appearance-edit').onclick=()=>{$('pref-theme').value=appTheme.current;$('pref-crossing').value=$('crossing-display').value;$('pref-sound').value=sound()?'yes':'no';const style=readStyle();for(const r of form.querySelectorAll('input[name=tt-style]'))r.checked=r.value===style;for(const r of form.querySelectorAll('input[name=panel-style]'))r.checked=r.value===panelStyle.current;baseline=values();modal.open();};
+  form.onsubmit=e=>{e.preventDefault();try{if($('pref-theme').value!==appTheme.current)appTheme.save($('pref-theme').value);if(chosenPanelStyle()!==panelStyle.current)panelStyle.save(chosenPanelStyle());$('crossing-display').value=$('pref-crossing').value;$('crossing-display').dispatchEvent(new Event('change'));if(sound()!==($('pref-sound').value==='yes'))$('sound-toggle').click();const style=saveStyle(chosenStyle());window.dispatchEvent(new CustomEvent('timetable-style',{detail:style}));modal.close(true);render();}catch(e){modal.message(e.message);}};render();
 }

@@ -3,37 +3,27 @@
 body[data-panel-style=modern85] .has-modern-signal>image{display:none}
 body[data-panel-style=modern85] .has-modern-signal>.signal-unknown{display:none}
 body[data-panel-style=modern85] .modern-signal{display:inline}
-body.panel-app[data-panel-style=modern85] .panel-scroll{--panel:#d7dad7;--rail:#7b817d;--rail-unknown:#fff;--route:#216c32;--ink:#303932;--track-main:#777f78;--track-side:#868d86;--track-off:#a8ada8;--fg-label:#48584b;--red:#c5252d;--green:#216c32;--amber:#946000;--yellow:#946000;background:var(--panel)}
-body[data-panel-style=modern85] #track-plan{background:#d7dad7}
-body[data-panel-style=modern85] #track-plan .track-label{fill:#303932}
-body[data-panel-style=modern85] #track-plan .track-label.lbl-place{fill:#4b554e}
-body[data-panel-style=modern85] #track-plan .track-label.lbl-road{fill:#59645c}
-body[data-panel-style=modern85] #track-plan .destination-plate{fill:#c2c9c2;stroke:#89958b}
-body[data-panel-style=modern85] #track-plan .destination-arrow{stroke:#303932}
-body[data-panel-style=modern85] #track-plan .turnout-number{fill:#754084}
-body[data-panel-style=modern85] #track-plan .turnout-number.locked{fill:#754084;font-weight:600}
-body[data-panel-style=modern85] #track-plan .rail-hollow{stroke:#d7dad7}
-body[data-panel-style=modern85] #track-plan .rail.unknown:not(.turnout-base){stroke:#fff;stroke-dasharray:4 4}
-body[data-panel-style=modern85] #track-plan .rail.stub{stroke:#747c75}
-body[data-panel-style=modern85] #track-plan .route-flow{stroke:#216c32}
-body[data-panel-style=modern85] #track-plan .route-flow[data-kind=shunt]{stroke:#aa7900}
-body[data-panel-style=modern85] #track-plan .route-flow.held,
-body[data-panel-style=modern85] #track-plan .route-flow.setting{stroke:#946000;stroke-dasharray:4 6}
-body[data-panel-style=modern85] #track-plan .route-flow.cancelling{stroke:#ac328f;stroke-dasharray:4 6}
+body[data-panel-style=modern85] .panel-scroll,body[data-panel-style=modern85] #track-plan{background:var(--bg)}
+body.panel-app #track-plan .rail-hollow{stroke:var(--bg)}
+body.panel-app #track-plan .route-flow{stroke:var(--green)}
+body.panel-app #track-plan .route-flow:is(.held,.setting,.cancelling){stroke:var(--green);stroke-dasharray:4 6}
 body[data-panel-style=modern85] #track-plan .lamp{display:none}
-body[data-panel-style=modern85] #track-plan .touch-target .dot{fill:#cbd1cb;stroke:#606b62}
-body[data-panel-style=modern85] #track-plan .touch-target.chosen .dot{fill:#f4dc8a;stroke:#5c633d}
-body[data-panel-style=modern85] #track-plan .touch-target.in-route .dot{fill:#93be9c}
+body[data-panel-style=modern85] #track-plan .destination-plate{fill:var(--chip-bg);stroke:var(--chip-border)}
+body[data-panel-style=modern85] #track-plan .destination-arrow{stroke:var(--fg)}
 body[data-panel-style=modern85] #track-plan .signal-target .hit{stroke:transparent;fill:transparent}
-body[data-panel-style=modern85] #track-plan .signal-target:is(:hover,:focus-visible,.signal-chosen,.route-choice-start,.route-choice-end,.signal-preparing) .hit{stroke:#383e39;fill:transparent}
-body[data-panel-style=modern85] #track-plan .touch-target:focus-visible .hit{stroke:#1b4e75;stroke-width:2}
-.modern-signal-back{fill:#d7dad7;stroke:none}
-.modern-signal-mark{fill:none;stroke:#777e78;stroke-width:2;stroke-linejoin:miter}
-.modern-signal[data-tone=go] .modern-signal-mark{stroke:#216c32}
-.modern-signal[data-tone=endpoint] .modern-signal-mark{stroke:#c5252d}
-.modern-signal[data-tone=releasing] .modern-signal-mark{stroke:#ac328f}
-.modern-signal[data-tone=unknown] .modern-signal-mark{stroke:#fff}
-.modern-signal-question{fill:#303932;font:600 11px var(--font-mono)}
+body[data-panel-style=modern85] #track-plan .signal-target:is(:hover,:focus-visible,.signal-chosen,.route-choice-start,.route-choice-end,.signal-preparing) .hit{stroke:var(--fg);fill:transparent}
+/* Samma prioritet i båda vyerna: belagt > spärrat > lokalstyrt > låst väg. */
+body.panel-app #track-plan .rail[data-track-state=local]{stroke:var(--track-local)!important;opacity:1}
+body.panel-app #track-plan .rail[data-track-state=blocked]{stroke:var(--track-blocked)!important;opacity:1}
+body.panel-app #track-plan .rail[data-track-state=occupied]{stroke:var(--red)!important}
+body.panel-app #track-plan .rail[data-track-state=local].branch-off{opacity:.45}
+.modern-signal-back{fill:var(--bg);stroke:none}
+.modern-signal-mark{fill:none;stroke:var(--track-main);stroke-width:2;stroke-linejoin:miter}
+.modern-signal[data-tone=go] .modern-signal-mark{stroke:var(--green)}
+.modern-signal[data-tone=endpoint] .modern-signal-mark{stroke:var(--red)}
+.modern-signal[data-tone=releasing] .modern-signal-mark{stroke:var(--yellow)}
+.modern-signal[data-tone=unknown] .modern-signal-mark{stroke:var(--fg)}
+.modern-signal-question{fill:var(--fg);font:600 11px var(--font-mono)}
 .panel-style-choice{display:grid;gap:10px;margin:0 0 18px;padding:12px;border:1px solid var(--border)}
 .panel-style-choice label{display:flex;flex-direction:row;align-items:flex-start;gap:10px;margin:0;padding:10px;border:1px solid var(--border);border-radius:4px;cursor:pointer}
 .panel-style-choice label:has(input:checked){border-color:var(--green);background:#ffffff06}

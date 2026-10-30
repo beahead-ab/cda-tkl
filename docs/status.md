@@ -1,5 +1,10 @@
 # Charlottendal TKL – lägesbild 30 oktober 2026
 
+## Förberett: 0.86.1 – tema och spårfärger
+
+85-vyn följer svart/ljust tema, gemensamt med Studio. Belagt visas rött, låst tågväg grönt, lokalt styrt blått och trafikspärrat lila. Beläggning har högst färgprioritet. Stationsmodell och driftlogik är oförändrade.
+
+
 ## 0.86.0 – två ställverksvyer
 
 **Publicerad: 0.86.0 (30 oktober 2026; cda-tkl main `92284ef`, #116; alla fem kontroller godkända i CI `41122549455`).**
