@@ -8,6 +8,8 @@ import {signalRouteControls,signalImage} from './signal-route-controls.js';
 import {createAdminNavigation} from './admin-navigation.js';
 import {studioTarget} from './admin-navigation-model.js';
 import {createAdminAppearance} from './admin-appearance.js';
+import {createPanelStyle} from './panel-style.js';
+import {createModernSignal,modernSignalView} from './panel-symbols.js';
 import {createPanelFit} from './panel-fit.js';
 import {syncAdminWorkspaces,registerAdminWorkspace,settingsRows,createAdminDialog} from './admin-ui.js';
 import {attribute,style,text as setText,flowProgress,createPanelFrames,preparingEndpoints} from './panel-rendering.js';
@@ -61,7 +63,7 @@ $('crossing-display').onchange=()=>{setCrossingDisplay($('crossing-display').val
 
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, connectionSettings, stationSettings, operatingControls, modelClock, trainMeet, feedback, layout;
-let routeConfirmation,signalEndpoints;
+let routeConfirmation,signalEndpoints,panelStyle;
 const routeTargets=createRouteTargets({load:async(from,kind)=>{
   const response=await fetch('/api/route-targets?'+new URLSearchParams({from,kind,...(rangerMode?{operator:'ranger'}:{})}),{cache:'no-store'});
   if(!response.ok)throw Error('Mål kunde inte kontrolleras.');
@@ -412,7 +414,8 @@ function buildPlan() {
     g.classList.toggle('signal-startable',signalControls.starts.has(routeButton));
     accessible(g, `Signal ${m.mast}${routeButton?(signalControls.starts.has(routeButton)?' · växeltågväg':' · slutsignal'):''}`, e => {if(routeButton)choose(routeButton,'shunt');else if(e.type==='keydown')showInspector('signal',m.mast,e);});
     objectDetails(g,'signal',m.mast);
-    signals.push({ ...m, g, images, unknown, type, signalType:m.type, files, routeButton });
+    const modern=createModernSignal({parent:g,type:m.type,degrees:m.deg,scale:m.scale,label:'Signal '+m.mast,make:svg});
+    signals.push({ ...m, g, images, unknown, modern, type, signalType:m.type, files, routeButton });
   }
   const used = new Set(config.routes.flatMap(r => [r.from, r.to]));
   for (const b of layout.controls) {
@@ -554,6 +557,8 @@ function paintPlan() {
     const shunting=state.routes.some(r=>r.kind==='shunt'&&r.signals.includes(s.mast));
     const requested=signalImage(s.signalType,value,shunting);
     const selected=decodedIcons.has(s.files[requested])?requested:2;
+    const modernView=modernSignalView({type:s.signalType,name:s.mast,signal:state.signals[s.mast],connected:fresh&&!state.storageFault,connectionAt:state.connectionAt,configured:!!config.signals[s.mast],routes:state.routes});
+    s.modern?.update(modernView);
     s.images.forEach((image,i)=>attribute(image,'visibility',i===selected?'visible':'hidden'));
     style(s.unknown,'display',selected !== 2 ? 'none' : '');
     s.g.classList.toggle('unconfigured', !config.signals[s.mast]);
@@ -567,6 +572,7 @@ function paintPlan() {
     attribute(s.g,'aria-busy',!!preparing);
     if(s.routeButton)attribute(s.g,'aria-pressed',chosenKind==='shunt'&&s.routeButton===chosen);
     attribute(s.g,'aria-description',(s.routeButton?(s.routeButton===chosen?'Vald startsignal. ':signalTargets.has(s.routeButton)?'Möjlig slutsignal. ':signalControls.starts.has(s.routeButton)?'Klicka för växeltågväg. ':'Slutsignal · välj en startsignal först. '):'')+'Högerklicka eller tryck Skift+F10 för information.');
+    if(panelStyle?.current==='modern85'&&s.modern)attribute(s.g,'aria-description',modernView.description+'. '+s.g.getAttribute('aria-description'));
   }
   for(const lamp of indicatorLamps) lamp.node.classList.toggle('occupied',fresh&&state.blocks[lamp.block]?.occupied===true);
   for(const lamp of sourceLamps) {
@@ -610,7 +616,7 @@ function paintPlan() {
       const g = svg('g', {}, $('flow-layer'));
       const presentation=routePresentation(r,panel,config,layout.controls);
       const parts = presentation.parts.map(part => {
-        const node = svg('line', { x1: part.x1, y1: part.y1, x2: part.x2, y2: part.y2, class: 'route-flow' }, g);
+        const node = svg('line', { x1: part.x1, y1: part.y1, x2: part.x2, y2: part.y2, class: 'route-flow', 'data-kind':r.kind||'main' }, g);
         const lamps = [];
         const count=part.length<26?1:Math.max(1,Math.round(part.length/78));
         for(let j=0;j<count;j++){const dist=(j+.5)/count*part.length; lamps.push({at:part.distance+dist,node:svg('circle',{cx:part.x1+(part.x2-part.x1)*(j+.5)/count,cy:part.y1+(part.y2-part.y1)*(j+.5)/count,r:3.4,class:'lamp'},g)});}
@@ -769,6 +775,12 @@ async function start() {
   clearTimeout(preloadTimer);
   sourceRegister = createSourceRegister({config,panel,saveNote:(key,note)=>api('note',{key,note}),onActive:applyPresentation});
   signalControls=signalRouteControls(config,registry,signalEndpoints);
+  panelStyle=createPanelStyle({station:config.station?.id,root:document.body,onChange:()=>{
+    const unfinished=chosen||routeConfirmation?.selection;
+    clearChoice(false);
+    if(unfinished)message('Startvalet avbröts när ställverksutseendet ändrades.',{error:false});
+    window.dispatchEvent(new Event('panel-style-change'));paint();
+  }});
   buildPlan();
   const deckPluppar=()=>buttons.filter(b=>b.isRoute).map(b=>({id:b.id,kind:b.kind,node:b.g,label:label(b.id)}));
   streamDeck=createStreamDeck({pluppar:deckPluppar,choose,clearChoice,api,message,state:()=>state,online:()=>online&&state?.connection==='connected',chosen:()=>chosen,trainMeet:()=>state?.trainMeet,layout:()=>state?.streamDeck,onChange:()=>streamDeckAdmin?.devices(),ranger:()=>rangerMode});
@@ -813,7 +825,7 @@ async function start() {
   $('inspector').onclick = e => { const source=e.target.closest('[data-source-kind]'); if(source) { openSource(source.dataset.sourceKind,source.dataset.sourceName); return; } const position = e.target.closest('button')?.dataset.manual; if (position) manualTurnout(inspected.name, position); };
   $('clear-selection').onclick = ()=>clearChoice();
   document.addEventListener('keydown', e => { if(e.key==='Escape'){if(document.querySelector('.admin-dialog[open]'))return;if($('inspector-host').open){e.preventDefault();closeInspector();return;}if(fullscreen.active()){fullscreen.exit();return;}manualFeedback.clear();clearChoice();} });
-  // Original is the only active panel. Retired skin preferences must not restore it differently.
+  // Äldre skins ersätts inte av nya driftlägen. Det nya vyvalet är separat och stationsbundet.
   try{localStorage.removeItem('charlottendal-skin');}catch{}
   createPanelFit({plan:$('track-plan'),viewport:document.querySelector('.panel-scroll'),stage:$('plan-stage'),controls:$('panel-console')});
   panelHead=createPanelHead({shell:document.querySelector('#panel-view .panel-shell'),onUpdate:view=>openUpdateNotice(view,{api,message}),onRanger:a=>api('ranger/'+a.command,a.command==='answer'?{id:a.id,approved:a.approved}:{id:a.id}),
@@ -830,7 +842,7 @@ async function start() {
   createPanelSplit({bottom:$('panel-bottom'),viewport:document.querySelector('.panel-scroll')});
   // Nothing administrative in the signal box's frame: the update chips join the Drift tab's buttons.
   const headRight=document.getElementById('plan-head-right');if(headRight){document.querySelector('#panel-drift .drift-actions')?.append(...headRight.children);headRight.remove();}
-  createAdminAppearance();
+  createAdminAppearance({panelStyle});
   for(const id of ['appearance','journal','streamdeck'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   $('journal-filter').oninput=paintJournal;
   for(const id of ['xml','migration','protocol','update','ai','users','start','station'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));

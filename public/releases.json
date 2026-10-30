@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.86.0",
+    "date": "2026-10-30",
+    "notes": [
+      "Inställningar → Utseende och ljud har två ställverksvyer: Originalpanel och 85-inspirerad skärmvy med trianglar och vinklar för signalerna.",
+      "Valet sparas per webbläsare och station. Samma spårplan, manövrering och driftstatus i båda vyerna; vybytet skickar inga order.",
+      "Ofullständiga eller okända signalbesked markeras med frågetecken. Detaljerade dvärgbesked gissas inte från en tågväg."
+    ]
+  },
+  {
     "version": "0.85.2",
     "date": "2026-10-28",
     "notes": [
