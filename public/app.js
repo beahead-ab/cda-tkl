@@ -409,12 +409,12 @@ function buildPlan() {
     if(m.type==='hsi_3+dvsi')files.push('Hsi0+Sh1');
     const images=files.map((file,i)=>svg('image',{x:-w/2,y:-h/2,width:w,height:h,transform:`rotate(${m.deg})`,href:icon(file),visibility:i===2?'visible':'hidden','pointer-events':'none'},g));
     const unknown = svg('text', { x: rw / 2 + 1, y: 3, class: 'signal-unknown' }, g, '?');
-    const modern=createModernSignal({parent:g,type:m.type,degrees:m.deg,scale:m.scale,label:'Signal '+m.mast,make:svg});
     const routeButton=signalControls.buttons.get(m.mast);
     if(routeButton)g.dataset.routeButton=routeButton;
     g.classList.toggle('signal-startable',signalControls.starts.has(routeButton));
     accessible(g, `Signal ${m.mast}${routeButton?(signalControls.starts.has(routeButton)?' · växeltågväg':' · slutsignal'):''}`, e => {if(routeButton)choose(routeButton,'shunt');else if(e.type==='keydown')showInspector('signal',m.mast,e);});
     objectDetails(g,'signal',m.mast);
+    const modern=createModernSignal({parent:g,type:m.type,degrees:m.deg,scale:m.scale,label:'Signal '+m.mast,make:svg});
     signals.push({ ...m, g, images, unknown, modern, type, signalType:m.type, files, routeButton });
   }
   const used = new Set(config.routes.flatMap(r => [r.from, r.to]));
