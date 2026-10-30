@@ -1,6 +1,8 @@
 # Charlottendal TKL – lägesbild 30 oktober 2026
 
-## Förberett: 0.86.0 – två ställverksvyer
+## 0.86.0 – två ställverksvyer
+
+**Publicerad: 0.86.0 (30 oktober 2026; cda-tkl main `92284ef`, #116; alla fem kontroller godkända i CI `41122549455`).**
 
 Inställningar → Utseende och ljud väljer Originalpanel eller 85-inspirerad skärmvy. Valet sparas per webbläsare och station. Samma monterade spårplan, driftstatus och manövrering används. Inga stationsprofiler eller förreglingsregler ändras; ofullständiga dvärgbesked visas uttryckligen som ofullständiga. Se [ställverksvyer](stallverksvyer.md) och #115. Fysisk acceptans återstår.
 
