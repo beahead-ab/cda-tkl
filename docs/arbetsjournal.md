@@ -1,5 +1,9 @@
 # Arbetsjournal – godkänd helleverans
 
+## 0.86.4 – ladda aktuella gränssnittsfiler
+
+Efterkontrollen av 0.86.3 visade gamla gränssnittsfiler trots nytt versionsnummer. Startskriptet, utseendedialogen och ställverkets temafiler använder nu versionsmärkta URL:er så uppdateringen laddas direkt.
+
 ## 30 oktober 2026 – växelnummer i ställverket, 0.86.3
 
 Trafikvyn saknade ett visningsval trots Studios befintliga lagerknapp. Växelnummer är nu släckta som standard i 85-vyn och kan tändas/släckas under Utseende och ljud. Valet sparas lokalt per station och vy och synkas mellan flikar. Samma visningsregel täcker vanliga växlar och dubbla korsningsväxlar, även vid låsning. Ingen fältorder skickas.

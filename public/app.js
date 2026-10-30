@@ -7,7 +7,7 @@ import {trackRestrictions,restrictionMarkers,lineRestrictionExtents} from './tra
 import {signalRouteControls,signalImage} from './signal-route-controls.js';
 import {createAdminNavigation} from './admin-navigation.js';
 import {studioTarget} from './admin-navigation-model.js';
-import {createAdminAppearance} from './admin-appearance.js';
+import {createAdminAppearance} from './admin-appearance.js?v=0.86.4';
 import {createPanelStyle} from './panel-style.js';
 import {createTurnoutNumbers} from './turnout-numbers.js';
 import {createAppTheme} from './app-theme.js';
