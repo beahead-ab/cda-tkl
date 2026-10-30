@@ -1,5 +1,10 @@
 # Ren panel och separat verktygssida
 
+## Växelnummer
+
+Inställningar → Utseende och ljud → Växelnummer väljer Tända eller Släckta för aktuell ställverksvy. 85-vyn har släckta nummer som standard; originalpanelen har tända. Valet sparas per webbläsare, station och vy. Spårbeteckningarna visas fortfarande. Studios lagerknapp styr endast Studio.
+
+
 ## Gemensamt färgtema och spårfärger (0.86.1)
 
 Utseende och ljud → Redigera väljer Mörkt (svart bakgrund) eller Ljust, delat med Studio.

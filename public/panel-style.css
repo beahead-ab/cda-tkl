@@ -1,4 +1,6 @@
 /* Vybyte ändrar bara samma monterade instruments presentation. */
+/* Täcker vanliga och dubbla korsningsväxlars nummer, även när växeln är låst. */
+body[data-turnout-numbers=false] #track-plan .turnout-number{display:none}
 .modern-signal{display:none;pointer-events:none}
 body[data-panel-style=modern85] .has-modern-signal>image{display:none}
 body[data-panel-style=modern85] .has-modern-signal>.signal-unknown{display:none}
