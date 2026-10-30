@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.86.1",
+    "date": "2026-10-30",
+    "notes": [
+      "85-vyn följer nu färgtemat: svart bakgrund i mörkt läge och ljus bakgrund i ljust läge. Färgtemat delas med Studio och väljs under Utseende och ljud.",
+      "Spårfärgerna är rött för belagt, grönt för låst tågväg, blått för lokalt styrt och lila för trafikspärrat. Beläggning visas alltid rött."
+    ]
+  },
+  {
     "version": "0.86.0",
     "date": "2026-10-30",
     "notes": [

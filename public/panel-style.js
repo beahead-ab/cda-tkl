@@ -1,7 +1,7 @@
 // Bara presentation. Inga serveranrop, fältorder eller ändringar av stationsprofilen.
 export const PANEL_STYLES = [
   {id:'original',title:'Originalpanel',detail:'Nuvarande mörka spårplan med signalbilder.'},
-  {id:'modern85',title:'85-inspirerad skärmvy',detail:'Grå spårplan med trianglar för huvudsignaler och vinklar för dvärgsignaler.'}
+  {id:'modern85',title:'85-inspirerad skärmvy',detail:'Följer ljust eller mörkt tema, med trianglar för huvudsignaler och vinklar för dvärgsignaler.'}
 ];
 export const validPanelStyle = value => PANEL_STYLES.some(s=>s.id===value)?value:'original';
 export const panelStyleTitle = value => PANEL_STYLES.find(s=>s.id===validPanelStyle(value)).title;

@@ -1,5 +1,12 @@
 # Ren panel och separat verktygssida
 
+## Gemensamt färgtema och spårfärger (0.86.1)
+
+Utseende och ljud → Redigera väljer Mörkt (svart bakgrund) eller Ljust, delat med Studio.
+85-vyn följer valet. Belagt spår är rött, låst tågväg grönt, lokalstyrt blått och trafikspärrat lila.
+Beläggning går före spärr och lokalstyrning; lokalstyrning går före vägmarkeringen.
+
+
 ## Två ställverksvyer (0.86.0)
 
 Under Inställningar → Utseende och ljud → Redigera väljs Originalpanel eller 85-inspirerad skärmvy. Valet gäller den här webbläsaren och stationen. Original är standard. Inga tågvägar eller lås ändras vid vybyte; ett oskickat startval avbryts. Symboler, begränsningar och prov beskrivs i [ställverksvyer](stallverksvyer.md).

@@ -40,15 +40,48 @@ async function browserSmoke() {
   await page.screenshot({ path: path.join(artifacts, '01-panel.png'), fullPage: true });
   mark('Webbläsarinloggning och panel med renderad spårplan');
 
+  // Temaval görs i den riktiga inställningsdialogen. Allt körs mot provvolymen.
+  for(const theme of ['dark','light']){
+    await page.goto(prov.origin+'/#tools/appearance',{waitUntil:'domcontentloaded'});
+    await page.locator('#appearance-edit').waitFor();
+    const later=page.getByRole('button',{name:'Senare',exact:true});
+    if(await later.isVisible())await later.click();
+    await page.locator('#appearance-edit').click();
+    await page.locator('input[name=panel-style][value=modern85]').check();
+    await page.locator('#pref-theme').selectOption(theme);
+    await page.getByRole('button',{name:'Spara',exact:true}).click();
+    await page.goto(prov.origin+'/#panel',{waitUntil:'domcontentloaded'});
+    await page.waitForFunction(t=>document.body.dataset.panelStyle==='modern85'&&document.documentElement.dataset.theme===t,theme);
+    const colors=await page.evaluate(()=>{
+      const plan=document.querySelector('#track-plan'),source=plan.querySelector('.rail');
+      const result={background:getComputedStyle(plan).backgroundColor};
+      for(const [name,cls] of Object.entries({occupied:'rail occupied blocked',blocked:'rail blocked',local:'rail unconfigured',locked:'route-flow traversing',shunt:'route-flow active'})){
+        const node=source.cloneNode(false);node.setAttribute('class',cls);
+        node.setAttribute('data-track-state',name);if(name==='shunt')node.setAttribute('data-kind','shunt');
+        plan.append(node);result[name]=getComputedStyle(node).stroke;node.remove();
+      }
+      result.signalBackground=getComputedStyle(plan.querySelector('.modern-signal-back')).fill;
+      return result;
+    });
+    const expected=theme==='dark'?{background:'rgb(0, 0, 0)',occupied:'rgb(255, 90, 77)',blocked:'rgb(181, 156, 232)',local:'rgb(90, 169, 255)',locked:'rgb(70, 211, 107)',shunt:'rgb(70, 211, 107)',signalBackground:'rgb(0, 0, 0)'}:{background:'rgb(244, 246, 248)',occupied:'rgb(197, 37, 45)',blocked:'rgb(130, 56, 172)',local:'rgb(23, 106, 196)',locked:'rgb(25, 116, 58)',shunt:'rgb(25, 116, 58)',signalBackground:'rgb(244, 246, 248)'};
+    assert.deepEqual(colors,expected);
+    await page.screenshot({path:path.join(artifacts,'05-modern85-'+theme+'.png'),fullPage:true});
+  }
+  mark('85-vyn följer mörkt/ljust tema och visar rätt rött, grönt, blått och lila');
+
+
   await page.goto(prov.origin + '/studio.html#konfigurera', { waitUntil: 'domcontentloaded' });
   await page.locator('#st-plan-host .st-plan-scroll > svg').waitFor();
   assert.equal(await page.locator('.st-error').count(), 0);
   assert.match(await page.locator('.st-brand').innerText(), /CHARLOTTENDAL/);
+  assert.equal(await page.locator('html').getAttribute('data-theme'),'light','Studio följer panelens sparade ljusa tema');
+  await page.locator('#st-theme').click();
   await page.screenshot({ path: path.join(artifacts, '02-studio.png'), fullPage: true });
   mark('Studio läser källorna och renderar stationsplanen');
 
   await page.goto(prov.origin + '/#advanced/update', { waitUntil: 'domcontentloaded' });
   await page.locator('#advanced-update:not([hidden])').waitFor();
+  assert.equal(await page.locator('html').getAttribute('data-theme'),'dark','Panelen följer Studios sparade mörka tema');
   await page.waitForFunction(() => document.querySelector('#advanced-update-content')?.textContent.includes('Render'));
   await page.screenshot({ path: path.join(artifacts, '03-uppdatering.png'), fullPage: true });
   mark('Uppdatering visar Render utan att starta något bygge');
