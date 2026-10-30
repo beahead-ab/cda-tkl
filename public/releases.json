@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.86.5",
+    "date": "2026-10-30",
+    "notes": [
+      "85-vyn visar motriktade signaler och sidoskydd i vanligt stopp grått. Röd kontur kräver verklig slutpunkt eller låst egen signal utan körbesked.",
+      "Slutpunkten identifieras via stationens exakta NX-bindning. AIS skiljs från en vanlig stopporder; återrapporterat körbesked och okända besked döljs inte."
+    ]
+  },
+  {
     "version": "0.86.4",
     "date": "2026-10-30",
     "notes": [

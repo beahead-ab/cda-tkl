@@ -551,3 +551,8 @@ Se [Bennys provguide](benny-windows-bluetooth-prov.md) för fysisk acceptans och
 ## Klarering efter träffbyte (0.86.2)
 
 Godkänn och Neka skickar samma aktuella träffgeneration som TrainMeet rapporterar. Det gäller både korten i Klarering och knapparna över spårplanen, samt tågrörelserna. Om träffen ändras medan ett knapptryck väntar skickas ingen åtgärd i den nya träffen; kontrollera senaste läget och välj åtgärden igen.
+
+
+## 85-vyns stoppsymboler från 0.86.5
+
+Grå signal betyder normalt stopp, även för motriktade signaler och sidoskydd vid en lagd tågväg. Röd kontur betyder verklig slutpunkt för låst väg eller egen låst signal utan körbesked. Slutpunkten hämtas från vägens exakta NX-bindning; hela skyddslistan används inte för rödfärgning. AIS ger fylld röd huvudsignal eller gul separat dvärg efter stoppåterrapport. Grönt kräver som tidigare bekräftat körbesked. Bruten eller otillräcklig återrapport visas med frågetecken.

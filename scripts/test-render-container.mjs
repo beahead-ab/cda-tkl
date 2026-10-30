@@ -29,7 +29,7 @@ function assertIdentity(config, state) {
   assert.deepEqual(state.installationStation.stations.map(s => s.id), ['charlottendal']);
 }
 
-async function browserSmoke() {
+async function browserSmoke(cookie) {
   const page = await prov.openBrowser();
   await page.goto(prov.origin + '/login', { waitUntil: 'domcontentloaded' });
   await page.locator('#login:not([hidden])').waitFor();
@@ -69,6 +69,28 @@ async function browserSmoke() {
   }
   mark('85-vyn följer mörkt/ljust tema och visar rätt rött, grönt, blått och lila');
 
+  // Den första avfrågningen rapporterar alla detektorer och signaler stegvis.
+  await prov.until('Fria spår och stopp före tågvägsprovet',async()=>{const s=await prov.authenticatedState(cookie);return Object.values(s.blocks).every(b=>b.occupied===false)&&Object.values(s.signals).every(s=>s.aspect==='stop');});
+  const route=profile.routes.find(r=>r.id==='htvAu--htvSpIA');
+  await json('/api/route',{cookie,data:{from:route.from,to:route.to,intent:'build'}});
+  await prov.until('Infarten aktiv',async()=> (await prov.authenticatedState(cookie)).routes.some(r=>r.definitionId===route.id&&r.state==='active'));
+  const symbol=name=>page.locator('#track-plan .signal-target[aria-label="Signal '+name+'"] .modern-signal');
+  await page.waitForFunction(()=>document.querySelector('.signal-target[aria-label="Signal U2"] .modern-signal')?.dataset.tone==='stop'&&document.querySelector('.signal-target[aria-label="Signal 1/7"] .modern-signal')?.dataset.tone==='endpoint'&&document.querySelector('.signal-target[aria-label="Signal 1/1"] .modern-signal')?.dataset.tone==='go');
+  assert.match(await symbol('U2').locator('title').textContent(),/Stopp återrapporterat$/);
+  assert.match(await symbol('1/7').locator('title').textContent(),/slutpunkt för låst tågväg/);
+  assert.equal(await symbol('U2').locator('.modern-signal-mark').evaluate(n=>getComputedStyle(n).stroke),'rgb(83, 99, 111)');
+  assert.equal(await symbol('1/7').locator('.modern-signal-mark').evaluate(n=>getComputedStyle(n).stroke),'rgb(197, 37, 45)');
+  await page.screenshot({path:path.join(artifacts,'06-modern85-aktiv-tagvag.png'),fullPage:true});
+  await json('/api/route',{cookie,data:{from:route.from,to:route.to,intent:'cancel'}});
+  await prov.until('Infarten återtagen',async()=>!(await prov.authenticatedState(cookie)).routes.length);
+  await page.waitForFunction(()=>document.querySelector('.signal-target[aria-label="Signal 1/7"] .modern-signal')?.dataset.tone==='stop');
+  await json('/api/all-stop',{cookie,data:{enabled:true}});
+  await page.waitForFunction(()=>document.querySelector('.signal-target[aria-label="Signal U2"] .modern-signal')?.dataset.tone==='blocked');
+  assert.equal(await symbol('U2').locator('.modern-signal-main').evaluate(n=>getComputedStyle(n).fill),'rgb(197, 37, 45)');
+  await prov.until('AIS kan återställas',async()=>(await prov.authenticatedState(cookie)).allStopReset.allowed);
+  await json('/api/all-stop',{cookie,data:{enabled:false}});
+  await page.waitForFunction(()=>document.querySelector('.signal-target[aria-label="Signal U2"] .modern-signal')?.dataset.tone==='stop');
+  mark('Aktiv tågväg: motriktat stopp grått, verklig slutpunkt röd, kör grönt; återtagning och AIS verifierade');
 
   await page.goto(prov.origin + '/studio.html#konfigurera', { waitUntil: 'domcontentloaded' });
   await page.locator('#st-plan-host .st-plan-scroll > svg').waitFor();
@@ -141,7 +163,7 @@ try {
   const destinations = await json('/api/destinations', { cookie, data: { revision: state.destinations.revision, entry } });
   const clock = await json('/api/clock', { cookie, data: { sessionId: state.clock.sessionId, revision: state.clock.revision, rate: 3, running: false, timeMs: 46800000 } });
   await json('/api/onboarding/finish', { cookie, data: { skipped: ['ai', 'trainmeet'] } });
-  await browserSmoke();
+  await browserSmoke(cookie);
   docker(['restart', '--time', '10', prov.id]); prov.containerAddress(); await prov.applicationReady();
   const after = await prov.authenticatedState(cookie), afterConfig = await json('/api/config', { cookie }); assertIdentity(afterConfig, after);
   const session = await json('/api/auth/session', { cookie }); assert.equal(session.authenticated, true); assert.equal(session.user.id, user.id);

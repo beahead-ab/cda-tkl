@@ -1,4 +1,8 @@
 # Charlottendal TKL – lägesbild 30 oktober 2026
+## Förberett: 0.86.5 – korrekta stoppsymboler i 85-vyn
+
+Vanligt stopp, motriktade signaler och sidoskydd visas grått. Röd kontur kräver exakt bunden slutpunkt eller låst egen signal utan körbesked. AIS har separat symbolvisning efter återrapport. Inga stationsprofiler, förreglingsvillkor eller manöverorder ändras.
+
 
 ## 0.86.4 – ladda aktuella gränssnittsfiler
 

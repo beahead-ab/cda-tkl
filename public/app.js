@@ -12,7 +12,7 @@ import {createPanelStyle} from './panel-style.js';
 import {createTurnoutNumbers} from './turnout-numbers.js';
 import {createAppTheme} from './app-theme.js';
 import {trackColorState} from './track-colors.js';
-import {createModernSignal,modernSignalView} from './panel-symbols.js';
+import {createModernSignal,modernSignalView} from './panel-symbols.js?v=0.86.5';
 import {createPanelFit} from './panel-fit.js';
 import {syncAdminWorkspaces,registerAdminWorkspace,settingsRows,createAdminDialog} from './admin-ui.js';
 import {attribute,style,text as setText,flowProgress,createPanelFrames,preparingEndpoints} from './panel-rendering.js';
@@ -571,7 +571,7 @@ function paintPlan() {
     const shunting=state.routes.some(r=>r.kind==='shunt'&&r.signals.includes(s.mast));
     const requested=signalImage(s.signalType,value,shunting);
     const selected=decodedIcons.has(s.files[requested])?requested:2;
-    const modernView=modernSignalView({type:s.signalType,name:s.mast,signal:state.signals[s.mast],connected:fresh&&!state.storageFault,connectionAt:state.connectionAt,configured:!!config.signals[s.mast],routes:state.routes});
+    const modernView=modernSignalView({type:s.signalType,name:s.mast,signal:state.signals[s.mast],connected:fresh&&!state.storageFault,connectionAt:state.connectionAt,configured:!!config.signals[s.mast],routes:state.routes,sourceEndpoints:signalEndpoints,stopBlocked:state.controls?.stopAll===true});
     s.modern?.update(modernView);
     s.images.forEach((image,i)=>attribute(image,'visibility',i===selected?'visible':'hidden'));
     style(s.unknown,'display',selected !== 2 ? 'none' : '');
