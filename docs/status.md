@@ -1,5 +1,10 @@
 # Charlottendal TKL – lägesbild 30 oktober 2026
 
+## 0.86.3 – tänd och släck växelnummer
+
+85-vyn visar inga växelnummer som standard. Inställningar → Utseende och ljud → Växelnummer tänder och släcker numren separat per station, vy och webbläsare. Originalpanelens standard är fortsatt tända nummer. Studio behåller sitt separata lagerval.
+
+
 ## 0.86.2 – svar på klarering efter träffbyte
 
 **Publicerad: 0.86.2 (30 oktober 2026; cda-tkl main `b9bbd89`, #120; samtliga fem CI-kontroller godkända i `41132891318` på `5fd9601`).**

@@ -1,5 +1,10 @@
 # Arbetsjournal – godkänd helleverans
 
+## 30 oktober 2026 – växelnummer i ställverket, 0.86.3
+
+Trafikvyn saknade ett visningsval trots Studios befintliga lagerknapp. Växelnummer är nu släckta som standard i 85-vyn och kan tändas/släckas under Utseende och ljud. Valet sparas lokalt per station och vy och synkas mellan flikar. Samma visningsregel täcker vanliga växlar och dubbla korsningsväxlar, även vid låsning. Ingen fältorder skickas.
+
+
 ## 30 oktober 2026 – 0.86.2, Godkänn/Neka
 
 Felet reproducerades med Neka i den öppna Charlottendal-panelen. Serverns besked var ”Träffen eller configen har ändrats. Läs in arbetsytan igen innan du fortsätter.” TrainMeet Server kräver `meet_generation` efter träff/configbyte; adaptern tappade fältet från `/v1/tkl/context`. Generationen bevaras och bifogas nu centralt till både klareringar och tågrörelser. Klientens generation och köade kommandons kontext kontrolleras före sändning. Ingen automatisk omsändning sker i en ny träff.

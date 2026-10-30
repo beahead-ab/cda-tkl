@@ -9,6 +9,7 @@ import {createAdminNavigation} from './admin-navigation.js';
 import {studioTarget} from './admin-navigation-model.js';
 import {createAdminAppearance} from './admin-appearance.js';
 import {createPanelStyle} from './panel-style.js';
+import {createTurnoutNumbers} from './turnout-numbers.js';
 import {createAppTheme} from './app-theme.js';
 import {trackColorState} from './track-colors.js';
 import {createModernSignal,modernSignalView} from './panel-symbols.js';
@@ -66,7 +67,7 @@ $('crossing-display').onchange=()=>{setCrossingDisplay($('crossing-display').val
 
 let state, config, panel, registry, chosen = null, inspected = null, online = false, lastEvent = 0, pending = 0;
 let manualFeedback, sourceRegister, trainInformation, telegramRecorder, connectionSettings, stationSettings, operatingControls, modelClock, trainMeet, feedback, layout;
-let routeConfirmation,signalEndpoints,panelStyle;
+let routeConfirmation,signalEndpoints,panelStyle,turnoutNumbersDisplay;
 const routeTargets=createRouteTargets({load:async(from,kind)=>{
   const response=await fetch('/api/route-targets?'+new URLSearchParams({from,kind,...(rangerMode?{operator:'ranger'}:{})}),{cache:'no-store'});
   if(!response.ok)throw Error('Mål kunde inte kontrolleras.');
@@ -794,6 +795,7 @@ async function start() {
     if(unfinished)message('Startvalet avbröts när ställverksutseendet ändrades.',{error:false});
     window.dispatchEvent(new Event('panel-style-change'));paint();
   }});
+  turnoutNumbersDisplay=createTurnoutNumbers({station:config.station?.id,root:document.body,panelStyle});
   buildPlan();
   const deckPluppar=()=>buttons.filter(b=>b.isRoute).map(b=>({id:b.id,kind:b.kind,node:b.g,label:label(b.id)}));
   streamDeck=createStreamDeck({pluppar:deckPluppar,choose,clearChoice,api,message,state:()=>state,online:()=>online&&state?.connection==='connected',chosen:()=>chosen,trainMeet:()=>state?.trainMeet,layout:()=>state?.streamDeck,onChange:()=>streamDeckAdmin?.devices(),ranger:()=>rangerMode});
@@ -855,7 +857,7 @@ async function start() {
   createPanelSplit({bottom:$('panel-bottom'),viewport:document.querySelector('.panel-scroll')});
   // Nothing administrative in the signal box's frame: the update chips join the Drift tab's buttons.
   const headRight=document.getElementById('plan-head-right');if(headRight){document.querySelector('#panel-drift .drift-actions')?.append(...headRight.children);headRight.remove();}
-  createAdminAppearance({panelStyle,appTheme});
+  createAdminAppearance({panelStyle,appTheme,turnoutNumbersDisplay});
   for(const id of ['appearance','journal','streamdeck'])registerAdminWorkspace('#tools/'+id,$(id+'-tools'));
   $('journal-filter').oninput=paintJournal;
   for(const id of ['xml','migration','protocol','update','ai','users','start','station'])registerAdminWorkspace('#advanced/'+id,$('advanced-'+id));
