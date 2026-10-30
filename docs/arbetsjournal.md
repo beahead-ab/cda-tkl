@@ -2,6 +2,8 @@
 
 ## 0.86.4 – ladda aktuella gränssnittsfiler
 
+**Publicerad: 0.86.4 (30 oktober 2026; main `d57cdb3`, #124; växelnummer i #121, main `9ca83ab`).** Full CI för funktionen är grön på `f546541` (`41133204487`); cacheadresserna har dessutom 21 riktade godkända prov och syntaxkontroll. Safari visade körande 0.86.4, Växelnummer Släckta och fungerande sparning till Tända. Webbläsarstyrningen slutade svara före återställningen av testvalet; användarens Safari kan därför fortfarande ha Tända valt. Fysisk bana ingår inte i efterkontrollen.
+
 Efterkontrollen av 0.86.3 visade gamla gränssnittsfiler trots nytt versionsnummer. Startskriptet, utseendedialogen och ställverkets temafiler använder nu versionsmärkta URL:er så uppdateringen laddas direkt.
 
 ## 30 oktober 2026 – växelnummer i ställverket, 0.86.3
