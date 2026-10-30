@@ -2414,3 +2414,8 @@ Publicerad i cda-tkl main `92284ef` genom #116 efter fem gröna CI-kontroller i 
 ## 30 oktober 2026 – 0.86.1, tema och spårfärger
 
 Casper rättade 85-vyns fasta ljusa bakgrund. Den följer nu mörkt/ljust tema, mörkt som standard, med samma sparade temaval som Studio. Spårfärgerna följer önskemålet: rött belagt, grönt låst väg (även växling), blått uttryckligen lokalstyrt, lila trafikspärrat. Färgprioriteten låter beläggning synas över alla andra statusar. Vägmarkering täcker inte lokalspårens blå färg. Endast presentationen ändras; inga manöverorder, profiler eller lås ändras.
+
+
+Publicerad: 0.86.1 (30 oktober 2026; cda-tkl main `99bf795`, #118; alla fem kontroller godkända i CI `41126251719` på `167d558`).
+
+Webbläsarprovet i den riktiga Render-avbildningen verifierade faktiska bakgrunds- och spårfärger i mörkt/ljust tema samt det delade valet mellan panel och Studio. Alla enhetsprov, integrationer, källkontroller, återställningsprov, båda containerproven, Windowsproven och Träkvistas fristående paket godkändes. Skärmbilder sparades i CI. Ingen ny lokal visuell kontroll eller fysisk stationsprovning gjordes. Dokumentationsnoteringen ändrar inte programmet och bygger inte om webbdriften.
