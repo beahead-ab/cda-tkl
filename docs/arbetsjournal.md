@@ -1,5 +1,12 @@
 # Arbetsjournal – godkänd helleverans
 
+## 30 oktober 2026 – 0.86.2, Godkänn/Neka
+
+Felet reproducerades med Neka i den öppna Charlottendal-panelen. Serverns besked var ”Träffen eller configen har ändrats. Läs in arbetsytan igen innan du fortsätter.” TrainMeet Server kräver `meet_generation` efter träff/configbyte; adaptern tappade fältet från `/v1/tkl/context`. Generationen bevaras och bifogas nu centralt till både klareringar och tågrörelser. Klientens generation och köade kommandons kontext kontrolleras före sändning. Ingen automatisk omsändning sker i en ny träff.
+
+Regressionsprov täcker accept, reject, movement, serverns generationsvillkor, äldre servrar, ogiltiga generationer och generationsbyte under väntande poll.
+
+
 ## Aktuellt 23 september 2026, natt
 
 **04:10: aktiv serverrelease är 470ff88, version 0.8.1. Publicerad och efterkontrollerad: 340 tågvägar, 65 + 4 godkända serverprov, 133/153 NX-definitioner med körbar koppling. Fortsätt nästa ofärdiga steg; publiceringen är KLAR.**
