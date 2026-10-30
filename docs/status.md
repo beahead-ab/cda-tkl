@@ -1,5 +1,9 @@
 # Charlottendal TKL – lägesbild 30 oktober 2026
 
+## 0.86.4 – ladda aktuella gränssnittsfiler
+
+Efterkontrollen av 0.86.3 visade gamla gränssnittsfiler trots nytt versionsnummer. Startskriptet, utseendedialogen och ställverkets temafiler använder nu versionsmärkta URL:er så uppdateringen laddas direkt.
+
 ## 0.86.3 – tänd och släck växelnummer
 
 85-vyn visar inga växelnummer som standard. Inställningar → Utseende och ljud → Växelnummer tänder och släcker numren separat per station, vy och webbläsare. Originalpanelens standard är fortsatt tända nummer. Studio behåller sitt separata lagerval.
