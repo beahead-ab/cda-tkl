@@ -48,7 +48,10 @@ test('lagringshändelser gäller bara den aktuella stationen och kan tas bort',(
   storage.data.clear();listener({key:null});assert.equal(view.current,'original');view.destroy();
 });
 test('signalsymboler täcker huvud- och dvärgtyper i båda stationerna utan att omtolka stopplyktor',()=>{
-  for(const file of ['public/data/panel.json','stations/trakvista/data/panel.json']){
+  // Träkvistas fristående installationspaket innehåller inte Charlottendals data.
+  const panels=['public/data/panel.json','stations/trakvista/data/panel.json'].filter(file=>fs.existsSync(new URL('../'+file,import.meta.url)));
+  assert.ok(panels.length>0,'minst paketets egen stationspanel finns');
+  for(const file of panels){
     const panel=JSON.parse(fs.readFileSync(new URL('../'+file,import.meta.url)));
     for(const m of panel.micons){
       assert.ok(modernSignalKind(m.type)||['sly_2','ssi_2'].includes(m.type),m.type);
