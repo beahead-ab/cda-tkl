@@ -2,7 +2,11 @@
 
 ## 0.86.2 – svar på klarering efter träffbyte
 
-Förberedd rättelse: TrainMeets `meet_generation` bevaras från stationskontexten och skickas med klarerings- och rörelsekommandon. Detta löser serverns avvisning ”Träffen eller configen har ändrats” på Godkänn/Neka. Köade kommandon avvisas vid ändrad generation, publikation eller trafikdag. Äldre servrar stöds fortfarande.
+**Publicerad: 0.86.2 (30 oktober 2026; cda-tkl main `b9bbd89`, #120; samtliga fem CI-kontroller godkända i `41132891318` på `5fd9601`).**
+
+TrainMeets `meet_generation` bevaras från stationskontexten och skickas med klarerings- och rörelsekommandon. Detta löser serverns avvisning ”Träffen eller configen har ändrats” på Godkänn/Neka. Köade kommandon avvisas vid ändrad generation, publikation eller trafikdag. Äldre servrar stöds fortfarande.
+
+Webbdriften är verifierad på 0.86.2 med hälsostatus `running`. Liveprov 22:54: Godkänn för tåg 8785 från Vagnsta och Neka för tåg 312 från Gässlösa bekräftades i händelseloggen. CI: 661 enhetsprov godkända (tre plattformsberoende överhoppade), 19 integrationer, två separata uppdateringsprov, 387 paketenhetsprov samt container-/Windows-kontroller utan fel.
 
 
 ## 0.86.1 – tema och spårfärger

@@ -6,6 +6,8 @@ Felet reproducerades med Neka i den öppna Charlottendal-panelen. Serverns beske
 
 Regressionsprov täcker accept, reject, movement, serverns generationsvillkor, äldre servrar, ogiltiga generationer och generationsbyte under väntande poll.
 
+Publicerad genom #120, main `b9bbd89`, efter fem gröna CI-kontroller i `41132891318`: 661 godkända enhetsprov (tre plattformsberoende överhoppade), 19 integrationer, två separata uppdateringsprov och 387 paketenhetsprov. Webbdriften visar 0.86.2 och `/healthz` svarar `running`. Liveprov 22:54: Godkänn från klareringskortet registrerades för tåg 8785/Vagnsta; Neka från statusraden registrerades för tåg 312/Gässlösa. Händelseloggen bekräftade båda och inga felmeddelanden visades. TrainMeet Server ändrades inte. Träkvistas paket provades i CI men publicerades inte till dess separata förråd.
+
 
 ## Aktuellt 23 september 2026, natt
 
