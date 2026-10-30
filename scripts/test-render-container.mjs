@@ -55,7 +55,7 @@ async function browserSmoke() {
     const colors=await page.evaluate(()=>{
       const plan=document.querySelector('#track-plan'),source=plan.querySelector('.rail');
       const result={background:getComputedStyle(plan).backgroundColor};
-      for(const [name,cls] of Object.entries({occupied:'rail occupied blocked',blocked:'rail blocked',local:'rail unconfigured',locked:'route-flow traversing',shunt:'route-flow active'})){
+      for(const [name,cls] of Object.entries({occupied:'rail occupied blocked',blocked:'rail blocked',local:'rail ranger-laid',locked:'route-flow traversing',shunt:'route-flow active'})){
         const node=source.cloneNode(false);node.setAttribute('class',cls);
         node.setAttribute('data-track-state',name);if(name==='shunt')node.setAttribute('data-kind','shunt');
         plan.append(node);result[name]=getComputedStyle(node).stroke;node.remove();

@@ -11,3 +11,17 @@ body.panel-app .panel-shell{--track-local:#5aa9ff;--track-blocked:#b59ce8}
 :root[data-theme=light] input,
 :root[data-theme=light] select,
 :root[data-theme=light] textarea{color:var(--text);background:var(--surface);border-color:var(--border)}
+
+:root[data-theme=light] body.panel-app{background:var(--page)}
+:root[data-theme=light] body.panel-app .panel-scroll,
+:root[data-theme=light] body.panel-app #track-plan,
+:root[data-theme=light] body.panel-app #panel-bottom{background:var(--bg);color:var(--fg);border-color:var(--divider)}
+:root[data-theme=light] .brand,
+:root[data-theme=light] .app-header nav .selected{color:var(--text)}
+:root[data-theme=light] body.panel-app .tt-entry{color:var(--fg-soft)}
+:root[data-theme=light] body.panel-app .tt-now{color:var(--fg);background:#8c620014}
+:root[data-theme=light] body.panel-app .tt-preview,
+:root[data-theme=light] body.panel-app #tt-status{background:var(--bg);color:var(--fg)}
+:root[data-theme=light] body.panel-app .tt-mode button[aria-pressed=true],
+:root[data-theme=light] body.panel-app .bottom-tabs button[aria-selected=true]{background:var(--segment-active);color:var(--fg)}
+:root[data-theme=light] body.panel-app .ev-tabs button[aria-selected=true]{color:var(--fg)}

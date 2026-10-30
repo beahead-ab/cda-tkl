@@ -13,7 +13,7 @@ body[data-panel-style=modern85] #track-plan .destination-arrow{stroke:var(--fg)}
 body[data-panel-style=modern85] #track-plan .signal-target .hit{stroke:transparent;fill:transparent}
 body[data-panel-style=modern85] #track-plan .signal-target:is(:hover,:focus-visible,.signal-chosen,.route-choice-start,.route-choice-end,.signal-preparing) .hit{stroke:var(--fg);fill:transparent}
 /* Samma prioritet i båda vyerna: belagt > spärrat > lokalstyrt > låst väg. */
-body.panel-app #track-plan .rail[data-track-state=local]{stroke:var(--track-local);opacity:1}
+body.panel-app #track-plan .rail[data-track-state=local]{stroke:var(--track-local)!important;opacity:1}
 body.panel-app #track-plan .rail[data-track-state=blocked]{stroke:var(--track-blocked)!important;opacity:1}
 body.panel-app #track-plan .rail[data-track-state=occupied]{stroke:var(--red)!important}
 body.panel-app #track-plan .rail[data-track-state=local].branch-off{opacity:.45}
