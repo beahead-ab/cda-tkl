@@ -1,5 +1,10 @@
 # Charlottendal TKL – lägesbild 30 oktober 2026
 
+## 0.86.2 – svar på klarering efter träffbyte
+
+Förberedd rättelse: TrainMeets `meet_generation` bevaras från stationskontexten och skickas med klarerings- och rörelsekommandon. Detta löser serverns avvisning ”Träffen eller configen har ändrats” på Godkänn/Neka. Köade kommandon avvisas vid ändrad generation, publikation eller trafikdag. Äldre servrar stöds fortfarande.
+
+
 ## 0.86.1 – tema och spårfärger
 
 **Publicerad: 0.86.1 (30 oktober 2026; cda-tkl main `99bf795`, #118; alla fem kontroller godkända i CI `41126251719` på `167d558`).**

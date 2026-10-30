@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.86.2",
+    "date": "2026-10-30",
+    "notes": [
+      "Godkänn och Neka fungerar även efter byte av träff eller config i TrainMeet. Klareringar och tågrörelser skickar med serverns aktuella träffgeneration.",
+      "Ett väntande knapptryck följer inte med till en ny träffgeneration eller trafikdag. Kontrollera det nya läget och välj åtgärden igen."
+    ]
+  },
+  {
     "version": "0.86.1",
     "date": "2026-10-30",
     "notes": [

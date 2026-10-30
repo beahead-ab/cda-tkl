@@ -15,7 +15,7 @@ export function createClearance({api,message,onRequest,onAttention}) {
 <datalist id="cl-train-numbers"></datalist><datalist id="cl-tracks"></datalist>`;
   const $=id=>document.getElementById('cl-'+id);
   let tm=null,online=false,busy=false,seen=new Set(),lastLines='',lastRows='';
-  const call=(name,extra)=>api('trainmeet/'+name,{sessionId:tm.sessionId,revision:tm.revision,...extra});
+  const call=(name,extra)=>api('trainmeet/'+name,{sessionId:tm.sessionId,revision:tm.revision,meetGeneration:tm.context?.meetGeneration??null,...extra});
   async function run(work){if(busy||!tm)return;busy=true;controls();try{return await work();}finally{busy=false;controls();}}
   $('lines').addEventListener('submit',e=>{const form=e.target.closest('form[data-line]');if(!form)return;e.preventDefault();const input=form.querySelector('input');run(async()=>{if(await call('clearance',{connectionId:form.dataset.line,action:'request',trainNumber:input.value.trim()}))input.value='';});});
   $('lines').addEventListener('click',e=>{const button=e.target.closest('button[data-action]');if(!button)return;run(()=>call('clearance',{connectionId:button.dataset.line,action:button.dataset.action,trainNumber:''}));});

@@ -541,3 +541,8 @@ till exempel COM7. Sök enheter igen läser Windows serieportlista; den kan inne
 säkert inkommande/utgående. Porten kan också skrivas för hand. Kanal döljs och MAC-adress behövs inte.
 Stäng JMRI före anslutning. Senaste portfel visas vid gatewayen; frånkoppling stoppar återanslutningsförsöken.
 Se [Bennys provguide](benny-windows-bluetooth-prov.md) för fysisk acceptans och återgång.
+
+
+## Klarering efter träffbyte (0.86.2)
+
+Godkänn och Neka skickar samma aktuella träffgeneration som TrainMeet rapporterar. Det gäller både korten i Klarering och knapparna över spårplanen, samt tågrörelserna. Om träffen ändras medan ett knapptryck väntar skickas ingen åtgärd i den nya träffen; kontrollera senaste läget och välj åtgärden igen.
