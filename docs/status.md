@@ -1,5 +1,9 @@
 # Charlottendal TKL – lägesbild 30 oktober 2026
-## Förberett: 0.86.5 – korrekta stoppsymboler i 85-vyn
+## 0.86.5 – korrekta stoppsymboler i 85-vyn
+
+**Publicerad: 0.86.5 (30 oktober 2026; cda-tkl main `8ea2c91`, #122; alla fem kontroller godkända i CI `41135617277` på `0f818ba`).**
+
+Verifierad live på cda-tkl.trainmeet.app, Render `dep-dbihdq7b9u1s738igm5g`. Befintlig inloggning fungerar; mörk 85-vy har svart bakgrund och grått normalt stopp. Aktiva tågvägar och AIS verifierades i isolerat Docker/Chromium-prov.
 
 Vanligt stopp, motriktade signaler och sidoskydd visas grått. Röd kontur kräver exakt bunden slutpunkt eller låst egen signal utan körbesked. AIS har separat symbolvisning efter återrapport. Inga stationsprofiler, förreglingsvillkor eller manöverorder ändras.
 
