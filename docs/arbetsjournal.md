@@ -2402,3 +2402,8 @@ Automatiska prov skuggar shutdown med en skalfunktion och provar både beställd
 **Publicerad: 0.85.2 (28 oktober 2026; cda-tkl main `111948f`, #113; samtliga kontroller godkända i CI `40675022627`).**
 
 Provningen omfattar enhetsprov, integrationer, återställning, stationspaket, båda containerproven och Windows-installation. Omstartsproven använder skuggat shutdown; fysisk omstart på Pi återstår att prova. Merge-meddelandets [skip render] lämnar webbdriften orörd.
+
+
+## 30 oktober 2026 – två ställverksvyer, 0.86.0
+
+Casper beställde de två versionerna som val under inställningar, efter designunderlaget i #115. Originalpanelen är standard; den 85-inspirerade skärmvyn använder samma monterade geometri och manöverknappar. Vyvalet lagras per station och webbläsare. En additiv klientmodul skiljer symbolritningen från rapporttolkning och vyval. Tågvägar och profilfiler är orörda. Ofullständiga dvärgbesked får frågetecken och en förklaring, inte ett gissat tillåtande delbesked. Den moderna färgsättningen är begränsad till spårplanen. Publikt underlag och avgränsningar finns i docs/stallverksvyer.md.

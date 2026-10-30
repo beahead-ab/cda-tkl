@@ -1,4 +1,8 @@
-# Charlottendal TKL – lägesbild 28 oktober 2026
+# Charlottendal TKL – lägesbild 30 oktober 2026
+
+## Förberett: 0.86.0 – två ställverksvyer
+
+Inställningar → Utseende och ljud väljer Originalpanel eller 85-inspirerad skärmvy. Valet sparas per webbläsare och station. Samma monterade spårplan, driftstatus och manövrering används. Inga stationsprofiler eller förreglingsregler ändras; ofullständiga dvärgbesked visas uttryckligen som ofullständiga. Se [ställverksvyer](stallverksvyer.md) och #115. Fysisk acceptans återstår.
 
 ## 0.85.2 – automatisk omstart efter Pi-installation
 

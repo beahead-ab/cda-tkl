@@ -1,5 +1,9 @@
 # Ren panel och separat verktygssida
 
+## Två ställverksvyer (0.86.0)
+
+Under Inställningar → Utseende och ljud → Redigera väljs Originalpanel eller 85-inspirerad skärmvy. Valet gäller den här webbläsaren och stationen. Original är standard. Inga tågvägar eller lås ändras vid vybyte; ett oskickat startval avbryts. Symboler, begränsningar och prov beskrivs i [ställverksvyer](stallverksvyer.md).
+
 Ställverket öppnas på `/#panel`. Överkanten innehåller namn, anslutningsstatus och meny. Från version 0.29.0 är den stora knappraden borttagen enligt Caspers godkända förenkling.
 
 ## Stabil låsmarkering utan programmeringsspår (0.82.12)
