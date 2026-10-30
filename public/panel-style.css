@@ -23,6 +23,9 @@ body.panel-app #track-plan .rail[data-track-state=local].branch-off{opacity:.45}
 .modern-signal-mark{fill:none;stroke:var(--track-main);stroke-width:2;stroke-linejoin:miter}
 .modern-signal[data-tone=go] .modern-signal-mark{stroke:var(--green)}
 .modern-signal[data-tone=endpoint] .modern-signal-mark{stroke:var(--red)}
+.modern-signal[data-tone=blocked] .modern-signal-main{stroke:var(--red);fill:var(--red)}
+.modern-signal[data-tone=blocked] .modern-signal-dwarf{stroke:var(--yellow)}
+.modern-signal[data-tone=blocked]:has(.modern-signal-main) .modern-signal-dwarf{stroke:var(--track-main)}
 .modern-signal[data-tone=releasing] .modern-signal-mark{stroke:var(--yellow)}
 .modern-signal[data-tone=unknown] .modern-signal-mark{stroke:var(--fg)}
 .modern-signal-question{fill:var(--fg);font:600 11px var(--font-mono)}

@@ -2437,3 +2437,10 @@ Casper rättade 85-vyns fasta ljusa bakgrund. Den följer nu mörkt/ljust tema, 
 Publicerad: 0.86.1 (30 oktober 2026; cda-tkl main `99bf795`, #118; alla fem kontroller godkända i CI `41126251719` på `167d558`).
 
 Webbläsarprovet i den riktiga Render-avbildningen verifierade faktiska bakgrunds- och spårfärger i mörkt/ljust tema samt det delade valet mellan panel och Studio. Alla enhetsprov, integrationer, källkontroller, återställningsprov, båda containerproven, Windowsproven och Träkvistas fristående paket godkändes. Skärmbilder sparades i CI. Ingen ny lokal visuell kontroll eller fysisk stationsprovning gjordes. Dokumentationsnoteringen ändrar inte programmet och bygger inte om webbdriften.
+
+
+## 30 oktober 2026 – 0.86.5, motriktade signaler i 85-vyn
+
+Casper beställde rättning och produktionssättning efter jämförelse med TDOK 2021:0552 v2.0 s. 84–89. Tidigare färgades alla återrapporterade stoppsignaler i guardSignals röda. Nu krävs verklig slutpunkt enligt entydig NX-sensor/mast-bindning eller medlemskap som egen signal i en reserverad tågväg. Vanligt motriktat skydd och sidoskydd blir grått. AIS läses som en uttrycklig spärr mot körmedgivanden, men faktiskt kör eller okänd rapportkvalitet ersätts aldrig av ett påhittat stopp. Individuella signalspärrar och andra låsområdesgränser som modellen inte rapporterar införs inte genom antaganden. Originalsymbolerna, driftreglerna och stationsprofilerna ändras inte.
+
+Riktade prov omfattar verkliga infarter i Charlottendal och Träkvista, saknade/tvetydiga slutpunkter, låsta egna signaler, återtagning, AIS och rapportkvalitet. Containerprovet följer en verkligt lagd syntetisk tågväg i den riktiga panelen.

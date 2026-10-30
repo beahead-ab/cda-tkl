@@ -64,13 +64,56 @@ test('signalsymboler täcker huvud- och dvärgtyper i båda stationerna utan att
   assert.equal(signalRotation(90),0);assert.equal(signalRotation(270),180);assert.equal(signalRotation(0),-90);assert.equal(signalRotation(undefined),null);
 });
 const report=(extra={})=>({type:'hsi_5',name:'1/5',signal:{aspect:'stop',updatedAt:10},connected:true,connectionAt:5,...extra});
-test('återrapport styr symbolen: normalt stopp grått, låsskydd rött, inte order eller tågvägsbegäran',()=>{
+test('återrapport styr symbolen: normalt stopp och vanligt låsskydd grått, inte order',()=>{
   assert.equal(modernSignalView(report()).tone,'stop');
   assert.equal(modernSignalView(report({signal:{aspect:'stop',desired:'GO',updatedAt:10}})).tone,'stop');
   assert.equal(modernSignalView(report({signal:{aspect:'go',desired:'STOP',updatedAt:10},routes:[{signals:['1/5'],state:'cancelling'}]})).tone,'go','kör är kvar tills stopp rapporteras');
-  assert.equal(modernSignalView(report({routes:[{guardSignals:['1/5'],state:'active'}]})).tone,'endpoint');
+  assert.equal(modernSignalView(report({routes:[{guardSignals:['1/5'],state:'active'}]})).tone,'stop');
   assert.equal(modernSignalView(report({routes:[{signals:['1/5'],state:'cancelling'}]})).tone,'releasing');
-  assert.equal(modernSignalView(report({routes:[{signals:['1/5'],state:'clearing'}]})).tone,'stop');
+  assert.equal(modernSignalView(report({routes:[{signals:['1/5'],state:'clearing'}]})).tone,'endpoint');
+});
+test('rött kräver låst egen signal eller entydig slutpunkt, inte motriktat sidoskydd',()=>{
+  const route={state:'active',signals:['start'],guardSignals:['end','opposing','flank'],source:{nxButtons:['from','to']}};
+  const sourceEndpoints={endpoints:[{sensor:'to',mast:'end'}]};
+  const view=(name,extra={})=>modernSignalView(report({name,routes:[route],sourceEndpoints,...extra}));
+  assert.equal(view('opposing').tone,'stop');assert.equal(view('flank').tone,'stop');
+  assert.equal(view('end').tone,'endpoint');assert.match(view('end').description,/slutpunkt/);
+  assert.equal(view('start').tone,'endpoint');assert.match(view('start').description,/utan körbesked/);
+  assert.equal(view('start',{signal:{aspect:'go',updatedAt:10}}).tone,'go');
+  assert.equal(view('end',{sourceEndpoints:{}}).tone,'stop','saknad bindning får inte gissas');
+  assert.equal(view('end',{sourceEndpoints:{endpoints:[...sourceEndpoints.endpoints,{sensor:'to',mast:'other'}]}}).tone,'stop','tvetydig bindning får inte gissas');
+  assert.equal(view('end',{routes:[]}).tone,'stop','slutpunkten återgår när låset tas bort');
+  assert.equal(view('end',{routes:[{...route,state:'requested'}]}).tone,'stop','en begäran är inget lås');
+  assert.equal(view('opposing',{signal:{aspect:'stop',desired:'STOP',updatedAt:10}}).tone,'stop','en stopporder är ingen stoppspärr');
+});
+test('AIS är en uttrycklig stoppspärr men körbesked och rapportkvalitet döljs inte',()=>{
+  assert.equal(modernSignalView(report({stopBlocked:true})).tone,'blocked');
+  assert.equal(modernSignalView(report({stopBlocked:true,signal:{aspect:'go',updatedAt:10}})).tone,'go');
+  for(const extra of [{connected:false},{connectionAt:11},{configured:false},{signal:null}]){
+    assert.equal(modernSignalView(report({stopBlocked:true,...extra})).tone,'unknown');
+  }
+  assert.equal(modernSignalView(report({stopBlocked:true,routes:[{signals:['1/5'],state:'cancelling'}]})).tone,'releasing');
+});
+test('Charlottendals infart behåller motriktade signaler grå och verklig slutpunkt röd',()=>{
+  const file=new URL('../profiles/charlottendal-network.json',import.meta.url);
+  if(!fs.existsSync(file))return; // Paketet för Träkvista har enbart sin egen profil.
+  const config=JSON.parse(fs.readFileSync(file)),sourceEndpoints=JSON.parse(fs.readFileSync(new URL('../public/data/signal-endpoints.json',import.meta.url)));
+  const route={...config.routes.find(r=>r.id==='htvAu--htvSpIA'),state:'active'};
+  assert.ok(route.signals?.length);assert.ok(route.guardSignals.includes('1/7'));
+  const view=name=>modernSignalView(report({name,routes:[route],sourceEndpoints}));
+  assert.equal(view('1/7').tone,'endpoint');
+  for(const name of route.guardSignals.filter(n=>n!=='1/7'))assert.equal(view(name).tone,'stop',name);
+});
+test('Träkvistas infart skiljer slutpunkt från motriktat skydd',()=>{
+  const pairs=[['stations/trakvista/profiles/network.json','stations/trakvista/data/signal-endpoints.json'],['profiles/network.json','public/data/signal-endpoints.json']];
+  const pair=pairs.find(([profile])=>fs.existsSync(new URL('../'+profile,import.meta.url)));
+  if(!pair)return;
+  const config=JSON.parse(fs.readFileSync(new URL('../'+pair[0],import.meta.url))),sourceEndpoints=JSON.parse(fs.readFileSync(new URL('../'+pair[1],import.meta.url)));
+  const definition=config.routes.find(r=>r.id==='htvA--htvI');if(!definition)return;
+  const route={...definition,state:'active'};
+  const view=name=>modernSignalView(report({name,routes:[route],sourceEndpoints}));
+  assert.equal(view('1/7').tone,'endpoint');
+  for(const name of ['2/10','2/8','1/8']){assert.ok(route.guardSignals.includes(name));assert.equal(view(name).tone,'stop',name);}
 });
 test('bruten kontakt, gammal anslutningsrapport och saknad bindning kan aldrig visa kör',()=>{
   const go={aspect:'go',updatedAt:10};

@@ -21,7 +21,9 @@ huvudsignal/dvärg/kombination s. 84–89, tåg- och växlingsväg s. 67–69.
 Detta är en inspirerad visning, inte en historiskt verifierad MAN900-kopia eller en full M85-emulator.
 
 - Normal stoppsignal är grå. Kör i en huvudsignal är grönt först efter återrapport från aktuell anslutning.
-- Stoppsignal som enligt serverns tågvägstabell skyddar en låst väg markeras röd.
+- Från 0.86.5 visas vanligt stopp grått även för motriktade signaler och sidoskydd. Skyddslistan i sig ger inte röd färg.
+- Röd kontur visar den verkliga slutpunkten för en låst väg eller en egen signal som är låst i vägen utan körbesked. Slutpunkten måste ha en entydig bindning från vägens slutliga NX-sensor till signalmast; saknad eller tvetydig bindning gissas inte.
+- Aktiv AIS är en uttrycklig spärr mot körmedgivanden. Efter stoppåterrapport visas huvudsignalens triangel fylld röd, separat dvärgsymbol gul och kombinationssignalens dvärgdel grå. Enbart en skickad STOP-order räknas aldrig som AIS. Kör fortsätter att visas tills stopp rapporteras. Separata individuella signalspärrar och särskilda låsområdesgränser saknar egna rapporterade tillstånd i nuvarande modell och härleds inte ur skyddslistan.
 - Pågående återtagning markeras gult efter stoppåterrapport. Kör fortsätter visas om stopp ännu inte rapporterats.
 - Vit symbol med frågetecken betyder okänt eller otillräckligt detaljerat besked. Vid bruten kontakt,
   lagringsfel, saknad bindning eller rapport från föregående anslutning visas inget bekräftat körbesked.
