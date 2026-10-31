@@ -2,6 +2,8 @@
 
 ## 31 oktober 2026 – avgång fastnar som uppställt (0.86.6)
 
+**Publicerad: 0.86.6 (31 oktober 2026; cda-tkl main `ce9935d`, #127; samtliga fem CI-kontroller godkända i `41156982363` på `b391c1e`).** Webbdriften är verifierad på 0.86.6: ställverk, träff och klocka laddar utan JavaScript-fel. CI: 675 enhetsprov godkända (tre plattformsberoende överhoppade), 20 integrationer inklusive tåg 92 från uppställt till återrapporterad avgång, två återställningsprov och 401 paketenhetsprov. Container- och Windows-kontroller är godkända. Ingen provavgång skickades i den pågående träffen.
+
 Casper visade tåg 92 på utfarten medan tidtabellen fortfarande sade Uppställt. Charlottendals äldre körpolicy lägger tågvägar men återrapporterar inte tågrörelser. En separat frånkopplad avgångsrapportör följer nu säker spårning från stationen till utfarten, binder till en entydig aktiv rörelse och skriver avgång genom den befintliga TrainMeet-adaptern. Saknad TrainMeet-koppling, fel granne, utebliven klarering och serverfel behåller en synlig väntande rapport; de fabricerar ingen bekräftelse. Väntande lokala avgångar kan inte ställas ut på nytt. Ny träff, dag, station, parkoppling eller stationsruntime tömmer lokala bevis. Träkvistas befintliga tidtabellsautomat och fysisk LocoNet-drift behåller sina flöden.
 
 
