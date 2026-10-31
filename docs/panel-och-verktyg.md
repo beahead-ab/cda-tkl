@@ -1,5 +1,10 @@
 # Ren panel och separat verktygssida
 
+## Verifierad avgång i frånkopplat läge (0.86.6)
+
+När ett säkert identifierat tåg lämnar Charlottendals spårbild ändras rapporten direkt. Med en utfart kopplad under Orter till rätt TrainMeet-granne och godkänd klarering återrapporteras avgången automatiskt. Avgått visas när TrainMeet bekräftat. I väntan på bekräftelse visas Lämnat ställverket och orsaken, exempelvis saknad stationskoppling eller klarering. Tåget fortsätter inte räknas som uppställt eller försenat. Lokala utpassager sparas under den pågående stationskörningen, inte över omstart; en äldre avgång utan bevarad spårning måste anmälas manuellt. Fysisk LocoNet-drift omfattas inte av automatisk återrapportering.
+
+
 ## Växelnummer
 
 Inställningar → Utseende och ljud → Växelnummer väljer Tända eller Släckta för aktuell ställverksvy. 85-vyn har släckta nummer som standard; originalpanelen har tända. Valet sparas per webbläsare, station och vy. Spårbeteckningarna visas fortfarande. Studios lagerknapp styr endast Studio.

@@ -1,5 +1,10 @@
 # Arbetsjournal – godkänd helleverans
 
+## 31 oktober 2026 – avgång fastnar som uppställt (0.86.6)
+
+Casper visade tåg 92 på utfarten medan tidtabellen fortfarande sade Uppställt. Charlottendals äldre körpolicy lägger tågvägar men återrapporterar inte tågrörelser. En separat frånkopplad avgångsrapportör följer nu säker spårning från stationen till utfarten, binder till en entydig aktiv rörelse och skriver avgång genom den befintliga TrainMeet-adaptern. Saknad TrainMeet-koppling, fel granne, utebliven klarering och serverfel behåller en synlig väntande rapport; de fabricerar ingen bekräftelse. Väntande lokala avgångar kan inte ställas ut på nytt. Ny träff, dag, station, parkoppling eller stationsruntime tömmer lokala bevis. Träkvistas befintliga tidtabellsautomat och fysisk LocoNet-drift behåller sina flöden.
+
+
 ## 0.86.4 – ladda aktuella gränssnittsfiler
 
 **Publicerad: 0.86.4 (30 oktober 2026; main `d57cdb3`, #124; växelnummer i #121, main `9ca83ab`).** Full CI för funktionen är grön på `f546541` (`41133204487`); cacheadresserna har dessutom 21 riktade godkända prov och syntaxkontroll. Safari visade körande 0.86.4, Växelnummer Släckta och fungerande sparning till Tända. Webbläsarstyrningen slutade svara före återställningen av testvalet; användarens Safari kan därför fortfarande ha Tända valt. Fysisk bana ingår inte i efterkontrollen.

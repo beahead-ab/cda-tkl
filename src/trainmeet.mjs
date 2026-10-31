@@ -325,8 +325,8 @@ export class TrainMeet extends EventEmitter {
       if(!train)fail('Tågrörelsen finns inte på stationen i dag.',409);
       if(this.checkAutomationContext(data,context)){
         if(train.train_number!==data.trainNumber)fail('Automatens tågrörelse gäller inte längre samma tåg.',409);
-        guard?.();
       }
+      guard?.();
       const current=(context.movements||[]).find(m=>m.id===movementId)||{};
       const payload={station_id:this.data.stationId,movement_id:movementId,departure:departure||current.departure||'none',arrival:arrival||current.arrival||'none',event_type:'tkl_'+(departure||arrival||'track_changed')};
       const actualTrack=track.trim()||current.track||train.track_id||'';if(actualTrack)payload.actual_track=actualTrack;
