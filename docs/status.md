@@ -2,7 +2,7 @@
 
 ## 0.86.6 – återrapportera verifierad avgång
 
-Charlottendals frånkopplade körläge knyter säker tågspårning till en entydig aktiv TrainMeet-rörelse och återrapporterar utpassagen när rätt granne har reserverat sträckan. Tidtabell och klarering visar lokal utpassage direkt, med tydlig orsak om avgången inte kan anmälas. Ingen försening eller uppställt-markering fortsätter efter utpassagen. Ej publicerad ännu.
+Charlottendals frånkopplade körläge knyter säker tågspårning till en entydig aktiv TrainMeet-rörelse och återrapporterar utpassagen när rätt granne har reserverat sträckan. Tidtabell och klarering visar lokal utpassage direkt, med tydlig orsak om avgången inte kan anmälas. Ingen försening eller uppställt-markering fortsätter efter utpassagen. **Publicerad: 0.86.6 (31 oktober 2026; cda-tkl main `ce9935d`, #127; samtliga fem CI-kontroller godkända i `41156982363` på `b391c1e`).** Webbdriften är verifierad på 0.86.6: ställverk, träff och klocka laddar utan JavaScript-fel. CI: 675 enhetsprov godkända (tre plattformsberoende överhoppade), 20 integrationer inklusive tåg 92 från uppställt till återrapporterad avgång, två återställningsprov och 401 paketenhetsprov. Container- och Windows-kontroller är godkända. Ingen provavgång skickades i den pågående träffen.
 
 ## 0.86.5 – korrekta stoppsymboler i 85-vyn
 
