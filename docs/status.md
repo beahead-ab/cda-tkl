@@ -1,4 +1,65 @@
-# Charlottendal TKL – lägesbild 22 oktober 2026
+# Charlottendal TKL – lägesbild 30 oktober 2026
+
+## 0.86.6 – återrapportera verifierad avgång
+
+Charlottendals frånkopplade körläge knyter säker tågspårning till en entydig aktiv TrainMeet-rörelse och återrapporterar utpassagen när rätt granne har reserverat sträckan. Tidtabell och klarering visar lokal utpassage direkt, med tydlig orsak om avgången inte kan anmälas. Ingen försening eller uppställt-markering fortsätter efter utpassagen. **Publicerad: 0.86.6 (31 oktober 2026; cda-tkl main `ce9935d`, #127; samtliga fem CI-kontroller godkända i `41156982363` på `b391c1e`).** Webbdriften är verifierad på 0.86.6: ställverk, träff och klocka laddar utan JavaScript-fel. CI: 675 enhetsprov godkända (tre plattformsberoende överhoppade), 20 integrationer inklusive tåg 92 från uppställt till återrapporterad avgång, två återställningsprov och 401 paketenhetsprov. Container- och Windows-kontroller är godkända. Ingen provavgång skickades i den pågående träffen.
+
+## 0.86.5 – korrekta stoppsymboler i 85-vyn
+
+**Publicerad: 0.86.5 (30 oktober 2026; cda-tkl main `8ea2c91`, #122; alla fem kontroller godkända i CI `41135617277` på `0f818ba`).**
+
+Verifierad live på cda-tkl.trainmeet.app, Render `dep-dbihdq7b9u1s738igm5g`. Befintlig inloggning fungerar; mörk 85-vy har svart bakgrund och grått normalt stopp. Aktiva tågvägar och AIS verifierades i isolerat Docker/Chromium-prov.
+
+Vanligt stopp, motriktade signaler och sidoskydd visas grått. Röd kontur kräver exakt bunden slutpunkt eller låst egen signal utan körbesked. AIS har separat symbolvisning efter återrapport. Inga stationsprofiler, förreglingsvillkor eller manöverorder ändras.
+
+
+## 0.86.4 – ladda aktuella gränssnittsfiler
+
+**Publicerad: 0.86.4 (30 oktober 2026; main `d57cdb3`, #124; växelnummer i #121, main `9ca83ab`).** Full CI för funktionen är grön på `f546541` (`41133204487`); cacheadresserna har dessutom 21 riktade godkända prov och syntaxkontroll. Safari visade körande 0.86.4, Växelnummer Släckta och fungerande sparning till Tända. Webbläsarstyrningen slutade svara före återställningen av testvalet; användarens Safari kan därför fortfarande ha Tända valt. Fysisk bana ingår inte i efterkontrollen.
+
+Efterkontrollen av 0.86.3 visade gamla gränssnittsfiler trots nytt versionsnummer. Startskriptet, utseendedialogen och ställverkets temafiler använder nu versionsmärkta URL:er så uppdateringen laddas direkt.
+
+## 0.86.3 – tänd och släck växelnummer
+
+85-vyn visar inga växelnummer som standard. Inställningar → Utseende och ljud → Växelnummer tänder och släcker numren separat per station, vy och webbläsare. Originalpanelens standard är fortsatt tända nummer. Studio behåller sitt separata lagerval.
+
+
+## 0.86.2 – svar på klarering efter träffbyte
+
+**Publicerad: 0.86.2 (30 oktober 2026; cda-tkl main `b9bbd89`, #120; samtliga fem CI-kontroller godkända i `41132891318` på `5fd9601`).**
+
+TrainMeets `meet_generation` bevaras från stationskontexten och skickas med klarerings- och rörelsekommandon. Detta löser serverns avvisning ”Träffen eller configen har ändrats” på Godkänn/Neka. Köade kommandon avvisas vid ändrad generation, publikation eller trafikdag. Äldre servrar stöds fortfarande.
+
+Webbdriften är verifierad på 0.86.2 med hälsostatus `running`. Liveprov 22:54: Godkänn för tåg 8785 från Vagnsta och Neka för tåg 312 från Gässlösa bekräftades i händelseloggen. CI: 661 enhetsprov godkända (tre plattformsberoende överhoppade), 19 integrationer, två separata uppdateringsprov, 387 paketenhetsprov samt container-/Windows-kontroller utan fel.
+
+
+## 0.86.1 – tema och spårfärger
+
+**Publicerad: 0.86.1 (30 oktober 2026; cda-tkl main `99bf795`, #118; alla fem kontroller godkända i CI `41126251719` på `167d558`).**
+
+85-vyn följer svart/ljust tema, gemensamt med Studio. Belagt visas rött, låst tågväg grönt, lokalt styrt blått och trafikspärrat lila. Beläggning har högst färgprioritet. Stationsmodell och driftlogik är oförändrade.
+
+
+## 0.86.0 – två ställverksvyer
+
+**Publicerad: 0.86.0 (30 oktober 2026; cda-tkl main `92284ef`, #116; alla fem kontroller godkända i CI `41122549455`).**
+
+Inställningar → Utseende och ljud väljer Originalpanel eller 85-inspirerad skärmvy. Valet sparas per webbläsare och station. Samma monterade spårplan, driftstatus och manövrering används. Inga stationsprofiler eller förreglingsregler ändras; ofullständiga dvärgbesked visas uttryckligen som ofullständiga. Se [ställverksvyer](stallverksvyer.md) och #115. Fysisk acceptans återstår.
+
+## 0.85.2 – automatisk omstart efter Pi-installation
+
+**Publicerad: 0.85.2 (28 oktober 2026; cda-tkl main `111948f`, #113; samtliga kontroller godkända i CI `40675022627`).**
+
+En fysisk Raspberry Pi med systemd startar om automatiskt en minut efter godkänd förstagångsinstallation. Startkontrollen måste lyckas först. Befintliga installationer, uppdateringstjänsten, andra datorer och miljöer utan systemd beställer ingen omstart. `CDA_TKL_REBOOT=0` väljer bort omstarten. README och Pi-guiden beskriver SSH-avbrottet och nästa start. Inget ändras på en fysisk Pi eller i Render under detta arbete.
+
+
+## 0.85.1 – installation från det publika huvudförrådet
+
+README är nu installationsguiden för Raspberry Pi, Mac och Windows, inklusive SSH och byte från tidigare installation. Installerare, uppdaterare och versionskontroll använder `beahead-ab/cda-tkl`. Sparade standardadresser migreras; egna stationsförråd och driftdata bevaras. Den separata publiceringen till cda-tkl-install tas bort. Äldre installationer måste köra den nya installationsraden manuellt en gång. Ingen fysisk installation eller Render-tjänst uppdateras av detta arbete.
+
+## Förberett i PR: 0.85.0 – BTLocoBridge på Windows
+
+Windows kan välja kortets utgående COM-port. Gatewayen kör i Node med låst SerialPort 13.0.0; Pi/Mac använder befintliga hjälpare. Automatiska prov använder syntetiska portar, inklusive fel, fragmenterat eko och återanslutning. Fysisk acceptans återstår enligt [Bennys provguide](benny-windows-bluetooth-prov.md). PR-förberedelsen ändrar ingen main eller körande installation.
 
 ## Installationsförråden publicerade som 0.84.0
 

@@ -11,7 +11,7 @@
 # The CHARLOTTENDAL_* paths below are only overridden by test/web-updater.test.mjs.
 set -euo pipefail
 [ "$(id -u)" -eq 0 ] || { echo "Kör med sudo: sudo charlottendal-update"; exit 1; }
-SOURCE="${CHARLOTTENDAL_UPDATE_SOURCE:-https://github.com/beahead-ab/cda-tkl-install.git}"
+SOURCE="${CHARLOTTENDAL_UPDATE_SOURCE:-https://github.com/beahead-ab/cda-tkl.git}"
 BASE="${CHARLOTTENDAL_BASE:-/opt/charlottendal}"
 STATE="${CHARLOTTENDAL_STATE:-/var/lib/charlottendal-tkl}"
 BACKUPS="${CHARLOTTENDAL_BACKUPS:-/root/charlottendal-backups}"
@@ -34,15 +34,15 @@ OLD_DIR=$(readlink -f "$BASE/current")
 FROM=$("$NODE" -p "require('$OLD_DIR/package.json').version")
 WORK=$(mktemp -d); trap 'rm -rf "$WORK"' EXIT
 
-status fetching "Hämtar senaste versionen från cda-tkl-install."
+status fetching "Hämtar senaste versionen från cda-tkl."
 mkdir -p "$WORK/install"
 if command -v git >/dev/null; then
-  git clone -q --depth 1 "$SOURCE" "$WORK/clone" || fail "cda-tkl-install kunde inte hämtas."
+  git clone -q --depth 1 "$SOURCE" "$WORK/clone" || fail "cda-tkl kunde inte hämtas."
   COMMIT=$(git -C "$WORK/clone" rev-parse --short HEAD)
   (cd "$WORK/clone" && git archive HEAD) | tar -x -C "$WORK/install"
 else
   curl -fsSL "${SOURCE%.git}/archive/refs/heads/main.tar.gz" | tar -xz --strip-components=1 -C "$WORK/install" \
-    || fail "cda-tkl-install kunde inte hämtas."
+    || fail "cda-tkl kunde inte hämtas."
   COMMIT=$(date -u +%Y%m%d%H%M)
 fi
 TO=$("$NODE" -p "require('$WORK/install/package.json').version")

@@ -1,5 +1,8 @@
 # Tågspårning
 
+**28 oktober 2026, 0.85.1:** Installation och uppdatering flyttas till det publika huvudförrådet cda-tkl. Tågspårningen ändras inte. Äldre installationer kör den nya installationsraden i [README](../README.md#uppdatera-en-befintlig-installation) en gång. Tidigare publiceringsnoteringar nedan är historik.
+
+
 Sedan 0.73.0 räknar TKL ut vilket tåg som står var, ur spåravkänningarna, växellägena och tågvägarna, och visar
 det på ställverket. Spårningen är **bara presentation**: låsning, signaler och tågvägar läser den aldrig. Den är på
 när **LocoNet inte är ansluten** och TKL själv kör trafikspelets tåg (sedan 0.79.0, [LocoNet ansluten eller ej

@@ -1,6 +1,6 @@
 # Installs Charlottendal TKL on a Windows 10/11 PC for the logged-in user. In PowerShell:
 #
-#   irm https://raw.githubusercontent.com/beahead-ab/cda-tkl-install/main/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/beahead-ab/cda-tkl/main/install.ps1 | iex
 #
 # Its own Node 22 from nodejs.org (checksum verified), the signal box and the LocoNet
 # simulator started hidden at login and restarted if they stop, and a desktop shortcut
@@ -15,7 +15,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$Repository = 'beahead-ab/cda-tkl-install'
+$Repository = 'beahead-ab/cda-tkl'
 $Branch = if ($env:CDA_TKL_BRANCH) { $env:CDA_TKL_BRANCH } else { 'main' }
 # Samma två namn som install.sh läser, så Pi, Mac och PC tar emot samma token.
 $Token = if ($env:TKL_TOKEN) { $env:TKL_TOKEN } else { $env:CDA_TKL_TOKEN }
@@ -45,7 +45,7 @@ try {
   }
   if (-not (Test-Path (Join-Path $Source 'src\server.mjs'))) { throw 'Installationspaketet är ofullständigt.' }
   # Läs identiteten före kataloger och genvägar, så en annan station inte ersätter Charlottendal.
-  $Identity = @{ TKL_ID = 'cda-tkl'; TKL_NAME = 'Charlottendal'; TKL_STATION = 'charlottendal'; TKL_REPOSITORY = 'beahead-ab/cda-tkl-install' }
+  $Identity = @{ TKL_ID = 'cda-tkl'; TKL_NAME = 'Charlottendal'; TKL_STATION = 'charlottendal'; TKL_REPOSITORY = 'beahead-ab/cda-tkl' }
   $IdentityFile = Join-Path $Source 'packaging\identity.env'
   if (Test-Path $IdentityFile) { foreach ($Line in Get-Content $IdentityFile) { if ($Line -match '^(TKL_[A-Z_]+)=(.*)$') { $Identity[$Matches[1]] = $Matches[2].Trim() } } }
   if ($Identity['TKL_ID'] -notmatch '^[a-z0-9-]+$') { throw 'Ogiltigt TKL_ID i packaging\identity.env.' }
@@ -88,6 +88,13 @@ try {
   try { & (Join-Path $NodeDir 'npm.cmd') ci --omit=dev --no-audit --no-fund --no-update-notifier --loglevel=error; if ($LASTEXITCODE) { throw 'npm ci misslyckades.' } }
   finally { Pop-Location }
   & (Join-Path $NodeDir 'node.exe') --check (Join-Path $Release 'src\server.mjs'); if ($LASTEXITCODE) { throw 'Programmet kunde inte läsas.' }
+  # Windows-COM stöds av det versionslåsta Node-paketet; ingen separat Python-installation krävs.
+  # Kontrollera native-modulen före versionsbytet, även om npm hoppade över ett optional-beroende.
+  Push-Location $Release
+  try {
+    & (Join-Path $NodeDir 'node.exe') --input-type=module -e "import('serialport').then(m => { if (typeof m.SerialPort !== 'function') process.exit(1); }).catch(() => process.exit(1));"
+    if ($LASTEXITCODE) { throw 'Windows-stödet för COM-portar kunde inte laddas. Den föregående versionen är kvar. Kör installationen igen och spara felutskriften om felet återkommer.' }
+  } finally { Pop-Location }
   $Pointer = Join-Path $App 'current.txt'
   $Previous = if (Test-Path $Pointer) { (Get-Content $Pointer -Raw).Trim() } else { '' }
   Set-Content -Path $Pointer -Value $Release -Encoding UTF8
@@ -101,6 +108,10 @@ try {
       Set-Content -Path $EnvFile -Encoding UTF8
   }
   if (-not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_INSTALL_KIND=' -Quiet)) { Add-Content -Path $EnvFile -Value 'CHARLOTTENDAL_INSTALL_KIND=windows' -Encoding UTF8 }
+  # Byt den gamla standardadressen, men bevara ett uttryckligt eget förråd och all driftdata.
+  $Config = Get-Content $EnvFile -Raw
+  $Migrated = $Config -replace '(?m)^CHARLOTTENDAL_INSTALL_REPOSITORY="?beahead-ab/cda-tkl-install"?\r?$', 'CHARLOTTENDAL_INSTALL_REPOSITORY=beahead-ab/cda-tkl'
+  if ($Migrated -ne $Config) { Set-Content -Path $EnvFile -Value $Migrated -NoNewline -Encoding UTF8 }
   if ($Identity['TKL_STATION'] -and $Identity['TKL_STATION'] -ne 'charlottendal' -and -not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_STATION=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_STATION=' + $Identity['TKL_STATION']) -Encoding UTF8 }
   # Privat förråd: spara samma token som installationen fick, så att Uppdatering i panelen ser nya versioner.
   $TokenFile = Join-Path $App 'github-token'
@@ -110,7 +121,7 @@ try {
   $UpdateScript = Join-Path $App 'update.ps1'
   Copy-Item (Join-Path $Source 'packaging\windows\update.ps1') $UpdateScript -Force
   if (-not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_UPDATE_COMMAND=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_UPDATE_COMMAND=' + $UpdateScript) -Encoding UTF8 }
-  if ($Identity['TKL_REPOSITORY'] -and $Identity['TKL_REPOSITORY'] -ne 'beahead-ab/cda-tkl-install' -and -not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_INSTALL_REPOSITORY=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_INSTALL_REPOSITORY=' + $Identity['TKL_REPOSITORY']) -Encoding UTF8 }
+  if ($Identity['TKL_REPOSITORY'] -and $Identity['TKL_REPOSITORY'] -ne 'beahead-ab/cda-tkl' -and -not (Select-String -Path $EnvFile -Pattern '^CHARLOTTENDAL_INSTALL_REPOSITORY=' -Quiet)) { Add-Content -Path $EnvFile -Value ('CHARLOTTENDAL_INSTALL_REPOSITORY=' + $Identity['TKL_REPOSITORY']) -Encoding UTF8 }
   Copy-Item -Force (Join-Path $Source 'packaging\windows\run.ps1') (Join-Path $App 'run.ps1')
 
   # Started hidden at login (Startup folder; no administrator rights needed).
@@ -136,11 +147,12 @@ try {
   Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like "*$App*" -and $_.ProcessId -ne $PID } |
     ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
   function Start-Tkl {
-    # Start-Process joins -ArgumentList entries with spaces. Quote the full -File path explicitly:
-    # installation folders like "Träkvista TKL" otherwise get split before PowerShell starts.
+    # Start-Process slår ihop -ArgumentList med blanksteg. Hela -File-sökvägen citeras därför uttryckligen,
+    # annars delas installationsmappar som "Träkvista TKL" upp innan PowerShell startar. $args är en
+    # automatisk variabel i PowerShell och används inte här.
     $RunScript = Join-Path $App 'run.ps1'
-    $Args = '-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "' + $RunScript + '"'
-    Start-Process -FilePath $PowerShell -WindowStyle Hidden -ArgumentList $Args
+    $RunArgs = '-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "' + $RunScript + '"'
+    Start-Process -FilePath $PowerShell -WindowStyle Hidden -ArgumentList $RunArgs
   }
   function Wait-Tkl { for ($i = 0; $i -lt 40; $i++) { try { Invoke-WebRequest -UseBasicParsing -TimeoutSec 2 http://127.0.0.1:8910/api/config | Out-Null; return $true } catch { Start-Sleep 1 } }; return $false }
   Start-Tkl

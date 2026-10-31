@@ -1,5 +1,26 @@
 # Ren panel och separat verktygssida
 
+## Verifierad avgång i frånkopplat läge (0.86.6)
+
+När ett säkert identifierat tåg lämnar Charlottendals spårbild ändras rapporten direkt. Med en utfart kopplad under Orter till rätt TrainMeet-granne och godkänd klarering återrapporteras avgången automatiskt. Avgått visas när TrainMeet bekräftat. I väntan på bekräftelse visas Lämnat ställverket och orsaken, exempelvis saknad stationskoppling eller klarering. Tåget fortsätter inte räknas som uppställt eller försenat. Lokala utpassager sparas under den pågående stationskörningen, inte över omstart; en äldre avgång utan bevarad spårning måste anmälas manuellt. Fysisk LocoNet-drift omfattas inte av automatisk återrapportering.
+
+
+## Växelnummer
+
+Inställningar → Utseende och ljud → Växelnummer väljer Tända eller Släckta för aktuell ställverksvy. 85-vyn har släckta nummer som standard; originalpanelen har tända. Valet sparas per webbläsare, station och vy. Spårbeteckningarna visas fortfarande. Studios lagerknapp styr endast Studio.
+
+
+## Gemensamt färgtema och spårfärger (0.86.1)
+
+Utseende och ljud → Redigera väljer Mörkt (svart bakgrund) eller Ljust, delat med Studio.
+85-vyn följer valet. Belagt spår är rött, låst tågväg grönt, lokalstyrt blått och trafikspärrat lila.
+Beläggning går före spärr och lokalstyrning; lokalstyrning går före vägmarkeringen.
+
+
+## Två ställverksvyer (0.86.0)
+
+Under Inställningar → Utseende och ljud → Redigera väljs Originalpanel eller 85-inspirerad skärmvy. Valet gäller den här webbläsaren och stationen. Original är standard. Inga tågvägar eller lås ändras vid vybyte; ett oskickat startval avbryts. Symboler, begränsningar och prov beskrivs i [ställverksvyer](stallverksvyer.md).
+
 Ställverket öppnas på `/#panel`. Överkanten innehåller namn, anslutningsstatus och meny. Från version 0.29.0 är den stora knappraden borttagen enligt Caspers godkända förenkling.
 
 ## Stabil låsmarkering utan programmeringsspår (0.82.12)
@@ -376,7 +397,7 @@ Chromium-policyn Elgatos enheter, så ingen behöver klicka; se raspberry-pi.md.
 ## Notis om ny version att installera (0.49.0)
 
 Installerade kopior (Raspberry Pi, Mac, PC; `CHARLOTTENDAL_INSTALL_KIND` i app.env) frågar
-`beahead-ab/cda-tkl-install` efter senaste versionen 30 sekunder efter start och sedan var sjätte
+`beahead-ab/cda-tkl` efter senaste versionen 30 sekunder efter start och sedan var sjätte
 timme (`src/update-check.mjs`; läser bara package.json, skickar inget). Finns en nyare visar
 statusraden `● Uppdatering X` i blått. På Raspberry Pi öppnar chipet en bekräftelse med **Uppdatera
 nu**, som via `POST /api/update/start` startar `cda-tkl-update.service`; polkit-regeln
@@ -521,3 +542,22 @@ Inställningar → Den här datorn → Användare visar en färdig inbjudningste
 Ny kod. **Kopiera hela inbjudan** tar med installationens inloggningsadress, stationens namn, e-postadress,
 engångskod, roll, giltighetstid och instruktioner för eget lösenord. Texten går också att markera och kopiera
 manuellt. Ingen e-post skickas automatiskt. Koden visas bara i den öppna dialogen.
+
+
+### BTLocoBridge på Windows (0.85.0, provversion)
+
+Under Inställningar → Banan (LocoNet) väljs BTLocoBridge och kortets **utgående Bluetooth-COM-port**,
+till exempel COM7. Sök enheter igen läser Windows serieportlista; den kan innehålla andra portar och anger inte
+säkert inkommande/utgående. Porten kan också skrivas för hand. Kanal döljs och MAC-adress behövs inte.
+Stäng JMRI före anslutning. Senaste portfel visas vid gatewayen; frånkoppling stoppar återanslutningsförsöken.
+Se [Bennys provguide](benny-windows-bluetooth-prov.md) för fysisk acceptans och återgång.
+
+
+## Klarering efter träffbyte (0.86.2)
+
+Godkänn och Neka skickar samma aktuella träffgeneration som TrainMeet rapporterar. Det gäller både korten i Klarering och knapparna över spårplanen, samt tågrörelserna. Om träffen ändras medan ett knapptryck väntar skickas ingen åtgärd i den nya träffen; kontrollera senaste läget och välj åtgärden igen.
+
+
+## 85-vyns stoppsymboler från 0.86.5
+
+Grå signal betyder normalt stopp, även för motriktade signaler och sidoskydd vid en lagd tågväg. Röd kontur betyder verklig slutpunkt för låst väg eller egen låst signal utan körbesked. Slutpunkten hämtas från vägens exakta NX-bindning; hela skyddslistan används inte för rödfärgning. AIS ger fylld röd huvudsignal eller gul separat dvärg efter stoppåterrapport. Grönt kräver som tidigare bekräftat körbesked. Bruten eller otillräcklig återrapport visas med frågetecken.

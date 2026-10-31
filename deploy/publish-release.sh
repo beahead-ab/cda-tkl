@@ -73,7 +73,7 @@ trap rollback ERR
 
 say "Uppdateringstjänsten (Inställningar → Uppdatering → Uppdatera nu)"
 # Installed or refreshed on every publish, so the web deployment can update itself from
-# cda-tkl-install afterwards. polkit lets the TKL service start the update, and only that.
+# cda-tkl afterwards. polkit lets the TKL service start the update, and only that.
 remote "W=$BASE/releases/$SHA/packaging/web; install -m 0755 \$W/charlottendal-update /usr/local/sbin/charlottendal-update && install -m 0644 \$W/charlottendal-update.service /etc/systemd/system/charlottendal-update.service && systemctl daemon-reload && if [ -d /etc/polkit-1/rules.d ]; then install -m 0644 \$W/50-charlottendal-update.rules /etc/polkit-1/rules.d/50-charlottendal-update.rules; echo 'Uppdateringstjänsten installerad.'; else echo 'Varning: polkit saknas, så panelen kan inte starta uppdateringen. Installera med: apt-get install -y polkitd'; fi"
 
 say "Aktiverar $SHA och startar om TKL"
@@ -93,9 +93,4 @@ remote "journalctl -u charlottendal-tkl --since '2 minutes ago' -p err --no-page
 remote "cd $STATE && md5sum -c --quiet $BK/state.md5 && echo 'Driftdata oförändrade.' || echo 'Driftdata ändrade sedan backupen (se ovan); kontrollera att det är väntat.'"
 trap - ERR
 say "Klart · $SHA (version $VERSION) publicerad $(date '+%Y-%m-%d %H:%M %Z') · backup $BK · föregående release $OLD"
-# The same release becomes installable from the public repository (Raspberry Pi, Mac, PC).
-if [ -z "${CHARLOTTENDAL_SKIP_INSTALL_REPO:-}" ]; then
-  say "Publicerar $SHA i cda-tkl-install"
-  deploy/publish-install.sh "$FULL" || echo "Varning: cda-tkl-install uppdaterades inte; kör deploy/publish-install.sh $SHA för hand."
-fi
-
+# Den publika main-grenen är också installationskällan; inget separat installationsförråd publiceras.

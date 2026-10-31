@@ -1,5 +1,32 @@
 # Arbetsjournal – godkänd helleverans
 
+## 31 oktober 2026 – avgång fastnar som uppställt (0.86.6)
+
+**Publicerad: 0.86.6 (31 oktober 2026; cda-tkl main `ce9935d`, #127; samtliga fem CI-kontroller godkända i `41156982363` på `b391c1e`).** Webbdriften är verifierad på 0.86.6: ställverk, träff och klocka laddar utan JavaScript-fel. CI: 675 enhetsprov godkända (tre plattformsberoende överhoppade), 20 integrationer inklusive tåg 92 från uppställt till återrapporterad avgång, två återställningsprov och 401 paketenhetsprov. Container- och Windows-kontroller är godkända. Ingen provavgång skickades i den pågående träffen.
+
+Casper visade tåg 92 på utfarten medan tidtabellen fortfarande sade Uppställt. Charlottendals äldre körpolicy lägger tågvägar men återrapporterar inte tågrörelser. En separat frånkopplad avgångsrapportör följer nu säker spårning från stationen till utfarten, binder till en entydig aktiv rörelse och skriver avgång genom den befintliga TrainMeet-adaptern. Saknad TrainMeet-koppling, fel granne, utebliven klarering och serverfel behåller en synlig väntande rapport; de fabricerar ingen bekräftelse. Väntande lokala avgångar kan inte ställas ut på nytt. Ny träff, dag, station, parkoppling eller stationsruntime tömmer lokala bevis. Träkvistas befintliga tidtabellsautomat och fysisk LocoNet-drift behåller sina flöden.
+
+
+## 0.86.4 – ladda aktuella gränssnittsfiler
+
+**Publicerad: 0.86.4 (30 oktober 2026; main `d57cdb3`, #124; växelnummer i #121, main `9ca83ab`).** Full CI för funktionen är grön på `f546541` (`41133204487`); cacheadresserna har dessutom 21 riktade godkända prov och syntaxkontroll. Safari visade körande 0.86.4, Växelnummer Släckta och fungerande sparning till Tända. Webbläsarstyrningen slutade svara före återställningen av testvalet; användarens Safari kan därför fortfarande ha Tända valt. Fysisk bana ingår inte i efterkontrollen.
+
+Efterkontrollen av 0.86.3 visade gamla gränssnittsfiler trots nytt versionsnummer. Startskriptet, utseendedialogen och ställverkets temafiler använder nu versionsmärkta URL:er så uppdateringen laddas direkt.
+
+## 30 oktober 2026 – växelnummer i ställverket, 0.86.3
+
+Trafikvyn saknade ett visningsval trots Studios befintliga lagerknapp. Växelnummer är nu släckta som standard i 85-vyn och kan tändas/släckas under Utseende och ljud. Valet sparas lokalt per station och vy och synkas mellan flikar. Samma visningsregel täcker vanliga växlar och dubbla korsningsväxlar, även vid låsning. Ingen fältorder skickas.
+
+
+## 30 oktober 2026 – 0.86.2, Godkänn/Neka
+
+Felet reproducerades med Neka i den öppna Charlottendal-panelen. Serverns besked var ”Träffen eller configen har ändrats. Läs in arbetsytan igen innan du fortsätter.” TrainMeet Server kräver `meet_generation` efter träff/configbyte; adaptern tappade fältet från `/v1/tkl/context`. Generationen bevaras och bifogas nu centralt till både klareringar och tågrörelser. Klientens generation och köade kommandons kontext kontrolleras före sändning. Ingen automatisk omsändning sker i en ny träff.
+
+Regressionsprov täcker accept, reject, movement, serverns generationsvillkor, äldre servrar, ogiltiga generationer och generationsbyte under väntande poll.
+
+Publicerad genom #120, main `b9bbd89`, efter fem gröna CI-kontroller i `41132891318`: 661 godkända enhetsprov (tre plattformsberoende överhoppade), 19 integrationer, två separata uppdateringsprov och 387 paketenhetsprov. Webbdriften visar 0.86.2 och `/healthz` svarar `running`. Liveprov 22:54: Godkänn från klareringskortet registrerades för tåg 8785/Vagnsta; Neka från statusraden registrerades för tåg 312/Gässlösa. Händelseloggen bekräftade båda och inga felmeddelanden visades. TrainMeet Server ändrades inte. Träkvistas paket provades i CI men publicerades inte till dess separata förråd.
+
+
 ## Aktuellt 23 september 2026, natt
 
 **04:10: aktiv serverrelease är 470ff88, version 0.8.1. Publicerad och efterkontrollerad: 340 tågvägar, 65 + 4 godkända serverprov, 133/153 NX-definitioner med körbar koppling. Fortsätt nästa ofärdiga steg; publiceringen är KLAR.**
@@ -2365,3 +2392,71 @@ Efter mergningen kontrollerade Codex båda tjänsternas deployhistorik och händ
 | Träkvista | **0.84.0** | `e2240af` | [`dep-dbc48pbncjis73elq7ig`](https://dashboard.render.com/web/srv-dbaj7oajnfac73fu81vg/deploys/dep-dbc48pbncjis73elq7ig) |
 
 Versionerna lästes på nytt direkt ur `/app/package.json` i respektive körande container via Renders Web Shell med `node -p 'require("/app/package.json").version'`; båda svarade `0.84.0`. Båda aktiva driftsättningarna var **Live**, och de publika `/healthz`-adresserna svarade `{"status":"running"}`. Efterkontrollen var enbart avläsning och startade inte om eller driftsatte någon tjänst. Även denna journalanteckning använder `[skip render]`.
+
+
+## 27 oktober 2026 – BTLocoBridge via Windows-COM-port, förberett i PR
+
+Tk-TKL #2 visade att Windows uttryckligen spärrades och att gatewayen bara hade POSIX-hjälpare.
+0.85.0 lägger till en Windows-väg via kortets utgående Bluetooth-COM-port (SerialPort 13.0.0, valfritt
+beroende för övriga plattformar). Installatören kontrollerar att Windows-modulen laddas före versionsbytet.
+Den tidigare föreslagna citeringsrättelsen i Start-Tkl ingår, så att standardmappen med blanksteg kan provstartas.
+
+COM-portar listas på begäran, manuellt portval tillåts även vid sökfel, och kanal/MAC ersätts av portfält på Windows.
+Ingen orderkvittens syntetiseras: gatewayen kräver hela orderns eko. Portfel, avbrott och försenad öppning stänger
+anslutningen; befintlig återanslutning startar en ny gateway utan att upprepa förlorade order.
+Byte till ett otillgängligt anslutningssätt under live kräver först uttrycklig frånkoppling.
+
+Båda stationernas gemensamma program får ändringen. Windows-CI använder Node 22, native-modulen och syntetisk
+SerialPort-mock över riktig lokal TCP. [Bennys provguide](benny-windows-bluetooth-prov.md) beskriver installation
+av provgrenen, utgående COM-port, banprov, avbrott, omstart, resultat och återgång till main.
+Fysisk Windows-/Bluetooth-verifiering återstår; inget är publicerat till main eller driftsatt i den här PR-fasen.
+
+
+## 28 oktober 2026 – publikt huvudförråd och samlad installationsguide, 0.85.1
+
+Casper har gjort cda-tkl publikt och vill avveckla cda-tkl-install och cda-tkl-drift. README skrivs om till en stegvis installationsguide för Pi, Mac och Windows: Imager, användare/värdnamn, SSH med lösenord och IP-alternativ, installationskommandon, lokal panel, SSH-tunnel, första ägare, TrainMeet, Stream Deck, uppdatering och felsökning. Utvecklingshistoriken ligger kvar i projektdokumenten.
+
+Installation och uppdatering hämtar direkt från cda-tkl. En gammal uttrycklig standardadress flyttas, medan egna stationsförråd, inställningar och driftdata bevaras. Äldre uppdateringsskript behöver ersättas genom en manuell körning från den nya adressen; detta beskrivs i README. Den separata publiceringslistan och publish-install.sh avvecklas. Träkvistas publiceringsflöde behålls. Ingen fysisk installation eller webbdrift uppdateras automatiskt av arbetet.
+
+
+## 28 oktober 2026 – automatisk omstart efter förstagångsinstallation på Pi, 0.85.2
+
+Casper vill att installationskommandot också startar om Pi:n när allt är klart. Installeraren beställer därför omstart om en minut efter en lyckad förstagångsinstallation på en fysisk Raspberry Pi med systemd, även för rangerarstationen. Omstarten ligger efter tjänsternas startkontroll. Slutmeddelandet förklarar att SSH bryts. Befintliga versioner, uppdateringstjänsten, andra Linux-datorer och miljöer utan systemd startas inte om. `CDA_TKL_REBOOT=0` väljer bort omstarten. Båda guiderna uppdateras.
+
+Automatiska prov skuggar shutdown med en skalfunktion och provar både beställd omstart, fel, uppdatering, annan dator och att installeraren aldrig når omstarten efter misslyckad startkontroll. Ingen riktig dator startas om i proven.
+
+
+**Publicerad: 0.85.2 (28 oktober 2026; cda-tkl main `111948f`, #113; samtliga kontroller godkända i CI `40675022627`).**
+
+Provningen omfattar enhetsprov, integrationer, återställning, stationspaket, båda containerproven och Windows-installation. Omstartsproven använder skuggat shutdown; fysisk omstart på Pi återstår att prova. Merge-meddelandets [skip render] lämnar webbdriften orörd.
+
+
+## 30 oktober 2026 – två ställverksvyer, 0.86.0
+
+Casper beställde de två versionerna som val under inställningar, efter designunderlaget i #115. Originalpanelen är standard; den 85-inspirerade skärmvyn använder samma monterade geometri och manöverknappar. Vyvalet lagras per station och webbläsare. En additiv klientmodul skiljer symbolritningen från rapporttolkning och vyval. Tågvägar och profilfiler är orörda. Ofullständiga dvärgbesked får frågetecken och en förklaring, inte ett gissat tillåtande delbesked. Den moderna färgsättningen är begränsad till spårplanen. Publikt underlag och avgränsningar finns i docs/stallverksvyer.md.
+
+Publicerad i cda-tkl main `92284ef` genom #116 efter fem gröna CI-kontroller i `41122549455`: hela enhetssviten, integrationer, källkontroller, Windows, båda containerproven och Träkvistas paketering. Riktig Chrome har provat val/sparande i båda stationerna, återläsning efter omladdning och bevarat driftläge/kommandosekvenser vid vybyte med aktiv tågväg. Träkvistas separata förråd har inte publicerats i denna etapp. Inget fysiskt banprov har gjorts. Dokumentationsnoteringen ändrar inte programmet och ska inte bygga om webbdriften.
+
+
+## 30 oktober 2026 – 0.86.1, tema och spårfärger
+
+Casper rättade 85-vyns fasta ljusa bakgrund. Den följer nu mörkt/ljust tema, mörkt som standard, med samma sparade temaval som Studio. Spårfärgerna följer önskemålet: rött belagt, grönt låst väg (även växling), blått uttryckligen lokalstyrt, lila trafikspärrat. Färgprioriteten låter beläggning synas över alla andra statusar. Vägmarkering täcker inte lokalspårens blå färg. Endast presentationen ändras; inga manöverorder, profiler eller lås ändras.
+
+
+Publicerad: 0.86.1 (30 oktober 2026; cda-tkl main `99bf795`, #118; alla fem kontroller godkända i CI `41126251719` på `167d558`).
+
+Webbläsarprovet i den riktiga Render-avbildningen verifierade faktiska bakgrunds- och spårfärger i mörkt/ljust tema samt det delade valet mellan panel och Studio. Alla enhetsprov, integrationer, källkontroller, återställningsprov, båda containerproven, Windowsproven och Träkvistas fristående paket godkändes. Skärmbilder sparades i CI. Ingen ny lokal visuell kontroll eller fysisk stationsprovning gjordes. Dokumentationsnoteringen ändrar inte programmet och bygger inte om webbdriften.
+
+
+## 30 oktober 2026 – 0.86.5, motriktade signaler i 85-vyn
+
+Casper beställde rättning och produktionssättning efter jämförelse med TDOK 2021:0552 v2.0 s. 84–89. Tidigare färgades alla återrapporterade stoppsignaler i guardSignals röda. Nu krävs verklig slutpunkt enligt entydig NX-sensor/mast-bindning eller medlemskap som egen signal i en reserverad tågväg. Vanligt motriktat skydd och sidoskydd blir grått. AIS läses som en uttrycklig spärr mot körmedgivanden, men faktiskt kör eller okänd rapportkvalitet ersätts aldrig av ett påhittat stopp. Individuella signalspärrar och andra låsområdesgränser som modellen inte rapporterar införs inte genom antaganden. Originalsymbolerna, driftreglerna och stationsprofilerna ändras inte.
+
+Riktade prov omfattar verkliga infarter i Charlottendal och Träkvista, saknade/tvetydiga slutpunkter, låsta egna signaler, återtagning, AIS och rapportkvalitet. Containerprovet följer en verkligt lagd syntetisk tågväg i den riktiga panelen.
+
+
+**Publicerad: 0.86.5 (30 oktober 2026; cda-tkl main `8ea2c91`, #122; alla fem kontroller godkända i CI `41135617277` på `0f818ba`).**
+
+Render `dep-dbihdq7b9u1s738igm5g` är live från `8ea2c91`. Faktisk produktionskontroll i befintlig Chrome-session: version 0.86.5, `/app.js?v=0.86.5`, modern85, mörkt tema, svart spårplansbakgrund och 63 normalt stoppade signalsymboler grå. De nya titlarna visar återrapporterat stopp. Ingen fysisk bana eller tågväg manövrerades under efterkontrollen. Aktiv infart, röd exakt slutpunkt, grått motriktat skydd, grönt kör, återtagning och AIS verifierades i den riktiga containerpanelen med syntetiska data. Alla fem CI-jobb gick igenom, inklusive integrationer, återställning, fristående Träkvistapaket, båda containerproven och Windows. Lokalt 19 riktade prov samt syntax och operationskontroller.
+
+Privat validerad backup före merge: `/data/release-backups/before-0.86.5-2026-10-30T22-06-11.594Z.tar.gz`, 2 143 128 byte, 19 filer varav 12 validerade JSON-filer, SHA-256 `efe6028b57de56e71eee542769fdb4c023179895b3208e970a38bc097ecb55dc`. Arkiv och manifest stannar på tjänstens disk. Föregående fungerande Render-deploy är `dep-dbih7lec6qcc73b36fr0` (0.86.4). Träkvistas separata förråd och tjänst publicerades inte i denna omgång. Dokumentationsnoteringen använder [skip ci] [skip render] och ändrar inte programmet.

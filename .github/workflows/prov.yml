@@ -106,3 +106,26 @@ jobs:
           $errors = $null
           [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD 'install.ps1'), [ref]$tokens, [ref]$errors) | Out-Null
           if ($errors.Count -gt 0) { $errors | Write-Error; exit 1 }
+
+  windows-bluetooth:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund
+      - name: Prova COM-stöd och gateway med syntetisk serieport
+        run: node --test test/windows-bluetooth.test.mjs test/connection-mode.test.mjs test/serial-gateway.test.mjs
+      - name: Prova COM-inställningarna i en riktig webbläsare
+        shell: pwsh
+        run: |
+          npm install --prefix "$env:RUNNER_TEMP/tkl-browser" --no-save --ignore-scripts --no-audit --no-fund playwright@1.56.1
+          & "$env:RUNNER_TEMP/tkl-browser/node_modules/.bin/playwright.cmd" install chromium
+          $env:TKL_PLAYWRIGHT_MODULE = ([System.Uri](Join-Path $env:RUNNER_TEMP 'tkl-browser/node_modules/playwright/index.mjs')).AbsoluteUri
+          node test/connection-ui.mjs
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - name: Installera på Windows med bevarade syntetiska driftdata
+        shell: pwsh
+        run: ./test/windows-install.ps1
