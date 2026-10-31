@@ -58,16 +58,17 @@ export function createClearance({api,message,onRequest,onAttention}) {
       return `<section class="card cl-line${needsAttention(line)?' attention':''}" data-state="${esc(line.state)}" data-line-card="${esc(line.id)}"><h3>${esc(line.neighborName)} <small>${esc([TRACK_TEXT[line.trackType]||line.trackType||'',NEIGHBOR_TEXT[line.neighborMode]||''].filter(Boolean).join(' · '))}</small></h3><p class="cl-state">${esc(lineStatus(line))}</p><div class="admin-actions">${actions||'<span class="muted">Inget att göra här nu.</span>'}</div></section>`;
     }).join('')||'<p class="muted">TrainMeet har inga sträckor registrerade för stationen.</p>';
     lastLines=swap($('lines'),lines,lastLines,'data-request-for');
+    const reports=new Map((tm.departures||[]).map(r=>[r.movementId,r]));
     const states=new Map(c.movements.map(m=>[m.id,m])),trackLabel=new Map(c.tracks.map(t=>[t.id,t.label]));
     const coming=new Set(c.lines.filter(l=>l.direction==='in'&&(l.state==='reserved'||l.state==='occupied')).map(l=>l.trainNumber));
     const sorted=[...c.trains].sort((a,b)=>(a.arrival_time||a.departure_time||'').localeCompare(b.arrival_time||b.departure_time||'',undefined,{numeric:true}));
     let open=0;
     const rows=sorted.map(t=>{
-      const m=states.get(t.id),done=movementDone(m,t);if(!done)open++;
-      const actions=movementActions(m,t,coming.has(t.train_number)).map(a=>`<button type="button" data-move="${a.field}:${a.value}" data-movement="${esc(t.id)}"${a.confirm?` data-confirm="${esc(a.confirm)}"`:''} class="${a.primary?'primary':''}">${a.label}</button>`).join('');
+      const m=states.get(t.id),report=reports.get(t.id),done=movementDone(m,t);if(!done)open++;
+      const actions=movementActions(m,t,coming.has(t.train_number),report).map(a=>`<button type="button" data-move="${a.field}:${a.value}" data-movement="${esc(t.id)}"${a.confirm?` data-confirm="${esc(a.confirm)}"`:''} class="${a.primary?'primary':''}">${a.label}</button>`).join('');
       const trackInput=m?.arrival==='approaching'?`<input data-track-for="${esc(t.id)}" list="cl-tracks" maxlength="10" placeholder="Spår" aria-label="Verkligt spår för tåg ${esc(t.train_number)}" autocomplete="off">`:'';
       const track=m?.track?trackLabel.get(m.track)||m.track:t.track;
-      return `<tr class="${done?'done':''}${m?.departure==='ready'?' ready':''}"><td>${esc(t.train_number)}</td><td>${esc(t.arrival_time||'')}</td><td>${esc(t.departure_time||'')}</td><td>${esc(track||'')}</td><td>${esc([t.arrival_from,t.departure_to].filter(Boolean).join(' → '))}</td><td>${esc(movementStatus(m,t))}</td><td class="cl-row-actions">${trackInput}${actions}</td></tr>`;
+      return `<tr class="${done?'done':''}${m?.departure==='ready'?' ready':''}"><td>${esc(t.train_number)}</td><td>${esc(t.arrival_time||'')}</td><td>${esc(t.departure_time||'')}</td><td>${esc(track||'')}</td><td>${esc([t.arrival_from,t.departure_to].filter(Boolean).join(' → '))}</td><td>${esc(movementStatus(m,t,report))}</td><td class="cl-row-actions">${trackInput}${actions}</td></tr>`;
     }).join('');
     lastRows=swap($('trains').querySelector('tbody'),rows,lastRows,'data-track-for');
     $('trains-count').textContent=`${open} av ${sorted.length} kvar`;

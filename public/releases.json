@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.86.6",
+    "date": "2026-10-31",
+    "notes": [
+      "Verifierad avgång i Charlottendals frånkopplade körläge återrapporteras till TrainMeet när rätt utfart och klarering finns. Tidtabell och klarering visar Avgått efter bekräftelse.",
+      "Ett tåg som lämnat ställverket ligger inte kvar som uppställt och försenat. Saknad stationskoppling eller klarering visas tydligt tills avgången kan anmälas."
+    ]
+  },
+  {
     "version": "0.86.5",
     "date": "2026-10-30",
     "notes": [

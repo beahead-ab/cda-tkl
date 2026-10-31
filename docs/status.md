@@ -1,4 +1,9 @@
 # Charlottendal TKL – lägesbild 30 oktober 2026
+
+## 0.86.6 – återrapportera verifierad avgång
+
+Charlottendals frånkopplade körläge knyter säker tågspårning till en entydig aktiv TrainMeet-rörelse och återrapporterar utpassagen när rätt granne har reserverat sträckan. Tidtabell och klarering visar lokal utpassage direkt, med tydlig orsak om avgången inte kan anmälas. Ingen försening eller uppställt-markering fortsätter efter utpassagen. Ej publicerad ännu.
+
 ## 0.86.5 – korrekta stoppsymboler i 85-vyn
 
 **Publicerad: 0.86.5 (30 oktober 2026; cda-tkl main `8ea2c91`, #122; alla fem kontroller godkända i CI `41135617277` på `0f818ba`).**
