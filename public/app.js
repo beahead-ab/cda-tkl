@@ -12,7 +12,7 @@ import {createPanelStyle} from './panel-style.js';
 import {createTurnoutNumbers} from './turnout-numbers.js';
 import {createAppTheme} from './app-theme.js';
 import {trackColorState} from './track-colors.js';
-import {createModernSignal,modernSignalView} from './panel-symbols.js?v=0.86.5';
+import {createModernSignal,modernSignalView} from './panel-symbols.js?v=0.86.7';
 import {createPanelFit} from './panel-fit.js';
 import {syncAdminWorkspaces,registerAdminWorkspace,settingsRows,createAdminDialog} from './admin-ui.js';
 import {attribute,style,text as setText,flowProgress,createPanelFrames,preparingEndpoints} from './panel-rendering.js';
@@ -126,7 +126,7 @@ const iconTypes = {
   'hsi_3+dvsi': ['Hsi0+Sh0', 'Hsi1+Sh1', 'Hsi-dark+Sh-dark', 12, 32], hdvsi_8: ['Hdvsi0+Sh0', 'Hdvsi1+Sh1', 'Hdvsi-dark', 18, 31],
   dvsi_4: ['Dvsi0', 'Dvsi1', 'Dvsi-dark', 18, 25], sly_2: ['Ssi0', 'Ssi1', 'Dark', 18, 25],
   // Träkvistas typer, med mod59-bilderna (se nedan om mod68).
-  hsi_7: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hdvsi_5: ['Hdvsi0+Sh0', 'Hdvsi1+Sh1', 'Hdvsi-dark', 18, 31], ssi_2: ['Ssi0', 'Ssi1', 'Dark', 18, 25]
+  hsi_3: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hsi_7: ['Hsi0', 'Hsi1', 'Hsi-dark', 12, 32], hdvsi_5: ['Hdvsi0+Sh0', 'Hdvsi1+Sh1', 'Hdvsi-dark', 18, 31], ssi_2: ['Ssi0', 'Ssi1', 'Dark', 18, 25]
 };
 // mod59 hör till den mörka panelen. Bennys Träkvista växlar mellan mod68 (ljus skärm) och mod59 (mörk) med Ändra
 // panelmodell; TKL:s mörka panel motsvarar hans mod59-modell, så samma bilder gäller för båda stationerna.

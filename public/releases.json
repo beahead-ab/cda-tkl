@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.86.7",
+    "date": "2026-11-01",
+    "notes": [
+      "Träkvistas rättade XML- och CSV-filer från tk-tkl används med nya LS-adresser och lägesgivare även för växel 21a. Signal 4v följer XML-placeringen vid A7.",
+      "Manuella IT-växlar och interna block utan sensor har ingen LocoNet-trafik och visas utan fysisk adress i Studio. Charlottendal har inga sådana objekt och påverkas inte.",
+      "Träkvistas infartssignal 1/2 ritas som huvudsignal i 85-vyn."
+    ]
+  },
+  {
     "version": "0.86.6",
     "date": "2026-10-31",
     "notes": [

@@ -59,6 +59,7 @@ test('signalsymboler täcker huvud- och dvärgtyper i båda stationerna utan att
     }
   }
   assert.equal(modernSignalKind('hsi_7'),'main');assert.equal(modernSignalKind('hdvsi_5'),'combined');
+  assert.equal(modernSignalKind('hsi_3'),'main','Träkvistas infartssignal 1/2 i det rättade underlaget');
   assert.equal(modernSignalKind('dvsi_4'),'dwarf');assert.equal(modernSignalKind('ssi_2'),null);
   assert.equal(modernSignalKind('ny-typ'),null);
   assert.equal(signalRotation(90),0);assert.equal(signalRotation(270),180);assert.equal(signalRotation(0),-90);assert.equal(signalRotation(undefined),null);
@@ -114,6 +115,17 @@ test('Träkvistas infart skiljer slutpunkt från motriktat skydd',()=>{
   const view=name=>modernSignalView(report({name,routes:[route],sourceEndpoints}));
   assert.equal(view('1/7').tone,'endpoint');
   for(const name of ['2/10','2/8','1/8']){assert.ok(route.guardSignals.includes(name));assert.equal(view(name).tone,'stop',name);}
+});
+test('Träkvistas infartssignal 1/2 (hsi_3 i det rättade underlaget) ritas som huvudsignal och visar kör',()=>{
+  const panel=JSON.parse(fs.readFileSync(new URL('../stations/trakvista/data/panel.json',import.meta.url)));
+  const icon=panel.micons.find(m=>m.mast==='1/2');
+  assert.equal(icon?.type,'hsi_3');
+  const nodes=[];const make=(tag,attrs,parent,value)=>{const n={tag,attrs:{...attrs},textContent:value??'',getAttribute(k){return this.attrs[k];},setAttribute(k,v){this.attrs[k]=v;},style:{},classList:{add(){}}};nodes.push(n);return n;};
+  const symbol=createModernSignal({parent:{classList:{add(){}}},type:icon.type,degrees:icon.deg,scale:icon.scale,label:'Signal 1/2',make});
+  assert.ok(symbol,'85-vyn ritar en egen symbol');
+  assert.deepEqual(nodes.filter(n=>n.tag==='path').map(n=>n.attrs.class),['modern-signal-mark modern-signal-main']);
+  const go=modernSignalView(report({type:'hsi_3',name:'1/2',signal:{aspect:'go',updatedAt:10}}));
+  assert.equal(go.tone,'go');assert.equal(go.uncertain,false,'en huvudsignal har inget dolt dvärgbesked');
 });
 test('bruten kontakt, gammal anslutningsrapport och saknad bindning kan aldrig visa kör',()=>{
   const go={aspect:'go',updatedAt:10};
