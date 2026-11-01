@@ -257,3 +257,34 @@ test('a long disconnection is written to the journal once, not at every reconnec
   assert.equal(lost(), 2);
   assert.equal(e.journal.filter(x => x.kind === 'connected').length, 1);
 });
+test('Charlottendal har inga manuella IT-växlar eller interna block: varje växel och spårledning beordras och hörs på LocoNet som förut', () => {
+  // Träkvistas rättade underlag (tk-tkl #5) märker IT-växlar local och block utan sensor internal; kärnan och simulatorn
+  // hoppar över dem. Charlottendals profiler har inga sådana objekt, så ingen order eller återrapport faller bort här.
+  const load = file => JSON.parse(fs.readFileSync(new URL('../profiles/' + file, import.meta.url)));
+  for (const file of ['charlottendal.json', 'charlottendal-network.json', 'simulator.json', 'simulator-network.json']) {
+    const p = load(file);
+    assert.deepEqual(Object.keys(p.turnouts).filter(n => p.turnouts[n].local), [], file + ': manuella växlar');
+    assert.deepEqual(Object.keys(p.blocks).filter(n => p.blocks[n].internal), [], file + ': interna block');
+  }
+  const network = load('charlottendal-network.json'), sent = [];
+  const e = new Engine(network, { now: () => 100000, send: bytes => sent.push(decode(bytes)) }); e.connection(true);
+  for (const [name, b] of Object.entries(network.turnouts)) {
+    const before = sent.length; e.turnoutOrder(name, 'T');
+    assert.equal(sent.length, before + 1, name + ' beordras'); assert.equal(sent.at(-1).address, b.address);
+    if (b.feedbackSensors) continue;
+    e.receive(switchReport(b.address, b.inverted ? 'C' : 'T')); assert.equal(e.turnouts[name].position, 'T', name + ' hörs');
+  }
+  for (const [name, b] of Object.entries(network.blocks)) {
+    const inputs = b.inputs || [b];
+    for (const i of inputs) e.receive(sensorReport(i.address, i.activeMeansOccupied));
+    assert.equal(e.blocks[name].occupied, true, name + ' belagd');
+    for (const i of inputs) e.receive(sensorReport(i.address, !i.activeMeansOccupied));
+    assert.equal(e.blocks[name].occupied, false, name + ' fri');
+  }
+  // Simulatorn svarar på förfrågan för varje spårlednings ingång, som tidigare.
+  const sim = load('simulator-network.json'), field = new Field(sim, { now: () => 100000 }), reported = new Set();
+  field.on('frame', bytes => { const d = decode(bytes); if (d.kind === 'sensor') reported.add(d.address); });
+  for (let g = 0; g < 8; g++) field.interrogate(g);
+  const inputs = [...new Set(Object.values(sim.blocks).flatMap(b => (b.inputs || [b]).map(i => i.address)))];
+  assert.deepEqual(inputs.filter(a => !reported.has(a)), [], 'alla ingångar besvaras');
+});

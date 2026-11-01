@@ -9,8 +9,11 @@
 #   deploy/publish-station.sh trakvista HEAD --first     # the first time: replaces the repository's history
 #
 # Changes made in the station's repository after the last publication (Benny's corrections) must be in cda-tkl
-# first; otherwise the script stops and lists them (docs/stationer.md). STATION_REMOTE picks another repository
-# (tests), STATION_NO_TEST=1 skips the tests, STATION_NO_PUSH=1 commits without pushing and keeps the folder.
+# first; otherwise the script stops and lists them (docs/stationer.md). When they are taken in by hand and some files
+# cannot be byte-identical (the version, the release notes), installation.received in stations/<id>/station.json names
+# the station repository's commit that cda-tkl has taken in up to; only changes after it are compared. STATION_REMOTE
+# picks another repository (tests), STATION_NO_TEST=1 skips the tests, STATION_NO_PUSH=1 commits without pushing and
+# keeps the folder.
 set -euo pipefail
 ID="${1:?Ange stationen: deploy/publish-station.sh trakvista}"
 FIRST=false; [ "${3:-}" = --first ] && FIRST=true
@@ -20,7 +23,7 @@ FULL=$(git rev-parse "${2:-HEAD}^{commit}")
 [ -z "$(git status --porcelain --untracked-files=no)" ] || { echo "Arbetsträdet har ocommittade ändringar."; exit 1; }
 STATION=$(git show "$FULL:stations/$ID/station.json")
 field() { printf '%s' "$STATION" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s).installation?.[process.argv[1]];console.log(Array.isArray(v)?v.join(' '):v??'')})" "$1"; }
-REPOSITORY=$(field repository); NAME=$(field name); DOCS=$(field docs)
+REPOSITORY=$(field repository); NAME=$(field name); DOCS=$(field docs); RECEIVED=$(field received)
 [ -n "$REPOSITORY" ] && [ -n "$NAME" ] || { echo "stations/$ID/station.json saknar installation.repository och installation.name."; exit 1; }
 REMOTE="${STATION_REMOTE:-https://github.com/$REPOSITORY.git}"
 VERSION=$(git show "$FULL:package.json" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.parse(s).version))")
@@ -34,11 +37,19 @@ git clone -q "$REMOTE" "$WORK/repo" 2>/dev/null || { mkdir -p "$WORK/repo" && gi
 cd "$WORK/repo"
 for key in user.name user.email; do value=$(git -C "$SOURCE" config "$key" || true); [ -z "$value" ] || git config "$key" "$value"; done
 OLD=$(git rev-parse -q --verify HEAD || true)
-LAST="" CHANGED=""
+LAST="" FROM="" CHANGED=""
 if [ -n "$OLD" ] && [ "$FIRST" = false ]; then
   LAST=$(git log --format=%H --grep="^$MARK" -1)
   [ -n "$LAST" ] || { echo "$REPOSITORY är inte publicerat med det här skriptet; första gången: deploy/publish-station.sh $ID HEAD --first"; exit 1; }
-  CHANGED=$(git diff --name-only "$LAST" HEAD)
+  FROM=$LAST
+  # Stationens rättelser som cda-tkl redan har tagit in (installation.received) jämförs inte igen. Gäller bara en commit
+  # efter den senaste publiceringen och på stationens main; det som ändrats efter den jämförs som vanligt.
+  if [ -n "$RECEIVED" ]; then
+    TAKEN=$(git rev-parse -q --verify "$RECEIVED^{commit}") || { echo "installation.received ($RECEIVED) finns inte i $REPOSITORY."; exit 1; }
+    git merge-base --is-ancestor "$TAKEN" HEAD || { echo "installation.received ($RECEIVED) är inte en del av $REPOSITORY main."; exit 1; }
+    if [ "$TAKEN" != "$LAST" ] && git merge-base --is-ancestor "$LAST" "$TAKEN"; then FROM=$TAKEN; fi
+  fi
+  CHANGED=$(git diff --name-only "$FROM" HEAD)
 fi
 
 find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
@@ -57,7 +68,7 @@ for f in $CHANGED; do
 done
 if [ -n "$MISSING" ]; then
   echo "$REPOSITORY har ändringar som inte finns i cda-tkl än:"
-  git log --oneline "$LAST..HEAD"
+  git log --oneline "$FROM..HEAD"
   printf '  %s\n' $MISSING
   echo "Ta in dem i cda-tkl först (docs/stationer.md) och publicera igen."
   exit 1

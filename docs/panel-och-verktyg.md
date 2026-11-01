@@ -1,5 +1,10 @@
 # Ren panel och separat verktygssida
 
+## Träkvistas signal 1/2 (0.86.7)
+
+I Bennys rättade underlag är Träkvistas infartssignal 1/2 av typen `hsi_3`. 85-vyn ritar den som huvudsignal (triangel), och originalpanelen visar samma huvudsignalbild som tidigare. Ingen manöver ändras.
+
+
 ## Verifierad avgång i frånkopplat läge (0.86.6)
 
 När ett säkert identifierat tåg lämnar Charlottendals spårbild ändras rapporten direkt. Med en utfart kopplad under Orter till rätt TrainMeet-granne och godkänd klarering återrapporteras avgången automatiskt. Avgått visas när TrainMeet bekräftat. I väntan på bekräftelse visas Lämnat ställverket och orsaken, exempelvis saknad stationskoppling eller klarering. Tåget fortsätter inte räknas som uppställt eller försenat. Lokala utpassager sparas under den pågående stationskörningen, inte över omstart; en äldre avgång utan bevarad spårning måste anmälas manuellt. Fysisk LocoNet-drift omfattas inte av automatisk återrapportering.

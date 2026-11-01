@@ -1,6 +1,7 @@
 import {attribute,text} from './panel-rendering.js';
 
-const MAIN=new Set(['hsi_2','hsi_4','hsi_5','hsi_7']);
+// hsi_3: Träkvistas infartssignal 1/2 i det rättade underlaget (tk-tkl #5), en huvudsignal som hsi_5.
+const MAIN=new Set(['hsi_2','hsi_3','hsi_4','hsi_5','hsi_7']);
 const COMBINED=new Set(['hsi_3+dvsi','hdvsi_5','hdvsi_8']);
 export function modernSignalKind(type){return MAIN.has(type)?'main':COMBINED.has(type)?'combined':type==='dvsi_4'?'dwarf':null;}
 // Källans signalbild pekar uppåt före rotation. Samma rotationskonvention används av båda vyerna.

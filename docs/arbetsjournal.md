@@ -1,5 +1,21 @@
 # Arbetsjournal – godkänd helleverans
 
+## 1 november 2026 – Träkvistas rättelser från tk-tkl tillbaka i cda-tkl (0.86.7)
+
+**Ej mergad, ej publicerad.** Casper ville kunna publicera Träkvista ur cda-tkl igen. tk-tkl hade fyra commits efter publiceringsmarkören `e2240af` (cda-tkl `7c2834b`, 0.84.0): #3 `62eed3e` (BTLocoBridge via COM-port på Windows), #5 `6fd2f74`/`3573d13` (rättat underlag ur ärende #4) och #1 `316f702` (start och hälsokontroll i install.ps1). Ett genererat paket ur main jämfördes med tk-tkl main, fil för fil och som tregångsjämförelse mot `e2240af`:
+
+- **Träkvistas data och dokument (A):** `Trakvista.xml`, två CSV-tabeller, de genererade filerna i `data/` och `profiles/`, `station.json`, `docs/trakvista.md` och proven i `test/trakvista.test.mjs` och de två stationsintegrationerna. Lades på från #5 med `format-patch | git am -3 --keep-cr`; varje fil är byte-lik med tk-tkl.
+- **Gemensamt program (B):** `src/engine.mjs`, `src/field.mjs`, `src/studio/{detection,deviations,registry}.mjs` och `scripts/make-station-profile.mjs` ur #5 skiljer manuella IT-växlar (`local`) och block utan sensor (`internal`) från LocoNet. `public/panel-symbols.js` och `public/app.js` känner typen `hsi_3`, som signal 1/2 fick i det rättade underlaget. `deploy/publish-station.sh` läser `installation.received`.
+- **Redan i cda-tkl eller avsiktligt olika (C):** #3 finns genom #109 (alla filer lika, eller med senare tillägg i `install.ps1`, `src/server.mjs` och `test/windows-install.ps1`), #1 genom #108. Paketets namn, förråd och identitet sätts av `make-station-repository.mjs`. Versionsfilerna skiljer sig: tk-tkl använde 0.85.0 och 0.85.1, som i cda-tkl är andra releaser. Notiserna från tk-tkl:s 0.85.1 står i 0.86.7.
+
+Publiceringen kräver byte-lika filer, vilket versionsfilerna aldrig kan bli. `installation.received` = `316f702` i `stations/trakvista/station.json` säger att tk-tkl är intaget till och med den commiten; bara senare ändringar jämförs. En okänd commit stoppar, och efter nästa publicering gäller markören igen. `test/station-package.test.mjs` provar stoppet, mottagningen och en senare rättelse mot lokala förråd.
+
+Charlottendal: profilerna har inga `local`- eller `internal`-objekt, så de nya villkoren slår aldrig till. Ett A/B-prov körde main och grenen mot Charlottendals två profiler: alla 340 tågvägar lagda och återtagna, 4 472 LocoNet-order, 464 400 simulatorrapporter, växel- och spårledningsrapporter för varje objekt och Studios register, avvikelser och detektering gav identiska sammandrag. Nya prov i `test/engine.test.mjs` och `test/studio.test.mjs` håller fast det. `test/panel-style.test.mjs` provar att 1/2 ritas som huvudsignal.
+
+Det rättade underlaget ger Träkvistas profil en ny källhash (`421a922…`). Det är samma hash som Träkvista på Render redan kör från tk-tkl `316f702`. Containerprovets återgång till 0.86.6 jämförs därför mot den versionens eget stationsunderlag (`scripts/test-station-container.mjs`).
+
+Prov lokalt: `npm test` 682 godkända (ett överhoppat), `check`, `verify:operations`, `verify:trakvista` och 20 integrationer godkända. Provpubliceringen mot en lokal kopia av tk-tkl utan push listar inga saknade ändringar. Kvar i #115: `hdvsi_5` och `ssi_2` saknar klickstöd i Träkvista.
+
 ## 31 oktober 2026 – avgång fastnar som uppställt (0.86.6)
 
 **Publicerad: 0.86.6 (31 oktober 2026; cda-tkl main `ce9935d`, #127; samtliga fem CI-kontroller godkända i `41156982363` på `b391c1e`).** Webbdriften är verifierad på 0.86.6: ställverk, träff och klocka laddar utan JavaScript-fel. CI: 675 enhetsprov godkända (tre plattformsberoende överhoppade), 20 integrationer inklusive tåg 92 från uppställt till återrapporterad avgång, två återställningsprov och 401 paketenhetsprov. Container- och Windows-kontroller är godkända. Ingen provavgång skickades i den pågående träffen.

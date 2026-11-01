@@ -23,6 +23,9 @@ test('objektregistret har stationens mängder och bara spårbarhet ur XML, inget
   assert.equal(r.blocks.filter(b => b.status === 'ur XML, ej uppmätt').length, 162); assert.equal(r.blocks.filter(b => b.status === 'bänkadress i simulatorn').length, 35);
   assert.equal(r.blocks.find(b => b.id === 'S155').status, 'bänkadress i simulatorn');
   assert.deepEqual(r.xmlOnlyTurnouts, ['Vx124']);
+  // Träkvistas manuella IT-växlar och interna block (tk-tkl #5) visas utan LocoNet-adress; Charlottendal har inga sådana.
+  assert.ok(r.turnouts.every(t => t.loconet.order === sources.profile.turnouts[t.id].address && t.loconet.report === t.loconet.order), 'varje växel har sin LocoNet-adress');
+  assert.ok(r.blocks.every(b => b.loconet.report === sources.profile.blocks[b.id].address && b.loconet.inputs.length > 0), 'varje spårledning har sina ingångar');
   assert.equal(r.modules.map(m => m.id).join(','), 'M00,M01,M02,M03,M04,M05,M06,M07,M08,M09,M10,M11');
 });
 

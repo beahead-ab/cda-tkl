@@ -49,11 +49,25 @@ Sökvägarna är desamma i båda förråden, så commiten går att lägga på di
 
 ```sh
 git -C ../Tk-TKL pull
-git -C ../Tk-TKL format-patch --stdout <senaste publicering>..main | git am -3
+git -C ../Tk-TKL format-patch --stdout <senaste publicering>..main | git am -3 --keep-cr
 ```
+
+`--keep-cr` behövs eftersom `Trakvista.xml` och CSV-tabellerna har Windows-radslut.
 
 Publiceringen jämför varje fil som ändrats i Tk-TKL sedan förra publiceringen med det som ska publiceras. Saknas en
 ändring stannar den och visar commit och filer, så att inget i Tk-TKL skrivs över.
+
+Jämförelsen kräver att filen blir byte-lika. Det går inte när Tk-TKL har satt en egen version (`package.json`,
+`package-lock.json`, sidfoten och `public/releases.json`) eller när cda-tkl har ändrat samma fil efteråt. Då tas
+ändringen in för hand, och `installation.received` i `stations/trakvista/station.json` anger den commit i Tk-TKL som
+cda-tkl har tagit in till och med. Publiceringen jämför då bara det som ändrats i Tk-TKL efter den commiten; en senare
+rättelse stoppar som vanligt. En commit som inte finns på Tk-TKL:s main stoppar publiceringen. Efter nästa publicering
+gäller publiceringsmarkören igen. Visa före en sådan markering att varje ändring finns med, till exempel med en
+tregångsjämförelse fil för fil mot förra publiceringen.
+
+1 november 2026 togs tk-tkl #3, #5 och #1 in på det sättet (0.86.7, `received` = `316f702`): #3 fanns redan genom
+cda-tkl #109 och #1 genom #108, och #5 lades på med `git am`. Tk-TKL hade använt 0.85.0 och 0.85.1, som i cda-tkl är
+andra releaser; notiserna står i 0.86.7.
 
 ## Jämförelse
 
