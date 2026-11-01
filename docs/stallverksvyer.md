@@ -52,3 +52,50 @@ Båda symboluppsättningarna är monterade samtidigt; CSS väljer vilken som vis
 Inställningar → Utseende och ljud → Redigera har Färgtema: Mörkt eller Ljust. Mörkt är standard.
 Valet delas med Studios befintliga temaknapp och följer med mellan öppna flikar. 85-vyn har inga
 egna fasta bakgrunds- eller textfärger. Signalerna använder samma färgvariabler som övriga panelen.
+
+## Stationsinventering (#115, andra etappen)
+
+`node scripts/panel-view-inventory.mjs` skriver en fellista för varje station i paketet (`trakvista` för en station,
+`--json` för maskinläsbar lista). Skriptet läser panelen, driftprofilen, signaländpunkterna och källregistret.
+Det ändrar inga filer, skickar inga order och lägger inga nya bindningar. Klassningen av symboler och slutpunkter
+görs med samma funktioner som 85-vyn (`panel-symbols.js`, `signal-route-controls.js`).
+`test/panel-view-inventory.test.mjs` kör inventeringen för paketets stationer och stoppar vid en signal utan symbol,
+fel riktning, en slutpunkt utan entydig mast eller en korsningsväxel som saknar en bunden del.
+
+Resultat på cda-tkl main `9f40de4` (0.86.6), med cda-tkl:s egna stationsfiler:
+
+| | Charlottendal | Träkvista |
+|---|---|---|
+| Signaler i panelen | 66: 24 huvud, 18 dvärg, 21 kombinerade, 3 stopplyktor | 25: 6 huvud, 9 dvärg, 6 kombinerade, 4 stopplyktor |
+| Riktning mot tågvägarna | 61 signaler i 821 passager, inga fel | 21 signaler i 99 passager, inga fel |
+| Ingen tågväg att prova riktningen mot | 4/2 och L1 (virtuella), stopplyktorna Xv, IIIdo, IIIev | stopplyktorna S3v, S3ö, S4s, S4v |
+| Slutpunkt med röd kontur | 114 av 210 huvudtågvägar, 94 utfarter, 2 mot stopplyktan Xv | 9 av 27, 13 utfarter, 5 mot stopplyktorna S3v och S3ö |
+| Exakt dvärg-/kombinationsbesked saknas | 28 signaler med egen återrapport | 15 |
+| Virtuella signaler utan egen återrapport | 13 | inga |
+| Entydig startmast för huvudtågväg | alla 210 (33 signaler) | alla 27 (9 signaler) |
+| Växeltågväg genom signalklick | 101 av 130; 29 börjar vid en ren huvudsignal | 6 av 30; typerna `hdvsi_5` och `ssi_2` saknar klickstöd |
+| Växlar | 49 enkelväxlar | 11 enkelväxlar och korsningsväxeln Vx22a/Vx23 med två bundna delar; Vx10–Vx13 manövreras lokalt |
+
+En utfart slutar vid sin egen utfartssignal, som vägen ställer i kör; slutpunkten ligger då utanför stationen och
+saknas inte. Riktningen provas mot närmaste del av varje tågväg som signalen begränsar. Det är en kontroll av
+underlaget, inte en fysisk verifiering av signalerna.
+
+**Vad inventeringen visar att det behövs:**
+
+1. **Ingen ommodellering för riktningen.** Alla signalbilder som begränsar en tågväg pekar i färdriktningen, i båda
+   stationerna. Den fysiska riktningen ska fortfarande verifieras på banan.
+2. **Dvärg- och kombinationsbesked** kräver rikare återrapport från signalkorten (beskedskoder per delbesked),
+   inte en ny vy: 28 signaler i Charlottendal och 15 i Träkvista. Till dess visas frågetecknet.
+3. **Stopplyktor** har ingen 85-symbol och behåller originalbilden. Sju huvudtågvägar slutar vid en stopplykta och
+   får därför ingen röd slutpunkt. Symbol och förebild behöver beslutas.
+4. **Träkvistas växeltågvägar:** `signal-route-controls.js` känner bara Charlottendals typer. Kombinationstypen
+   `hdvsi_5` och stopplyktan `ssi_2` saknas, så 24 av 30 växeltågvägar läggs bara med de synliga manöverplupparna.
+   En utökning är en manöverändring och kräver prov på Träkvistas bana.
+5. **Träkvistas rättade underlag** i tk-tkl #5 finns ännu inte i cda-tkl. Där har signal 1/2 typen `hsi_3`, som
+   saknar 85-symbol. När underlaget tas in måste `hsi_3` läggas till som huvudsignal i `panel-symbols.js` och i
+   bildtabellen i `app.js`; både `panel-style.test.mjs` och inventeringsprovet stoppar annars.
+6. **Huvudtågvägsstart på triangeln:** startmasten är entydig för alla huvudtågvägar i underlaget, men bindningen
+   är inte manuellt verifierad och används inte för manöver.
+
+Kvar i #115 utan ändring här: historiskt exakt MAN900-återgivning (kräver versionsbestämd primärkälla), en separat
+schematisk layout med samma objekt-id:n, och snabbväxling av vyn i panelens meny.
