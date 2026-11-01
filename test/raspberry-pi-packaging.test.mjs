@@ -65,6 +65,10 @@ test('the Windows installer never exits the user\'s PowerShell and starts TKL hi
   assert.match(ps,/GetFolderPath\('Startup'\)/);
   assert.match(ps,/--app=http:\/\/127\.0\.0\.1:8910\/#panel/);
   assert.match(read('packaging/windows/run.ps1'),/scripts\/start\.mjs/);
+  assert.ok(ps.includes(`-File "' + $RunScript + '"'`),'sökvägen till run.ps1 citeras, installationsmappen har blanksteg');
+  assert.match(ps,/-ArgumentList \$RunArgs\b/);
+  assert.doesNotMatch(ps,/\$args\s*=/i,'$args är en automatisk variabel i PowerShell');
+  assert.match(ps,/Get-Content -Path \$TklLog -Tail 25/,'ett startfel visar de senaste loggraderna');
 });
 
 test('installed copies turn on the update notice, and only the Pi service may start its update',()=>{
