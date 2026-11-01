@@ -50,11 +50,12 @@ function previousRelease() {
   return null;
 }
 
-function assertIdentity(config, state, version = release) {
+// expected: stationsprofilen som versionen bär. En äldre version har sitt eget stationsunderlag och sin egen källhash.
+function assertIdentity(config, state, version = release, expected = profile) {
   assert.equal(config.station.id, id); assert.equal(config.station.title, station.title);
   assert.equal(config.release, version); assert.equal(state.release, version);
-  assert.equal(config.id, profile.id); assert.equal(state.profile.id, profile.id);
-  assert.equal(config.sourceHash, profile.sourceHash); assert.equal(config.authMode, 'external');
+  assert.equal(config.id, expected.id); assert.equal(state.profile.id, expected.id);
+  assert.equal(config.sourceHash, expected.sourceHash); assert.equal(config.authMode, 'external');
   assert.equal(state.storageFault, null); assert.equal(state.connectionInfo.mode, 'simulator');
   assert.equal(state.connectionMode.mode, 'offline');
   assert.equal(state.installationStation.current, id); assert.equal(state.installationStation.locked, true);
@@ -225,7 +226,9 @@ try {
   prov.replaceContainer(previousImage, { env: { CHARLOTTENDAL_STATION: id, TKL_OWNER_EMAIL: username, TKL_OWNER_PASSWORD: temporary } });
   await prov.applicationReady();
   const previousState = await prov.authenticatedState(cookie);
-  assertIdentity(await json('/api/config', { cookie }), previousState, previous.version);
+  // Rättat stationsunderlag (som Träkvistas i 0.86.7) ger en ny källhash; den äldre versionen kör sitt eget underlag.
+  const previousProfile = JSON.parse(command('git', ['show', `${previous.commit}:stations/${id}/profiles/network.json`]));
+  assertIdentity(await json('/api/config', { cookie }), previousState, previous.version, previousProfile);
   assert.equal((await json('/api/auth/session', { cookie })).user.id, user.id);
   assert.deepEqual(previousState.destinations.entries, destinations.entries);
   assert.equal(previousState.clock.timeMs, clock.timeMs);

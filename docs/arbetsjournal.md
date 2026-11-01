@@ -12,6 +12,8 @@ Publiceringen kräver byte-lika filer, vilket versionsfilerna aldrig kan bli. `i
 
 Charlottendal: profilerna har inga `local`- eller `internal`-objekt, så de nya villkoren slår aldrig till. Ett A/B-prov körde main och grenen mot Charlottendals två profiler: alla 340 tågvägar lagda och återtagna, 4 472 LocoNet-order, 464 400 simulatorrapporter, växel- och spårledningsrapporter för varje objekt och Studios register, avvikelser och detektering gav identiska sammandrag. Nya prov i `test/engine.test.mjs` och `test/studio.test.mjs` håller fast det. `test/panel-style.test.mjs` provar att 1/2 ritas som huvudsignal.
 
+Det rättade underlaget ger Träkvistas profil en ny källhash (`421a922…`). Det är samma hash som Träkvista på Render redan kör från tk-tkl `316f702`. Containerprovets återgång till 0.86.6 jämförs därför mot den versionens eget stationsunderlag (`scripts/test-station-container.mjs`).
+
 Prov lokalt: `npm test` 682 godkända (ett överhoppat), `check`, `verify:operations`, `verify:trakvista` och 20 integrationer godkända. Provpubliceringen mot en lokal kopia av tk-tkl utan push listar inga saknade ändringar. Kvar i #115: `hdvsi_5` och `ssi_2` saknar klickstöd i Träkvista.
 
 ## 31 oktober 2026 – avgång fastnar som uppställt (0.86.6)
